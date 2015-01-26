@@ -99,7 +99,7 @@
 			</div>
 
 			<div class="panel panel-default">
-			  <div class="panel-heading">MyAQL</div>
+			  <div class="panel-heading">MySQL</div>
 			  <div class="panel-body">
 			    Our database will use MySQL.
 			    <br />
