@@ -2,6 +2,10 @@
 
 echo gettext("welcome to the site");
 echo gettext("welcometothesite");
+
+echo "<br />";
+
+echo gettext("testkey");
 ?>
 	
 <div id="content">

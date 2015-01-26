@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2015-01-24 18:54-0500\n"
-"PO-Revision-Date: 2015-01-24 18:54-0500\n"
+"POT-Creation-Date: 2015-01-26 14:44-0500\n"
+"PO-Revision-Date: 2015-01-26 14:44-0500\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: en_CA\n"
@@ -10,14 +10,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 1.7.3\n"
-"X-Poedit-Basepath: C:\\xampp\\htdocs\\CampFire\n"
+"X-Poedit-Basepath: C:\\xampp\\htdocs\\CampFire150\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: application/views/home_view.php:7
+#: application/views/Home/home_view.php:3
 msgid "welcome to the site"
-msgstr "welcome to the site CA"
+msgstr "welcome to the site CAasfdasfasd"
 
-#: application/views/home_view.php:8
+#: application/views/Home/home_view.php:4
 msgid "welcometothesite"
 msgstr "welcometothesite CA"
+
+#: application/views/Home/home_view.php:8
+msgid "testkey"
+msgstr "Hello World"
