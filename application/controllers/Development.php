@@ -27,19 +27,22 @@ class Development extends Controller {
 
 		foreach ($module->models as $model) {
 
-			$model = trim($model);
-			
-			$modelUrl = APP_DIR . 'models/' . $module->module . "/" . $model . ".php";
-
-			if (!file_exists($modelUrl)) 
+			if(!empty($model))
 			{
-				copy(APP_DIR . '../templates/model.php', $modelUrl);
+				$model = trim($model);
+				
+				$modelUrl = APP_DIR . 'models/' . $module->module . "/" . $model . ".php";
 
-				$modelFileContents = file_get_contents($modelUrl);	
-	
-				$modelFileContents = str_replace("ExampleModel", $model, $modelFileContents);	
+				if (!file_exists($modelUrl)) 
+				{
+					copy(APP_DIR . '../templates/model.php', $modelUrl);
 
-				file_put_contents($modelUrl, $modelFileContents);				    
+					$modelFileContents = file_get_contents($modelUrl);	
+		
+					$modelFileContents = str_replace("ExampleModel", $model, $modelFileContents);	
+
+					file_put_contents($modelUrl, $modelFileContents);				    
+				}
 			}
 		}
 
