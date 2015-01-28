@@ -94,7 +94,7 @@ class Model {
 	{
 	    return date('Y-m-d H:i:s', $val);
 	}
-	
+/*	
 	public function query($qry)
 	{
 		$result = mysql_query($qry) or die('MySQL Error: '. mysql_error());
@@ -110,6 +110,54 @@ class Model {
 		$exec = mysql_query($qry) or die('MySQL Error: '. mysql_error());
 		return $exec;
 	}
-    
+
+	public function dblink()
+	{
+		try {
+		    $this->connection = new PDO($config['db_dsn'], $config['db_username'], $config['db_password']);
+		} catch (PDOException $e) {
+		    echo 'Connection failed: ' . $e->getMessage();
+		}
+	}
+ */
+
+	public function query($qry)
+	{
+//		dblink();
+
+		try
+		{
+			$result = $this->connection->query($qry) or die('MySQL Error: '. mysql_error());
+			$resultObjects = array();
+			$rowNum = 0;
+
+			while($row = $result->fetchObject($this))
+			{
+				$resultObjects[$rowNum] = $row;
+				$rowNum++;
+			}
+
+			return $resultObjects;
+		}
+		catch(PDOException $e)
+		{
+			echo $e->getMessage();
+		}
+	}
+
+	public function execute($qry)
+	{
+		try
+		{
+			$result = $this->connection->exec($qry) or die('MySQL Error: '. mysql_error());
+
+			return $result;
+		}
+		catch(PDOException $e)
+		{
+			echo $e->getMessage();
+		}
+	}
+
 }
 ?>
