@@ -13,20 +13,14 @@ class Validator
 		if(isset($validationDecorators))
 		{
 			foreach ($validationDecorators as $property => $validationTypes) {
-
-				foreach (explode(',', $validationTypes) as $validationType) {
-					$validationType = trim($validationType);
+				foreach ($validationTypes as $validationType => $errorMessage) {
 
 					try
 					{
 						//Call a validation method
-						$validationMessage = $this->$validationType($viewModel->$property);
-
-						if($validationMessage != null)
+						if($this->$validationType($viewModel->$property))
 				    	{
-				    		$validationMessages[$property] = $validationMessage;
-
-				    		break;
+				    		$validationMessages[$property][$validationType] = $errorMessage;
 				    	}
 			    	}
 			    	catch(Exception $ex)
@@ -44,14 +38,12 @@ class Validator
 
 	private function email($propertyValue)
 	{
-		$message;
+		return !filter_var($propertyValue, FILTER_VALIDATE_EMAIL);
+	}
 
-		if (!filter_var($propertyValue, FILTER_VALIDATE_EMAIL)) 
-		{
-			$message = "You have entered an invalid email address.";
-		}
-
-		return $message;
+	private function required($propertyValue)
+	{
+		return empty($propertyValue);
 	}
 }
 

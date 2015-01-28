@@ -30,7 +30,7 @@ class Home extends Controller {
 	function homeformsubmit()
 	{
 
-		//$testViewModel = $this->loadModel('TestViewModel');
+		$testViewModel = $this->loadModel('TestViewModel');
 		$testViewModel = AutoMapper::mapPost($testViewModel);
 
 		$testViewModel->validate();
@@ -43,7 +43,7 @@ class Home extends Controller {
 		{
 			$template = $this->loadView('home_view');
 			$template->set('testViewModel', $testViewModel);
-			$template->render();
+			$template->render(true);
 		}
 	}
     
