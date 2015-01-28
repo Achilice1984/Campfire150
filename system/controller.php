@@ -10,6 +10,11 @@
 
 
 class Controller {
+
+	public function __construct()
+	{
+
+	}
 	
 	/***************************************************
 	*
@@ -18,7 +23,18 @@ class Controller {
 	****************************************************/
 	public function loadModel($name)
 	{
-		require(APP_DIR .'models/'. get_class($this) . "/" .  $name .'.php');
+		$urlArray = split("/", $name);
+
+		if(count($urlArray) > 1)
+		{
+			require(APP_DIR .'models/' . $name .'.php');
+
+			$name = $urlArray[count($urlArray) - 1];
+		}
+		else
+		{
+			require(APP_DIR .'models/'. get_class($this) . "/" .  $name .'.php');
+		}
 
 		$model = new $name;
 		return $model;

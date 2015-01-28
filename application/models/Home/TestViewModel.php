@@ -9,6 +9,10 @@ class TestViewModel extends Model
 
 	function __construct()
 	{
+		array('email' => 
+			array('email' => 'Invalid email',
+					'required' => 'email is required')
+		)
 		parent::__construct(array('email' => 'email'));
 	}
 }
