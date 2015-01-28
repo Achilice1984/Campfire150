@@ -11,9 +11,28 @@
 
 class Controller {
 
-	public function __construct()
+	public function isAuth()
 	{
+		if(isset($_SESSION["isAuth"]))
+		{
+			return $_SESSION["isAuth"];
+		}
+		else
+		{
+			return false;
+		}
+	}
 
+	public function isAdmin()
+	{
+		if(isset($_SESSION["isAdmin"]))
+		{
+			return $_SESSION["isAdmin"];
+		}
+		else
+		{
+			return false;
+		}
 	}
 	
 	/***************************************************
