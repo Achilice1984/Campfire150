@@ -11,6 +11,8 @@ session_start();
 */
 require_once('./application/plugins/gettext/gettext.inc');
 require_once('./application/plugins/automapper/AutoMapper.php');
+require_once('./application/plugins/akismet/akismet.class.php');
+require_once('./application/plugins/mailchimp/Mailchimp.php');
 
 // I18N support information here
 $language;
