@@ -7,14 +7,14 @@ echo "<br />";
 
 echo gettext("testkey");
 ?>
-	
+    
 <div id="content"> 
 
     <!-- <form action="<?php echo BASE_URL; ?>home/index" method="post">
-		Name: <input type="text" name="name" value="<?php echo $testViewModel->name; ?>" <?php echo $testViewModel->getValidationAttribute("name") ?>><br>
-		E-mail: <input type="text" name="email" value="<?php echo $testViewModel->email; ?>" <?php echo $testViewModel->getValidationAttribute("email") ?> ><br>
-		<input type="submit">
-	</form> -->
+        Name: <input type="text" name="name" value="<?php echo $testViewModel->name; ?>" <?php echo $testViewModel->getValidationAttribute("name") ?>><br>
+        E-mail: <input type="text" name="email" value="<?php echo $testViewModel->email; ?>" <?php echo $testViewModel->getValidationAttribute("email") ?> ><br>
+        <input type="submit">
+    </form> -->
 <div class="container">
 
     <h1>Campfire 150</h1>

@@ -53,6 +53,7 @@ class Home extends Controller {
 		//             ));
 		// print_r($result);
 
+
 		$template = $this->loadView('index');
 		$template->set('testViewModel', $testViewModel);
 		$template->render(true);
