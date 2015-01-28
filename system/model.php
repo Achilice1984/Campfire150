@@ -52,14 +52,16 @@ class Model {
 
 	public function getValidationAttribute($propertyName)
 	{
-		$dataAttribute = "";
+		$dataAttributes = " ";
 
 		if(isset($this->validationDecorators[$propertyName]))
 		{
-			$dataAttribute = "data-validate=\"" . $this->validationDecorators[$propertyName] . "\"";
+			foreach ($this->validationDecorators[$propertyName] as $validationType => $errorMessage) {
+				$dataAttributes .= "data-validate-" . $validationType . "=\"" . $errorMessage . "\" ";
+			}
 		}
 
-		return $dataAttribute;
+		return $dataAttributes;
 	}
 
 	public function escapeString($string)
