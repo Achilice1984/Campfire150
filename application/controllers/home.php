@@ -8,23 +8,19 @@ class Home extends Controller {
 
 		if($this->isPost())
 		{
+			$testViewModel = AutoMapper::mapPost($testViewModel);
+
+			$testViewModel->validate();
+
 			if($testViewModel->getValidationResult()->isValid())
 			{
-				$this->redirect("home/index");
-			}
-			else
-			{
-				$template = $this->loadView('home_view');
-				$template->set('testViewModel', $testViewModel);
-				$template->render();
+				$this->redirect("");
 			}
 		}
-		else
-		{
-			$template = $this->loadView('home_view');
-			$template->set('testViewModel', $testViewModel);
-			$template->render(true);
-		}
+
+		$template = $this->loadView('home_view');
+		$template->set('testViewModel', $testViewModel);
+		$template->render(true);
 	}
 
 	function homeformsubmit()

@@ -18,7 +18,7 @@ echo gettext("testkey");
     	include(APP_DIR . 'views/shared/displayErrors.php');
     ?>
 
-    <form action="<?php echo BASE_URL; ?>home/homeformsubmit" method="post">
+    <form action="<?php echo BASE_URL; ?>home/index" method="post">
 		Name: <input type="text" name="name" value="<?php echo $testViewModel->name; ?>" <?php echo $testViewModel->getValidationAttribute("name") ?>><br>
 		E-mail: <input type="text" name="email" value="<?php echo $testViewModel->email; ?>" <?php echo $testViewModel->getValidationAttribute("email") ?> ><br>
 		<input type="submit">
