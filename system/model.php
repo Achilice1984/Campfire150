@@ -11,14 +11,10 @@
 class Model {
 
 	private $connection;//This is more of a handler now
-	private $validationResult;
-	private $validationDecorators;
-
-	public function __construct($validationDecorators)
+	
+	public function __construct()
 	{
 		global $config;
-
-		$this->validationDecorators = $validationDecorators;
 
 		/************
 		*	Hey yougen, this is an example of how to change this to work for PDO
@@ -33,36 +29,7 @@ class Model {
 		    echo 'Connection failed: ' . $e->getMessage();
 		}
 	}
-
-	public function validate()
-	{
-		$validator = new Validator();
-		$this->validationResult = $validator->validate($this);
-	}
-
-	public function getValidationResult()
-	{
-		return $this->validationResult;
-	}
-
-	public function getValidationDecorators()
-	{
-		return $this->validationDecorators;
-	}
-
-	public function getValidationAttribute($propertyName)
-	{
-		$dataAttributes = " ";
-
-		if(isset($this->validationDecorators[$propertyName]))
-		{
-			foreach ($this->validationDecorators[$propertyName] as $validationType => $errorMessage) {
-				$dataAttributes .= "data-validate-" . $validationType . "=\"" . $errorMessage . "\" ";
-			}
-		}
-
-		return $dataAttributes;
-	}
+	
 
 	public function escapeString($string)
 	{

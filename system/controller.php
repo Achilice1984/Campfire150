@@ -58,6 +58,25 @@ class Controller {
 		$model = new $name;
 		return $model;
 	}
+
+	public function loadViewModel($name)
+	{
+		$urlArray = split("/", $name);
+
+		if(count($urlArray) > 1)
+		{
+			require(APP_DIR .'viewmodels/' . $name .'.php');
+
+			$name = $urlArray[count($urlArray) - 1];
+		}
+		else
+		{
+			require(APP_DIR .'viewmodels/'. get_class($this) . "/" .  $name .'.php');
+		}
+
+		$model = new $name;
+		return $model;
+	}
 	
 	public function loadView($name)
 	{

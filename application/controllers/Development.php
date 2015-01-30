@@ -23,6 +23,10 @@ class Development extends Controller {
 		{
 		    mkdir(APP_DIR . 'models/' . $module->module, 0777, true);
 		}
+		if (!file_exists(APP_DIR . 'viewmodels/' . $module->module)) 
+		{
+		    mkdir(APP_DIR . 'viewmodels/' . $module->module, 0777, true);
+		}
 
 
 		foreach ($module->models as $model) {
