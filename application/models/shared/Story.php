@@ -47,7 +47,7 @@ class Story extends Model
 
 		$stmt->bindParam(':storyId', $storyId, PDO::PARAM_INT);
 
-		$story = parent::query($stmt);
+		$story = $this->query($stmt);
 
 		return $story[0];
 	}
@@ -58,7 +58,7 @@ class Story extends Model
 
 		$stmt->bindParam(':storyId', $storyId, PDO::PARAM_INT);
 
-		$parent::execute($stmt);
+		$this->execute($stmt);
 	}
 }
 ?>

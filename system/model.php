@@ -149,9 +149,9 @@ class Model {
 	{
 		try
 		{
-			$results = $this->connection->exec($qry) or die('MySQL Error: '. mysql_error());
+			$result = $this->connection->exec($qry) or die('MySQL Error: '. mysql_error());
 
-			return $results;
+			return $result;
 		}
 		catch(PDOException $e)
 		{

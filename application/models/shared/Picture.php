@@ -27,7 +27,7 @@ class Story extends Model
 		$stmt->bindParam(':fileName', $fileName, PDO::PARAM_STR);
 		$stmt->bindParam(':pictureId', $pictureId, PDO::PARAM_INT);
 
-		parent::execute($stmt);
+		$this->execute($stmt);
 	}
 
 	// may be it is not proper to define this function here
@@ -49,7 +49,7 @@ class Story extends Model
 
 		$stmt->bindParam(':pictureId', $pictureId, PDO::PARAM_INT);
 
-		$parent::execute($stmt);
+		$this->execute($stmt);
 	}
 }
 ?>

@@ -46,7 +46,7 @@ class User extends Model
 		$stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
 
 
-		parent::execute($stmt);
+		$this->execute($stmt);
 	}
 
 	// may be it is not proper to define this function here
@@ -68,7 +68,7 @@ class User extends Model
 
 		$stmt->bindParam(':userId', $userId, PDO::PARAM_INT);
 
-		$parent::execute($stmt);
+		$this->execute($stmt);
 	}
 }
 ?>
