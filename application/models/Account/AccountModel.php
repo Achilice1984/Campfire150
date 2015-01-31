@@ -3,12 +3,20 @@
 class AccountModel extends Model {
 
 	public function login($email, $password)
-	{
-		//Returns a User class if user was logged in succesfully
+	{		
+		//Accepts an email address and their hashed password
+		//Returns bool if email
 		//Account must be verified to login
+
+		$hashedPasswordFromDatabase; //Get the hashed password from the database using email address
+
+		return PasswordHasher::verifyPassword($password, $hashedPasswordFromDatabase);
 	}
 	public function registerUserProfile($user)
 	{
+		//This is how you hash the password
+		$hashedPassword = PasswordHasher::hashPassword($user->password);
+
 		//Accepts a User class
 		//Returns true or false if the user was registered properly or not
 		//verified flag should be set to false
@@ -61,6 +69,18 @@ class AccountModel extends Model {
 		//Gets the total follower for this userid
 		//Returns the total
 	}
+	public function followUser($userID, $userToFollowID)
+	{
+		//Accepts a user id and the id of the user to follow
+		//Check that not already following other user
+		//Returns bool if saved succesfully
+	}
+	public function unfollowUser($userID, $userToUnFollowID)
+	{
+		//Accepts a user id and the id of the user to stop following
+		//Check that user is following other user
+		//Returns bool if saved succesfully
+	}
 	public function getFollowers($userID)
 	{
 		//Accepts a user id
@@ -91,10 +111,31 @@ class AccountModel extends Model {
 		//Gets an array of stories that were recommended to the owner of this user id
 		//Returns an array of Story class
 	}
-	public function searchForUser($userSearch)
+	public function searchForUser($userSearch, $howMany, $page)
 	{
-		//Accepts a string that will be someones name
+		//Accepts a string that will be someones name, how many results to return, what page of results your on
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
 		//Gets an array of users who most closely match the search string
+		//Checks if user is following each user (add this to user viewmodel class)
+		//Returns an array of User class
+	}
+
+	public function getUserList($howMany, $page)
+	{
+		//Accepts how many results to return, what page of results your on
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Checks if user is following each user (add this to user viewmodel class)
+		//Users must have verified flag set to true
+		//Returns an array of User class
+	}
+
+	public function getLatestUserList($howMany, $page)
+	{
+		//Accepts how many results to return, what page of results your on
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Checks if user is following each user (add this to user viewmodel class)
+		//Gets a list of the most recently registered users
+		//Users must have verified flag set to true
 		//Returns an array of User class
 	}
 
