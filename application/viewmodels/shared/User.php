@@ -4,8 +4,18 @@
 */
 class User extends ViewModel
 {
-	public $name;// = "Josh";
-	public $email;// = "josh.dvrs@gmail.com";
+	public $UserId;
+	public $Email;
+	public $Password;
+	public $RegisterDate;
+	public $Address;
+	public $PostalCode;
+	public $Notes;
+	public $AchievementLevelType_LevelId;
+	public $FirstName;
+	public $MidName;
+	public $LastName;
+	public $LanguageType_LanguageId;
 
 	function __construct()
 	{		

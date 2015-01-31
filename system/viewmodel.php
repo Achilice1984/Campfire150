@@ -20,7 +20,14 @@ class ViewModel
 
 	public function getValidationResult()
 	{
-		return $this->validationResult;
+		if(isset($this->validationResult))
+		{
+			return $this->validationResult;
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	public function getValidationDecorators()
