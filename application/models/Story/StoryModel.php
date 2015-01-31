@@ -31,6 +31,24 @@ class StoryModel extends Model {
 		//returns bool if saved correctly
 	}
 
+	public function getStory($userID, $storyID)
+	{
+		//Accepts a user id, and a storyID
+		//Check privacy type
+		//Must be approved
+		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
+		//returns a Story class
+	}
+
+	public function getStoryAsAdmin($adminID, $storyID)
+	{
+		//Accepts an admin id and a storyID
+		//Do not Check privacy type
+		//Does not have to be approved
+		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
+		//returns a Story class
+	}
+
 	public function getStoryListByCategoryID($categoryID, $howMany, $page)
 	{
 		//Accepts a categoryID, how many results to return, what page of results your on
