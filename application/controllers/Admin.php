@@ -6,15 +6,17 @@ class Admin extends Controller {
 	function index()
 	{
 		//Loads a model from corresponding model folder
-		$model = $this->loadModel('SomeModel');
+		$model = $this->loadModel('AdminModel');
 
 		//Loads a view model from corresponding viewmodel folder
-		$viewModel = $this->loadModel('SomeViewModel');
+		//$viewModel = $this->loadModel('SomeViewModel');
 
 		//Loads a view from corresponding view folder
 		$template = $this->loadView('index');
+
 		//Adds a variable or object to that can be accessed in the view
-		$template->set('viewModel', $viewModel);
+		//$template->set('viewModel', $viewModel);
+
 		//Renders the view. true indicates to load the layout
 		$template->render(true);
 
@@ -32,6 +34,255 @@ class Admin extends Controller {
 		{
 			//Execute this code if NOT a post back
 		}
+	}
+
+	function AjaxUserList()
+	{
+		// [start] => 0
+	 //    [length] => 10
+	 //    [search] => Array
+	 //        (
+	 //            [value] => 
+	 //            [regex] => false
+	 //        )
+
+		$howMany = $_POST["draw"];
+		$page = $_POST["draw"];
+
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => 50,
+	        "recordsFiltered" =>50,
+	        "data" => array(
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	)
+	    );
+		echo json_encode($output);
+	}
+
+	function AjaxUserListDisabled()
+	{
+		// [start] => 0
+	 //    [length] => 10
+	 //    [search] => Array
+	 //        (
+	 //            [value] => 
+	 //            [regex] => false
+	 //        )
+
+		$howMany = $_POST["draw"];
+		$page = $_POST["draw"];
+
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => 50,
+	        "recordsFiltered" =>50,
+	        "data" => array(
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	)
+	    );
+		echo json_encode($output);
+	}
+
+	function AjaxUserListInappropriate()
+	{
+		// [start] => 0
+	 //    [length] => 10
+	 //    [search] => Array
+	 //        (
+	 //            [value] => 
+	 //            [regex] => false
+	 //        )
+
+		$howMany = $_POST["draw"];
+		$page = $_POST["draw"];
+
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => 50,
+	        "recordsFiltered" =>50,
+	        "data" => array(
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo",
+				      "28th Nov 08",
+				      "$162,700"),
+	        	)
+	    );
+		echo json_encode($output);
 	}
 
 	function insert()

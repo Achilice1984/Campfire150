@@ -1,29 +1,139 @@
 
 <div class="container">
-    <h1>Title</h1>
+ 
+    <h1>Admin Portal</h1> 
 
-    <?php
-        $validationResult = $viewModel->getValidationResult();
-        
-        include(APP_DIR . 'views/shared/displayErrors.php');
-    ?>
+    <div role="tabpanel">
 
-    <form action="<?php echo BASE_URL; ?>Admin/index" method="post">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#Stories" aria-controls="Stories" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-file"></span> Stories</a></li>
+            <li role="presentation"><a href="#Comments" aria-controls="Comments" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-comment"></span> Comments</a></li>
+            <li role="presentation"><a href="#Users" aria-controls="Users" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-user"></span> Users</a></li>
+            <li role="presentation"><a href="#Story_Questionaire" aria-controls="Story_Questionaire" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-question-sign"></span> Story Questionaire</a></li>
+            <li role="presentation"><a href="#User_Questions" aria-controls="User_Questions" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-question-sign"></span> User Questions</a></li>
+            <li role="presentation"><a href="#Website_Dropdowns" aria-controls="Website_Dropdowns" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-list"></span> Website Dropdowns</a></li>
+        </ul>
 
-        <div class="form-group">
-            <label for="name">Label</label>
-            <input type="text" class="form-control" name="name" placeholder="placeholder">
-        </div>
+        <!-- Tab panes -->
+        <div class="tab-content" style="padding:20px;">
+            <div role="tabpanel" class="tab-pane active" id="Stories"> 
 
-        <div class="form-group">
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" name="crud"> Add CRUD Actions and Views? (insert, edit, delete, get)
-                </label>
+                <ul class="nav nav-pills">
+                    <li role="presentation" class="active"><a href="#Stories_PendingApproal" aria-controls="Stories_PendingApproal" role="tab" data-toggle="tab">Pending Approval</a></li>
+                    <li role="presentation"><a href="#Stories_Rejected" aria-controls="Stories_Rejected" role="tab" data-toggle="tab">Rejected</a></li>
+                    <li role="presentation"><a href="#Stories_Inappropriate" aria-controls="Stories_Inappropriate" role="tab" data-toggle="tab">Inappropriate</a></li>
+                </ul>   
+
+                <div class="tab-content" style="padding:20px;">
+                    <div role="tabpanel" class="tab-pane active" id="Stories_PendingApproal">
+                        pending approval
+                    </div>  
+                    <div role="tabpanel" class="tab-pane" id="Stories_Rejected">
+                        Stories_Rejected
+                    </div>  
+                    <div role="tabpanel" class="tab-pane" id="Stories_Inappropriate">
+                        Stories_Inappropriate
+                    </div> 
+                </div>       
+
+            </div>
+            <div role="tabpanel" class="tab-pane" id="Comments">
+
+                <ul class="nav nav-pills">
+                    <li role="presentation" class="active"><a href="#Comments_Rejected" aria-controls="Comments_Rejected" role="tab" data-toggle="tab">Rejected</a></li>
+                    <li role="presentation"><a href="#Comments_Inappropriate" aria-controls="Comments_Inappropriate" role="tab" data-toggle="tab">Inappropriate</a></li>
+                </ul>   
+
+                <div class="tab-content" style="padding:20px;">
+                    <div role="tabpanel" class="tab-pane active" id="Comments_Rejected">
+                        Comments_Rejected
+                    </div>  
+                    <div role="tabpanel" class="tab-pane" id="Comments_Inappropriate">
+                        Comments_Inappropriate
+                    </div> 
+                </div>  
+
+            </div>
+            <div role="tabpanel" class="tab-pane" id="Users">
+
+                <ul class="nav nav-pills">
+                    <li role="presentation" class="active"><a href="#Users_Find" aria-controls="Users_Find" role="tab" data-toggle="tab">Find Users</a></li>
+                    <li role="presentation"><a href="#Users_Disabled_Account" aria-controls="Users_Disabled_Account" role="tab" data-toggle="tab">Disabled Accounts</a></li>
+                    <li role="presentation"><a href="#Users_Inappropriate" aria-controls="Users_Inappropriate" role="tab" data-toggle="tab">Ranked By Inappropriate Flags Issued</a></li>
+                </ul>   
+
+                <div class="tab-content" style="padding:20px;">
+                    <div role="tabpanel" class="tab-pane active" id="Users_Find">
+                        <!--This table will contain all users -->
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxUserList">
+                            <thead>
+                                <tr>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>User Type</th>
+                                    <th>Email</th>
+                                    <th>Disabled</th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>  
+                    <div role="tabpanel" class="tab-pane" id="Users_Disabled_Account">
+                        <!--This table will contain all users that are disabled -->
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxUserListDisabled">
+                            <thead>
+                                <tr>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>User Type</th>
+                                    <th>Email</th>
+                                    <th>Disabled</th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>  
+                    <div role="tabpanel" class="tab-pane" id="Users_Inappropriate">
+                        <!--This table will contain all users but order them by most inappropriate flags issued -->
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxUserListInappropriate">
+                            <thead>
+                                <tr>
+                                    <th>First Name</th>
+                                    <th>Last Name</th>
+                                    <th>User Type</th>
+                                    <th>Email</th>
+                                    <th>Disabled</th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div> 
+                </div>
+
+            </div>
+            <div role="tabpanel" class="tab-pane" id="Story_Questionaire">
+
+                List of questions for story questionaire
+
+            </div>
+            <div role="tabpanel" class="tab-pane" id="User_Questions">
+
+                List of questions that may be asked
+
+            </div>
+            <div role="tabpanel" class="tab-pane" id="Website_Dropdowns">
+
+                List of dropdowns used in the website
+
             </div>
         </div>
 
-        <button type="submit" class="btn btn-default">Submit</button>
-
-    </form>
+    </div>
 </div>
