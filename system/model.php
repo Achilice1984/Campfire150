@@ -52,6 +52,7 @@ class Model {
 			$pdo = $this->prepare($qry);
 			$pdo->execute($params);
 
+			//Fetches data and puts it into object form
 			return $pdo->fetchAll(PDO::FETCH_OBJ);
 		}
 		catch(PDOException $e) 
