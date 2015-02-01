@@ -1,6 +1,15 @@
 <?php
 
 class Admin extends Controller {
+
+	function __construct()
+	{
+		//Will limit all these function to admin level of privlidge
+		// if(!$this->isAdmin())
+		// {
+		// 	$this->redirect("");
+		// }
+	}
 	
 	//Main action for controller, equivelent to: www.site.com/controller/
 	function index()
@@ -39,15 +48,32 @@ class Admin extends Controller {
 	function AjaxUserList()
 	{
 		// [start] => 0
-	 //    [length] => 10
-	 //    [search] => Array
-	 //        (
-	 //            [value] => 
-	 //            [regex] => false
-	 //        )
+		 //    [length] => 10
+		 //    [search] => Array
+		 //        (
+		 //            [value] => 
+		 //            [regex] => false
+		 //        )
+		$userList;
+		$howMany = $_POST["length"]; //How many results to return
+		$page = $_POST["draw"]; //What page number in results
+		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
 
-		$howMany = $_POST["draw"];
-		$page = $_POST["draw"];
+		if(!empty($_POST["search"]["value"]))
+		{
+			$accountModel = $this->loadModel('Account/AccountModel');
+			
+			//Perform a search
+			$userList = $accountModel->searchForUser($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$adminModel = $this->loadModel('AdminModel');
+
+			$userList = $adminModel->getListUsersDisabled($adminID, $howMany, $page);
+		}
+
+		//Process user list into array like below:	
 
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
@@ -128,9 +154,26 @@ class Admin extends Controller {
 	 //            [value] => 
 	 //            [regex] => false
 	 //        )
+		$userList;
+		$howMany = $_POST["length"]; //How many results to return
+		$page = $_POST["draw"]; //What page number in results
+		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
 
-		$howMany = $_POST["draw"];
-		$page = $_POST["draw"];
+		if(!empty($_POST["search"]["value"]))
+		{
+			$accountModel = $this->loadModel('Account/AccountModel');
+			
+			//Perform a search
+			$userList = $accountModel->searchForUser($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$adminModel = $this->loadModel('AdminModel');
+
+			$userList = $adminModel->getListUsersDisabled($adminID, $howMany, $page);
+		}
+
+		//Process user list into array like below:		
 
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
@@ -205,15 +248,32 @@ class Admin extends Controller {
 	function AjaxUserListInappropriate()
 	{
 		// [start] => 0
-	 //    [length] => 10
-	 //    [search] => Array
-	 //        (
-	 //            [value] => 
-	 //            [regex] => false
-	 //        )
+		 //    [length] => 10
+		 //    [search] => Array
+		 //        (
+		 //            [value] => 
+		 //            [regex] => false
+		 //        )
+		$userList;
+		$howMany = $_POST["length"]; //How many results to return
+		$page = $_POST["draw"]; //What page number in results
+		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
 
-		$howMany = $_POST["draw"];
-		$page = $_POST["draw"];
+		if(!empty($_POST["search"]["value"]))
+		{
+			$accountModel = $this->loadModel('Account/AccountModel');
+			
+			//Perform a search
+			$userList = $accountModel->searchForUser($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$adminModel = $this->loadModel('AdminModel');
+
+			$userList = $adminModel->getListUsersDisabled($adminID, $howMany, $page);
+		}
+
+		//Process user list into array like below:	
 
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
