@@ -1,6 +1,15 @@
 <?php
 
 class Account extends Controller {
+
+	function __construct()
+	{
+		//Must be logged in to use functions
+		// if(!$this->isAuth())
+		// {
+		// 	$this->redirect("");
+		// }
+	}
 	
 	//Main action for controller, equivelent to: www.site.com/controller/
 	function index($id, $blah)
