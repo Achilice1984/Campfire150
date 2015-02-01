@@ -11,7 +11,7 @@ echo gettext("testkey");
 
 <div class="container">
 
-    <h1>Campfire 150</h1>
+    <h1>Campfire 150 | Home</h1>
     
     <?php
         $validationResult = $viewModel->getValidationResult();
