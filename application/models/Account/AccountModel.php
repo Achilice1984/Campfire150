@@ -209,7 +209,7 @@ class AccountModel extends Model {
 		//Checks if user is following each user (add this to user viewmodel class)
 		//Returns an array of User class		
 
-		$statement = "SELECT *, MATCH(FirstName, LastName, Email, MidName) AGAINST('$keyword') AS score FROM User LIMIT ?, ? WHERE MATCH(FirstName, LastName, Email, MidName) AGAINST(?) ORDER BY score DESC";
+		$statement = "SELECT *, MATCH(FirstName, LastName, Email, MidName) AGAINST('$userSearch') AS score FROM User LIMIT ?, ? WHERE MATCH(FirstName, LastName, Email, MidName) AGAINST(?) ORDER BY score DESC";
 
 		$start = $howMany * ($page - 1);
 
