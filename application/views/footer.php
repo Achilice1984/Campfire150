@@ -5,6 +5,18 @@
     <script src="<?php echo BASE_URL; ?>/static/plugins/bootstrap/js/bootstrap.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="<?php echo BASE_URL; ?>/static/plugins/fittext/jquery.fittext.js"></script>
+
+    <?php
+        if(isset($datatables))
+        {
+            echo '<script src="' . BASE_URL . '/static/plugins/DataTables/media/js/jquery.dataTables.js"></script>';
+        }
+
+        if(isset($tinymce))
+        {
+            echo '<script src="' . BASE_URL . '/static/plugins/tinymce/js/tinymce/tinymce.min.js"></script>';
+        }
+    ?>   
     
 
     <script type="text/javascript">    	
