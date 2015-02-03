@@ -345,6 +345,362 @@ class Admin extends Controller {
 		echo json_encode($output);
 	}
 
+	function AjaxStoryListPending()
+	{
+		// [start] => 0
+		 //    [length] => 10
+		 //    [search] => Array
+		 //        (
+		 //            [value] => 
+		 //            [regex] => false
+		 //        )
+		$storyList;
+		$howMany = $_POST["length"]; //How many results to return
+		$page = $_POST["draw"]; //What page number in results
+		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+
+		if(!empty($_POST["search"]["value"]))
+		{
+			$adminModel = $this->loadModel('AdminModel');
+			
+			//Perform a search
+			$storyList = $adminModel->searchStoriesPendingApproval($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$adminModel = $this->loadModel('AdminModel');
+
+			$storyList = $adminModel->getStoryListPendingApproval($adminID, $howMany, $page);
+		}
+
+		//Process story list into array like below:	
+
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => 50,
+	        "recordsFiltered" =>50,
+	        "data" => array(
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo")
+	        	)
+	    );
+		echo json_encode($output);
+	}
+
+	function AjaxStoryListRejected()
+	{
+		// [start] => 0
+		 //    [length] => 10
+		 //    [search] => Array
+		 //        (
+		 //            [value] => 
+		 //            [regex] => false
+		 //        )
+		$storyList;
+		$howMany = $_POST["length"]; //How many results to return
+		$page = $_POST["draw"]; //What page number in results
+		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+
+		if(!empty($_POST["search"]["value"]))
+		{
+			$adminModel = $this->loadModel('AdminModel');
+			
+			//Perform a search
+			$storyList = $adminModel->searchStoriesRejected($adminID, $userSearch, $howMany, $page);
+		}
+		else
+		{
+			$adminModel = $this->loadModel('AdminModel');
+
+			$storyList = $adminModel->getStoryListRejected($adminID, $howMany, $page);
+		}
+
+		//Process story list into array like below:	
+
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => 50,
+	        "recordsFiltered" =>50,
+	        "data" => array(
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo")
+	        	)
+	    );
+		echo json_encode($output);
+	}
+
+	function AjaxStoryListInappropriate()
+	{
+		// [start] => 0
+		 //    [length] => 10
+		 //    [search] => Array
+		 //        (
+		 //            [value] => 
+		 //            [regex] => false
+		 //        )
+		$storyList;
+		$howMany = $_POST["length"]; //How many results to return
+		$page = $_POST["draw"]; //What page number in results
+		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+
+		if(!empty($_POST["search"]["value"]))
+		{
+			$storyModel = $this->loadModel('Story/StoryModel');
+			
+			//Perform a search
+			$storyList = $storyModel->searchStories($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$adminModel = $this->loadModel('AdminModel');
+
+			$storyList = $adminModel->getStoryListFlaggedInappropriate($adminID, $howMany, $page);
+		}
+
+		//Process story list into array like below:	
+
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => 50,
+	        "recordsFiltered" =>50,
+	        "data" => array(
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo")
+	        	)
+	    );
+		echo json_encode($output);
+	}
+
+	function AjaxCommentListInappropriate()
+	{
+		// [start] => 0
+		 //    [length] => 10
+		 //    [search] => Array
+		 //        (
+		 //            [value] => 
+		 //            [regex] => false
+		 //        )
+		$commentList;
+		$howMany = $_POST["length"]; //How many results to return
+		$page = $_POST["draw"]; //What page number in results
+		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+
+		if(!empty($_POST["search"]["value"]))
+		{
+			$commentList = $this->loadModel('Story/StoryModel');
+			
+			//Perform a search
+			$commentList = $storyModel->searchStories($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$adminModel = $this->loadModel('Story/StoryModel');
+
+			$commentList = $adminModel->getCommentListInappropriate($adminID, $howMany, $page);
+		}
+
+		//Process comment list into array like below:	
+
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => 50,
+	        "recordsFiltered" =>50,
+	        "data" => array(
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo")
+	        	)
+	    );
+		echo json_encode($output);
+	}
+
+	function AjaxCommentListRejected()
+	{
+		// [start] => 0
+		 //    [length] => 10
+		 //    [search] => Array
+		 //        (
+		 //            [value] => 
+		 //            [regex] => false
+		 //        )
+		$commentList;
+		$howMany = $_POST["length"]; //How many results to return
+		$page = $_POST["draw"]; //What page number in results
+		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+
+		if(!empty($_POST["search"]["value"]))
+		{
+			$commentList = $this->loadModel('Story/StoryModel');
+			
+			//Perform a search
+			$commentList = $storyModel->searchStories($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$adminModel = $this->loadModel('Story/StoryModel');
+
+			$commentList = $adminModel->getCommentListRejected($adminID, $adminID, $howMany, $page);
+		}
+
+		//Process comment list into array like below:	
+
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => 50,
+	        "recordsFiltered" =>50,
+	        "data" => array(
+	        	array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo"),array("Airi",
+				      "Satou",
+				      "Accountant",
+				      "Tokyo")
+	        	)
+	    );
+		echo json_encode($output);
+	}
+
 	function insert()
 	{
 		//Loads a model from corresponding model folder
