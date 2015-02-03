@@ -1,15 +1,25 @@
 <?php
 
 class Account extends Controller {
+
+	function __construct()
+	{
+		//Must be logged in to use functions
+		// if(!$this->isAuth())
+		// {
+		// 	$this->redirect("");
+		// }
+	}
 	
 	//Main action for controller, equivelent to: www.site.com/controller/
-	function index()
+	function index($id, $blah)
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AccountModel');
 
 		//Loads a view model from corresponding viewmodel folder
 		$viewModel = $this->loadViewModel('AccountViewModel');
+		$viewmodel->storyList = $model->getStoyrList();
 
 		//Loads a view from corresponding view folder
 		$template = $this->loadView('index');
@@ -18,6 +28,14 @@ class Account extends Controller {
 		//Renders the view. true indicates to load the layout
 		$template->render(true);
 
+		if($this->isAdmin())
+		{
+			$model->getuserListAdmin();
+		}
+		else
+		{
+			$model->getRegularUserList();
+		}
 		//Execute code if a post back
 		if($this->isPost())
 		{
@@ -38,7 +56,11 @@ class Account extends Controller {
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AccountModel');
+		$model->updateProfile
 
+		$user = AutoMapper::mapPost(new User());
+
+		$model->updateUser($user);
 		//Loads a view model from corresponding viewmodel folder
 		$viewModel = $this->loadViewModel('AccountViewModel');
 

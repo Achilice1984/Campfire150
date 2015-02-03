@@ -4,7 +4,12 @@
     <!-- Include all compiled plugins (below), or include individual files as needed -->
     <script src="<?php echo BASE_URL; ?>/static/plugins/bootstrap/js/bootstrap.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="<?php echo BASE_URL; ?>/static/plugins/fittext/jquery.fittext.js"></script>
-    
+    <script src="<?php echo BASE_URL; ?>/static/plugins/fittext/jquery.fittext.js"></script>    
+
+    <?php //Loads js files
+        foreach (@$this->js as $js) { ?>
+            <script src="<?php echo $js;?>"></script>
+    <?php } ?>
+
   </body>
 </html>

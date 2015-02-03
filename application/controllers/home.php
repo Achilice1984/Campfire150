@@ -4,15 +4,17 @@ class Home extends Controller {
 	
 	function index()
 	{
-		$testViewModel = $this->loadModel('TestViewModel');
+		$model = $this->loadModel('HomeModel');
+
+		$homeViewModel = $this->loadViewModel('HomeViewModel');
 
 		if($this->isPost())
 		{
-			$testViewModel = AutoMapper::mapPost($testViewModel);
+			$homeViewModel = AutoMapper::mapPost($homeViewModel);
 
-			$testViewModel->validate();
+			$homeViewModel->validate();
 
-			if($testViewModel->getValidationResult()->isValid())
+			if($homeViewModel->getValidationResult()->isValid())
 			{
 				$this->redirect("");
 			}
@@ -55,7 +57,7 @@ class Home extends Controller {
 
 
 		$template = $this->loadView('index');
-		$template->set('testViewModel', $testViewModel);
+		$template->set('viewModel', $homeViewModel);
 		$template->render(true);
 	}    
 }
