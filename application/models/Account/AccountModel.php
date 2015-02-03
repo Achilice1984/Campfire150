@@ -4,29 +4,87 @@ class AccountModel extends Model {
 
 	public function login($email, $password)
 	{		
-		//Accepts an email address and their hashed password
-		//Returns bool if email
-		//Account must be verified to login
+		$authentication = new Authentication();
 
-		$hashedPasswordFromDatabase; //Get the hashed password from the database using email address
+		$statement = "SELECT * FROM User WHERE Email = ?";
 
-		return PasswordHasher::verifyPassword($password, $hashedPasswordFromDatabase);
+		$user = $this->fetchIntoClass($statement, array($email), "Shared/User");
+
+		return $authentication->authenticate($password, $user->Password, $user->IsAdmin);
 	}
 	public function registerUserProfile($user)
 	{
-		//This is how you hash the password
-		$hashedPassword = PasswordHasher::hashPassword($user->password);
+		$authentication = new Authentication();
+
+		$statement = "INSERT INTO User (Email, Password, Address, PostalCode, PhoneNumber, FirstName, LastName, MidName, HashedVerification)";
+		$statement .= " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+		$user->Password = $authentication->hashPassword($user->password);
+
+		$hashedEmailVerification = md5(uniqid());
+
+		$parameters = array($user->Email, $user->Password, $user->Address, $user->PostalCode, $user->PhoneNumber, $user->FirstName, $user->LastName, $user->MidName, $hashedEmailVerification);
+
+		
+		$rowCount = $this->fetchRowCount($statement, $parameters);
+
+		//Success insert
+		if($rowCount >= 1)
+		{
+			$emailSent = sendEmailVerification($email, $hashedEmailVerification);
+
+			return true;
+		}
 
 		//Accepts a User class
 		//Returns true or false if the user was registered properly or not
 		//verified flag should be set to false
 	}
+
+	public function sendEmailVerification($email, $hashedEmailVerification)
+	{
+		$to      = $email; // Send email to our user
+		$subject = 'Signup | Verification'; // Give the email a subject
+		$message = '
+		 
+		Thanks for signing up for CampFire150!
+		Your account has been created, you can login using the credentials you signed up with after you have activated your account by clicking the url below.
+		 
+		Please click this link to activate your account:
+		http://localhost:8084/campfire150/account/verify/' . $email . '/' . $hashedEmailVerification . '
+		 
+		'; // Our message above including the link
+		                     
+		$headers = 'From:josh.dvrs@gmail.com' . "\r\n"; // Set from headers
+		mail($to, $subject, $message, $headers); // Send our email
+	}
+
 	public function verifiyEmail($email, $hashedValue)
 	{
 		//Accepts users email address and some hashed value
 		//Checks that email address and hashedValue matches in the database
 		//Sets verified flag to true
 		//return bool
+
+		$statement = "SELECT * FROM User WHERE Email = ? AND HashedVerification = ?";
+
+		$user = $this->fetchIntoClass($statement, array($email, $hashedValue), "Shared/User");
+
+		$verified = false;
+		//Does everything match?
+		if(isset($user))
+		{
+			$updateStatement = "UPDATE User SET Verified = TRUE";
+
+			$rowCount = $this->fetchRowCount($updateStatement, array());
+			//Success insert
+			if($rowCount >= 1)
+			{
+				$verified = true;
+			}
+		}
+
+		return $verified;
 	}
 	public function updateUserProfile($user)
 	{
@@ -41,33 +99,53 @@ class AccountModel extends Model {
 		//Updates the password in the database with the new password
 		//Returns true or false if the password was updated properly or not
 	}
-	public function deActivateUser($user, $admin)
-	{
-		//Accepts a User class for $user and a User class for $admin
-		//Sets the active flag to false in user profile
-		//Uses admin details to say who deactivated the account
-	}
+	
 	public function getUserProfileByEmail($email)
 	{
 		//Accepts an email
 		//Returns a User class with profile info relate to an email address
+		$authentication = new Authentication();
+
+		$statement = "SELECT * FROM User WHERE Email = ?";
+
+		$user = $this->fetchIntoClass($statement, array($email), "Shared/User");
+
+		return $user;
 	}
 	public function getUserProfileByID($userID)
 	{
 		//Accepts a user id
 		//Returns a User class with profile info relate to its id
+		$authentication = new Authentication();
+
+		$statement = "SELECT * FROM User WHERE UserId = ?";
+
+		$user = $this->fetchIntoClass($statement, array($userID), "Shared/User");
+
+		return $user;
 	}
 	public function getTotalStoriesWritten($userID)
 	{
 		//Accepts an user id
 		//Gets the total stories written by the user who owns this email address
 		//Returns the total
+		$statement = "SELECT count(*) FROM Story WHERE User_UserId = ?";
+
+		$totalStories = $this->fetchColumn($statement, array($userID));
+
+		return $totalStories;
 	}
 	public function getTotalFollowers($userID)
 	{
 		//Accepts a user id
 		//Gets the total follower for this userid
 		//Returns the total
+
+		$statement = "SELECT count(*) FROM Following WHERE User_UserId = ?";
+
+		$totalFollowing = $this->fetchColumn($statement, array($userID));
+
+		return $totalFollowing;
 	}
 	public function followUser($userID, $userToFollowID)
 	{
@@ -92,6 +170,12 @@ class AccountModel extends Model {
 		//Accepts a user id
 		//Gets the total amount of people following the owner of this user id
 		//Returns the total
+
+		$statement = "SELECT count(*) FROM Following WHERE User_FollowerId = ?";
+
+		$totalFollowers = $this->fetchColumn($statement, array($userID));
+
+		return $totalFollowers;
 	}
 	public function getFollowing($userID)
 	{
@@ -104,6 +188,12 @@ class AccountModel extends Model {
 		//Accepts a user id
 		//Gets an array of stories written by the owner of this user id
 		//Returns an array of Story class
+
+		$statement = "SELECT * FROM Story WHERE User_UserId = ?";
+
+		$stories = $this->fetchIntoClass($statement, array($userID), "Shared/Story");
+
+		return $stories;
 	}
 	public function getStoriesRecommendedByFriends($userID)
 	{
@@ -117,7 +207,15 @@ class AccountModel extends Model {
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
 		//Gets an array of users who most closely match the search string
 		//Checks if user is following each user (add this to user viewmodel class)
-		//Returns an array of User class
+		//Returns an array of User class		
+
+		$statement = "SELECT *, MATCH(FirstName, LastName, Email, MidName) AGAINST('$keyword') AS score FROM User LIMIT ?, ? WHERE MATCH(FirstName, LastName, Email, MidName) AGAINST(?) ORDER BY score DESC";
+
+		$start = $howMany * ($page - 1);
+
+		$user = $this->fetchIntoClass($statement, array($start, $howMany, $userSearch), "Shared/User");
+
+		return $user;
 	}
 
 	public function getUserList($howMany, $page)
@@ -127,6 +225,14 @@ class AccountModel extends Model {
 		//Checks if user is following each user (add this to user viewmodel class)
 		//Users must have verified flag set to true
 		//Returns an array of User class
+
+		$statement = "SELECT * FROM User LIMIT ?, ?";
+
+		$start = $howMany * ($page - 1);
+
+		$user = $this->fetchIntoClass($statement, array($start, $howMany), "Shared/User");
+
+		return $user;
 	}
 
 	public function getLatestUserList($howMany, $page)
@@ -137,6 +243,14 @@ class AccountModel extends Model {
 		//Gets a list of the most recently registered users
 		//Users must have verified flag set to true
 		//Returns an array of User class
+
+		$statement = "SELECT * FROM User ORDER BY RegisterDate DESC LIMIT ?, ?";
+
+		$start = $howMany * ($page - 1);
+
+		$user = $this->fetchIntoClass($statement, array($start, $howMany), "Shared/User");
+
+		return $user;
 	}
 
 

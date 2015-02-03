@@ -4,8 +4,8 @@
 */
 class AccountViewModel extends ViewModel
 {
-	public $name;// = "Josh";
-	public $email;// = "josh.dvrs@gmail.com";
+	public $storyList;// = "Josh";
+	public $userList;// = "josh.dvrs@gmail.com";
 
 	function __construct()
 	{		

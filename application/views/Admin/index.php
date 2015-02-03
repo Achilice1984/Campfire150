@@ -1,3 +1,7 @@
+<script type="text/javascript">
+    var requiredScripts = ["plugins/DataTables/media/js/jquery.dataTables",
+                            "js/adminDataTables"];
+</script>
 
 <div class="container">
  
@@ -27,13 +31,49 @@
 
                 <div class="tab-content" style="padding:20px;">
                     <div role="tabpanel" class="tab-pane active" id="Stories_PendingApproal">
-                        pending approval
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxStoryListPending" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Owner</th>
+                                    <th>Email</th>
+                                    <th>Uploaded Date</th>                                    
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>  
                     <div role="tabpanel" class="tab-pane" id="Stories_Rejected">
-                        Stories_Rejected
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxStoryListRejected" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Owner</th>
+                                    <th>Email</th>
+                                    <th>Uploaded Date</th>                                    
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>  
                     <div role="tabpanel" class="tab-pane" id="Stories_Inappropriate">
-                        Stories_Inappropriate
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxStoryListInappropriate" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Owner</th>
+                                    <th>Email</th>
+                                    <th>Uploaded Date</th>                                    
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div> 
                 </div>       
 
@@ -47,10 +87,34 @@
 
                 <div class="tab-content" style="padding:20px;">
                     <div role="tabpanel" class="tab-pane active" id="Comments_Rejected">
-                        Comments_Rejected
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxCommentListRejected" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>Story Title</th>
+                                    <th>Comment Owner</th>
+                                    <th>Email</th>
+                                    <th>Comment Date</th>                                    
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div>  
                     <div role="tabpanel" class="tab-pane" id="Comments_Inappropriate">
-                        Comments_Inappropriate
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxCommentListInappropriate" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>Story Title</th>
+                                    <th>Comment Owner</th>
+                                    <th>Email</th>
+                                    <th>Comment Date</th>                                    
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
                     </div> 
                 </div>  
 
@@ -66,7 +130,7 @@
                 <div class="tab-content" style="padding:20px;">
                     <div role="tabpanel" class="tab-pane active" id="Users_Find">
                         <!--This table will contain all users -->
-                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxUserList">
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxUserList" style="display:none;">
                             <thead>
                                 <tr>
                                     <th>First Name</th>
@@ -83,7 +147,7 @@
                     </div>  
                     <div role="tabpanel" class="tab-pane" id="Users_Disabled_Account">
                         <!--This table will contain all users that are disabled -->
-                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxUserListDisabled">
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxUserListDisabled" style="display:none;">
                             <thead>
                                 <tr>
                                     <th>First Name</th>
@@ -100,7 +164,7 @@
                     </div>  
                     <div role="tabpanel" class="tab-pane" id="Users_Inappropriate">
                         <!--This table will contain all users but order them by most inappropriate flags issued -->
-                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxUserListInappropriate">
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxUserListInappropriate" style="display:none;">
                             <thead>
                                 <tr>
                                     <th>First Name</th>

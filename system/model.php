@@ -27,11 +27,20 @@ class Model {
 	}
 
 	public function fetchIntoClass($qry, $params=array(), $className)
-	{
+	{		
 		//Example array: array(':calories' => $calories, ':colour' => $colour)
 		//Or by order array($calories, $colour)
 		try 
 		{
+			$urlArray = split("/", $className);
+
+			if(count($urlArray) > 1)
+			{
+				require_once(APP_DIR .'viewmodels/' . $className .'.php');
+
+				$className = $urlArray[count($urlArray) - 1];
+			}
+
 			$pdo = $this->prepare($qry);
 			$pdo->execute($params);
 
@@ -69,6 +78,21 @@ class Model {
 			$pdo->execute($params);
 
 			return $pdo->rowCount();
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+	public function fetchColumn($qry, $params=array()){
+		//Example array: array(':calories' => $calories, ':colour' => $colour)
+		//Or by order array($calories, $colour)
+		try 
+		{
+			$pdo = $this->prepare($qry);
+			$pdo->execute($params);
+
+			return $pdo->fetchColumn();
 		}
 		catch(PDOException $e) 
 		{

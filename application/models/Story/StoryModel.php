@@ -2,7 +2,7 @@
 
 class StoryModel extends Model {
 
-	public function searchStories($storySearch)
+	public function searchStories($storySearch, $howMany, $page)
 	{
 		//Accepts string to search for a story
 		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
@@ -138,6 +138,26 @@ class StoryModel extends Model {
 	public function getCommentsForStory($storyID, $howMany, $page)
 	{
 		//Accepts a story id, how many results to return, what page of results your on
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Checks if user has makrked comment as inappropriate (add this to comment viewmodel class)
+		//Gets a list of comments related to a story
+		//The comments published flag must be true
+		//returns an array of comment class related to a story
+	}
+
+	public function getCommentListInappropriate($adminID, $howMany, $page)
+	{
+		//Accepts how many results to return, what page of results your on
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Checks if user has makrked comment as inappropriate (add this to comment viewmodel class)
+		//Gets a list of comments related to a story
+		//The comments published flag must be true
+		//returns an array of comment class related to a story
+	}
+
+	public function getCommentListRejected($adminID, $howMany, $page)
+	{
+		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
 		//Checks if user has makrked comment as inappropriate (add this to comment viewmodel class)
 		//Gets a list of comments related to a story

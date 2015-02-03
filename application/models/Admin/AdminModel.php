@@ -2,7 +2,21 @@
 
 class AdminModel extends Model {
 
-	public function getStoryListPendingApproval($howMany, $page)
+	public function searchStoriesPendingApproval($adminID, $storySearch, $howMany, $page)
+	{
+		//Accepts string to search for a story
+		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
+		//returns an array of Story class that relate to the search string
+	}
+
+	public function searchStoriesRejected($adminID, $storySearch, $howMany, $page)
+	{
+		//Accepts string to search for a story
+		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
+		//returns an array of Story class that relate to the search string
+	}
+
+	public function getStoryListPendingApproval($adminID, $howMany, $page)
 	{
 		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -11,7 +25,7 @@ class AdminModel extends Model {
 		//returns an array of Story class
 	}
 
-	public function getStoryListRejected($howMany, $page)
+	public function getStoryListRejected($adminID, $howMany, $page)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -21,7 +35,7 @@ class AdminModel extends Model {
 		//returns an array of Story class
 	}
 
-	public function getStoryListFlaggedInappropriate($howMany, $page)
+	public function getStoryListFlaggedInappropriate($adminID, $howMany, $page)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -115,6 +129,13 @@ class AdminModel extends Model {
 		//returns an array of User class
 	}
 
+	public function deActivateUser($user, $admin)
+	{
+		//Accepts a User class for $user and a User class for $admin
+		//Sets the active flag to false in user profile
+		//Uses admin details to say who deactivated the account
+	}
+
 	public function getListUsersDisabled($adminID, $howMany, $page)
 	{
 		//Accepts how many, page
@@ -158,6 +179,22 @@ class AdminModel extends Model {
 	public function addQuestion($adminID, $questionE, $questionF)
 	{
 		//Accepts a english questionE, a french questionF
+		//returns bool if saved succesfully
+	}
+
+	public function getListDropdowns($adminID)
+	{
+		//Accepts admin id
+		//returns list of dropdowns and their values
+	}
+	public function addDropdownValue($adminID, $dropdownValueE, $dropdownValueF)
+	{
+		//Accepts a english dropdownValueE, a french dropdownValueF
+		//returns bool if saved succesfully
+	}
+	public function updateDropdownValue($adminID, $dropdownValueE, $dropdownValueF)
+	{
+		//Accepts a english dropdownValueE, a french dropdownValueF
 		//returns bool if saved succesfully
 	}
 

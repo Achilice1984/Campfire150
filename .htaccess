@@ -7,3 +7,8 @@ RewriteRule . index.php [L]
 
 # Prevent file browsing
 Options -Indexes
+
+# Error Pages
+ErrorDocument 401 /CampFire150/401.html
+ErrorDocument 403 /CampFire150/403.html
+ErrorDocument 500 /CampFire150/500.html
