@@ -17,6 +17,7 @@ class User extends ViewModel
 	public $LastName;
 	public $LanguageType_LanguageId;
 	public $IsAdmin;
+	public $LanguagePreference;
 
 	function __construct()
 	{		

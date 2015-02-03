@@ -10,6 +10,20 @@
 
 
 class Controller {
+
+		public function isAuth()
+		{
+			$auth = new Authentication();
+
+			return $auth->isAuthenticated();
+		}
+
+		public function isAdmin()
+		{
+			$auth = new Authentication();
+
+			return $auth->isAdmin();
+		}
 	
 	/***************************************************
 	*

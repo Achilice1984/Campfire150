@@ -10,7 +10,7 @@ class AccountModel extends Model {
 
 		$user = $this->fetchIntoClass($statement, array($email), "Shared/User");
 
-		return $authentication->authenticate($password, $user->Password, $user->IsAdmin);
+		return $authentication->authenticate($password, $user);
 	}
 	public function registerUserProfile($user)
 	{
