@@ -1,3 +1,4 @@
 tinymce.init({
-    selector: "textarea"
+    selector: "textarea",
+    removed_menuitems: 'newdocument'
  });
