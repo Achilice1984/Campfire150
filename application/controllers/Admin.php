@@ -23,6 +23,9 @@ class Admin extends Controller {
 		//Loads a view from corresponding view folder
 		$template = $this->loadView('index');
 
+		$template->loadPlugin('datatables');
+		//$template->loadPlugin('tinymce');
+
 		//Adds a variable or object to that can be accessed in the view
 		//$template->set('viewModel', $viewModel);
 

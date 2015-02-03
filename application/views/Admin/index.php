@@ -1,6 +1,7 @@
 <script type="text/javascript">
-    var requiredScripts = ["plugins/DataTables/media/js/jquery.dataTables",
-                            "js/adminDataTables"];
+    var requiredScripts = [ "js/adminDataTables"//,
+                            //"js/tinymce"
+                            ];
 </script>
 
 <div class="container">

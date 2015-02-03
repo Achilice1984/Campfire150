@@ -23,6 +23,11 @@ class View {
 		$this->pageVars[$var] = $val;
 	}
 
+	public function loadPlugin($name)
+	{
+		$this->pageVars[$name] = true;
+	}
+
 	public function render($useLayout = false)
 	{
 		extract($this->pageVars);
