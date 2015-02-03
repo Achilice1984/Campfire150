@@ -49,8 +49,11 @@ require(ROOT_DIR .'system/view.php');
 require(ROOT_DIR .'system/controller.php');
 require(ROOT_DIR .'system/pip.php');
 
+//Custom System
 require(ROOT_DIR .'system/validationresult.php');
 require(ROOT_DIR .'system/validator.php');
+require(ROOT_DIR .'system/authentication.php');
+require(ROOT_DIR .'system/sessionmanager.php');
 
 // Define base URL
 global $config;

@@ -1,8 +1,3 @@
-<script type="text/javascript">
-    var requiredScripts = [ "js/adminDataTables"//,
-                            //"js/tinymce"
-                            ];
-</script>
 
 <div class="container">
  

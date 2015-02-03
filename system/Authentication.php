@@ -6,36 +6,47 @@ class Authentication
 {
 	public function isAuthenticated()
 	{
-		if(isset($_SESSION["isAuth"]))
-		{
-			return $_SESSION["isAuth"];
-		}
-		else
-		{
-			return false;
-		}
+		$sessionManger = new SessionManager();
+
+		return $sessionManger->isAuthenticated();
 	}
 
 	public function isAdmin()
 	{
-		if(isset($_SESSION["isAdmin"]))
-		{
-			return $_SESSION["isAdmin"];
-		}
-		else
-		{
-			return false;
-		}
+		$sessionManger = new SessionManager();
+
+		return $sessionManger->isAdmin();
 	}
 
-	public function authenticate($password, $hashedPasswordFromDatabase, $isAdmin)
+	public function authenticate($loginPassword, $user)
 	{
-		$isAuthenticated = password_verify($password, $hash);
+		$isAuthenticated = password_verify($loginPassword, $user->Password);
 
-		$_SESSION["isAuth"]  = $isAuthenticated;
-		$_SESSION["isAdmin"] = $isAdmin;
+		//If you are authenticated setup session variable
+		if($isAuthenticated)
+		{
+			$sessionManger = new SessionManager();
+
+			$sessionManger->setUserSessions($user);
+		}
 
 		return $isAuthenticated;
+	}
+
+	public function getUser()
+	{		
+		$sessionManger = new SessionManager();
+
+		$user = $sessionManger->setUserSessions($user);
+
+		return $user;
+	}
+
+	public function isEng()
+	{
+		$sessionManger = new SessionManager();
+
+		return $sessionManger->isEng();	
 	}
 
 	public function hashPassword($password)

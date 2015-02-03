@@ -23,8 +23,17 @@ class Admin extends Controller {
 		//Loads a view from corresponding view folder
 		$template = $this->loadView('index');
 
-		$template->loadPlugin('datatables');
-		//$template->loadPlugin('tinymce');
+		//  $template->setCSS(array(
+		// 	array("static/css/style.css", "intern")
+		// 	array("http://www.example.com/default.css", "extern")
+		// ));
+		$template->setJS(array(
+			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
+			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
+			array("static/js/adminDataTables.js", "intern")
+			//array("static/js/tinymce.js", "intern")
+			//array("http://www.example.com/static.js", "extern")
+		));
 
 		//Adds a variable or object to that can be accessed in the view
 		//$template->set('viewModel', $viewModel);
