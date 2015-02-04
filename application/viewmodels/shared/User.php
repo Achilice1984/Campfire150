@@ -21,10 +21,10 @@ class User extends ViewModel
 
 	function __construct()
 	{		
-		parent::__construct(array('email' => 
+		parent::__construct(array('Email' => 
 									array('email' => 'Invalid email',
 											'required' => 'email is required'),
-									'name' =>
+									'FirstName' =>
 										array('required' => 'the name field is required!')
 								));
 	}
