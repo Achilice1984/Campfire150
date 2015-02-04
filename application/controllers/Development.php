@@ -23,23 +23,30 @@ class Development extends Controller {
 		{
 		    mkdir(APP_DIR . 'models/' . $module->module, 0777, true);
 		}
+		if (!file_exists(APP_DIR . 'viewmodels/' . $module->module)) 
+		{
+		    mkdir(APP_DIR . 'viewmodels/' . $module->module, 0777, true);
+		}
 
 
 		foreach ($module->models as $model) {
 
-			$model = trim($model);
-			
-			$modelUrl = APP_DIR . 'models/' . $module->module . "/" . $model . ".php";
-
-			if (!file_exists($modelUrl)) 
+			if(!empty($model))
 			{
-				copy(APP_DIR . '../templates/model.php', $modelUrl);
+				$model = trim($model);
+				
+				$modelUrl = APP_DIR . 'models/' . $module->module . "/" . $model . ".php";
 
-				$modelFileContents = file_get_contents($modelUrl);	
-	
-				$modelFileContents = str_replace("ExampleModel", $model, $modelFileContents);	
+				if (!file_exists($modelUrl)) 
+				{
+					copy(APP_DIR . '../templates/model.php', $modelUrl);
 
-				file_put_contents($modelUrl, $modelFileContents);				    
+					$modelFileContents = file_get_contents($modelUrl);	
+		
+					$modelFileContents = str_replace("ExampleModel", $model, $modelFileContents);	
+
+					file_put_contents($modelUrl, $modelFileContents);				    
+				}
 			}
 		}
 

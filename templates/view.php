@@ -3,7 +3,7 @@
     <h1>Title</h1>
 
     <?php
-        $validationResult = $model->getValidationResult();
+        $validationResult = $viewModel->getValidationResult();
         
         include(APP_DIR . 'views/shared/displayErrors.php');
     ?>

@@ -13,6 +13,8 @@ require_once('./application/plugins/gettext/gettext.inc');
 require_once('./application/plugins/automapper/AutoMapper.php');
 require_once('./application/plugins/akismet/akismet.class.php');
 require_once('./application/plugins/mailchimp/Mailchimp.php');
+require_once('./application/plugins/alphaid/alphaID.php');
+
 
 // I18N support information here
 $language;
@@ -42,12 +44,16 @@ define('APP_DIR', ROOT_DIR .'application/');
 // Includes
 require(APP_DIR .'config/config.php');
 require(ROOT_DIR .'system/model.php');
+require(ROOT_DIR .'system/viewmodel.php');
 require(ROOT_DIR .'system/view.php');
 require(ROOT_DIR .'system/controller.php');
 require(ROOT_DIR .'system/pip.php');
 
+//Custom System
 require(ROOT_DIR .'system/validationresult.php');
 require(ROOT_DIR .'system/validator.php');
+require(ROOT_DIR .'system/authentication.php');
+require(ROOT_DIR .'system/sessionmanager.php');
 
 // Define base URL
 global $config;

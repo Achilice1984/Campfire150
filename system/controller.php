@@ -11,29 +11,19 @@
 
 class Controller {
 
-	public function isAuth()
-	{
-		if(isset($_SESSION["isAuth"]))
+		public function isAuth()
 		{
-			return $_SESSION["isAuth"];
-		}
-		else
-		{
-			return false;
-		}
-	}
+			$auth = new Authentication();
 
-	public function isAdmin()
-	{
-		if(isset($_SESSION["isAdmin"]))
-		{
-			return $_SESSION["isAdmin"];
+			return $auth->isAuthenticated();
 		}
-		else
+
+		public function isAdmin()
 		{
-			return false;
+			$auth = new Authentication();
+
+			return $auth->isAdmin();
 		}
-	}
 	
 	/***************************************************
 	*
@@ -46,13 +36,32 @@ class Controller {
 
 		if(count($urlArray) > 1)
 		{
-			require(APP_DIR .'models/' . $name .'.php');
+			require_once(APP_DIR .'models/' . $name .'.php');
 
 			$name = $urlArray[count($urlArray) - 1];
 		}
 		else
 		{
-			require(APP_DIR .'models/'. get_class($this) . "/" .  $name .'.php');
+			require_once(APP_DIR .'models/'. get_class($this) . "/" .  $name .'.php');
+		}
+
+		$model = new $name;
+		return $model;
+	}
+
+	public function loadViewModel($name)
+	{
+		$urlArray = split("/", $name);
+
+		if(count($urlArray) > 1)
+		{
+			require_once(APP_DIR .'viewmodels/' . $name .'.php');
+
+			$name = $urlArray[count($urlArray) - 1];
+		}
+		else
+		{
+			require_once(APP_DIR .'viewmodels/'. get_class($this) . "/" .  $name .'.php');
 		}
 
 		$model = new $name;
@@ -67,12 +76,12 @@ class Controller {
 	
 	public function loadPlugin($name)
 	{
-		require(APP_DIR .'plugins/'. $name .'.php');
+		require_once(APP_DIR .'plugins/'. $name .'.php');
 	}
 	
 	public function loadHelper($name)
 	{
-		require(APP_DIR .'helpers/'. $name .'.php');
+		require_once(APP_DIR .'helpers/'. $name .'.php');
 		$helper = new $name;
 		return $helper;
 	}
