@@ -33,6 +33,23 @@ class Story extends Controller {
 			//Execute this code if NOT a post back
 		}
 	}
+	function StoryList()
+	{
+		$storyModel = $this->loadModel("Story/StoryModel");
+
+		$stories  = $storyModel->getStories();
+
+		if($this->isAjax())
+		{
+			echo json_encode($stories);
+		}
+		else
+		{
+			$view = $this->loadView("storyList");
+			$view->set('stories', $stories);
+			$view->render(true);//true = add header foot
+		}
+	}
 
 	function insert()
 	{
