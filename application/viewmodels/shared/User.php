@@ -8,25 +8,30 @@ class User extends ViewModel
 	public $Email;
 	public $Password;
 	public $RegisterDate;
+	public $AchievementLevelType_LevelId;
 	public $Address;
 	public $PostalCode;
 	public $Notes;
-	public $AchievementLevelType_LevelId;
 	public $FirstName;
 	public $MidName;
 	public $LastName;
 	public $LanguageType_LanguageId;
-	public $IsAdmin;
-	public $LanguagePreference;
+	public $Active;
+	public $AdminFlag;
+	public $VerifiedEmail;
+	public $PhoneNumber;
+	public $VerificationCode;
+	public $FailedLoginAttempt;
+	public $LockoutTimes;
 
 	function __construct()
 	{		
-		parent::__construct(array('Email' => 
-									array('email' => 'Invalid email',
-											'required' => 'email is required'),
-									'FirstName' =>
-										array('required' => 'the name field is required!')
-								));
+		// parent::__construct(array('Email' => 
+		// 							array('email' => 'Invalid email',
+		// 									'required' => 'email is required'),
+		// 							'FirstName' =>
+		// 								array('required' => 'the name field is required!')
+		// 						));
 	}
 }
 ?>

@@ -4,7 +4,19 @@
 */
 class PictureViewModel extends ViewModel
 {
-	//Story properties same as in database
+	//Picture properties same as in database
+
+	public $PictureId;
+	public $Title;
+	public $Description;
+	public $FileName;
+	public $Active;
+	public $InppropriateFlag;
+	public $TimeStamp;
+	public $picturetype_PictureTypeId;
+	public $PictureExtension;	
+	public $User_UserId;
+
 	function __construct()
 	{
 		//Add validation decorators

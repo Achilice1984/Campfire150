@@ -4,7 +4,15 @@
 */
 class CommentViewModel extends ViewModel
 {
-	//Story properties same as in database
+	//Comment properties same as in database
+
+	public $CommentId;
+	public $Story_StoryId;
+	public $User_UserId;
+	public $Content;
+	public $PublishFlag;
+	public $TimeStamp;
+	
 	function __construct()
 	{
 		//Add validation decorators

@@ -5,15 +5,10 @@
 class AnswerViewModel extends ViewModel
 {
 	//Story properties same as in database
-	public $StoryId;
-	public $DatePosted;
-	public $User_UserId;
-	public $StoryTitle;
-	public $Content;
-	public $PrivacyType_PrivacyTypeId;
-	public $Active;
-	public $LatestChange;
-
+	public $AnswerId;
+	public $AnswerE;
+	public $AnswerF;
+	
 	function __construct()
 	{
 		//Add validation decorators

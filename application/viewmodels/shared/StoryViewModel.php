@@ -5,6 +5,15 @@
 class StoryViewModel extends ViewModel
 {
 	//Story properties same as in database
+	public $StoryId;
+	public $DatePosted;
+	public $User_UserId;
+	public $StoryTitle;
+	public $Content;
+	public $PrivacyType_PrivacyTypeId;
+	public $Active;
+	public $LatestChange;
+
 	function __construct()
 	{
 		//Add validation decorators

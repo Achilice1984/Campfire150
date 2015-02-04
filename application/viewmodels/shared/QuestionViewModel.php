@@ -4,7 +4,12 @@
 */
 class QuestionViewModel extends ViewModel
 {
-	//Story properties same as in database
+	//Question properties same as in database
+
+	public $QuestionId;
+	public $QuestionE;
+	public $QuestionF;
+
 	function __construct()
 	{
 		//Add validation decorators
