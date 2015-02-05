@@ -2,11 +2,12 @@
 /**
 * 
 */
-class User extends ViewModel
+class UserViewModel extends ViewModel
 {
 	public $UserId;
 	public $Email;
 	public $Password;
+	public $RePassword;
 	public $RegisterDate;
 	public $AchievementLevelType_LevelId;
 	public $Address;
@@ -16,6 +17,7 @@ class User extends ViewModel
 	public $MidName;
 	public $LastName;
 	public $LanguageType_LanguageId;
+<<<<<<< HEAD:application/viewmodels/shared/User.php
 	public $Active;
 	public $AdminFlag;
 	public $VerifiedEmail;
@@ -23,6 +25,12 @@ class User extends ViewModel
 	public $VerificationCode;
 	public $FailedLoginAttempt;
 	public $LockoutTimes;
+=======
+	public $IsAdmin;
+	public $IsAuth;
+	public $LanguagePreference;
+	public $PhoneNumber;
+>>>>>>> origin/continue-admin-module:application/viewmodels/shared/UserViewModel.php
 
 	function __construct()
 	{		

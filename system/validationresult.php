@@ -30,5 +30,10 @@ class ValidationResult
 	{
 		return $this->validationMessages;
 	}
+
+	public function setValidationMessage($key, $message)
+	{
+		return $this->validationMessages["other"][$key] = $message;
+	}
 }
 ?>

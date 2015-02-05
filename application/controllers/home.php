@@ -59,7 +59,13 @@ class Home extends Controller {
 		$template = $this->loadView('index');
 		$template->set('viewModel', $homeViewModel);
 		$template->render(true);
-	}    
+	}  
+
+	function terms()
+	{
+		$template = $this->loadView('terms');
+		$template->render(true);
+	}  
 }
 
 ?>
