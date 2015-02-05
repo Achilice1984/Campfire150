@@ -2,11 +2,12 @@
 /**
 * 
 */
-class User extends ViewModel
+class UserViewModel extends ViewModel
 {
 	public $UserId;
 	public $Email;
 	public $Password;
+	public $RePassword;
 	public $RegisterDate;
 	public $Address;
 	public $PostalCode;
@@ -17,7 +18,9 @@ class User extends ViewModel
 	public $LastName;
 	public $LanguageType_LanguageId;
 	public $IsAdmin;
+	public $IsAuth;
 	public $LanguagePreference;
+	public $PhoneNumber;
 
 	function __construct()
 	{		

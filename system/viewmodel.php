@@ -30,6 +30,29 @@ class ViewModel
 		}
 	}
 
+	public function addErrorMessage($key, $errorMessage)
+	{
+		if(!isset($this->validationResult))
+		{
+			$this->validationResult = new ValidationResult();
+		}
+
+		$this->validationResult->setValidationMessage($key, $errorMessage);
+	}
+
+
+	public function isValid()
+	{
+		if(isset($this->validationResult))
+		{
+			return $this->validationResult->isValid();
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 	public function getValidationDecorators()
 	{
 		return $this->validationDecorators;

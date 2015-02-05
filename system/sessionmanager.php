@@ -31,7 +31,7 @@ class SessionManager
 	public function setUserSessions($user)
 	{
 		//Authentication
-		$_SESSION["isAuth"]  	= $isAuthenticated;
+		$_SESSION["isAuth"]  	= true;
 		$_SESSION["isAdmin"] 	= $user->IsAdmin;
 
 		//User Details
@@ -41,7 +41,7 @@ class SessionManager
 		$_SESSION["LastName"] 	= $user->LastName;
 		$_SESSION["MidName"] 	= $user->MidName;
 		$_SESSION["Address"]    = $user->Address;
-		$_SESSION["PostalCode"] = $user->PostalCode;		
+		$_SESSION["PostalCode"] = $user->PostalCode;
 	}
 
 	public function setLanguageSession($languageId)
@@ -61,15 +61,13 @@ class SessionManager
 
 	public function getUserSession()
 	{
-		require_once(APP_DIR .'viewmodels/User.php');
+		require_once(APP_DIR .'viewmodels/shared/UserViewModel.php');
 
-		$user = null;
+		$user = new UserViewModel();
 
 		//If you are authenticated setup session variable
 		if(isset($_SESSION["isAuth"]))
-		{
-			$user = new User();
-
+		{	
 			//User Details
 			$user->UserId 	  = $_SESSION["UserId"];
 			$user->Email 	  = $_SESSION["Email"];
@@ -80,8 +78,11 @@ class SessionManager
 			$user->PostalCode = $_SESSION["PostalCode"];
 
 			$user->LanguagePreference = $_SESSION["languagePreference"];
-		}
 
+			$user->IsAdmin = $_SESSION["isAdmin"];
+			$user->IsAuth = $_SESSION["isAuth"];
+		}
+		
 		return $user;
 	}
 

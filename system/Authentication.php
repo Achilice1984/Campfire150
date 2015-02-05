@@ -21,7 +21,6 @@ class Authentication
 	public function authenticate($loginPassword, $user)
 	{
 		$isAuthenticated = password_verify($loginPassword, $user->Password);
-
 		//If you are authenticated setup session variable
 		if($isAuthenticated)
 		{

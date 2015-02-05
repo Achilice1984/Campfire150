@@ -65,12 +65,17 @@ class Controller {
 		}
 
 		$model = new $name;
+		
 		return $model;
 	}
 	
 	public function loadView($name)
 	{
+		$sessionManager = new SessionManager();
+
 		$view = new View(get_class($this) . "/" . $name);
+		$view->set("currentUser", $sessionManager->getUserSession());
+
 		return $view;
 	}
 	
