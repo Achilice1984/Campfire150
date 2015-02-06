@@ -234,6 +234,31 @@ class AdminModel extends Model {
 		//Accepts the adminID and the story id
 		//Change a rejected story to an approved story
 		//returns bool whether it was saved succesfully or not
+		// try
+		// {
+		// 	$qry1 = "SELECT *  FROM admin_approve_story WHERE userId = ? AND storyID = ?";
+		// 	$parameters = array($adminID, $storyID);
+
+		// 	$exist = $this->fetchRowCount($qry1, $parameters);
+
+		// 	if($exist)
+		// 	{
+				try{
+					$qry2 = "UPDATE admin_approve_story SET Approved = 1 WHERE userId = ? AND storyID = ?";
+					$parameters = array($adminID, $storyID);
+
+					$this->execute(qry2);
+				}
+				catch(PDOException $e)
+				{
+					return $e->getMessage();
+				}				
+		// 	}
+		// }
+		// catch(PDOException $e)
+		// {
+		// 	return $e->getMessage();			
+		// }
 	}
 
 	public function changeApprovedToRejected($adminID, $storyID, $reason)
@@ -241,6 +266,17 @@ class AdminModel extends Model {
 		//Accepts the adminID, the story id and the reason why it was rejected
 		//Change an approved story to a rejected story
 		//returns bool whether it was saved succesfully or not
+		try
+		{
+			$qry2 = "UPDATE admin_approve_story SET Approved = 0, ApprovalCommentE = ? WHERE userId = ? AND storyID = ?";
+			$parameters = array($reason, $adminID, $storyID);
+
+			$this->execute(qry2);
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function getCommentListFlaggedInappropriate($howMany, $page)
@@ -250,6 +286,37 @@ class AdminModel extends Model {
 		//Gets a list of comments that have been marked as inappropriate by users
 		//Order the list by how many inappropriate flags there are
 		//returns an array of Comment class
+		$offset = ($page - 1) * $howMany;
+
+		// try{
+		// 	$qry = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
+		// 	$rowCount = $this->fetchRowCount($qry, array($adminID));
+		// 	if($rowCount >= 1)
+		// 	{
+		try{
+			$statement = "SELECT *  FROM comment WHERE CommentId in ";
+			$statement .= "(SELECT Comment_CommentId FROM user_inappropriateflag_comment) ";
+			$statement .= "ORDER BY CommentId LIMIT ? OFFSET ?"
+			$parameters = array($howMany, $page);
+
+			$storyList = $this->fetchIntoObject($statement, $parameters);
+			return $storyList;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+		// 	}
+		// 	else
+		// 	{
+		// 		return false;
+		// 	}
+
+		// }
+		// catch(PDOException $e) 
+		// {
+		// 	return $e->getMessage();
+		// }	
 	}
 
 	public function rejectCommentAsAdmin($adminID, $commentID, $reason)

@@ -12,10 +12,11 @@ class PictureViewModel extends ViewModel
 	public $FileName;
 	public $Active;
 	public $InppropriateFlag;
+	public $User_UserId;
 	public $TimeStamp;
 	public $picturetype_PictureTypeId;
 	public $PictureExtension;	
-	public $User_UserId;
+	
 
 	function __construct()
 	{
