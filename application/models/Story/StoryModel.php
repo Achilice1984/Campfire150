@@ -128,11 +128,17 @@ class StoryModel extends Model {
 		//returns an array of Story class related to a category
 	}
 
-	public function addCommentToStory($comment)
+	public function addCommentToStory($comment, $storyID, $userID)
 	{
 		//Accepts a comment class
 		//inserts a new comment with the published flag set to false
 		//returns bool if the comment was saved succesfully
+
+		$statement = "INSERT INTO Comment Story_StoryId, User_UserId, Content VALUES(?, ?, ?)";
+
+		$parameters = array($storyID, $userID, $comment);
+
+		$this->execute($statement);
 	}
 
 	public function getCommentsForStory($storyID, $howMany, $page)
@@ -143,6 +149,14 @@ class StoryModel extends Model {
 		//Gets a list of comments related to a story
 		//The comments published flag must be true
 		//returns an array of comment class related to a story
+
+		$statement = "SELECT * FROM Comment WHERE Story_StoryId = ? ORDER BY CommentId ASC LIMIT ?, ?";
+
+		$start = $howMany * ($page - 1);
+
+		$comment = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/Comment");
+
+		return $comment;
 	}
 
 	public function getCommentListInappropriate($adminID, $howMany, $page)
@@ -153,6 +167,16 @@ class StoryModel extends Model {
 		//Gets a list of comments related to a story
 		//The comments published flag must be true
 		//returns an array of comment class related to a story
+
+		$statement = "SELECT * FROM Comment WHERE PublishFlag = 1 AND CommentId IN ";
+
+		$statement .= "(SELECT DISTINCT Comment_CommentId FROM user_inappropriateflag_comment) ORDER BY CommentId LIMIT ?, ?";
+
+		$start = $howMany * ($page - 1);
+
+		$comment = $this->fetchIntoClass($statement, array($start, $howMany), "Shared/Comment");
+
+		return $comment;
 	}
 
 	public function getCommentListRejected($adminID, $howMany, $page)
@@ -171,13 +195,24 @@ class StoryModel extends Model {
 		//Gets a list of comments that haven't been published by a user
 		//The comments published flag must be flase
 		//returns an array of comment class that haven't been published yet
+		$statement = "SELECT * FROM comment WHERE User_UserId = ? AND PublishFlag = 0" ORDER BY CommentId;
+
+		$comment = $this->fetchIntoClass($statement, array($userID), "Shared/Comment");
+
+		return $comment;
 	}
 
-	public function flagCommentAsInapropriate($commentID, $userID, $isInappropriate)
+	public function flagCommentAsInapropriate($commentID, $userID)
 	{
 		//Accepts a commentID, a userID, and a bool for if it was thought to be inapropriate
 		//checks to see if user already marked it as inapropriate
 		//returns bool if saved correctly
+
+		$statement = "INSERT INTO user_inappropriateflag_comment VALUES(?, ?)";
+
+		$parameters = array($userID, $commentID);
+
+		$this->execute($statement);
 	}
 
 	
