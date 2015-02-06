@@ -27,19 +27,26 @@ class AdminModel extends Model {
 
 		try
 		{
-			$qry = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
-			$rowCount = $this->fetchRowCount($qry, array($adminID));
+			$statement = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
+
+			$rowCount = $this->fetchRowCount($statement, array($adminID));
+
 			if($rowCount >= 1)
 			{
 				try
 				{
 					$statement = "SELECT *  FROM story WHERE storyID NOT IN ";
-					$statement .= "(SELECT Story_StoryId FROM admin_approve_story)";
-					$statement .= "LIMIT ? OFFSET ?"
-					$parameters = array($howMany, $page);
 
-					$storyList = $this->fetchIntoObject($statement, $parameters);
+					$statement .= "(SELECT Story_StoryId FROM admin_approve_story)";
+
+					$statement .= "LIMIT ? OFFSET ?";
+
+					$parameters = array($howMany, $offset);
+
+					$storyList = $this->fetchIntoClass($statement, $parameters, "Shared/Story");
+
 					return $storyList;
+
 				}
 				catch(PDOException $e) 
 				{
@@ -48,7 +55,7 @@ class AdminModel extends Model {
 			}
 			else
 			{
-				return false;
+				echo "Sorry, you can not do this. You are not admin user";
 			}
 
 		}
@@ -69,17 +76,23 @@ class AdminModel extends Model {
 		$offset = ($page - 1) * $howMany;
 
 		try{
-			$qry = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
-			$rowCount = $this->fetchRowCount($qry, array($adminID));
+			$statement = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
+
+			$rowCount = $this->fetchRowCount($statement, array($adminID));
+
 			if($rowCount >= 1)
 			{
 				try{
 					$statement = "SELECT *  FROM story WHERE storyID IN ";
-					$statement .= "(SELECT Story_StoryId FROM admin_approve_story WHERE Approved = 0)";
-					$statement .= "LIMIT ? OFFSET ?"
-					$parameters = array($howMany, $page);
 
-					$storyList = $this->fetchIntoObject($statement, $parameters);
+					$statement .= "(SELECT Story_StoryId FROM admin_approve_story WHERE Approved = 0)";
+
+					$statement .= "LIMIT ? OFFSET ?";
+
+					$parameters = array($howMany, $offset);
+
+					$storyList = $this->fetchIntoClass($statement, $parameters, "Shared/Story");
+
 					return $storyList;
 				}
 				catch(PDOException $e) 
@@ -89,7 +102,7 @@ class AdminModel extends Model {
 			}
 			else
 			{
-				return false;
+				echo "Sorry, you can not do this. You are not admin user";
 			}
 
 		}
@@ -109,17 +122,24 @@ class AdminModel extends Model {
 		$offset = ($page - 1) * $howMany;
 
 		try{
-			$qry = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
-			$rowCount = $this->fetchRowCount($qry, array($adminID));
+			$statement = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
+
+			$rowCount = $this->fetchRowCount($statement, array($adminID));
+
 			if($rowCount >= 1)
 			{
 				try{
-					$statement = "SELECT *  FROM story WHERE storyID in ";
-					$statement .= "(SELECT Story_StoryId FROM user_recommend_story WHERE Opinion = 0) ";
-					$statement .= "LIMIT ? OFFSET ?"
-					$parameters = array($howMany, $page);
 
-					$storyList = $this->fetchIntoObject($statement, $parameters);
+					$statement = "SELECT *  FROM story WHERE storyID in ";
+
+					$statement .= "(SELECT Story_StoryId FROM user_recommend_story WHERE Opinion = 0) ";
+
+					$statement .= "LIMIT ? OFFSET ?"
+
+					$parameters = array($howMany, $offset);
+
+					$storyList = $this->fetchIntoClass($statement, $parameters, "Shared/Story");
+
 					return $storyList;
 				}
 				catch(PDOException $e) 
@@ -129,7 +149,7 @@ class AdminModel extends Model {
 			}
 			else
 			{
-				return false;
+				echo "This user is not Admin";
 			}
 
 		}
@@ -146,17 +166,22 @@ class AdminModel extends Model {
 
 		try
 		{
-			$qry1 = "SELECT *  FROM admin_approve_story WHERE userId = ? AND storyID = ?";
+			$statement1 = "SELECT *  FROM admin_approve_story WHERE userId = ? AND storyID = ?";
+
 			$parameters = array($adminID, $storyID);
 
-			$exist = $this->fetchRowCount($qry1, $parameters);
+			$exist = $this->fetchRowCount($statement1, $parameters);
+
 			if(!$exist)
 			{
 				try{
-					$qry2 = "INSERT INTO admin_approve_story VALUES(?, ?, ?, ?, NULL, 0)";
+
+					$statement2 = "INSERT INTO admin_approve_story VALUES(?, ?, ?, ?, NULL, 0)";
+
 					$parameters = array($adminID, $storyID, $reason, $reason,);
 
-					$this->execute(qry2);
+					$this->execute($statement2);
+
 				}
 				catch(PDOException $e)
 				{
@@ -167,10 +192,11 @@ class AdminModel extends Model {
 			{
 				try
 				{
-					$qry2 = "UPDATE admin_approve_story SET ApprovalCommentE = ? WHERE userId = ? AND storyID = ?";
+					$statement2 = "UPDATE admin_approve_story SET ApprovalCommentE = ? WHERE userId = ? AND storyID = ?";
+
 					$parameters = array( $reason, $adminID, $storyID);
 
-					$this->execute(qry2);
+					$this->execute($statement2);
 				}
 				catch(PDOException $e)
 				{
@@ -190,18 +216,20 @@ class AdminModel extends Model {
 		//returns bool whether it was saved succesfully or not
 		try
 		{
-			$qry1 = "SELECT *  FROM admin_approve_story WHERE userId = ? AND storyID = ?";
+			$statement1 = "SELECT *  FROM admin_approve_story WHERE userId = ? AND storyID = ?";
+
 			$parameters = array($adminID, $storyID);
 
-			$exist = $this->fetchRowCount($qry1, $parameters);
+			$exist = $this->fetchRowCount($statement1, $parameters);
 
 			if(!$exist)
 			{
 				try{
-					$qry2 = "INSERT INTO admin_approve_story(userId, storyID, Approved) VALUES(?, ?, 1)";
+					$statement2 = "INSERT INTO admin_approve_story(userId, storyID, Approved) VALUES(?, ?, 1)";
+
 					$parameters = array($adminID, $storyID);
 
-					$this->execute(qry2);
+					$this->execute($statement2);
 				}
 				catch(PDOException $e)
 				{
@@ -212,20 +240,25 @@ class AdminModel extends Model {
 			{
 				try
 				{
-					$qry2 = "UPDATE admin_approve_story SET Approved = 1 WHERE userId = ? AND storyID = ?";
+					$statement2 = "UPDATE admin_approve_story SET Approved = 1 WHERE userId = ? AND storyID = ?";
+
 					$parameters = array($adminID, $storyID);
 
-					$this->execute(qry2);
+					$this->execute($statement2);
 				}
 				catch(PDOException $e)
 				{
+
 					return $e->getMessage();
+
 				}				
 			}
 		}
 		catch(PDOException $e)
 		{
-			return $e->getMessage();			
+
+			return $e->getMessage();
+
 		}
 	}
 
@@ -236,18 +269,19 @@ class AdminModel extends Model {
 		//returns bool whether it was saved succesfully or not
 		// try
 		// {
-		// 	$qry1 = "SELECT *  FROM admin_approve_story WHERE userId = ? AND storyID = ?";
+		// 	$statement1 = "SELECT *  FROM admin_approve_story WHERE userId = ? AND storyID = ?";
 		// 	$parameters = array($adminID, $storyID);
 
-		// 	$exist = $this->fetchRowCount($qry1, $parameters);
+		// 	$exist = $this->fetchRowCount($statement1, $parameters);
 
 		// 	if($exist)
 		// 	{
 				try{
-					$qry2 = "UPDATE admin_approve_story SET Approved = 1 WHERE userId = ? AND storyID = ?";
+					$statement2 = "UPDATE admin_approve_story SET Approved = 1 WHERE userId = ? AND storyID = ?";
+
 					$parameters = array($adminID, $storyID);
 
-					$this->execute(qry2);
+					$this->execute($statement2);
 				}
 				catch(PDOException $e)
 				{
@@ -268,10 +302,11 @@ class AdminModel extends Model {
 		//returns bool whether it was saved succesfully or not
 		try
 		{
-			$qry2 = "UPDATE admin_approve_story SET Approved = 0, ApprovalCommentE = ? WHERE userId = ? AND storyID = ?";
+			$statement2 = "UPDATE admin_approve_story SET Approved = 0, ApprovalCommentE = ? WHERE userId = ? AND storyID = ?";
+
 			$parameters = array($reason, $adminID, $storyID);
 
-			$this->execute(qry2);
+			$this->execute($statement2);
 		}
 		catch(PDOException $e)
 		{
@@ -289,22 +324,29 @@ class AdminModel extends Model {
 		$offset = ($page - 1) * $howMany;
 
 		// try{
-		// 	$qry = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
-		// 	$rowCount = $this->fetchRowCount($qry, array($adminID));
+		// 	$statement = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
+		// 	$rowCount = $this->fetchRowCount($statement, array($adminID));
 		// 	if($rowCount >= 1)
 		// 	{
 		try{
-			$statement = "SELECT *  FROM comment WHERE CommentId in ";
-			$statement .= "(SELECT Comment_CommentId FROM user_inappropriateflag_comment) ";
-			$statement .= "ORDER BY CommentId LIMIT ? OFFSET ?"
-			$parameters = array($howMany, $page);
 
-			$storyList = $this->fetchIntoObject($statement, $parameters);
+			$statement = "SELECT *  FROM comment WHERE CommentId in ";
+
+			$statement .= "(SELECT Comment_CommentId FROM user_inappropriateflag_comment) ";
+
+			$statement .= "ORDER BY CommentId LIMIT ? OFFSET ?"
+
+			$parameters = array($howMany, $offset);
+
+			$storyList = $this->fetchIntoClass($statement, $parameters, "Shared/Story");
+
 			return $storyList;
 		}
 		catch(PDOException $e) 
 		{
+
 			return $e->getMessage();
+
 		}
 		// 	}
 		// 	else
