@@ -2,36 +2,46 @@
 
 class AccountModel extends Model {
 
-	public function login($email, $password)
+	public function login($user)
 	{		
 		$authentication = new Authentication();
 
-		$statement = "SELECT * FROM User WHERE Email = ?";
+		$statement = "SELECT * FROM User WHERE Email = :Email";
 
-		$user = $this->fetchIntoClass($statement, array($email), "Shared/User");
+		$userFromDB = $this->fetchIntoClass($statement, array(":Email" => $user->Email), "shared/UserViewModel");
 
-		return $authentication->authenticate($password, $user);
+		return $authentication->authenticate($user->Password, $userFromDB[0]);
 	}
 	public function registerUserProfile($user)
 	{
 		$authentication = new Authentication();
 
-		$statement = "INSERT INTO User (Email, Password, Address, PostalCode, PhoneNumber, FirstName, LastName, MidName, HashedVerification)";
-		$statement .= " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		$statement = "INSERT INTO User (Email, Password, Address, PostalCode, PhoneNumber, FirstName, LastName, MidName, VerificationCode)";
+		$statement .= " VALUES (:Email, :Password, :Address, :PostalCode, :PhoneNumber, :FirstName, :LastName, :MidName, :VerificationCode)";
 
-		$user->Password = $authentication->hashPassword($user->password);
+		$user->Password = $authentication->hashPassword($user->Password);
 
 		$hashedEmailVerification = md5(uniqid());
 
-		$parameters = array($user->Email, $user->Password, $user->Address, $user->PostalCode, $user->PhoneNumber, $user->FirstName, $user->LastName, $user->MidName, $hashedEmailVerification);
+		$parameters = array( 
+			":Email" => $user->Email, 
+			":Password" => $user->Password, 
+			":Address" => $user->Address, 
+			":PostalCode" => $user->PostalCode, 
+			":PhoneNumber" => $user->PhoneNumber, 
+			":FirstName" => $user->FirstName, 
+			":LastName" => $user->LastName, 
+			":MidName" => $user->MidName, 
+			":VerificationCode" => $hashedEmailVerification
+		);
 
 		
 		$rowCount = $this->fetchRowCount($statement, $parameters);
-
+		//echo "<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />" . $rowCount . "sdnbfkbnsdfkb";
 		//Success insert
 		if($rowCount >= 1)
 		{
-			$emailSent = sendEmailVerification($email, $hashedEmailVerification);
+			//$emailSent = sendEmailVerification($email, $hashedEmailVerification);
 
 			return true;
 		}
@@ -209,7 +219,7 @@ class AccountModel extends Model {
 		//Checks if user is following each user (add this to user viewmodel class)
 		//Returns an array of User class		
 
-		$statement = "SELECT *, MATCH(FirstName, LastName, Email, MidName) AGAINST('$keyword') AS score FROM User LIMIT ?, ? WHERE MATCH(FirstName, LastName, Email, MidName) AGAINST(?) ORDER BY score DESC";
+		$statement = "SELECT *, MATCH(FirstName, LastName, Email, MidName) AGAINST('$userSearch') AS score FROM User LIMIT ?, ? WHERE MATCH(FirstName, LastName, Email, MidName) AGAINST(?) ORDER BY score DESC";
 
 		$start = $howMany * ($page - 1);
 

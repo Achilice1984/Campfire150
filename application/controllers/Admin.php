@@ -30,7 +30,7 @@ class Admin extends Controller {
 		$template->setJS(array(
 			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
 			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
-			array("static/js/adminDataTables.js", "intern")
+			array("static/js/adminDataTables.js", "intern")//,
 			//array("static/js/tinymce.js", "intern")
 			//array("http://www.example.com/static.js", "extern")
 		));
