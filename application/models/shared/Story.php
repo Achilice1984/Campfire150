@@ -5,13 +5,13 @@
 class Story extends Model
 {
 	public $StoryId;
-	public $User_UserId;
-	public $Picture_PictureId;
 	public $DatePosted;
+	public $User_UserId;
 	public $StoryTitle;
 	public $Content;
-	public $InappropiateFlag_IsAppropriateFlag;
 	public $PrivacyType_PrivacyTypeId;
+	public $Active;
+	public $LatestChange;
 
 
 	function __construct()
