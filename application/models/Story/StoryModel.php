@@ -56,6 +56,8 @@ class StoryModel extends Model {
 		//Check privacy type
 		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
 		//returns an array of Story class related to a category
+
+		
 	}
 
 	public function getStoryList($howMany, $page)
@@ -66,6 +68,22 @@ class StoryModel extends Model {
 		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
 		//Should not contain any unpublished stories
 		//returns an array of Story class
+
+		try
+		{
+			$statement = "SELECT * FROM Story ORDER BY StoryId ASC LIMIT ?, ?";
+
+			$start = $howMany * ($page - 1);
+
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/Story");
+
+			return $storyList;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+
 	}
 
 	public function getStoryListPendingApproval($userID, $howMany, $page)
@@ -75,6 +93,21 @@ class StoryModel extends Model {
 		//Gets a list of stories that a user has submited but hasn't been apprved yet.
 		//Should not contain any published stories
 		//returns an array of Story class
+
+		try
+		{
+			$statement = "SELECT * FROM Story WHERE User_UserId=? ORDER BY StoryId ASC LIMIT ?, ?";
+
+			$start = $howMany * ($page - 1);
+
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/Story");
+
+			return $storyList;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}		
 	}
 
 	public function getStoryListRejected($userID, $howMany, $page)
@@ -85,6 +118,24 @@ class StoryModel extends Model {
 		//Should not contain any published stories
 		//Should have the admin user details an reason for being rejected
 		//returns an array of Story class
+		try
+		{
+			$statement = "SELECT * FROM Story WHERE StoryId IN ";
+
+			$statement .= "(SELECT Story_StoryId FROM admin_approve_story WHERE Approved = 0)";
+
+			$statement .= "ORDER BY StoryId ASC LIMIT ?, ?";
+
+			$start = $howMany * ($page - 1);
+
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/Story");
+
+			return $storyList;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function getStoryListApproved($userID, $howMany, $page)
@@ -94,6 +145,25 @@ class StoryModel extends Model {
 		//Gets a list of stories that have been approved by admin
 		//Should not contain any unpublished stories
 		//returns an array of Story class
+
+		try
+		{
+			$statement = "SELECT * FROM Story WHERE StoryId IN ";
+
+			$statement .= "(SELECT Story_StoryId FROM admin_approve_story WHERE Approved = 1)";
+
+			$statement .= "ORDER BY StoryId ASC LIMIT ?, ?";
+
+			$start = $howMany * ($page - 1);
+
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/Story");
+
+			return $storyList;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function getStoryListRecommendedByFriends($userID, $howMany, $page)
@@ -104,6 +174,25 @@ class StoryModel extends Model {
 		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
 		//Should not contain any unpublished stories
 		//returns an array of Story class
+
+		try
+		{
+			$statement = "SELECT * FROM Story WHERE StoryId IN ";
+
+			$statement .= "(SELECT Story_StoryId FROM user_recommend_story WHERE Opinion = 1)";
+
+			$statement .= "ORDER BY StoryId ASC LIMIT ?, ?";
+
+			$start = $howMany * ($page - 1);
+
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/Story");
+
+			return $storyList;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function getStoryListMostRecommended($howMany, $page)
@@ -115,6 +204,8 @@ class StoryModel extends Model {
 		//The list should be ordered by most recommended
 		//Should not contain any unpublished stories
 		//returns an array of Story class related to a category
+
+
 	}
 
 	public function getStoryListNewest($howMany, $page)
@@ -126,6 +217,22 @@ class StoryModel extends Model {
 		//The list should be ordered by newest story
 		//Should not contain any unpublished stories
 		//returns an array of Story class related to a category
+
+		try
+		{
+			$statement = "SELECT * FROM Story ORDER BY LatestChange DESC LIMIT ?, ?";
+
+			$start = $howMany * ($page - 1);
+
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/Story");
+
+			return $storyList;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+
 	}
 
 	public function addCommentToStory($comment, $storyID, $userID)
