@@ -65,22 +65,29 @@ class SessionManager
 
 		$user = new UserViewModel();
 
-		//If you are authenticated setup session variable
-		if(isset($_SESSION["isAuth"]))
-		{	
-			//User Details
-			$user->UserId 	  = $_SESSION["UserId"];
-			$user->Email 	  = $_SESSION["Email"];
-			$user->FirstName  = $_SESSION["FirstName"];
-			$user->LastName   = $_SESSION["LastName"];
-			$user->MidName    = $_SESSION["MidName"];
-			$user->Address    = $_SESSION["Address"];
-			$user->PostalCode = $_SESSION["PostalCode"];
+		try
+		{
+			//If you are authenticated setup session variable
+			if(isset($_SESSION["isAuth"]))
+			{	
+				//User Details
+				$user->UserId 	  = $_SESSION["UserId"];
+				$user->Email 	  = $_SESSION["Email"];
+				$user->FirstName  = $_SESSION["FirstName"];
+				$user->LastName   = $_SESSION["LastName"];
+				$user->MidName    = $_SESSION["MidName"];
+				$user->Address    = $_SESSION["Address"];
+				$user->PostalCode = $_SESSION["PostalCode"];
 
-			$user->LanguagePreference = $_SESSION["languagePreference"];
+				$user->LanguagePreference = $_SESSION["languagePreference"];
 
-			$user->IsAdmin = $_SESSION["isAdmin"];
-			$user->IsAuth = $_SESSION["isAuth"];
+				$user->IsAdmin = $_SESSION["isAdmin"];
+				$user->IsAuth = $_SESSION["isAuth"];
+			}
+		}
+		catch (Exception $e)
+		{
+			session_destroy();
 		}
 		
 		return $user;
@@ -97,6 +104,26 @@ class SessionManager
 		}
 
 		return true;
+	}
+
+	public function setErrorMessages($validationMessages)
+	{
+		if(!isset($_SESSION["errorMessages"]))
+		{
+			$_SESSION["errorMessages"] = array();			
+		}
+
+		$_SESSION["errorMessages"] = $validationMessages;
+	}
+
+	public function addErrorMessages($key, $errorMessage)
+	{
+		if(!isset($_SESSION["errorMessages"]))
+		{
+			$_SESSION["errorMessages"] = array();			
+		}
+		
+		$_SESSION["errorMessages"]["other"][$key] = $errorMessage;	
 	}
 }
 ?>

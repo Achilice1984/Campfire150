@@ -10,7 +10,16 @@ class AccountModel extends Model {
 
 		$userFromDB = $this->fetchIntoClass($statement, array(":Email" => $user->Email), "shared/UserViewModel");
 
-		return $authentication->authenticate($user->Password, $userFromDB[0]);
+		if($authentication->authenticate($user->Password, $userFromDB[0]))
+		{
+			//reset lockout 
+			return true;
+		}
+		else
+		{
+			//add lockout
+			return false;
+		}
 	}
 	public function registerUserProfile($user)
 	{
@@ -34,10 +43,9 @@ class AccountModel extends Model {
 			":MidName" => $user->MidName, 
 			":VerificationCode" => $hashedEmailVerification
 		);
-
 		
 		$rowCount = $this->fetchRowCount($statement, $parameters);
-		//echo "<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />" . $rowCount . "sdnbfkbnsdfkb";
+
 		//Success insert
 		if($rowCount >= 1)
 		{
@@ -45,10 +53,10 @@ class AccountModel extends Model {
 
 			return true;
 		}
-
-		//Accepts a User class
-		//Returns true or false if the user was registered properly or not
-		//verified flag should be set to false
+		else
+		{
+			return false;
+		}
 	}
 
 	public function sendEmailVerification($email, $hashedEmailVerification)
@@ -65,7 +73,7 @@ class AccountModel extends Model {
 		 
 		'; // Our message above including the link
 		                     
-		$headers = 'From:josh.dvrs@gmail.com' . "\r\n"; // Set from headers
+		$headers = 'From:' . $email . "\r\n"; // Set from headers
 		mail($to, $subject, $message, $headers); // Send our email
 	}
 
@@ -134,7 +142,51 @@ class AccountModel extends Model {
 
 		return $user;
 	}
-	public function getTotalStoriesWritten($userID)
+	public function getTotalStoriesApproved($userID)
+	{
+		//Accepts an user id
+		//Gets the total stories written by the user who owns this email address
+		//Returns the total
+		$statement = "SELECT count(*) FROM Story WHERE User_UserId = ?";
+
+		$totalStories = $this->fetchColumn($statement, array($userID));
+
+		return $totalStories;
+	}
+	public function getTotalStoriesPending($userID)
+	{
+		//Accepts an user id
+		//Gets the total stories written by the user who owns this email address
+		//Returns the total
+		$statement = "SELECT count(*) FROM Story WHERE User_UserId = ?";
+
+		$totalStories = $this->fetchColumn($statement, array($userID));
+
+		return $totalStories;
+	}
+	public function getTotalStoriesDenied($userID)
+	{
+		//Accepts an user id
+		//Gets the total stories written by the user who owns this email address
+		//Returns the total
+		$statement = "SELECT count(*) FROM Story WHERE User_UserId = ?";
+
+		$totalStories = $this->fetchColumn($statement, array($userID));
+
+		return $totalStories;
+	}
+	public function getTotalCommentsApproved($userID)
+	{
+		//Accepts an user id
+		//Gets the total stories written by the user who owns this email address
+		//Returns the total
+		$statement = "SELECT count(*) FROM Story WHERE User_UserId = ?";
+
+		$totalStories = $this->fetchColumn($statement, array($userID));
+
+		return $totalStories;
+	}
+	public function getTotalCommentsPending($userID)
 	{
 		//Accepts an user id
 		//Gets the total stories written by the user who owns this email address
@@ -178,7 +230,7 @@ class AccountModel extends Model {
 	public function getTotalFollowing($userID)
 	{
 		//Accepts a user id
-		//Gets the total amount of people following the owner of this user id
+		//Gets the total amount of people the current user is following
 		//Returns the total
 
 		$statement = "SELECT count(*) FROM Following WHERE User_FollowerId = ?";

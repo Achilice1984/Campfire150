@@ -2,10 +2,9 @@
 <div class="container">
     <h1>Title</h1>
 
-    <?php
-        $validationResult = $viewModel->getValidationResult();
-        
-        include(APP_DIR . 'views/shared/displayErrors.php');
+    <?php 
+        //Add error message block to the page
+        include(APP_DIR . 'views/shared/displayErrors.php'); 
     ?>
 
     <form action="<?php echo BASE_URL; ?>Account/index" method="post">

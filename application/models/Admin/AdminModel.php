@@ -134,7 +134,7 @@ class AdminModel extends Model {
 
 					$statement .= "(SELECT Story_StoryId FROM user_recommend_story WHERE Opinion = 0) ";
 
-					$statement .= "LIMIT ? OFFSET ?"
+					$statement .= "LIMIT ? OFFSET ?";
 
 					$parameters = array($howMany, $offset);
 
@@ -334,7 +334,7 @@ class AdminModel extends Model {
 
 			$statement .= "(SELECT Comment_CommentId FROM user_inappropriateflag_comment) ";
 
-			$statement .= "ORDER BY CommentId LIMIT ? OFFSET ?"
+			$statement .= "ORDER BY CommentId LIMIT ? OFFSET ?";
 
 			$parameters = array($howMany, $offset);
 
