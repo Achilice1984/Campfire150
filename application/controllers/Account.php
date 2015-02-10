@@ -4,261 +4,301 @@ class Account extends Controller {
 
 	function __construct()
 	{
-		//Must be logged in to use functions
-		// if(!$this->isAuth())
-		// {
-		// 	$this->redirect("");
-		// }
+		parent::__construct();
 	}
 	
-	//Main action for controller, equivelent to: www.site.com/controller/
-	function index($id, $blah)
-	{
-		//Loads a model from corresponding model folder
+	//The home view will be where a user can view all of their account information
+	function home()
+	{	
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+
+
+		/*******************************************
+		*
+		*		Populate data
+		*
+		**********************************************/		
+
+		//Load the accountHomeViewModel
+		$accountHomeViewModel = $this->loadViewModel('AccountHomeViewModel');
+
+		//Load the AccountModel to access account functions
 		$model = $this->loadModel('AccountModel');
 
-		//Loads a view model from corresponding viewmodel folder
-		$viewModel = $this->loadViewModel('AccountViewModel');
-		$viewmodel->storyList = $model->getStoyrList();
+		//Populate data to be shown on the page
+		// $accountHomeViewModel->$recommendedStoryList = $model->getStoriesRecommendedByFriends($currentUser->UserId);
+		// $accountHomeViewModel->$usersStoryList = $model->getStoriesWrittenByCurrentUser($currentUser->UserId);
+		// $accountHomeViewModel->$followingList = $model->getFollowing($currentUser->UserId);
 
-		//Loads a view from corresponding view folder
-		$template = $this->loadView('index');
-		//Adds a variable or object to that can be accessed in the view
-		$template->set('viewModel', $viewModel);
-		//Renders the view. true indicates to load the layout
-		$template->render(true);
+		// //How many people are they following
+		// $accountHomeViewModel->$totalFollowing = $model->getTotalFollowing($currentUser->UserId);
 
-		if($this->isAdmin())
-		{
-			$model->getuserListAdmin();
-		}
-		else
-		{
-			$model->getRegularUserList();
-		}
-		//Execute code if a post back
-		if($this->isPost())
-		{
-			//Can be used to redirect to another controller
-			//Can add query values ?id=1
-			//$this->redirect("controller/action");
+		// // How many people are following the user
+		// $accountHomeViewModel->$totalFollowers = $model->totalFollowers($currentUser->UserId);
 
-			//Check if request is ajax
-			//$this->isAjax()
-		}
-		else
-		{
-			//Execute this code if NOT a post back
-		}
-	}
+		// //How many approved stories
+		// $accountHomeViewModel->$totalApprovedStories = $model->getTotalStoriesApproved($currentUser->UserId);
+
+		// //How many pending stories
+		// $accountHomeViewModel->$totalPendingStories = $model->getTotalStoriesPending($currentUser->UserId);
+
+		// //How many denied stories
+		// $accountHomeViewModel->$totalDeniedStories = $model->getTotalStoriesDenied($currentUser->UserId);
+
+		// //How many approved comments
+		// $accountHomeViewModel->$totalApprovedComments = $model->getTotalCommentsApproved($currentUser->UserId);
+
+		// //How many penfing comments
+		// $accountHomeViewModel->$totalPendingComments = $model->getTotalCommentsPending($currentUser->UserId);
+
+
+
+		//Load the home view
+		$view = $this->loadView('home');
+
+		//Add a variable with data so that it can be accessed in the view
+		$view->set('accountHomeViewModel', $accountHomeViewModel);
+
+		//Render the home view. true indicates to load the layout pages as well
+		$view->render(true);
+	}	
 
 	function login()
-	{
-		//Loads a view model from corresponding viewmodel folder
+	{	
+		//Load the loginViewModel
 		$loginViewModel = $this->loadViewModel('LoginViewModel');
-		$loginViewModel = AutoMapper::mapPost($loginViewModel);
 
 		//Execute code if a post back
 		if($this->isPost())
-		{
-			//Loads a model from corresponding model folder
+		{			
+			//Map post values to the loginViewModel
+			$loginViewModel = AutoMapper::mapPost($loginViewModel);
+
+			//Load the AccountModel to access account functions
 			$model = $this->loadModel('AccountModel');
 			
-			$loginViewModel->validate();
-			
-			if($loginViewModel->isValid())
+			//Validate data that was posted to the server
+			//This will also set the temp errors to be shown in the view
+			if($loginViewModel->validate())
 			{		
-				//success, redirect to new page					
-				if($model->login($loginViewModel))
+				//Attempt to log user into website
+				$isLoggedIn = $model->login($loginViewModel);				
+
+				if($isLoggedIn) //Success
 				{
-					$this->redirect("");	
+					//Redirect to users home page
+					$this->redirect("account/home");	
 				}
-				else
+				else //Failed login
 				{
-					$loginViewModel->addErrorMessage("dbError", "Opps, it looks like your attempt to login faild.");
+					// Add an error message because login failed 
+					$loginViewModel->addErrorMessage("dbError", gettext("Opps, it looks like your attempt to login faild."));
 				}				
+			}			
+		}
+
+		//Load the login view
+		$view = $this->loadView('login');
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('loginViewModel', $loginViewModel);
+
+		//Render the login view. true indicates to load the layout pages as well
+		$view->render(true);
+	}
+
+	function logout()
+	{
+		$model = $this->loadModel('AccountModel');
+		$model->logout();
+
+		$this->redirect("");
+	}
+
+	function changelanguage()
+	{
+		$sessionManger = new SessionManager();
+		$model = $this->loadModel('AccountModel');
+
+		if(isset($this->currentUser) && $this->isAuth())
+		{
+			if($this->currentUser->LanguagePreference == "en_CA")
+			{
+				$this->currentUser->LanguagePreference = "fr_CA";
+				$sessionManger->setLanguageSession(2);
+
+				$model->updateUserLanguagePreference($this->currentUser->UserId, 2);
+			}
+			else
+			{
+				$this->currentUser->LanguagePreference = "en_CA";
+				$sessionManger->setLanguageSession(1);
+
+				$model->updateUserLanguagePreference($this->currentUser->UserId, 1);
 			}			
 		}
 		else
 		{
-			//Execute this code if NOT a post back
-		}
+			if($_SESSION["languagePreference"] == "en_CA")
+			{
+				$_SESSION["languagePreference"] = "fr_CA";
+			}
+			else
+			{
+				$_SESSION["languagePreference"] = "en_CA";
+			}			
+		}	
 
-		//Loads a view from corresponding view folder
-		$template = $this->loadView('login');
-		//Adds a variable or object to that can be accessed in the view
-		$template->set('viewModel', $loginViewModel);
-		//Renders the view. true indicates to load the layout
-		$template->render(true);
+		$this->redirect("");	
 	}
 
 	function register()
-	{		
-		//Loads a view model from corresponding viewmodel folder
-		$user = $this->loadViewModel('shared/UserViewModel');
-		$user = AutoMapper::mapPost($user);
+	{	
+		//Load the userViewModel
+		$userViewModel = $this->loadViewModel('shared/UserViewModel');
 
 		//Execute code if a post back
 		if($this->isPost())
-		{
-			//Loads a model from corresponding model folder
-			$model = $this->loadModel('AccountModel');			
+		{			
+			//Map post values to the userViewModel
+			$userViewModel = AutoMapper::mapPost($userViewModel);
 
-			$user->validate();
+			//debugit($userViewModel);
+
+
+			//Load the AccountModel to access account functions
+			$model = $this->loadModel('AccountModel');
 			
-			if($user->isValid())
+			//Validate data that was posted to the server
+			//This will also set the temp errors to be shown in the view
+			if($userViewModel->validate())
 			{		
-				//success, redirect to new page					
-				if($model->registerUserProfile($user))
+				//Attempt to register the user with our website				
+				if($model->registerUserProfile($userViewModel))
 				{
-					$this->redirect("");	
+					//If success, send user to the login page
+					$this->redirect("account/login");	
 				}
 				else
 				{
-					$user->addErrorMessage("dbError", "Opps, it looks like something went wrong while trying to save in the database.");
-				}				
+					$userViewModel->addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to register your profile."));
+				}					
 			}			
+		}
+
+		//Load the register view
+		$view = $this->loadView('register');
+
+		//Add a variable with old userViewModel data so that it can be accessed in the view
+		$view->set('userViewModel', $userViewModel);
+		
+		//Render the register view. true indicates to load the layout pages as well
+		$view->render(true);
+	}
+
+	function verifyemail($email, $hashedEmailVerification)
+	{
+	}
+
+	function changepassword()
+	{
+		$model = $this->loadModel('AccountModel');
+
+		//Load the userViewModel
+		$changePasswordViewModel = $this->loadViewModel('Account/ChangePasswordViewModel');
+
+		//Map post values to the userViewModel
+		$changePasswordViewModel = AutoMapper::mapPost($changePasswordViewModel);
+		
+		if($changePasswordViewModel->Password == $changePasswordViewModel->RePassword)
+		{
+			if($model->updateUserPassword($this->currentUser, $changePasswordViewModel))
+			{
+				//If success
+				$this->redirect("Account/profile");	
+			}
+			else
+			{
+				$changePasswordViewModel->addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your password."));
+			}
 		}
 		else
 		{
-			//Execute this code if NOT a post back
+			$changePasswordViewModel->addErrorMessage("dbError", gettext("Opps, it looks like your passwords don't match."));
 		}
 
-		$template = $this->loadView('register');
-		//Adds a variable or object to that can be accessed in the view
-		$template->set('viewModel', $user);
+		//Load the userViewModel
+		$userViewModel = $this->loadViewModel('shared/UserViewModel');		
+
+		//Load the register view
+		$view = $this->loadView('profile');
+
+		//Add a variable with old userViewModel data so that it can be accessed in the view
+		$view->set('userViewModel', $userViewModel);
 		
-		$template->render(true);
+		//Render the register view. true indicates to load the layout pages as well
+		$view->render(true);
 	}
 
+	function changeprofilepicture()
+	{
+	}
+
+	function changebackgroundpicture()
+	{
+	}
 
 	function profile()
 	{
-		//Loads a model from corresponding model folder
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+
+		//Load the userViewModel
+		$profileViewModel = $this->loadViewModel('ProfileViewModel');
+
+		//Load the AccountModel to access account functions
 		$model = $this->loadModel('AccountModel');
-		//$model->updateProfile
 
-		$user = AutoMapper::mapPost(new UserViewModel());
-
-		$model->updateUser($user);
-		//Loads a view model from corresponding viewmodel folder
-		$viewModel = $this->loadViewModel('AccountViewModel');
-
-		//Loads a view from corresponding view folder
-		$template = $this->loadView('profile');
-		//Adds a variable or object to that can be accessed in the view
-		$template->set('viewModel', $viewModel);
-		//Renders the view. true indicates to load the layout
-		$template->render(true);
+		$profileViewModel = $model->getProfileByID($this->currentUser->UserId);
 
 		//Execute code if a post back
 		if($this->isPost())
-		{
-			//Can be used to redirect to another controller
-			//Can add query values ?id=1
-			//$this->redirect("controller/action");
+		{			
+			//Map post values to the userViewModel
+			$profileViewModel = AutoMapper::mapPost($profileViewModel);			
+			
+			//Validate data that was posted to the server
+			//This will also set the temp errors to be shown in the view
+			if($profileViewModel->validate())
+			{		
+				//Attempt to register the user with our website				
+				if($model->updateUserProfile($profileViewModel))
+				{
+					$sessionManger = new SessionManager();
+					$sessionManger->setLanguageSession($profileViewModel->LanguageType_LanguageId);
 
-			//Check if request is ajax
-			//$this->isAjax()
+					//If success, send user to the home page
+					$this->redirect("account/home");	
+				}
+				else
+				{
+					$profileViewModel->addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your profile."));
+				}					
+			}			
 		}
-		else
-		{
-			//Execute this code if NOT a post back
-		}
+
+		//Load the profile view
+		$view = $this->loadView('profile');
+
+		//Add a variable with old userViewModel data so that it can be accessed in the view
+		$view->set('userViewModel', $profileViewModel);
+		
+		//Render the profile view. true indicates to load the layout pages as well
+		$view->render(true);
 	}
-
-	function insert()
-	{
-		//Loads a model from corresponding model folder
-		$model = $this->loadModel('AccountModel');
-
-		//Loads a view model from corresponding viewmodel folder
-		$viewModel = $this->loadViewModel('AccountViewModel');
-
-		//Loads a view from corresponding view folder
-		$template = $this->loadView('insert');
-		//Adds a variable or object to that can be accessed in the view
-		$template->set('viewModel', $viewModel);
-		//Renders the view. true indicates to load the layout
-		$template->render(true);
-
-		//Execute code if a post back
-		if($this->isPost())
-		{
-			//Can be used to redirect to another controller
-			//Can add query values ?id=1
-			//$this->redirect("controller/action");
-
-			//Check if request is ajax
-			//$this->isAjax()
-		}
-		else
-		{
-			//Execute this code if NOT a post back
-		}
-	}
-
-	function update()
-	{
-		//Loads a model from corresponding model folder
-		$model = $this->loadModel('AccountModel');
-
-		//Loads a view model from corresponding viewmodel folder
-		$viewModel = $this->loadViewModel('AccountViewModel');
-
-		//Loads a view from corresponding view folder
-		$template = $this->loadView('update');
-		//Adds a variable or object to that can be accessed in the view
-		$template->set('viewModel', $viewModel);
-		//Renders the view. true indicates to load the layout
-		$template->render(true);
-
-		//Execute code if a post back
-		if($this->isPost())
-		{
-			//Can be used to redirect to another controller
-			//Can add query values ?id=1
-			//$this->redirect("controller/action");
-
-			//Check if request is ajax
-			//$this->isAjax()
-		}
-		else
-		{
-			//Execute this code if NOT a post back
-		}
-	}
-
-	function delete()
-	{
-		//Loads a model from corresponding model folder
-		$model = $this->loadModel('AccountModel');
-
-		//Loads a view model from corresponding viewmodel folder
-		$viewModel = $this->loadViewModel('AccountViewModel');
-
-		//Loads a view from corresponding view folder
-		$template = $this->loadView('delete');
-		//Adds a variable or object to that can be accessed in the view
-		$template->set('viewModel', $viewModel);
-		//Renders the view. true indicates to load the layout
-		$template->render(true);
-
-		//Execute code if a post back
-		if($this->isPost())
-		{
-			//Can be used to redirect to another controller
-			//Can add query values ?id=1
-			//$this->redirect("controller/action");
-
-			//Check if request is ajax
-			//$this->isAjax()
-		}
-		else
-		{
-			//Execute this code if NOT a post back
-		}
-	}    
 }
 
 ?>

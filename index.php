@@ -15,8 +15,10 @@ require_once('./application/plugins/akismet/akismet.class.php');
 require_once('./application/plugins/mailchimp/Mailchimp.php');
 require_once('./application/plugins/alphaid/alphaID.php');
 
+//Need this if php version less than 5.5
+require_once('./application/plugins/password/password.php');
 
-// I18N support information here
+// Language Setup
 $language;
 
 if(!isset($_SESSION["languagePreference"]))
@@ -36,6 +38,9 @@ $domain = "messages";
 bindtextdomain($domain, "locale"); 
 textdomain($domain);
 
+// Remove any lingering errors
+unset($_SESSION["errorMessages"]);
+
 
 // Defines
 define('ROOT_DIR', realpath(dirname(__FILE__)) .'/');
@@ -50,7 +55,6 @@ require(ROOT_DIR .'system/controller.php');
 require(ROOT_DIR .'system/pip.php');
 
 //Custom System
-require(ROOT_DIR .'system/validationresult.php');
 require(ROOT_DIR .'system/validator.php');
 require(ROOT_DIR .'system/authentication.php');
 require(ROOT_DIR .'system/sessionmanager.php');
@@ -59,6 +63,42 @@ require(ROOT_DIR .'system/sessionmanager.php');
 global $config;
 define('BASE_URL', $config['base_url']);
 
+
+if($config["debugMode"] == true)
+{
+	error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);	
+}
+else
+{
+	error_reporting(-1);
+}
+
+set_error_handler("exception_error_handler");
+
 pip();
 
+?>
+
+<?php
+	function debugit($object)
+	{
+		echo "<div style='margin-top:100px;'></div>";
+		echo "<h2>Debugit</h2>";
+		echo "<pre>"; 
+			echo "<h3>Object Print Out:</h3>";
+			print_r($object);
+		echo "</pre>";
+	}	
+
+	function exception_error_handler($errno, $errstr, $errfile, $errline ) {
+
+		$_SESSION["errno"] = $errno;
+		$_SESSION["errstr"] = $errstr;
+		$_SESSION["errfile"] = $errfile;
+		$_SESSION["errline"] = $errline;
+
+		header('Location: '. $config['base_url'] . "error/generic");
+		exit;
+	}
+	
 ?>

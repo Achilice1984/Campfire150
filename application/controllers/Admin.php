@@ -4,6 +4,8 @@ class Admin extends Controller {
 
 	function __construct()
 	{
+		parent::__construct();
+
 		//Will limit all these function to admin level of privlidge
 		// if(!$this->isAdmin())
 		// {

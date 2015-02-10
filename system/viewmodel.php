@@ -4,7 +4,7 @@
 */
 class ViewModel
 {
-	private $validationResult;
+	private $isValid;
 	private $validationDecorators;
 	
 	function __construct($validationDecorators)
@@ -14,43 +14,34 @@ class ViewModel
 
 	public function validate()
 	{
+		$sessionManager = new SessionManager();
 		$validator = new Validator();
-		$this->validationResult = $validator->validate($this);
-	}
 
-	public function getValidationResult()
-	{
-		if(isset($this->validationResult))
+		$validationMessages = $validator->validate($this);		
+
+		if(count($validationMessages) > 0)
 		{
-			return $this->validationResult;
+			$sessionManager->setErrorMessages($validationMessages);
+			$this->isValid = false;
 		}
 		else
 		{
-			return null;
+			$this->isValid = true;
 		}
+
+		return $this->isValid;
 	}
 
 	public function addErrorMessage($key, $errorMessage)
 	{
-		if(!isset($this->validationResult))
-		{
-			$this->validationResult = new ValidationResult();
-		}
-
-		$this->validationResult->setValidationMessage($key, $errorMessage);
+		$sessionManager = new SessionManager();
+		$sessionManager->addErrorMessages($key, $errorMessage);
 	}
 
 
 	public function isValid()
 	{
-		if(isset($this->validationResult))
-		{
-			return $this->validationResult->isValid();
-		}
-		else
-		{
-			return false;
-		}
+		return $this->isValid;
 	}
 
 	public function getValidationDecorators()
