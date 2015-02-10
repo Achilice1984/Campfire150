@@ -75,14 +75,16 @@ class AdminModel extends Model {
 		//returns an array of Story class
 		$offset = ($page - 1) * $howMany;
 
-		try{
+		try
+		{
 			$statement = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
 
 			$rowCount = $this->fetchRowCount($statement, array($adminID));
 
 			if($rowCount >= 1)
 			{
-				try{
+				try
+				{
 					$statement = "SELECT *  FROM story WHERE storyID IN ";
 
 					$statement .= "(SELECT Story_StoryId FROM admin_approve_story WHERE Approved = 0)";
@@ -121,14 +123,16 @@ class AdminModel extends Model {
 		//returns an array of Story class
 		$offset = ($page - 1) * $howMany;
 
-		try{
+		try
+		{
 			$statement = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
 
 			$rowCount = $this->fetchRowCount($statement, array($adminID));
 
 			if($rowCount >= 1)
 			{
-				try{
+				try
+				{
 
 					$statement = "SELECT *  FROM story WHERE storyID in ";
 
@@ -174,7 +178,8 @@ class AdminModel extends Model {
 
 			if(!$exist)
 			{
-				try{
+				try
+				{
 
 					$statement2 = "INSERT INTO admin_approve_story VALUES(?, ?, ?, ?, NULL, 0)";
 
@@ -267,32 +272,33 @@ class AdminModel extends Model {
 		//Accepts the adminID and the story id
 		//Change a rejected story to an approved story
 		//returns bool whether it was saved succesfully or not
-		// try
-		// {
-		// 	$statement1 = "SELECT *  FROM admin_approve_story WHERE userId = ? AND storyID = ?";
-		// 	$parameters = array($adminID, $storyID);
 
-		// 	$exist = $this->fetchRowCount($statement1, $parameters);
+		try
+		{
+			$statement = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
 
-		// 	if($exist)
-		// 	{
-				try{
-					$statement2 = "UPDATE admin_approve_story SET Approved = 1 WHERE userId = ? AND storyID = ?";
+			$rowCount = $this->fetchRowCount($statement, array($adminID));
+
+			if($rowCount >= 1)
+			{
+				try
+				{
+					$statement2 = "UPDATE admin_approve_story SET Approved = 1, User_UserId = ? WHERE storyID = ?";
 
 					$parameters = array($adminID, $storyID);
 
-					$this->execute($statement2);
+					return $this->execute($statement2);
 				}
 				catch(PDOException $e)
 				{
 					return $e->getMessage();
 				}				
-		// 	}
-		// }
-		// catch(PDOException $e)
-		// {
-		// 	return $e->getMessage();			
-		// }
+			}
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function changeApprovedToRejected($adminID, $storyID, $reason)
@@ -300,17 +306,36 @@ class AdminModel extends Model {
 		//Accepts the adminID, the story id and the reason why it was rejected
 		//Change an approved story to a rejected story
 		//returns bool whether it was saved succesfully or not
+
 		try
 		{
-			$statement2 = "UPDATE admin_approve_story SET Approved = 0, ApprovalCommentE = ? WHERE userId = ? AND storyID = ?";
+			$statement = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
 
-			$parameters = array($reason, $adminID, $storyID);
+			$rowCount = $this->fetchRowCount($statement, array($adminID));
 
-			$this->execute($statement2);
+			if($rowCount >= 1)
+			{
+				try
+				{
+					$statement = "UPDATE admin_approve_story SET Approved = 0, ApprovalCommentE = ? WHERE userId = ? AND storyID = ?";
+
+					$parameters = array($reason, $adminID, $storyID);
+
+					return $this->execute($statement);
+				}
+				catch(PDOException $e)
+				{
+					return $e->getMessage();
+				}
+			}
+			else
+			{
+				return false;
+			}
 		}
 		catch(PDOException $e)
 		{
-			return $e->getMessage();
+			return $e->getMessage();			
 		}
 	}
 
@@ -321,44 +346,49 @@ class AdminModel extends Model {
 		//Gets a list of comments that have been marked as inappropriate by users
 		//Order the list by how many inappropriate flags there are
 		//returns an array of Comment class
-		$offset = ($page - 1) * $howMany;
 
-		// try{
-		// 	$statement = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
-		// 	$rowCount = $this->fetchRowCount($statement, array($adminID));
-		// 	if($rowCount >= 1)
-		// 	{
-		try{
+		try
+		{
+			$statement = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
 
-			$statement = "SELECT *  FROM comment WHERE CommentId in ";
+			$rowCount = $this->fetchRowCount($statement, array($adminID));
 
-			$statement .= "(SELECT Comment_CommentId FROM user_inappropriateflag_comment) ";
+			if($rowCount >= 1)
+			{
+				try
+				{
 
-			$statement .= "ORDER BY CommentId LIMIT ? OFFSET ?"
+					$statement = "SELECT *  FROM comment WHERE CommentId in ";
 
-			$parameters = array($howMany, $offset);
+					$statement .= "(SELECT Comment_CommentId FROM user_inappropriateflag_comment) ";
 
-			$storyList = $this->fetchIntoClass($statement, $parameters, "Shared/Story");
+					$start = $howMany * ($page - 1);
 
-			return $storyList;
+					$statement .= "ORDER BY CommentId LIMIT ?, ?";
+
+					$parameters = array($start, $howMany);
+
+					$storyList = $this->fetchIntoClass($statement, $parameters, "Shared/Story");
+
+					return $storyList;
+				}
+				catch(PDOException $e) 
+				{
+
+					return $e->getMessage();
+
+				}
+			}
+			else
+			{
+				return false;
+			}
+
 		}
 		catch(PDOException $e) 
 		{
-
 			return $e->getMessage();
-
 		}
-		// 	}
-		// 	else
-		// 	{
-		// 		return false;
-		// 	}
-
-		// }
-		// catch(PDOException $e) 
-		// {
-		// 	return $e->getMessage();
-		// }	
 	}
 
 	public function rejectCommentAsAdmin($adminID, $commentID, $reason)
@@ -394,6 +424,7 @@ class AdminModel extends Model {
 		//Accepts the adminID, the user id and the reason why it was rejected
 		//Disable a user account
 		//returns bool whether it was saved succesfully or not
+
 	}
 
 	public function enableUserAccount($adminID, $userID, $reason)
@@ -409,6 +440,39 @@ class AdminModel extends Model {
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
 		//Gets a list of users
 		//returns an array of User class
+
+		try
+		{
+			$statement = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
+
+			$rowCount = $this->fetchRowCount($statement, array($adminID));
+
+			if($rowCount >= 1)
+			{
+				try
+				{
+					$statement = "SELECT * FROM User ORDER BY UserId ASC LIMIT ?, ?";
+
+					$start = $howMany * ($page - 1);
+
+					$userList = $this->fetchIntoClass($statement, array($start, $howMany), "Shared/User");
+
+					return $userList;
+				}
+				catch(PDOException $e) 
+				{
+					return $e->getMessage();
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function deActivateUser($user, $admin)
@@ -424,6 +488,39 @@ class AdminModel extends Model {
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
 		//Gets a list of users that have been disabled with reason
 		//returns an array of User class
+
+		try
+		{
+			$statement = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
+
+			$rowCount = $this->fetchRowCount($statement, array($adminID));
+
+			if($rowCount >= 1)
+			{
+				try
+				{
+					$statement = "SELECT * FROM User WHERE Active = 0 ORDER BY UserId ASC LIMIT ?, ?";
+
+					$start = $howMany * ($page - 1);
+
+					$userList = $this->fetchIntoClass($statement, array($start, $howMany), "Shared/User");
+
+					return $userList;
+				}
+				catch(PDOException $e) 
+				{
+					return $e->getMessage();
+				}
+			}
+			else
+			{
+				return false;
+			}
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function getListUsersOderedByMostInappropriateFlags($adminID, $howMany, $page)
@@ -432,6 +529,8 @@ class AdminModel extends Model {
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
 		//Gets a list of users ordered by how many inapropriate flags they have issued
 		//returns an array of User class
+
+		
 	}
 
 	public function getListQuestionaireQuestions($adminID)
@@ -499,36 +598,6 @@ class AdminModel extends Model {
 	{
 		return $result;
 	}
-
-	// 	public function registerUserProfile($user)
-	// {
-	// 	$authentication = new Authentication();
-
-	// 	$statement = "INSERT INTO User (Email, Password, Address, PostalCode, PhoneNumber, FirstName, LastName, MidName, HashedVerification)";
-	// 	$statement .= " VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-	// 	$user->Password = $authentication->hashPassword($user->password);
-
-	// 	$hashedEmailVerification = md5(uniqid());
-
-	// 	$parameters = array($user->Email, $user->Password, $user->Address, $user->PostalCode, $user->PhoneNumber, $user->FirstName, $user->LastName, $user->MidName, $hashedEmailVerification);
-
-		
-	// 	$rowCount = $this->fetchRowCount($statement, $parameters);
-
-	// 	//Success insert
-	// 	if($rowCount >= 1)
-	// 	{
-	// 		$emailSent = sendEmailVerification($email, $hashedEmailVerification);
-
-	// 		return true;
-	// 	}
-
-	// 	//Accepts a User class
-	// 	//Returns true or false if the user was registered properly or not
-	// 	//verified flag should be set to false
-	// }
-
 
 }
 
