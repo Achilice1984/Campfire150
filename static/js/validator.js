@@ -1,8 +1,5 @@
-@@ -1,50 +1,143 @@
 <?php
-
 /**
-* 
 * Usage Example
 * if( validator->email($anEmailToBeValidated) ){
 *  this email is valid else invalid.
@@ -10,35 +7,15 @@
 ***
 * validator sub functions like phoneThreeDigit or name etc, all take a variable and return true/false
 */
-class Validator
-{
-	public function validate($viewModel)
-	{	
 class Validator{
 	public function validate($viewModel)	{	
 		$validationMessages = array();
 		$validationDecorators = $viewModel->getValidationDecorators();
-
-		if(isset($validationDecorators))
-		{
 		if(isset($validationDecorators)){
 			foreach ($validationDecorators as $property => $validationTypes) {
 				foreach ($validationTypes as $validationType => $errorMessage) {
-
-					try
-					{
 					try{
 						//Call a validation method
-						if($this->$validationType($viewModel->$property))
-				    	{
-				    		$validationMessages[$property][$validationType] = $errorMessage;
-				    	}
-			    	}
-			    	catch(Exception $ex)
-			    	{
-			    		$validationResult->validationMessages[$property] = "Some unknown error has occurred";
-			    	}
-		    	}
 						if($this->$validationType($viewModel->$property)){
 				   $validationMessages[$property][$validationType] = $errorMessage;
 				  }
@@ -49,20 +26,12 @@ class Validator{
 		  }
 			}
 		}
-
 		$validationResult = new ValidationResult($validationMessages);
-
 		return $validationResult;
 	}
-
-	private function email($propertyValue)
-	{
 	private function email($propertyValue){
 		return !filter_var($propertyValue, FILTER_VALIDATE_EMAIL);
 	}
-
-	private function required($propertyValue)
-	{
 	private function required($propertyValue){
 		return empty($propertyValue);
 	}
@@ -171,5 +140,4 @@ class Validator{
    return false;
  }}
 }
-
 ?>
