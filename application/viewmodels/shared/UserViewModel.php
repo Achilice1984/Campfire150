@@ -19,6 +19,7 @@ class UserViewModel extends ViewModel
 	public $PhoneNumber;
 	public $FailedLoginAttempt;
 	public $LockoutTimes;
+	public $VerifiedEmail;
 	
 	public $AchievementLevelType_LevelId;
 	public $Address;
@@ -33,22 +34,22 @@ class UserViewModel extends ViewModel
 	{		
 		parent::__construct(array(
 							'Email' => 
-							array('email' => 'Invalid email',
-									'required' => 'email is required'),
+							array('email' => 'Invalid Email Address',
+									'required' => 'The Email field is required!'),
 							'FirstName' =>
-								array('required' => 'the name field is required!'),
+								array('required' => 'The First Name field is required!'),
 							'LastName' =>
-								array('required' => 'the name field is required!'),
+								array('required' => 'The Last Name is required!'),
 							'Password' =>
-								array('required' => 'the name field is required!'),
+								array('required' => 'The Password field is required!'),
 							'RePassword' =>
-								array('required' => 'the name field is required!'),
+								array('required' => 'The The Re-Type Password field is required!'),
 							'Address' =>
-								array('required' => 'the name field is required!'),
+								array('required' => 'The Address field is required!'),
 							'PostalCode' =>
-								array('required' => 'the name field is required!'),
+								array('required' => 'The Postal Code field is required!'),
 							'LanguageType_LanguageId' =>
-								array('required' => 'the name field is required!')
+								array('required' => 'The Language field is required!')
 						));
 	}
 }

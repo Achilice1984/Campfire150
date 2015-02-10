@@ -63,15 +63,28 @@ require(ROOT_DIR .'system/sessionmanager.php');
 global $config;
 define('BASE_URL', $config['base_url']);
 
-if($config["debugMode"] == true)
-{
-	error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
-}
-else
-{
-	error_reporting(E_ERROR);
-}
+
+// if($config["debugMode"] == true)
+// {
+// 	error_reporting(E_ERROR);
+// }
+// else
+// {
+// 	error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
+// }
 
 pip();
 
+?>
+
+<?php
+	function debugit($object)
+	{
+		echo "<div style='margin-top:100px;'></div>";
+		echo "<h2>Debugit</h2>";
+		echo "<pre>"; 
+			echo "<h3>Object Print Out:</h3>";
+			print_r($object);
+		echo "</pre>";
+	}	
 ?>
