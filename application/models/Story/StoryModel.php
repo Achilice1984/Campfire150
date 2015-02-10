@@ -14,6 +14,18 @@ class StoryModel extends Model {
 		//Accepts a story class
 		//inserts a new story with the publish flag set to false
 		//returns bool if the story was saved succesfully
+		try
+		{
+			$statement = "INSERT INTO story (Story_StoryId, User_UserId, PrivacyType_PrivacyTypeId) VALUES(?, ?, 1)";
+
+			$parameters = array($story->StoryID, $story->User_UserId);
+
+			return $this->execute($statement);
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function changeStoryPrivacySetting($userID, $storyID, $privacyTypeID)
@@ -22,13 +34,39 @@ class StoryModel extends Model {
 		//checks that userid is owner of story
 		//Change the privacy setting
 		//returns bool if the setting changed or not
+
+		try
+		{
+			$statement = "UPDATE story SET PrivacyType_PrivacyTypeId=? WHERE User_UserId=? AND StoryId=?";
+
+			$parameters = array($privacyTypeID, $userID, $storyID);
+
+			ru $this->execute($statement);
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
 	}
 
-	public function flagStoryAsInapropriate($storyID, $userID, $isInappropriate)
+	public function flagStoryAsInapropriate($storyID, $userID)
 	{
 		//Accepts a storyID, a userID, and a bool for if it was thought to be inapropriate
 		//checks to see if user already marked it as inapropriate
 		//returns bool if saved correctly
+
+		try
+		{
+			$statement = "INSERT INTO user_recommend_story (Story_StoryId, User_UserId, Opinion) VALUES(?, ?, 0)";
+
+			$parameters = array($storyID, $userID);
+
+			return $this->execute($statement);
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function getStory($userID, $storyID)
@@ -38,6 +76,20 @@ class StoryModel extends Model {
 		//Must be approved
 		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
 		//returns a Story class
+
+		try
+		{
+			$statement = "SELECT * FROM Story User_UserId=? AND StoryId=?";
+
+			$story = $this->fetchIntoClass($statement, array($userID, $storyID), "Shared/Story");
+
+			return $story;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+
 	}
 
 	public function getStoryAsAdmin($adminID, $storyID)
@@ -241,7 +293,7 @@ class StoryModel extends Model {
 		//inserts a new comment with the published flag set to false
 		//returns bool if the comment was saved succesfully
 
-		$statement = "INSERT INTO Comment Story_StoryId, User_UserId, Content VALUES(?, ?, ?)";
+		$statement = "INSERT INTO Comment (Story_StoryId, User_UserId, Content) VALUES(?, ?, ?)";
 
 		$parameters = array($storyID, $userID, $comment);
 
@@ -257,13 +309,21 @@ class StoryModel extends Model {
 		//The comments published flag must be true
 		//returns an array of comment class related to a story
 
-		$statement = "SELECT * FROM Comment WHERE Story_StoryId = ? ORDER BY CommentId ASC LIMIT ?, ?";
+		try
+		{
 
-		$start = $howMany * ($page - 1);
+			$statement = "SELECT * FROM Comment WHERE Story_StoryId = ? ORDER BY CommentId ASC LIMIT ?, ?";
 
-		$comment = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/Comment");
+			$start = $howMany * ($page - 1);
 
-		return $comment;
+			$comment = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/Comment");
+
+			return $comment;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function getCommentListInappropriate($adminID, $howMany, $page)
@@ -274,16 +334,23 @@ class StoryModel extends Model {
 		//Gets a list of comments related to a story
 		//The comments published flag must be true
 		//returns an array of comment class related to a story
+		try
+		{
 
-		$statement = "SELECT * FROM Comment WHERE PublishFlag = 1 AND CommentId IN ";
+			$statement = "SELECT * FROM Comment WHERE PublishFlag = 1 AND CommentId IN ";
 
-		$statement .= "(SELECT DISTINCT Comment_CommentId FROM user_inappropriateflag_comment) ORDER BY CommentId LIMIT ?, ?";
+			$statement .= "(SELECT DISTINCT Comment_CommentId FROM user_inappropriateflag_comment) ORDER BY CommentId LIMIT ?, ?";
 
-		$start = $howMany * ($page - 1);
+			$start = $howMany * ($page - 1);
 
-		$comment = $this->fetchIntoClass($statement, array($start, $howMany), "Shared/Comment");
+			$comment = $this->fetchIntoClass($statement, array($start, $howMany), "Shared/Comment");
 
-		return $comment;
+			return $comment;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function getCommentListRejected($adminID, $howMany, $page)
@@ -302,11 +369,19 @@ class StoryModel extends Model {
 		//Gets a list of comments that haven't been published by a user
 		//The comments published flag must be flase
 		//returns an array of comment class that haven't been published yet
-		$statement = "SELECT * FROM comment WHERE User_UserId = ? AND PublishFlag = 0" ORDER BY CommentId;
+		
+		try
+		{
+			$statement = "SELECT * FROM comment WHERE User_UserId = ? AND PublishFlag = 0" ORDER BY CommentId;
 
-		$comment = $this->fetchIntoClass($statement, array($userID), "Shared/Comment");
+			$comment = $this->fetchIntoClass($statement, array($userID), "Shared/Comment");
 
-		return $comment;
+			return $comment;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function flagCommentAsInapropriate($commentID, $userID)
@@ -314,12 +389,19 @@ class StoryModel extends Model {
 		//Accepts a commentID, a userID, and a bool for if it was thought to be inapropriate
 		//checks to see if user already marked it as inapropriate
 		//returns bool if saved correctly
+	
+		try
+		{
+			$statement = "INSERT INTO user_inappropriateflag_comment VALUES(?, ?)";
 
-		$statement = "INSERT INTO user_inappropriateflag_comment VALUES(?, ?)";
+			$parameters = array($userID, $commentID);
 
-		$parameters = array($userID, $commentID);
-
-		$this->execute($statement);
+			$this->execute($statement);	
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
 	}
 
 	
