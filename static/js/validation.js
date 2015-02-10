@@ -1,3 +1,4 @@
+//http://formvalidation.io/getting-started/
 $(document).ready(function() {
     $('form').formValidation({
         framework: 'bootstrap',
