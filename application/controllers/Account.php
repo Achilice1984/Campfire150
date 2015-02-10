@@ -109,6 +109,14 @@ class Account extends Controller {
 		$view->render(true);
 	}
 
+	function logout()
+	{
+		$model = $this->loadModel('AccountModel');
+		$model->logout();
+
+		$this->redirect("");
+	}
+
 	function register()
 	{	
 		//Load the userViewModel
@@ -119,6 +127,9 @@ class Account extends Controller {
 		{			
 			//Map post values to the userViewModel
 			$userViewModel = AutoMapper::mapPost($userViewModel);
+
+			debugit($userViewModel);
+
 
 			//Load the AccountModel to access account functions
 			$model = $this->loadModel('AccountModel');
@@ -150,6 +161,9 @@ class Account extends Controller {
 		$view->render(true);
 	}
 
+	function verifyemail($email, $hashedEmailVerification)
+	{
+	}
 
 	function profile()
 	{
