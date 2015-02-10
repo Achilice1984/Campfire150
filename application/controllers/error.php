@@ -13,10 +13,25 @@ class Error extends Controller {
 		echo '<p>Looks like this page doesn\'t exist</p>';
 	}
     
-    function generic(Exception $ex)
+    function generic()
 	{
-		echo '<h1>Generic Error</h1>';
-		echo '<p>Looks like this page doesn\'t exist</p>';
+		if(isset($_SESSION["errno"]))
+		{
+			//Load the register view
+			$view = $this->loadView('generic');
+			
+			//Render the register view. true indicates to load the layout pages as well
+			$view->render(true);
+
+			unset($_SESSION["errno"]);
+			unset($_SESSION["errstr"]);
+			unset($_SESSION["errfile"]);
+			unset($_SESSION["errline"]);
+		}
+		else
+		{
+			$this->redirect("");
+		}
 	}
 }
 

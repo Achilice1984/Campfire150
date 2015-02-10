@@ -64,14 +64,16 @@ global $config;
 define('BASE_URL', $config['base_url']);
 
 
-// if($config["debugMode"] == true)
-// {
-// 	error_reporting(E_ERROR);
-// }
-// else
-// {
-// 	error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);
-// }
+if($config["debugMode"] == true)
+{
+	error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);	
+}
+else
+{
+	error_reporting(-1);
+}
+
+set_error_handler("exception_error_handler");
 
 pip();
 
@@ -87,4 +89,16 @@ pip();
 			print_r($object);
 		echo "</pre>";
 	}	
+
+	function exception_error_handler($errno, $errstr, $errfile, $errline ) {
+
+		$_SESSION["errno"] = $errno;
+		$_SESSION["errstr"] = $errstr;
+		$_SESSION["errfile"] = $errfile;
+		$_SESSION["errline"] = $errline;
+
+		header('Location: '. $config['base_url'] . "error/generic");
+		exit;
+	}
+	
 ?>
