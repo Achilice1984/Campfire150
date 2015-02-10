@@ -9,7 +9,7 @@
                 <div class="panel-body">
                     <div class="col-md-6"> 
 
-                        <form action="<?php echo BASE_URL; ?>account/login" method="post">
+                        <form action="<?php echo BASE_URL; ?>account/login" method="post" id="loginForm">
 
                             <?php 
                                 //Add error message block to the page

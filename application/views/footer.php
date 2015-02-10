@@ -8,6 +8,12 @@
     <script src="<?php echo BASE_URL; ?>static/plugins/validation/js/formValidation.min.js"></script> 
     <script src="<?php echo BASE_URL; ?>static/plugins/validation/js/framework/bootstrap.min.js"></script> 
 
+    
+    <script type="text/javascript" src="<?php echo BASE_URL; ?>static/plugins/validation/js/language/en_US.js"></script>
+    <script type="text/javascript" src="<?php echo BASE_URL; ?>static/plugins/validation/js/language/fr_FR.js"></script>
+
+    <input type="hidden" id="LanguagePreference" value="<?php if($_SESSION['languagePreference'] == "en_CA") { echo "en_US"; } else{ echo "fr_FR"; } ?>">
+
     <!-- Custom Scripts -->
     <script src="<?php echo BASE_URL; ?>static/js/validation.js"></script>
 

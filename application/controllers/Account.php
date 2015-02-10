@@ -28,30 +28,30 @@ class Account extends Controller {
 		$model = $this->loadModel('AccountModel');
 
 		//Populate data to be shown on the page
-		$accountHomeViewModel->$recommendedStoryList = $model->getStoriesRecommendedByFriends($currentUser->UserId);
-		$accountHomeViewModel->$usersStoryList = $model->getStoriesWrittenByCurrentUser($currentUser->UserId);
-		$accountHomeViewModel->$followingList = $model->getFollowing($currentUser->UserId);
+		// $accountHomeViewModel->$recommendedStoryList = $model->getStoriesRecommendedByFriends($currentUser->UserId);
+		// $accountHomeViewModel->$usersStoryList = $model->getStoriesWrittenByCurrentUser($currentUser->UserId);
+		// $accountHomeViewModel->$followingList = $model->getFollowing($currentUser->UserId);
 
-		//How many people are they following
-		$accountHomeViewModel->$totalFollowing = $model->getTotalFollowing($currentUser->UserId);
+		// //How many people are they following
+		// $accountHomeViewModel->$totalFollowing = $model->getTotalFollowing($currentUser->UserId);
 
-		// How many people are following the user
-		$accountHomeViewModel->$totalFollowers = $model->totalFollowers($currentUser->UserId);
+		// // How many people are following the user
+		// $accountHomeViewModel->$totalFollowers = $model->totalFollowers($currentUser->UserId);
 
-		//How many approved stories
-		$accountHomeViewModel->$totalApprovedStories = $model->getTotalStoriesApproved($currentUser->UserId);
+		// //How many approved stories
+		// $accountHomeViewModel->$totalApprovedStories = $model->getTotalStoriesApproved($currentUser->UserId);
 
-		//How many pending stories
-		$accountHomeViewModel->$totalPendingStories = $model->getTotalStoriesPending($currentUser->UserId);
+		// //How many pending stories
+		// $accountHomeViewModel->$totalPendingStories = $model->getTotalStoriesPending($currentUser->UserId);
 
-		//How many denied stories
-		$accountHomeViewModel->$totalDeniedStories = $model->getTotalStoriesDenied($currentUser->UserId);
+		// //How many denied stories
+		// $accountHomeViewModel->$totalDeniedStories = $model->getTotalStoriesDenied($currentUser->UserId);
 
-		//How many approved comments
-		$accountHomeViewModel->$totalApprovedComments = $model->getTotalCommentsApproved($currentUser->UserId);
+		// //How many approved comments
+		// $accountHomeViewModel->$totalApprovedComments = $model->getTotalCommentsApproved($currentUser->UserId);
 
-		//How many penfing comments
-		$accountHomeViewModel->$totalPendingComments = $model->getTotalCommentsPending($currentUser->UserId);
+		// //How many penfing comments
+		// $accountHomeViewModel->$totalPendingComments = $model->getTotalCommentsPending($currentUser->UserId);
 
 
 
@@ -117,6 +117,43 @@ class Account extends Controller {
 		$this->redirect("");
 	}
 
+	function changelanguage()
+	{
+		$sessionManger = new SessionManager();
+		$model = $this->loadModel('AccountModel');
+
+		if(isset($this->currentUser) && $this->isAuth())
+		{
+			if($this->currentUser->LanguagePreference == "en_CA")
+			{
+				$this->currentUser->LanguagePreference = "fr_CA";
+				$sessionManger->setLanguageSession(2);
+
+				$model->updateUserLanguagePreference($this->currentUser->UserId, 2);
+			}
+			else
+			{
+				$this->currentUser->LanguagePreference = "en_CA";
+				$sessionManger->setLanguageSession(1);
+
+				$model->updateUserLanguagePreference($this->currentUser->UserId, 1);
+			}			
+		}
+		else
+		{
+			if($_SESSION["languagePreference"] == "en_CA")
+			{
+				$_SESSION["languagePreference"] = "fr_CA";
+			}
+			else
+			{
+				$_SESSION["languagePreference"] = "en_CA";
+			}			
+		}	
+
+		$this->redirect("");	
+	}
+
 	function register()
 	{	
 		//Load the userViewModel
@@ -128,7 +165,7 @@ class Account extends Controller {
 			//Map post values to the userViewModel
 			$userViewModel = AutoMapper::mapPost($userViewModel);
 
-			debugit($userViewModel);
+			//debugit($userViewModel);
 
 
 			//Load the AccountModel to access account functions
@@ -146,7 +183,7 @@ class Account extends Controller {
 				}
 				else
 				{
-					$user->addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to register your profile."));
+					$userViewModel->addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to register your profile."));
 				}					
 			}			
 		}
@@ -165,6 +202,54 @@ class Account extends Controller {
 	{
 	}
 
+	function changepassword()
+	{
+		$model = $this->loadModel('AccountModel');
+
+		//Load the userViewModel
+		$changePasswordViewModel = $this->loadViewModel('Account/ChangePasswordViewModel');
+
+		//Map post values to the userViewModel
+		$changePasswordViewModel = AutoMapper::mapPost($changePasswordViewModel);
+		
+		if($changePasswordViewModel->Password == $changePasswordViewModel->RePassword)
+		{
+			if($model->updateUserPassword($this->currentUser, $changePasswordViewModel))
+			{
+				//If success
+				$this->redirect("Account/profile");	
+			}
+			else
+			{
+				$changePasswordViewModel->addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your password."));
+			}
+		}
+		else
+		{
+			$changePasswordViewModel->addErrorMessage("dbError", gettext("Opps, it looks like your passwords don't match."));
+		}
+
+		//Load the userViewModel
+		$userViewModel = $this->loadViewModel('shared/UserViewModel');		
+
+		//Load the register view
+		$view = $this->loadView('profile');
+
+		//Add a variable with old userViewModel data so that it can be accessed in the view
+		$view->set('userViewModel', $userViewModel);
+		
+		//Render the register view. true indicates to load the layout pages as well
+		$view->render(true);
+	}
+
+	function changeprofilepicture()
+	{
+	}
+
+	function changebackgroundpicture()
+	{
+	}
+
 	function profile()
 	{
 		//Check if users is authenticated for this request
@@ -172,30 +257,35 @@ class Account extends Controller {
 		$this->AuthRequest();
 
 		//Load the userViewModel
-		$userViewModel = $this->loadViewModel('shared/UserViewModel');
+		$profileViewModel = $this->loadViewModel('ProfileViewModel');
+
+		//Load the AccountModel to access account functions
+		$model = $this->loadModel('AccountModel');
+
+		$profileViewModel = $model->getProfileByID($this->currentUser->UserId);
 
 		//Execute code if a post back
 		if($this->isPost())
 		{			
 			//Map post values to the userViewModel
-			$userViewModel = AutoMapper::mapPost($userViewModel);
-
-			//Load the AccountModel to access account functions
-			$model = $this->loadModel('AccountModel');
+			$profileViewModel = AutoMapper::mapPost($profileViewModel);			
 			
 			//Validate data that was posted to the server
 			//This will also set the temp errors to be shown in the view
-			if($userViewModel->validate())
+			if($profileViewModel->validate())
 			{		
 				//Attempt to register the user with our website				
-				if($model->updateUserProfile($userViewModel))
+				if($model->updateUserProfile($profileViewModel))
 				{
+					$sessionManger = new SessionManager();
+					$sessionManger->setLanguageSession($profileViewModel->LanguageType_LanguageId);
+
 					//If success, send user to the home page
 					$this->redirect("account/home");	
 				}
 				else
 				{
-					$user->addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your profile."));
+					$profileViewModel->addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your profile."));
 				}					
 			}			
 		}
@@ -204,7 +294,7 @@ class Account extends Controller {
 		$view = $this->loadView('profile');
 
 		//Add a variable with old userViewModel data so that it can be accessed in the view
-		$view->set('userViewModel', $userViewModel);
+		$view->set('userViewModel', $profileViewModel);
 		
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);

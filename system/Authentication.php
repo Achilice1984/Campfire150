@@ -32,6 +32,11 @@ class Authentication
 		return $isAuthenticated;
 	}
 
+	public function verifyPassword($loginPassword, $dbPassword)
+	{
+		return password_verify($loginPassword, $dbPassword);
+	}
+
 	public function getUser()
 	{		
 		$sessionManger = new SessionManager();
