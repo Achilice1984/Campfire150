@@ -56,7 +56,7 @@ class Controller {
 	****************************************************/
 	public function loadModel($name)
 	{
-		$urlArray = split("/", $name);
+		$urlArray = explode("/", $name);
 
 		if(count($urlArray) > 1)
 		{
@@ -75,7 +75,7 @@ class Controller {
 
 	public function loadViewModel($name)
 	{
-		$urlArray = split("/", $name);
+		$urlArray = explode("/", $name);
 
 		if(count($urlArray) > 1)
 		{
