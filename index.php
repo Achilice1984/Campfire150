@@ -73,7 +73,7 @@ else
 	error_reporting(-1);
 }
 
-set_error_handler("exception_error_handler");
+// set_error_handler("exception_error_handler");
 
 pip();
 
