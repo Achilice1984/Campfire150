@@ -11,14 +11,18 @@ class AccountModel extends Model {
 		//Get user that matches email address
 		$user = $this->fetchIntoClass($statement, array(":Email" => $loginViewModel->Email), "shared/UserViewModel");
 
+		if (isset($user)) {
+			$user = $user[0];
+		}
+
 		if($user->VerifiedEmail) //Has user verified email?
 		{
 			$currentTime = new DateTime();
 
-			if(!isset($user->LockoutTimes) || strtotime('-15 minutes') > $user->LockoutTimes) //Is user locked out?
-			{
+			// if(!isset($user->LockoutTimes) || strtotime('-15 minutes') > $user->LockoutTimes) //Is user locked out?
+			// {
 				//check to see if user is properly authenticated
-				if($authentication->authenticate($loginViewModel->Password, $user[0])) //Is user peoperly authenticated?
+				if($authentication->authenticate($loginViewModel->Password, $user)) //Is user peoperly authenticated?
 				{
 					//Set login and lockouts back to starting point
 					$statement = "UPDATE User SET FailedLoginAttempt = :FailedLoginAttempt, LockoutTimes = :LockoutTimes";
@@ -68,12 +72,52 @@ class AccountModel extends Model {
 					//add lockout
 					return false;
 				}
-			}
+			//}
 		} // End of if($user->VerifiedEmail) //Has user verified email?
 		else
 		{
 			return false; //Email not verified
 		}
+	}
+
+	public function updateUserPassword($user, $changePasswordViewModel)
+	{
+		//Accepts an email address, a new password, and an old password
+		//Verifies that old password and email match
+		//Updates the password in the database with the new password
+		//Returns true or false if the password was updated properly or not		
+
+		$statement = "SELECT * FROM User WHERE Email = :Email";
+
+		//Get user that matches email address
+		$dbUser = $this->fetchIntoClass($statement, array(":Email" => $user->Email), "shared/UserViewModel");
+
+		if (isset($dbUser)) {
+			$dbUser = $dbUser[0];
+
+			$authentication = new Authentication();
+		
+			if($authentication->verifyPassword($changePasswordViewModel->OldPassword, $dbUser->Password))
+			{
+				$statement = "UPDATE User SET Password = :Password";
+				$statement .= " WHERE UserId = :UserId";
+
+				$parameters = array( 
+					":UserId" => $user->UserId,
+					":Password" => $authentication->hashPassword($changePasswordViewModel->Password)
+				);
+				
+				$rowCount = $this->fetchRowCount($statement, $parameters);
+
+				//Success insert
+				if($rowCount >= 1)
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	public function logout()
@@ -85,8 +129,8 @@ class AccountModel extends Model {
 	{
 		$authentication = new Authentication();
 
-		$statement = "INSERT INTO User (Email, Password, LanguageType_LanguageId, FirstName, LastName, MidName, Address, PostalCode, PhoneNumber, VerificationCode)";
-		$statement .= " VALUES (:Email, :Password, :LanguageType_LanguageId, :FirstName, :LastName, :MidName, :Address, :PostalCode, :PhoneNumber, :VerificationCode)";
+		$statement = "INSERT INTO User (Email, Password, LanguageType_LanguageId, FirstName, LastName, MidName, Address, PostalCode, PhoneNumber, VerificationCode, VerifiedEmail)";
+		$statement .= " VALUES (:Email, :Password, :LanguageType_LanguageId, :FirstName, :LastName, :MidName, :Address, :PostalCode, :PhoneNumber, :VerificationCode, :VerifiedEmail)";
 
 		$user->Password = $authentication->hashPassword($user->Password);
 
@@ -94,22 +138,26 @@ class AccountModel extends Model {
 
 		$parameters = array( 
 			":Email" => $user->Email, 
-			":Password" => $user->Password, 
+			":Password" => $user->Password,
+			":LanguageType_LanguageId" => $user->LanguageType_LanguageId, 
 			":FirstName" => $user->FirstName, 
 			":LastName" => $user->LastName, 
 			":MidName" => $user->MidName, 
 			":Address" => $user->Address, 
 			":PostalCode" => $user->PostalCode, 
 			":PhoneNumber" => $user->PhoneNumber,			
-			":VerificationCode" => $hashedEmailVerification
+			":VerificationCode" => $hashedEmailVerification,
+			":VerifiedEmail" => true
 		);
 		
+		//$this->sendEmailVerification($user->Email, $hashedEmailVerification);
+
 		$rowCount = $this->fetchRowCount($statement, $parameters);
 
 		//Success insert
 		if($rowCount >= 1)
 		{
-			sendEmailVerification($user->Email, $hashedEmailVerification);
+			//sendEmailVerification($user->Email, $hashedEmailVerification);
 
 			return true;
 		}
@@ -166,33 +214,26 @@ class AccountModel extends Model {
 	}
 	public function updateUserProfile($user)
 	{
-		//Accepts a User class
-		//Update user profile in database
-		//Returns true or false if the user was updated properly or not
-
 		$authentication = new Authentication();
 
-		$statement = "UPDATE User SET Email = :Email, Address = :Address, PostalCode = :PostalCode, City = :City, Province = :Province, Country = :Country, PhoneNumber = :PhoneNumber, FirstName = :FirstName, LastName = :LastName, MidName = :MidName";
+		$statement = "UPDATE User SET LanguageType_LanguageId = :LanguageType_LanguageId, Email = :Email, Address = :Address, PostalCode = :PostalCode, PhoneNumber = :PhoneNumber, FirstName = :FirstName, LastName = :LastName, MidName = :MidName";
 		$statement .= " WHERE UserId = :UserId";
 
 		$parameters = array( 
 			":Email" => $user->Email, 
 			":Address" => $user->Address, 
-			":PostalCode" => $user->PostalCode, 
-			":City" => $user->City,
-			":Province" => $user->Province,
-			":Country" => $user->Country,
-
+			":PostalCode" => $user->PostalCode,
 			":PhoneNumber" => $user->PhoneNumber, 
 			":FirstName" => $user->FirstName, 
 			":LastName" => $user->LastName, 
 			":MidName" => $user->MidName,
-			":UserId" => $userID
+			":UserId" => $user->UserId,
+			":LanguageType_LanguageId" => $user->LanguageType_LanguageId
 		);
 
 		
 		$rowCount = $this->fetchRowCount($statement, $parameters);
-		//echo "<br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />" . $rowCount . "sdnbfkbnsdfkb";
+
 		//Success insert
 		if($rowCount >= 1)
 		{
@@ -205,38 +246,65 @@ class AccountModel extends Model {
 			return false;
 		}
 	}
-	public function updateUserPassword($userID, $newPassword, $oldPassword)
+
+	public function updateUserLanguagePreference($userId, $languageId)
 	{
-		//Accepts an email address, a new password, and an old password
-		//Verifies that old password and email match
-		//Updates the password in the database with the new password
-		//Returns true or false if the password was updated properly or not
-	}
+		$statement = "UPDATE User SET LanguageType_LanguageId = :LanguageType_LanguageId";
+		$statement .= " WHERE UserId = :UserId";
+
+		$parameters = array( 
+			":UserId" => $userId,
+			":LanguageType_LanguageId" => $languageId
+		);
+
+		
+		$rowCount = $this->fetchRowCount($statement, $parameters);
+
+		//Success insert
+		if($rowCount >= 1)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}	
 	
 	public function getUserProfileByEmail($email)
 	{
-		//Accepts an email
-		//Returns a User class with profile info relate to an email address
-		$authentication = new Authentication();
+		$statement = "SELECT * FROM User WHERE Email = :Email";
 
-		$statement = "SELECT * FROM User WHERE Email = ?";
+		$user = $this->fetchIntoClass($statement, array(":Email" => $email), "shared/UserViewModel");
 
-		$user = $this->fetchIntoClass($statement, array($email), "Shared/User");
-
-		return $user;
+		return $user[0];
 	}
 	public function getUserProfileByID($userID)
 	{
-		//Accepts a user id
-		//Returns a User class with profile info relate to its id
-		$authentication = new Authentication();
+		$statement = "SELECT * FROM User WHERE UserId = :UserId";
 
-		$statement = "SELECT * FROM User WHERE UserId = ?";
+		$user = $this->fetchIntoClass($statement, array( ":UserId" => $userID), "shared/UserViewModel");
 
-		$user = $this->fetchIntoClass($statement, array($userID), "Shared/User");
-
-		return $user;
+		return $user[0];
 	}
+
+	public function getProfileByEmail($email)
+	{
+		$statement = "SELECT * FROM User WHERE Email = :Email";
+
+		$user = $this->fetchIntoClass($statement, array(":Email" => $email), "Account/ProfileViewModel");
+
+		return $user[0];
+	}
+	public function getProfileByID($userID)
+	{
+		$statement = "SELECT * FROM User WHERE UserId = :UserId";
+
+		$user = $this->fetchIntoClass($statement, array( ":UserId" => $userID), "Account/ProfileViewModel");
+
+		return $user[0];
+	}
+
 	public function getTotalStoriesApproved($userID)
 	{
 		//Accepts an user id

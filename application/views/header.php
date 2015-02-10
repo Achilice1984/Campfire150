@@ -39,6 +39,13 @@
         <div class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
             <?php
+              $language = "Français";
+
+              if($_SESSION["languagePreference"] != "en_CA")
+              {
+                $language = "English";
+              }
+
               if($currentUser->IsAuth)
               {
                 echo '<li><a href="' . BASE_URL . 'account/home">' . $currentUser->Email . '</a></li>';
@@ -48,13 +55,20 @@
                   echo '<ul class="dropdown-menu" role="menu">';
                     echo '<li><a href="' . BASE_URL . 'account/profile"> ' . gettext("Update Profile") . '</a></li>';
                     echo '<li><a href="' . BASE_URL . 'account/logout"> ' . gettext("Logout") . '</a></li>';
+                    echo '<li><a href="' . BASE_URL . 'account/changelanguage">' . $language . '</a></li>';
                   echo '</ul>';
                 echo '</li>';
               }
               else
-              {
-                echo '<li><a style="padding-right:0px;" href="' . BASE_URL . 'account/login"><span class="glyphicon glyphicon-user"></span> ' . gettext("Login") . ' / </a></li>';
-                echo '<li><a style="padding-left:5px;" href="' . BASE_URL . 'account/register"> ' . gettext("Register") . '</a></li>';
+              {                
+                echo '<li class="dropdown">';
+                  echo '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-cog"></span><span class="caret"></span></a>';
+                  echo '<ul class="dropdown-menu" role="menu">';
+                    echo '<li><a href="' . BASE_URL . 'account/login">' . gettext("Login") . '</a></li>';
+                    echo '<li><a href="' . BASE_URL . 'account/register">' . gettext("Register") . '</a></li>';
+                    echo '<li><a href="' . BASE_URL . 'account/changelanguage">' . $language . '</a></li>';
+                  echo '</ul>';
+                echo '</li>';
               }
             ?>
             
