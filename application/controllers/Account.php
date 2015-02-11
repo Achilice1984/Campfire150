@@ -244,7 +244,6 @@ class Account extends Controller {
 
 	function changeprofilepicture()
 	{
-<<<<<<< HEAD
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
 		$this->AuthRequest();
@@ -309,9 +308,6 @@ class Account extends Controller {
 
 
 		$this->redirect("account/profile");
-=======
-		//code
->>>>>>> origin/master
 	}
 
 	function changebackgroundpicture()
