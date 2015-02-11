@@ -73,7 +73,7 @@ else
 	error_reporting(-1);
 }
 
-// set_error_handler("exception_error_handler");
+ set_error_handler("exception_error_handler");
 
 pip();
 
@@ -91,6 +91,8 @@ pip();
 	}	
 
 	function exception_error_handler($errno, $errstr, $errfile, $errline ) {
+
+		global $config;
 
 		$_SESSION["errno"] = $errno;
 		$_SESSION["errstr"] = $errstr;

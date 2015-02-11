@@ -5,7 +5,8 @@
 class AccountHomeViewModel extends ViewModel
 {
 	//Lists of data
-	public $recommendedStoryList;
+	public $friendsRecommendedStoryList;
+	public $userRecommendedStoryList;
 	public $usersStoryList;
 	public $followingList;
 
