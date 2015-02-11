@@ -26,6 +26,11 @@ class Model {
 		}
 	}
 
+	public function lastInsertId()
+	{
+		return $this->connection->lastInsertId();
+	}
+
 	public function fetchIntoClass($qry, $params=array(), $className)
 	{		
 		//Example array: array(':calories' => $calories, ':colour' => $colour)
@@ -40,7 +45,7 @@ class Model {
 			 $pdo = $this->connection->prepare($qry);
 			 $pdo->execute($params);
 
-			 $urlArray = split("/", $className);
+			 $urlArray = explode("/", $className);
 
 			if(count($urlArray) > 1)
 			{

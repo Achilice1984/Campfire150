@@ -20,6 +20,7 @@ class PictureViewModel extends ViewModel
 
 	function __construct()
 	{
+		parent::__construct(array());
 		//Add validation decorators
 		// parent::__construct(array('Email' => 
 		// 							array('email' => 'Invalid email',
