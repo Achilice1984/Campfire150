@@ -2,51 +2,18 @@
 
 class StoryModel extends Model {
 
+
+	/******************************************************************************************************************
+	*
+	*				Story Lists
+	*
+	******************************************************************************************************************/
+
 	public function searchStories($storySearch, $howMany, $page)
 	{
 		//Accepts string to search for a story
 		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
 		//returns an array of Story class that relate to the search string
-	}
-
-	public function publishNewStory($story)
-	{
-		//Accepts a story class
-		//inserts a new story with the publish flag set to false
-		//returns bool if the story was saved succesfully
-	}
-
-	public function changeStoryPrivacySetting($userID, $storyID, $privacyTypeID)
-	{
-		//Accepts a user id (owner), a story id, and a privacy type
-		//checks that userid is owner of story
-		//Change the privacy setting
-		//returns bool if the setting changed or not
-	}
-
-	public function flagStoryAsInapropriate($storyID, $userID, $isInappropriate)
-	{
-		//Accepts a storyID, a userID, and a bool for if it was thought to be inapropriate
-		//checks to see if user already marked it as inapropriate
-		//returns bool if saved correctly
-	}
-
-	public function getStory($userID, $storyID)
-	{
-		//Accepts a user id, and a storyID
-		//Check privacy type
-		//Must be approved
-		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
-		//returns a Story class
-	}
-
-	public function getStoryAsAdmin($adminID, $storyID)
-	{
-		//Accepts an admin id and a storyID
-		//Do not Check privacy type
-		//Does not have to be approved
-		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
-		//returns a Story class
 	}
 
 	public function getStoryListByCategoryID($categoryID, $howMany, $page)
@@ -127,6 +94,68 @@ class StoryModel extends Model {
 		//Should not contain any unpublished stories
 		//returns an array of Story class related to a category
 	}
+
+
+	/******************************************************************************************************************
+	*
+	*				Story Updates
+	*
+	******************************************************************************************************************/
+
+	public function publishNewStory($story)
+	{
+		//Accepts a story class
+		//inserts a new story with the publish flag set to false
+		//returns bool if the story was saved succesfully
+	}
+
+	public function changeStoryPrivacySetting($userID, $storyID, $privacyTypeID)
+	{
+		//Accepts a user id (owner), a story id, and a privacy type
+		//checks that userid is owner of story
+		//Change the privacy setting
+		//returns bool if the setting changed or not
+	}
+
+	public function flagStoryAsInapropriate($storyID, $userID, $isInappropriate)
+	{
+		//Accepts a storyID, a userID, and a bool for if it was thought to be inapropriate
+		//checks to see if user already marked it as inapropriate
+		//returns bool if saved correctly
+	}
+
+	
+	/******************************************************************************************************************
+	*
+	*				Story Get Single
+	*
+	******************************************************************************************************************/	
+
+	public function getStory($userID, $storyID)
+	{
+		//Accepts a user id, and a storyID
+		//Check privacy type
+		//Must be approved
+		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
+		//returns a Story class
+	}
+
+	public function getStoryAsAdmin($adminID, $storyID)
+	{
+		//Accepts an admin id and a storyID
+		//Do not Check privacy type
+		//Does not have to be approved
+		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
+		//returns a Story class
+	}
+
+	
+
+	/******************************************************************************************************************
+	*
+	*				Story Comments
+	*
+	******************************************************************************************************************/	
 
 	public function addCommentToStory($comment, $storyID, $userID)
 	{
@@ -214,28 +243,6 @@ class StoryModel extends Model {
 
 		$this->execute($statement);
 	}
-
-	
-	public function get($id)
-	{
-		return $result;
-	}
-
-	public function insert()
-	{
-		return $result;
-	}
-
-	public function update()
-	{
-		return $result;
-	}
-
-	public function delete()
-	{
-		return $result;
-	}
-
 }
 
 ?>

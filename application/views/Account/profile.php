@@ -85,7 +85,7 @@
             <div role="tabpanel" class="tab-pane" id="update_password">
                 <form action="<?php echo BASE_URL; ?>Account/changepassword" method="post">
                     <div class="form-group">
-                        <label for="OldPassword">Old Password</label>
+                        <label for="OldPassword"><?php echo gettext("Old Password"); ?></label>
                         <input type="password" class="form-control" id="OldPassword" name="OldPassword" placeholder="<?php echo gettext("Enter Old Password"); ?>">
                     </div>
                     <div class="form-group">

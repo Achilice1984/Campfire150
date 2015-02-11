@@ -76,8 +76,6 @@ class Account extends Controller {
 			//Map post values to the loginViewModel
 			$loginViewModel = AutoMapper::mapPost($loginViewModel);
 
-			debugit($loginViewModel);
-
 			//Load the AccountModel to access account functions
 			$model = $this->loadModel('AccountModel');
 			
@@ -246,6 +244,7 @@ class Account extends Controller {
 
 	function changeprofilepicture()
 	{
+<<<<<<< HEAD
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
 		$this->AuthRequest();
@@ -310,6 +309,9 @@ class Account extends Controller {
 
 
 		$this->redirect("account/profile");
+=======
+		//code
+>>>>>>> origin/master
 	}
 
 	function changebackgroundpicture()
