@@ -246,6 +246,70 @@ class Account extends Controller {
 
 	function changeprofilepicture()
 	{
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+		
+		//This loads up your model for talking to the database
+		//it contains all functions needed to update database
+		$model = $this->loadModel('AccountModel');
+
+		//Load the userViewModel
+		$changeProfilePictureViewModel = $this->loadViewModel('Account/ChangeProfilePictureViewModel');
+
+		//Execute code if a post back
+		//This just checks to see if a form was submitted
+		if($this->isPost())
+		{	
+			//Map post values to the userViewModel
+			$changeProfilePictureViewModel = AutoMapper::mapPost($changeProfilePictureViewModel);
+
+			//Validate data that was posted to the server
+			//This will also set the temp errors to be shown in the view
+			if($changeProfilePictureViewModel->validate())
+			{	
+				//Call the database
+				//this function will save image meta data in the database
+				//it will return the image id
+				//1 == profile type image in the database
+				$imageId = $model->saveImageMetaData($cuurentUser->UserId, $changeProfilePictureViewModel, 1);
+
+				if(isset($imageId))
+				{
+					//image saved succefully in database
+					//process image and save in file system
+					//debugit($changeProfilePictureViewModel);
+
+					//this is your image file
+					//$changeProfilePictureViewModel->ProfilePicture;
+
+					$savedSuccessfuly = saveImage($cuurentUser->UserId, $changeProfilePictureViewModel, 1);
+
+					if($savedSuccessfuly == false)
+					{
+						//Ann error occoured you hvae to remove new profile picture meta data from the database
+						$model->removeImageMetaData($imageId);
+
+						//add error message so user knows whats up
+						$changeProfilePictureViewModel->addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
+					}
+				}
+				else
+				{
+					//add error message so user knows whats up
+					$changeProfilePictureViewModel->addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
+				}
+
+			}
+
+		}
+		else
+		{
+			$this->redirect("");
+		}
+
+
+		$this->redirect("account/profile");
 	}
 
 	function changebackgroundpicture()
