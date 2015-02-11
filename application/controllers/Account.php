@@ -289,13 +289,13 @@ class Account extends Controller {
 						$model->removeImageMetaData($imageId);
 
 						//add error message so user knows whats up
-						$changeProfilePictureViewModel->addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
+						addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
 					}
 				}
 				else
 				{
 					//add error message so user knows whats up
-					$changeProfilePictureViewModel->addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
+					addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
 				}
 
 			}
