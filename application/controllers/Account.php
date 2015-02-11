@@ -244,7 +244,6 @@ class Account extends Controller {
 
 	function changeprofilepicture()
 	{
-<<<<<<< HEAD
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
 		$this->AuthRequest();
@@ -290,13 +289,13 @@ class Account extends Controller {
 						$model->removeImageMetaData($imageId);
 
 						//add error message so user knows whats up
-						$changeProfilePictureViewModel->addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
+						addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
 					}
 				}
 				else
 				{
 					//add error message so user knows whats up
-					$changeProfilePictureViewModel->addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
+					addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
 				}
 
 			}
@@ -309,9 +308,6 @@ class Account extends Controller {
 
 
 		$this->redirect("account/profile");
-=======
-		//code
->>>>>>> origin/master
 	}
 
 	function changebackgroundpicture()
