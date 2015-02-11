@@ -7,76 +7,95 @@
 ***
 * validator sub functions like phoneThreeDigit or name etc, all take a variable and return true/false
 */
-class Validator{
-	public function validate($viewModel)	{	
-		$validationMessages = array();
-		$validationDecorators = $viewModel->getValidationDecorators();
-		if(isset($validationDecorators)){
-			foreach ($validationDecorators as $property => $validationTypes) {
-				foreach ($validationTypes as $validationType => $errorMessage) {
-					try{
-						//Call a validation method
-						if($this->$validationType($viewModel->$property)){
-				   $validationMessages[$property][$validationType] = $errorMessage;
-				  }
-			  }
-			  catch(Exception $ex){
-			   $validationResult->validationMessages[$property] = "Some unknown error has occurred";
-			  }
-		  }
-			}
-		}
-		$validationResult = new ValidationResult($validationMessages);
-		return $validationResult;
-	}
-	private function email($propertyValue){
-		return !filter_var($propertyValue, FILTER_VALIDATE_EMAIL);
-	}
-	private function required($propertyValue){
-		return empty($propertyValue);
-	}
+class Validator
+{
+  public function validate($viewModel)
+  { 
+    $validationMessages = array();
+    $validationDecorators = $viewModel->getValidationDecorators();
+
+    if(isset($validationDecorators))
+    {
+      foreach ($validationDecorators as $property => $validationTypes) {
+        foreach ($validationTypes as $validationType => $errorMessage) {
+
+          try
+          {
+            //Call a validation method
+            if($this->$validationType($viewModel->$property))
+              {
+                $validationMessages[$property][$validationType] = $errorMessage;
+              }
+            }
+            catch(Exception $ex)
+            {
+              $validationMessages[$property][$validationType] = "Some unknown error has occurred";
+            }
+          }
+      }
+    }
+
+    //$validationResult = new ValidationResult($validationMessages);
+
+    return $validationMessages;
+  }
+
+  private function email($propertyValue)
+  {
+    return !filter_var($propertyValue, FILTER_VALIDATE_EMAIL);
+  }
+
+  private function required($propertyValue)
+  {
+    return empty($propertyValue);
+  }
+
 	private function name($match){
-  if (preg_match('/^[a-zA-Z -]{2,30}$/', $match)){
-   return true;
-  }else{
-   return false;
-  }
+    if (preg_match('/^[a-zA-Z -]{2,30}$/', $match)){
+      return true;
+    }
+    else{
+      return false;
+    }
 	}
- private function firstName($match){
-  if (preg_match('/^[a-zA-Z -]{2,30}$/', $match)){
-   return true;
-  }else{
-   return false;
+  private function firstName($match){
+    if (preg_match('/^[a-zA-Z -]{2,30}$/', $match)){
+      return true;
+    }
+    else{
+      return false;
+    }
   }
- }
- private function lastName($match){
-  if (preg_match('/^[a-zA-Z -]{2,30}$/', $match)){
-   return true;
-  }else{
-   return false;
+  private function lastName($match){
+    if (preg_match('/^[a-zA-Z -]{2,30}$/', $match)){
+      return true;
+    }else{
+      return false;
+    }
   }
- }
- private function phoneThreeDigit($match){
-  if (preg_match('/^[0-9]{3}/', $match)){
-   return true;
-  }else{
-   return false;
-  } 
- }
- private function phoneAreaCode($match){
-  if (preg_match('/^[0-9]{3}/', $match)){
-   return true;
-  }else{
-   return false;
-  } 
- }
- private function phoneFourDigit($match){
-  if (preg_match('/^[0-9]{4}/', $match)){
-   return true;
-  }else{
-   return false;
-  } 
- }
+  private function phoneThreeDigit($match){
+    if (preg_match('/^[0-9]{3}/', $match)){
+      return true;
+    }
+    else{
+      return false;
+    } 
+  }
+  private function phoneAreaCode($match){
+    if (preg_match('/^[0-9]{3}/', $match)){
+      return true;
+    }
+    else{
+      return false;
+    } 
+  }
+  private function phoneFourDigit($match){
+    if (preg_match('/^[0-9]{4}/', $match)){
+      return true;
+    }else{
+      return false;
+    } 
+  }
  private function unitNo($match){
   if (preg_match('/^[0-9A-Za-z]{1,6}/', $match)){
    return true;

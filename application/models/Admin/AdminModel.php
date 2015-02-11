@@ -138,7 +138,7 @@ class AdminModel extends Model {
 
 					$statement .= "(SELECT Story_StoryId FROM user_recommend_story WHERE Opinion = 0) ";
 
-					$statement .= "LIMIT ? OFFSET ?"
+					$statement .= "LIMIT ? OFFSET ?";
 
 					$parameters = array($howMany, $offset);
 
@@ -370,10 +370,14 @@ class AdminModel extends Model {
 
 					$storyList = $this->fetchIntoClass($statement, $parameters, "Shared/Story");
 
+<<<<<<< HEAD
 					return $storyList;
 				}
 				catch(PDOException $e) 
 				{
+=======
+			$statement .= "ORDER BY CommentId LIMIT ? OFFSET ?";
+>>>>>>> origin/master
 
 					return $e->getMessage();
 

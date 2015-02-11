@@ -11,19 +11,43 @@
 
 class Controller {
 
-		public function isAuth()
+	public $currentUser;
+
+	function __construct()
+	{
+		$sessionManager = new SessionManager();
+
+		$this->currentUser = $sessionManager->getUserSession();
+
+		if($this->currentUser == null)
 		{
-			$auth = new Authentication();
-
-			return $auth->isAuthenticated();
+			$this->currentUser = new UserViewModel();
 		}
+	}
 
-		public function isAdmin()
+	public function isAuth()
+	{
+		$auth = new Authentication();
+
+		return $auth->isAuthenticated();
+	}
+
+	public function isAdmin()
+	{
+		$auth = new Authentication();
+
+		return $auth->isAdmin();
+	}
+
+	public function AuthRequest()
+	{
+		$auth = new Authentication();
+
+		if(!$auth->isAuthenticated())
 		{
-			$auth = new Authentication();
-
-			return $auth->isAdmin();
+			$this->redirect("");
 		}
+	}
 	
 	/***************************************************
 	*
@@ -32,7 +56,7 @@ class Controller {
 	****************************************************/
 	public function loadModel($name)
 	{
-		$urlArray = split("/", $name);
+		$urlArray = explode("/", $name);
 
 		if(count($urlArray) > 1)
 		{
@@ -51,7 +75,7 @@ class Controller {
 
 	public function loadViewModel($name)
 	{
-		$urlArray = split("/", $name);
+		$urlArray = explode("/", $name);
 
 		if(count($urlArray) > 1)
 		{
@@ -71,10 +95,8 @@ class Controller {
 	
 	public function loadView($name)
 	{
-		$sessionManager = new SessionManager();
-
 		$view = new View(get_class($this) . "/" . $name);
-		$view->set("currentUser", $sessionManager->getUserSession());
+		$view->set("currentUser", $this->currentUser);
 
 		return $view;
 	}

@@ -1,5 +1,7 @@
 <?php 
 
+$config["debugMode"] = true;
+
 $config['base_url'] = "http://localhost:8084/CampFire150/"; // Base URL including trailing slash (e.g. http://localhost/)
 
 $config['default_controller'] = 'home'; // Default controller to load

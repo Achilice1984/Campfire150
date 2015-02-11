@@ -9,12 +9,7 @@ class AccountViewModel extends ViewModel
 
 	function __construct()
 	{		
-		parent::__construct(array('email' => 
-									array('email' => 'Invalid email',
-											'required' => 'email is required'),
-									'name' =>
-										array('required' => 'the name field is required!')
-								));
+		parent::__construct(array());
 	}
 }
 ?>
