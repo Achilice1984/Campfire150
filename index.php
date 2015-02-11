@@ -14,32 +14,10 @@ require_once('./application/plugins/automapper/AutoMapper.php');
 require_once('./application/plugins/akismet/akismet.class.php');
 require_once('./application/plugins/mailchimp/Mailchimp.php');
 require_once('./application/plugins/alphaid/alphaID.php');
+require_once('./application/plugins/successanderror/successanderror.php');
 
 //Need this if php version less than 5.5
 require_once('./application/plugins/password/password.php');
-
-// Language Setup
-$language;
-
-if(!isset($_SESSION["languagePreference"]))
-{
-	$language = $_SESSION["languagePreference"] = "en_CA";
-}
-else
-{
-	$language = $_SESSION["languagePreference"];
-}
-
-putenv("LC_ALL={$language}");
-T_setlocale(LC_MESSAGES, $language);
- 
-// Set the text domain as "messages"
-$domain = "messages";
-bindtextdomain($domain, "locale"); 
-textdomain($domain);
-
-// Remove any lingering errors
-unset($_SESSION["errorMessages"]);
 
 
 // Defines
@@ -64,6 +42,26 @@ global $config;
 define('BASE_URL', $config['base_url']);
 
 
+// Language Setup
+$sessionManager = new SessionManager();
+$language = $sessionManager->setLanguagePrefernece();
+
+putenv("LC_ALL={$language}");
+T_setlocale(LC_MESSAGES, $language);
+ 
+// Set the text domain as "messages"
+$domain = "messages";
+bindtextdomain($domain, "locale"); 
+textdomain($domain);
+
+
+//Remove old success and error messages from sessions
+unsetErrors();
+unsetSuccess();
+
+
+
+//If we are in debugMode, show errors and use custom error handler for easier to read errors
 if($config["debugMode"] == true)
 {
 	error_reporting(E_ERROR | E_WARNING | E_PARSE | E_NOTICE);	
@@ -101,6 +99,5 @@ pip();
 
 		header('Location: '. $config['base_url'] . "error/generic");
 		exit;
-	}
-	
+	}	
 ?>

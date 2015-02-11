@@ -31,14 +31,7 @@ class ViewModel
 
 		return $this->isValid;
 	}
-
-	public function addErrorMessage($key, $errorMessage)
-	{
-		$sessionManager = new SessionManager();
-		$sessionManager->addErrorMessages($key, $errorMessage);
-	}
-
-
+	
 	public function isValid()
 	{
 		return $this->isValid;

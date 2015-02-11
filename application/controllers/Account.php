@@ -94,7 +94,7 @@ class Account extends Controller {
 				else //Failed login
 				{
 					// Add an error message because login failed 
-					$loginViewModel->addErrorMessage("dbError", gettext("Opps, it looks like your attempt to login faild."));
+					addErrorMessage("dbError", gettext("Opps, it looks like your attempt to login faild."));
 				}				
 			}			
 		}
@@ -183,7 +183,7 @@ class Account extends Controller {
 				}
 				else
 				{
-					$userViewModel->addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to register your profile."));
+					addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to register your profile."));
 				}					
 			}			
 		}
@@ -221,12 +221,12 @@ class Account extends Controller {
 			}
 			else
 			{
-				$changePasswordViewModel->addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your password."));
+				addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your password."));
 			}
 		}
 		else
 		{
-			$changePasswordViewModel->addErrorMessage("dbError", gettext("Opps, it looks like your passwords don't match."));
+			addErrorMessage("dbError", gettext("Opps, it looks like your passwords don't match."));
 		}
 
 		//Load the userViewModel
@@ -353,7 +353,7 @@ class Account extends Controller {
 				}
 				else
 				{
-					$profileViewModel->addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your profile."));
+					addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your profile."));
 				}					
 			}			
 		}
