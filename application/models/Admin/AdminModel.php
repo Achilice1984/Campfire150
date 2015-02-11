@@ -370,14 +370,14 @@ class AdminModel extends Model {
 
 					$storyList = $this->fetchIntoClass($statement, $parameters, "Shared/Story");
 
-<<<<<<< HEAD
+
 					return $storyList;
 				}
 				catch(PDOException $e) 
 				{
-=======
+
 			$statement .= "ORDER BY CommentId LIMIT ? OFFSET ?";
->>>>>>> origin/master
+
 
 					return $e->getMessage();
 

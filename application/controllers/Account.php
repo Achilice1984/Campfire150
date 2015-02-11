@@ -68,8 +68,10 @@ class Account extends Controller {
 	function test()
 	{
 		$model = $this->loadModel('Admin/AdminModel');
-		echo "string";
+		
 		//$returnData = $model->getStoryListByCategoryID(1,1);
+		
+		debugit($this->currentUser);
 	}
 
 	function login()
