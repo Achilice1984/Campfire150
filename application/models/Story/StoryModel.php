@@ -41,9 +41,9 @@ class StoryModel extends Model {
 
 			$parameters = array($privacyTypeID, $userID, $storyID);
 
-			ru $this->execute($statement);
+			return $this->execute($statement);
 		}
-		catch(PDOException $e) 
+		catch(PDOException $e)
 		{
 			return $e->getMessage();
 		}
@@ -85,11 +85,10 @@ class StoryModel extends Model {
 
 			return $story;
 		}
-		catch(PDOException $e) 
+		catch(PDOException $e)
 		{
 			return $e->getMessage();
 		}
-
 	}
 
 	public function getStoryAsAdmin($adminID, $storyID)
