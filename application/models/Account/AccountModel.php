@@ -192,10 +192,9 @@ class AccountModel extends Model {
 		//Deactivate those images
 		$currentActiveImage = $this->fetchIntoClass($selectStatement, $selectParameters, "shared/PictureViewModel");
 
-		debugit($currentActiveImage);
 		if (isset($currentActiveImage[0])) 
 		{
-			$safeToSaveImage = removeImageMetadata($currentActiveImage[0]->PictureId);
+			$safeToSaveImage = $this->removeImageMetadata($currentActiveImage[0]->PictureId);
 		}
 
 		if($safeToSaveImage == true)
@@ -272,7 +271,7 @@ class AccountModel extends Model {
 
 		$pictureViewModel = $this->fetchIntoClass($statement, array(":PictureId" => $pictureId), "shared/PictureViewModel");
 
-		if(isset($pictureViewModel))
+		if(isset($pictureViewModel[0]))
 		{
 			return $pictureViewModel[0];
 		}
@@ -364,7 +363,12 @@ class AccountModel extends Model {
 
 		$user = $this->fetchIntoClass($statement, array(":Email" => $email), "shared/UserViewModel");
 
-		return $user[0];
+		if(isset($user[0]))
+		{
+			return $user[0];
+		}
+
+		return null;
 	}
 	public function getUserProfileByID($userID)
 	{
@@ -372,7 +376,12 @@ class AccountModel extends Model {
 
 		$user = $this->fetchIntoClass($statement, array( ":UserId" => $userID), "shared/UserViewModel");
 
-		return $user[0];
+		if(isset($user[0]))
+		{
+			return $user[0];
+		}
+
+		return null;
 	}
 
 	public function getProfileByEmail($email)
@@ -381,7 +390,12 @@ class AccountModel extends Model {
 
 		$user = $this->fetchIntoClass($statement, array(":Email" => $email), "Account/ProfileViewModel");
 
-		return $user[0];
+		if(isset($user[0]))
+		{
+			return $user[0];
+		}
+
+		return null;
 	}
 	public function getProfileByID($userID)
 	{
@@ -389,7 +403,12 @@ class AccountModel extends Model {
 
 		$user = $this->fetchIntoClass($statement, array( ":UserId" => $userID), "Account/ProfileViewModel");
 
-		return $user[0];
+		if(isset($user[0]))
+		{
+			return $user[0];
+		}
+
+		return null;
 	}
 
 
