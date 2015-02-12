@@ -4,6 +4,9 @@
         <?php 
             //Add error message block to the page
             include(APP_DIR . 'views/shared/displayErrors.php'); 
+
+            //Add success message block to the page
+            include(APP_DIR . 'views/shared/displaySuccess.php'); 
         ?>
     </div>
 
@@ -41,6 +44,18 @@
                                     <input type="radio" name="LanguageType_LanguageId" id="LanguageType_LanguageId2" <?php if($userViewModel->LanguageType_LanguageId == 2) { echo "checked"; } ?> value="2"> <?php echo gettext("French"); ?>
                                 </label>
                             </div>
+                            <div class="form-group">
+                                <label for="ProfilePrivacyType_PrivacyTypeId"><?php echo gettext("Profile Privacy Type"); ?></label>
+                                <select class="form-control" name="ProfilePrivacyType_PrivacyTypeId">
+                                    <?php 
+                                        foreach ($privacyDropdownValues as $dropdownValue) {
+                                            echo "<option " . ($userViewModel->ProfilePrivacyType_PrivacyTypeId == $dropdownValue->Value ? 'selected=selected' : "") . " value='" . $dropdownValue->Value . "'>"; 
+                                                echo $dropdownValue->Name;
+                                            echo "</option>";
+                                        } 
+                                    ?>
+                                </select>
+                            </div>
 
                             <h3 style="padding-top:10px;"><?php echo gettext("Contact Details"); ?></h3>
                             <hr />
@@ -57,10 +72,10 @@
                                 <label for="LastName"><?php echo gettext("Last Name"); ?></label>
                                 <input type="text" class="form-control" id="LastName" name="LastName" placeholder="<?php echo gettext("Enter Your Last Name"); ?>" value="<?php echo $userViewModel->LastName; ?>">
                             </div>
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label for="PhoneNumber"><?php echo gettext("Phone Number"); ?></label>
                                 <input type="phone" class="form-control" id="PhoneNumber" name="PhoneNumber" placeholder="<?php echo gettext("Enter Your Phone Number"); ?>" value="<?php echo $userViewModel->PhoneNumber; ?>">
-                            </div>
+                            </div> -->
 
                             <h3 style="padding-top:10px;"><?php echo gettext("Address"); ?></h3>
                             <hr />
@@ -107,8 +122,7 @@
 
                 <form action="<?php echo BASE_URL; ?>Account/changeprofilepicture" method="post">                    
                     <div class="form-group">
-                        <!-- <label for="ProfilePicture"><?php echo gettext("Re-Type Password"); ?></label> -->
-                        <input type="file" id="ProfilePicture" name="ProfilePicture" placeholder="<?php echo gettext("Re-Type Password"); ?>">
+                        <input type="file" id="ProfilePicture" name="PictureFile" placeholder="<?php echo gettext("Re-Type Password"); ?>">
                     </div>
 
                     <button style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Change Profile Picture"); ?></button>
@@ -121,7 +135,7 @@
                 <form action="<?php echo BASE_URL; ?>Account/changebackgroundpicture" method="post">
                     <div class="form-group">
                         <!-- <label for="BackgroundPicture"><?php echo gettext("Re-Type Password"); ?></label> -->
-                        <input type="file" id="BackgroundPicture" name="BackgroundPicture" placeholder="<?php echo gettext("Re-Type Password"); ?>">
+                        <input type="file" id="BackgroundPicture" name="PictureFile" placeholder="<?php echo gettext("Re-Type Password"); ?>">
                     </div>
 
                     <button style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Change Background Picture"); ?></button>

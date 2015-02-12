@@ -13,6 +13,9 @@
 							<?php 
                                 //Add error message block to the page
                                 include(APP_DIR . 'views/shared/displayErrors.php'); 
+
+                                //Add success message block to the page
+                                include(APP_DIR . 'views/shared/displaySuccess.php'); 
                             ?>
 
 				        	<h3><?php echo gettext("User Details"); ?></h3>
@@ -39,7 +42,20 @@
                                 <label class="radio-inline">
                                     <input type="radio" name="LanguageType_LanguageId" id="LanguageType_LanguageId2" <?php if($userViewModel->LanguageType_LanguageId == 2) { echo "checked"; } ?> value="2"> <?php echo gettext("French"); ?>
                                 </label>
-                            </div>
+                            </div>                            
+                            <div class="form-group">
+				                <label for="ProfilePrivacyType_PrivacyTypeId"><?php echo gettext("Profile Privacy Type"); ?></label>
+				                <select class="form-control" name="ProfilePrivacyType_PrivacyTypeId">
+                       	 			<?php 
+					                	foreach ($privacyDropdownValues as $dropdownValue) {
+					                		echo "<option value='" . $dropdownValue->Value . "'>"; 
+					                			echo $dropdownValue->Name;
+					                		echo "</option>";
+					                	} 
+				                	?>
+								</select>
+				            </div>
+
 
 				            <h3 style="padding-top:10px;"><?php echo gettext("Contact Details"); ?></h3>
 				            <hr />
@@ -56,10 +72,10 @@
 				                <label for="LastName"><?php echo gettext("Last Name"); ?></label>
 				                <input type="text" class="form-control" id="LastName" name="LastName" placeholder="<?php echo gettext("Enter Your Last Name"); ?>" value="<?php echo $userViewModel->LastName; ?>">
 				            </div>
-				            <div class="form-group">
+				            <!-- <div class="form-group">
 				                <label for="PhoneNumber"><?php echo gettext("Phone Number"); ?></label>
 				                <input type="text" class="form-control" id="PhoneNumber" name="PhoneNumber" placeholder="<?php echo gettext("Enter Your Phone Number"); ?>" value="<?php echo $userViewModel->PhoneNumber; ?>">
-				            </div>
+				            </div> -->
 
 				            <h3 style="padding-top:10px;"><?php echo gettext("Address"); ?></h3>
 				            <hr />

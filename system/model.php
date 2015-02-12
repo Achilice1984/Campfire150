@@ -117,6 +117,23 @@ class Model {
 		}
 	}
 
+	public function fetch($qry, $params=array()){
+		//Example array: array(':calories' => $calories, ':colour' => $colour)
+		//Or by order array($calories, $colour)
+		try 
+		{
+			$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+			$pdo = $this->connection->prepare($qry);			
+
+			return $pdo->execute($params);
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
 	public function escapeString($string)
 	{
 		return mysql_real_escape_string($string);

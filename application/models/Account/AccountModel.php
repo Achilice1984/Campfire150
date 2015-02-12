@@ -17,73 +17,71 @@ class AccountModel extends Model {
 		//Get user that matches email address
 		$user = $this->fetchIntoClass($statement, array(":Email" => $loginViewModel->Email), "shared/UserViewModel");
 
-		if (isset($user)) {
-			$user = $user[0];
-		}
-
-		if($user->VerifiedEmail) //Has user verified email?
+		if (isset($user[0])) 
 		{
-			$currentTime = new DateTime();
+			$user = $user[0];
 
-			// if(!isset($user->LockoutTimes) || strtotime('-15 minutes') > $user->LockoutTimes) //Is user locked out?
-			// {
-				//check to see if user is properly authenticated
-				if($authentication->authenticate($loginViewModel->Password, $user)) //Is user peoperly authenticated?
+			if($user->VerifiedEmail) //Has user verified email?
+			{
+				$currentTime = new DateTime();
+
+				if(!isset($user->LockoutTimes) || strtotime('-15 minutes') > $user->LockoutTimes) //Is user locked out?
 				{
-					//Set login and lockouts back to starting point
-					$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt, LockoutTimes = :LockoutTimes";
-					$statement .= " WHERE UserId = :UserId";
-
-					$parameters = array( 					
-						":FailedLoginAttempt" => 0, 
-						":LockoutTimes" => NULL,
-						":UserId" => $user->UserId
-					);
-					
-					$rowCount = $this->fetchRowCount($statement, $parameters);
-
-					//reset lockout 
-					return true;
-				}
-				else //Login failed, update failed attempts
-				{
-					if($user->FailedLoginAttempt >= 5)
+					//check to see if user is properly authenticated
+					if($authentication->authenticate($loginViewModel->Password, $user)) //Is user peoperly authenticated?
 					{
-						//add a failed login attempt and set the lockout time
+						//Set login and lockouts back to starting point
 						$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt, LockoutTimes = :LockoutTimes";
 						$statement .= " WHERE UserId = :UserId";
 
-						$parameters = array( 
-							":FailedLoginAttempt" => $user->FailedLoginAttempt + 1, 
-							":LockoutTimes" => $currentTime,
+						$parameters = array( 					
+							":FailedLoginAttempt" => 0, 
+							":LockoutTimes" => NULL,
 							":UserId" => $user->UserId
 						);
 						
 						$rowCount = $this->fetchRowCount($statement, $parameters);
+
+						//reset lockout 
+						return true;
 					}
-					else
+					else //Login failed, update failed attempts
 					{
-						//add a failed login attempt
-						$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt";
-						$statement .= " WHERE UserId = :UserId";
+						if($user->FailedLoginAttempt >= 5)
+						{
+							//add a failed login attempt and set the lockout time
+							$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt, LockoutTimes = :LockoutTimes";
+							$statement .= " WHERE UserId = :UserId";
 
-						$parameters = array( 
-							":FailedLoginAttempt" => $user->FailedLoginAttempt + 1, 
-							":UserId" => $user->UserId
-						);
-						
-						$rowCount = $this->fetchRowCount($statement, $parameters);
+							$parameters = array( 
+								":FailedLoginAttempt" => $user->FailedLoginAttempt + 1, 
+								":LockoutTimes" => $currentTime,
+								":UserId" => $user->UserId
+							);
+							
+							$rowCount = $this->fetchRowCount($statement, $parameters);
+						}
+						else
+						{
+							//add a failed login attempt
+							$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt";
+							$statement .= " WHERE UserId = :UserId";
+
+							$parameters = array( 
+								":FailedLoginAttempt" => $user->FailedLoginAttempt + 1, 
+								":UserId" => $user->UserId
+							);
+							
+							$rowCount = $this->fetchRowCount($statement, $parameters);
+						}
 					}
-
-					//add lockout
-					return false;
 				}
-			//}
-		} // End of if($user->VerifiedEmail) //Has user verified email?
-		else
-		{
-			return false; //Email not verified
+			} // End of if($user->VerifiedEmail) //Has user verified email?
 		}
+
+
+
+		return false;
 	}
 
 	public function logout()
@@ -118,13 +116,7 @@ class AccountModel extends Model {
 					":Password" => $authentication->hashPassword($changePasswordViewModel->Password)
 				);
 				
-				$rowCount = $this->fetchRowCount($statement, $parameters);
-
-				//Success insert
-				if($rowCount >= 1)
-				{
-					return true;
-				}
+				return $this->fetch($statement, $parameters);
 			}
 		}
 
@@ -166,12 +158,7 @@ class AccountModel extends Model {
 		{
 			$updateStatement = "UPDATE User SET Verified = TRUE";
 
-			$rowCount = $this->fetchRowCount($updateStatement, array());
-			//Success insert
-			if($rowCount >= 1)
-			{
-				$verified = true;
-			}
+			$verified = $this->fetch($updateStatement, array());
 		}
 
 		return $verified;
@@ -183,33 +170,70 @@ class AccountModel extends Model {
 	*
 	******************************************************************************************************************/
 
-	public function saveImageMetadata($userId, $imageViewModel, $imageType)
+	public function saveUserImageMetadata($userId, $imageViewModel, $imageType)
 	{
-		//deactivate current images
-		if($imageType == 1)
-		{
+		// 1 = profile
+		// 2 = background
 
-		}
-		elseif ($imageType == 2) 
-		{
-			# code...
-		}
+		//If deactivating current image works
+		$safeToSaveImage = true;
 
-		$statement = "INSERT INTO picture (Title, Description, FileName, Active, InppropriateFlag, User_UserId, picturetype_PictureTypeId, PictureExtension)";
-		$statement .= " VALUES (:Title, :Description, :FileName, :Active, :InppropriateFlag, :User_UserId, :picturetype_PictureTypeId, :PictureExtension)";
+		//The returned id of the new picture
+		$pictureId = 0;
 
-		$parameters = array( 
-			":Title" => $user->Email, 
-			":Description" => $user->Password,
-			":FileName" => $user->LanguageType_LanguageId, 
-			":Active" => $user->FirstName, 
-			":InppropriateFlag" => $user->LastName, 
-			":User_UserId" => $userId, 
-			":picturetype_PictureTypeId" => $imageType, 
-			":PictureExtension" => $user->PostalCode
+		// Select any currently active images the user already has
+		$selectStatement = "SELECT * FROM picture WHERE User_UserId = :User_UserId AND picturetype_PictureTypeId = :picturetype_PictureTypeId AND Active = TRUE";
+
+		$selectParameters = array( 
+			":User_UserId" => $userId,
+			":picturetype_PictureTypeId" => $imageType
 		);
 
-		$user = $this->fetchIntoClass($statement, array($email, $hashedValue), "Shared/PictureViewModel");
+		//Deactivate those images
+		$currentActiveImage = $this->fetchIntoClass($selectStatement, $selectParameters, "shared/PictureViewModel");
+
+		debugit($currentActiveImage);
+		if (isset($currentActiveImage[0])) 
+		{
+			$safeToSaveImage = removeImageMetadata($currentActiveImage[0]->PictureId);
+		}
+
+		if($safeToSaveImage == true)
+		{
+			$statement = "INSERT INTO picture (Title, Description, FileName, Active, InppropriateFlag, User_UserId, picturetype_PictureTypeId, PictureExtension)";
+			$statement .= " VALUES (:Title, :Description, :FileName, :Active, :InppropriateFlag, :User_UserId, :picturetype_PictureTypeId, :PictureExtension)";
+
+
+			$parameters = array( 
+				":Title" => $imageViewModel->Title, 
+				":Description" => $imageViewModel->Description,
+				":FileName" => pathinfo($imageViewModel->PictureFile, PATHINFO_FILENAME), 
+				":Active" => true, 
+				":InppropriateFlag" => false, 
+				":User_UserId" => $userId, 
+				":picturetype_PictureTypeId" => $imageType, 
+				":PictureExtension" => pathinfo($imageViewModel->PictureFile, PATHINFO_EXTENSION)
+			);
+
+			if($this->fetch($statement, $parameters, "shared/PictureViewModel"))
+			{
+				$pictureId = $this->lastInsertId();
+			}
+		}
+
+		return $pictureId;
+	}
+
+	public function removeImageMetadata($pictureId)
+	{
+		$statement = "UPDATE picture SET Active = FALSE";
+		$statement .= " WHERE PictureId = :PictureId";
+
+		$parameters = array( 
+			":PictureId" => $pictureId
+		);
+
+		return $this->fetch($statement, $parameters);
 	}
 
 	public function getCurrentProfilePictureMetadata($userId)
@@ -256,25 +280,7 @@ class AccountModel extends Model {
 		return null;
 	}
 
-	public function removeImageMetadata($pictureId)
-	{
-		$statement = "UPDATE picture SET Active = FALSE";
-		$statement .= " WHERE PictureId = :PictureId";
-
-		$parameters = array( 
-			":PictureId" => $pictureId
-		);
-
-		$rowCount = $this->fetchRowCount($statement, $parameters);
-		
-		//Success deactivate
-		if($rowCount >= 1)
-		{
-			return true;
-		}
-
-		return false;
-	}
+	
 
 
 	/******************************************************************************************************************
@@ -287,8 +293,8 @@ class AccountModel extends Model {
 	{
 		$authentication = new Authentication();
 
-		$statement = "INSERT INTO user (Email, Password, LanguageType_LanguageId, FirstName, LastName, MidName, Address, PostalCode, PhoneNumber, VerificationCode, VerifiedEmail)";
-		$statement .= " VALUES (:Email, :Password, :LanguageType_LanguageId, :FirstName, :LastName, :MidName, :Address, :PostalCode, :PhoneNumber, :VerificationCode, :VerifiedEmail)";
+		$statement = "INSERT INTO user (Email, Password, LanguageType_LanguageId, FirstName, LastName, MidName, Address, PostalCode, PhoneNumber, VerificationCode, VerifiedEmail, ProfilePrivacyType_PrivacyTypeId)";
+		$statement .= " VALUES (:Email, :Password, :LanguageType_LanguageId, :FirstName, :LastName, :MidName, :Address, :PostalCode, :PhoneNumber, :VerificationCode, :VerifiedEmail, :ProfilePrivacyType_PrivacyTypeId)";
 
 		$user->Password = $authentication->hashPassword($user->Password);
 
@@ -305,31 +311,20 @@ class AccountModel extends Model {
 			":PostalCode" => $user->PostalCode, 
 			":PhoneNumber" => $user->PhoneNumber,			
 			":VerificationCode" => $hashedEmailVerification,
-			":VerifiedEmail" => true
+			":VerifiedEmail" => true,
+			":ProfilePrivacyType_PrivacyTypeId" => $user->ProfilePrivacyType_PrivacyTypeId
 		);
 		
 		//$this->sendEmailVerification($user->Email, $hashedEmailVerification);
 
-		$rowCount = $this->fetchRowCount($statement, $parameters);
-
-		//Success insert
-		if($rowCount >= 1)
-		{
-			//sendEmailVerification($user->Email, $hashedEmailVerification);
-
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return $this->fetch($statement, $parameters);
 	}
 	
 	public function updateUserProfile($user)
 	{
 		$authentication = new Authentication();
 
-		$statement = "UPDATE user SET LanguageType_LanguageId = :LanguageType_LanguageId, Email = :Email, Address = :Address, PostalCode = :PostalCode, PhoneNumber = :PhoneNumber, FirstName = :FirstName, LastName = :LastName, MidName = :MidName";
+		$statement = "UPDATE user SET LanguageType_LanguageId = :LanguageType_LanguageId, Email = :Email, Address = :Address, PostalCode = :PostalCode, PhoneNumber = :PhoneNumber, FirstName = :FirstName, LastName = :LastName, MidName = :MidName, ProfilePrivacyType_PrivacyTypeId = :ProfilePrivacyType_PrivacyTypeId";
 		$statement .= " WHERE UserId = :UserId";
 
 		$parameters = array( 
@@ -341,23 +336,12 @@ class AccountModel extends Model {
 			":LastName" => $user->LastName, 
 			":MidName" => $user->MidName,
 			":UserId" => $user->UserId,
-			":LanguageType_LanguageId" => $user->LanguageType_LanguageId
+			":LanguageType_LanguageId" => $user->LanguageType_LanguageId,
+			":ProfilePrivacyType_PrivacyTypeId" => $user->ProfilePrivacyType_PrivacyTypeId
 		);
 
 		
-		$rowCount = $this->fetchRowCount($statement, $parameters);
-
-		//Success insert
-		if($rowCount >= 1)
-		{
-			//$emailSent = sendEmailVerification($email, $hashedEmailVerification);
-
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return $this->fetch($statement, $parameters);
 	}
 
 	public function updateUserLanguagePreference($userId, $languageId)
@@ -371,17 +355,7 @@ class AccountModel extends Model {
 		);
 
 		
-		$rowCount = $this->fetchRowCount($statement, $parameters);
-
-		//Success insert
-		if($rowCount >= 1)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return $this->fetch($statement, $parameters);
 	}	
 	
 	public function getUserProfileByEmail($email)

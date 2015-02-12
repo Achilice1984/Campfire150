@@ -2,41 +2,48 @@
 -- Insert into Tag table
 --
 
-INSERT INTO Tag (TagNameE, TagNameF)
-VALUES ("Art", "Art");
-INSERT INTO Tag (TagNameE, TagNameF)
-VALUES ("Challenges", "Défis");
-INSERT INTO Tag (TagNameE, TagNameF)
-VALUES ("Climate/Weather", "Climat/Temps");
-INSERT INTO Tag (TagNameE, TagNameF)
-VALUES ("Environment", "Environnement");
-INSERT INTO Tag (TagNameE, TagNameF)
-VALUES ("Family", "Famille");
-INSERT INTO Tag (TagNameE, TagNameF)
-VALUES ("Leadership", "Leadership");
-INSERT INTO Tag (TagNameE, TagNameF)
-VALUES ("Technology", "Technologie");
-INSERT INTO Tag (TagNameE, TagNameF)
-VALUES ("Uncategorized", "Non classé");
+INSERT INTO Tag (TagName)
+VALUES ("Art");
+INSERT INTO Tag (TagName)
+VALUES ("Challenges");
+INSERT INTO Tag (TagName)
+VALUES ("Climate/Weather");
+INSERT INTO Tag (TagName)
+VALUES ("Environment");
+INSERT INTO Tag (TagName)
+VALUES ("Family");
+INSERT INTO Tag (TagName)
+VALUES ("Leadership");
+INSERT INTO Tag (TagName)
+VALUES ("Technology");
+INSERT INTO Tag (TagName)
+VALUES ("Uncategorized");
 
 --
 -- Insert into LanguageType table
 --
 
-INSERT INTO LanguageType (LanguageNameE, LanguageNameF)
+INSERT INTO LanguageType (NameE, NameF)
 VALUES ("English", "Anglais");
-INSERT INTO LanguageType (LanguageNameE, LanguageNameF)
+INSERT INTO LanguageType (NameE, NameF)
 VALUES ("French", "Français");
 
 --
 -- Insert into PrivacyType table
 --
 
-INSERT INTO PrivacyType (DescriptionE, DescriptionF)
+INSERT INTO StoryPrivacyType (NameE, NameF)
 VALUES ("Public", "Public");
-INSERT INTO PrivacyType (DescriptionE, DescriptionF)
+INSERT INTO StoryPrivacyType (NameE, NameF)
 VALUES ("Private", "Privé");
-INSERT INTO PrivacyType (DescriptionE, DescriptionF)
+INSERT INTO StoryPrivacyType (NameE, NameF)
+VALUES ("Friends", "Amis");
+
+INSERT INTO ProfilePrivacyType (NameE, NameF)
+VALUES ("Public", "Public");
+INSERT INTO ProfilePrivacyType (NameE, NameF)
+VALUES ("Private", "Privé");
+INSERT INTO ProfilePrivacyType (NameE, NameF)
 VALUES ("Friends", "Amis");
 
 --
@@ -52,11 +59,11 @@ INSERT INTO `campfire`.`achievementleveltype` (`LevelId`, `DescriptionE`, `Descr
 -- Insert into PictureType table
 --
 
-INSERT INTO PictureType (PictureTypeNameE, PictureTypeNameF)
+INSERT INTO PictureType (NameE, NameF)
 VALUES ("Profile", "Profil");
-INSERT INTO PictureType (PictureTypeNameE, PictureTypeNameF)
+INSERT INTO PictureType (NameE, NameF)
 VALUES ("Background", "Fond");
-INSERT INTO PictureType (PictureTypeNameE, PictureTypeNameF)
+INSERT INTO PictureType (NameE, NameF)
 VALUES ("Story", "histoire");
 
 --

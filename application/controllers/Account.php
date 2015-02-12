@@ -118,7 +118,7 @@ class Account extends Controller {
 	}
 
 	function changelanguage()
-	{
+	{		
 		$sessionManger = new SessionManager();
 		$model = $this->loadModel('AccountModel');
 
@@ -165,9 +165,6 @@ class Account extends Controller {
 			//Map post values to the userViewModel
 			$userViewModel = AutoMapper::mapPost($userViewModel);
 
-			//debugit($userViewModel);
-
-
 			//Load the AccountModel to access account functions
 			$model = $this->loadModel('AccountModel');
 			
@@ -188,11 +185,15 @@ class Account extends Controller {
 			}			
 		}
 
+		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+		$privacyDropdownValues = $siteModel->getDropdownValues_ProfilePrivacyType();
+
 		//Load the register view
 		$view = $this->loadView('register');
 
 		//Add a variable with old userViewModel data so that it can be accessed in the view
 		$view->set('userViewModel', $userViewModel);
+		$view->set('privacyDropdownValues', $privacyDropdownValues);
 		
 		//Render the register view. true indicates to load the layout pages as well
 		$view->render(true);
@@ -253,50 +254,50 @@ class Account extends Controller {
 		$model = $this->loadModel('AccountModel');
 
 		//Load the userViewModel
-		$changeProfilePictureViewModel = $this->loadViewModel('Account/ChangeProfilePictureViewModel');
+		$pictureViewModel = $this->loadViewModel('shared/PictureViewModel');
 
 		//Execute code if a post back
 		//This just checks to see if a form was submitted
 		if($this->isPost())
 		{	
 			//Map post values to the userViewModel
-			$changeProfilePictureViewModel = AutoMapper::mapPost($changeProfilePictureViewModel);
+			$pictureViewModel = AutoMapper::mapPost($pictureViewModel);
 
 			//Validate data that was posted to the server
 			//This will also set the temp errors to be shown in the view
-			if($changeProfilePictureViewModel->validate())
+			if($pictureViewModel->validate())
 			{	
 				//Call the database
 				//this function will save image meta data in the database
 				//it will return the image id
 				//1 == profile type image in the database
-				$imageId = $model->saveImageMetaData($cuurentUser->UserId, $changeProfilePictureViewModel, 1);
+				$imageId = $model->saveUserImageMetadata($this->currentUser->UserId, $pictureViewModel, 1);
+				echo $imageId;
+				// if($imageId != 0)
+				// {
+				// 	//image saved succefully in database
+				// 	//process image and save in file system
+				// 	//debugit($pictureViewModel);
 
-				if(isset($imageId))
-				{
-					//image saved succefully in database
-					//process image and save in file system
-					//debugit($changeProfilePictureViewModel);
+				// 	//this is your image file
+				// 	//$pictureViewModel->ProfilePicture;
 
-					//this is your image file
-					//$changeProfilePictureViewModel->ProfilePicture;
+				// 	$savedSuccessfuly = saveImage($cuurentUser->UserId, $pictureViewModel, 1);
 
-					$savedSuccessfuly = saveImage($cuurentUser->UserId, $changeProfilePictureViewModel, 1);
+				// 	if($savedSuccessfuly == false)
+				// 	{
+				// 		//Ann error occoured you hvae to remove new profile picture meta data from the database
+				// 		$model->removeImageMetaData($imageId);
 
-					if($savedSuccessfuly == false)
-					{
-						//Ann error occoured you hvae to remove new profile picture meta data from the database
-						$model->removeImageMetaData($imageId);
-
-						//add error message so user knows whats up
-						addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
-					}
-				}
-				else
-				{
-					//add error message so user knows whats up
-					addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
-				}
+				// 		//add error message so user knows whats up
+				// 		addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
+				// 	}
+				// }
+				// else
+				// {
+				// 	//add error message so user knows whats up
+				// 	addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
+				// }
 
 			}
 
@@ -307,7 +308,7 @@ class Account extends Controller {
 		}
 
 
-		$this->redirect("account/profile");
+		//$this->redirect("account/profile");
 	}
 
 	function changebackgroundpicture()
@@ -354,11 +355,15 @@ class Account extends Controller {
 			}			
 		}
 
+		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+		$privacyDropdownValues = $siteModel->getDropdownValues_ProfilePrivacyType();
+
 		//Load the profile view
 		$view = $this->loadView('profile');
 
 		//Add a variable with old userViewModel data so that it can be accessed in the view
 		$view->set('userViewModel', $profileViewModel);
+		$view->set('privacyDropdownValues', $privacyDropdownValues);
 		
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);

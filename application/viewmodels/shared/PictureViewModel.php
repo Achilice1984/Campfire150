@@ -16,6 +16,9 @@ class PictureViewModel extends ViewModel
 	public $TimeStamp;
 	public $picturetype_PictureTypeId;
 	public $PictureExtension;	
+
+	public $PictureUrl;
+	public $PictureFile;
 	
 
 	function __construct()
@@ -28,7 +31,7 @@ class PictureViewModel extends ViewModel
 		// 							'FirstName' =>
 		// 								array('required' => 'the name field is required!')
 		// 						));
-	}
+		//}
 	}
 }
 ?>

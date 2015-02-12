@@ -30,6 +30,8 @@ class UserViewModel extends ViewModel
 	public $LastName;
 	public $LanguageType_LanguageId;
 
+	public $ProfilePrivacyType_PrivacyTypeId;
+
 	function __construct()
 	{		
 		parent::__construct(array(
