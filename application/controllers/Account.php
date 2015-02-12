@@ -245,6 +245,20 @@ class Account extends Controller {
 
 	function changeprofilepicture()
 	{
+		//Hey Darren
+
+		//You have access to the following functions in the AccountModel:
+
+		// getPictureMetadataByPictureId($pictureId)
+			// Returns a PictureViewModel
+		// getCurrentBackgroundPictureMetadata($userId)
+			// Returns a PictureViewModel
+		// getCurrentProfilePictureMetadata($userId)
+			// Returns a PictureViewModel
+		// saveUserImageMetadata($userId, $pictureViewModel, $imageType)
+			// Returns a picture id
+
+
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
 		$this->AuthRequest();
@@ -272,32 +286,32 @@ class Account extends Controller {
 				//it will return the image id
 				//1 == profile type image in the database
 				$imageId = $model->saveUserImageMetadata($this->currentUser->UserId, $pictureViewModel, 1);
-				echo $imageId;
-				// if($imageId != 0)
-				// {
-				// 	//image saved succefully in database
-				// 	//process image and save in file system
-				// 	//debugit($pictureViewModel);
 
-				// 	//this is your image file
-				// 	//$pictureViewModel->ProfilePicture;
+				if($imageId != 0)
+				{
+					//image saved succefully in database
+					//process image and save in file system
+					//debugit($pictureViewModel);
 
-				// 	$savedSuccessfuly = saveImage($cuurentUser->UserId, $pictureViewModel, 1);
+					//this is your image file
+					//$pictureViewModel->ProfilePicture;
 
-				// 	if($savedSuccessfuly == false)
-				// 	{
-				// 		//Ann error occoured you hvae to remove new profile picture meta data from the database
-				// 		$model->removeImageMetaData($imageId);
+					$savedSuccessfuly = saveImage($cuurentUser->UserId, $pictureViewModel, 1);
 
-				// 		//add error message so user knows whats up
-				// 		addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
-				// 	}
-				// }
-				// else
-				// {
-				// 	//add error message so user knows whats up
-				// 	addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
-				// }
+					if($savedSuccessfuly == false)
+					{
+						//Ann error occoured you hvae to remove new profile picture meta data from the database
+						$model->removeImageMetaData($imageId);
+
+						//add error message so user knows whats up
+						addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
+					}
+				}
+				else
+				{
+					//add error message so user knows whats up
+					addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
+				}
 
 			}
 

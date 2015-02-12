@@ -32,6 +32,8 @@ class UserViewModel extends ViewModel
 
 	public $ProfilePrivacyType_PrivacyTypeId;
 
+	public $UserActionStatement;
+
 	function __construct()
 	{		
 		parent::__construct(array(
@@ -51,7 +53,9 @@ class UserViewModel extends ViewModel
 							'PostalCode' =>
 								array('required' => 'The Postal Code field is required!'),
 							'LanguageType_LanguageId' =>
-								array('required' => 'The Language field is required!')
+								array('required' => 'The Language field is required!'),
+							'ProfilePrivacyType_PrivacyTypeId' =>
+								array('required' => 'The privacy field is required!')
 						));
 	}
 }
