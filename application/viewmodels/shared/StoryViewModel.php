@@ -9,10 +9,11 @@ class StoryViewModel extends ViewModel
 	public $DatePosted;
 	public $User_UserId;
 	public $StoryTitle;
-	public $Content;
-	public $PrivacyType_PrivacyTypeId;
+	public $Content;	
 	public $Active;
 	public $LatestChange;
+	public $Published;
+	public $StoryPrivacyType_StoryPrivacyTypeId;
 
 	function __construct()
 	{
