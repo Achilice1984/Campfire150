@@ -10,9 +10,10 @@ class StoryViewModel extends ViewModel
 	public $User_UserId;
 	public $StoryTitle;
 	public $Content;
-	public $PrivacyType_PrivacyTypeId;
 	public $Active;
 	public $LatestChange;
+	public $Published;
+	public $StoryPrivacyType_StoryPrivacyTypeId;
 
 	function __construct()
 	{
@@ -23,7 +24,6 @@ class StoryViewModel extends ViewModel
 		// 							'FirstName' =>
 		// 								array('required' => 'the name field is required!')
 		// 						));
-	}
 	}
 }
 ?>

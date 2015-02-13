@@ -65,6 +65,33 @@ class Account extends Controller {
 		$view->render(true);
 	}	
 
+	function testAdmin()
+	{
+		$model = $this->loadModel('Admin/AdminModel');
+		
+		$returnData = $model->testStory();
+		
+		debugit($returnData);
+	}
+
+	function testStory()
+	{
+		$model = $this->loadModel('Story/StoryModel');
+		
+		$returnData = $model->publishNewStory($story);
+		
+		debugit($returnData);
+	}
+
+	function testAccount()
+	{
+		$model = $this->loadModel('Account/AccountModel');
+		
+		$returnData = $model->getCurrentProfilePictureMetadata(1);
+		
+		debugit($returnData);
+	}
+
 	function login()
 	{	
 		//Load the loginViewModel
