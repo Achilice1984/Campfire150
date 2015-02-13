@@ -9,7 +9,7 @@ class StoryViewModel extends ViewModel
 	public $DatePosted;
 	public $User_UserId;
 	public $StoryTitle;
-	public $Content;	
+	public $Content;
 	public $Active;
 	public $LatestChange;
 	public $Published;
@@ -24,7 +24,6 @@ class StoryViewModel extends ViewModel
 		// 							'FirstName' =>
 		// 								array('required' => 'the name field is required!')
 		// 						));
-	}
 	}
 }
 ?>

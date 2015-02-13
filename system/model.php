@@ -26,6 +26,11 @@ class Model {
 		}
 	}
 
+	public function lastInsertId()
+	{
+		return $this->connection->lastInsertId();
+	}
+
 	public function fetchIntoClass($qry, $params=array(), $className)
 	{		
 		//Example array: array(':calories' => $calories, ':colour' => $colour)
@@ -40,7 +45,7 @@ class Model {
 			 $pdo = $this->connection->prepare($qry);
 			 $pdo->execute($params);
 
-			 $urlArray = split("/", $className);
+			 $urlArray = explode("/", $className);
 
 			if(count($urlArray) > 1)
 			{
@@ -105,6 +110,23 @@ class Model {
 			$pdo->execute($params);
 
 			return $pdo->fetchColumn();
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function fetch($qry, $params=array()){
+		//Example array: array(':calories' => $calories, ':colour' => $colour)
+		//Or by order array($calories, $colour)
+		try 
+		{
+			$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+			$pdo = $this->connection->prepare($qry);			
+
+			return $pdo->execute($params);
 		}
 		catch(PDOException $e) 
 		{

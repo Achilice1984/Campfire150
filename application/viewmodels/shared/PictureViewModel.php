@@ -16,10 +16,14 @@ class PictureViewModel extends ViewModel
 	public $TimeStamp;
 	public $picturetype_PictureTypeId;
 	public $PictureExtension;	
+
+	public $PictureUrl;
+	public $PictureFile;
 	
 
 	function __construct()
 	{
+		parent::__construct(array());
 		//Add validation decorators
 		// parent::__construct(array('Email' => 
 		// 							array('email' => 'Invalid email',
@@ -27,7 +31,7 @@ class PictureViewModel extends ViewModel
 		// 							'FirstName' =>
 		// 								array('required' => 'the name field is required!')
 		// 						));
-	}
+		//}
 	}
 }
 ?>

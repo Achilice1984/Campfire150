@@ -65,13 +65,31 @@ class Account extends Controller {
 		$view->render(true);
 	}	
 
-	function test()
+	function testAdmin()
 	{
 		$model = $this->loadModel('Admin/AdminModel');
 		
-		//$returnData = $model->getStoryListByCategoryID(1,1);
+		$returnData = $model->testStory();
 		
-		debugit($this->currentUser);
+		debugit($returnData);
+	}
+
+	function testStory()
+	{
+		$model = $this->loadModel('Story/StoryModel');
+		
+		$returnData = $model->publishNewStory($story);
+		
+		debugit($returnData);
+	}
+
+	function testAccount()
+	{
+		$model = $this->loadModel('Account/AccountModel');
+		
+		$returnData = $model->getCurrentProfilePictureMetadata(1);
+		
+		debugit($returnData);
 	}
 
 	function login()
@@ -84,8 +102,6 @@ class Account extends Controller {
 		{			
 			//Map post values to the loginViewModel
 			$loginViewModel = AutoMapper::mapPost($loginViewModel);
-
-			debugit($loginViewModel);
 
 			//Load the AccountModel to access account functions
 			$model = $this->loadModel('AccountModel');
@@ -105,7 +121,7 @@ class Account extends Controller {
 				else //Failed login
 				{
 					// Add an error message because login failed 
-					$loginViewModel->addErrorMessage("dbError", gettext("Opps, it looks like your attempt to login faild."));
+					addErrorMessage("dbError", gettext("Opps, it looks like your attempt to login faild."));
 				}				
 			}			
 		}
@@ -129,7 +145,7 @@ class Account extends Controller {
 	}
 
 	function changelanguage()
-	{
+	{		
 		$sessionManger = new SessionManager();
 		$model = $this->loadModel('AccountModel');
 
@@ -176,9 +192,6 @@ class Account extends Controller {
 			//Map post values to the userViewModel
 			$userViewModel = AutoMapper::mapPost($userViewModel);
 
-			//debugit($userViewModel);
-
-
 			//Load the AccountModel to access account functions
 			$model = $this->loadModel('AccountModel');
 			
@@ -194,16 +207,20 @@ class Account extends Controller {
 				}
 				else
 				{
-					$userViewModel->addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to register your profile."));
+					addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to register your profile."));
 				}					
 			}			
 		}
+
+		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+		$privacyDropdownValues = $siteModel->getDropdownValues_ProfilePrivacyType();
 
 		//Load the register view
 		$view = $this->loadView('register');
 
 		//Add a variable with old userViewModel data so that it can be accessed in the view
 		$view->set('userViewModel', $userViewModel);
+		$view->set('privacyDropdownValues', $privacyDropdownValues);
 		
 		//Render the register view. true indicates to load the layout pages as well
 		$view->render(true);
@@ -232,12 +249,12 @@ class Account extends Controller {
 			}
 			else
 			{
-				$changePasswordViewModel->addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your password."));
+				addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your password."));
 			}
 		}
 		else
 		{
-			$changePasswordViewModel->addErrorMessage("dbError", gettext("Opps, it looks like your passwords don't match."));
+			addErrorMessage("dbError", gettext("Opps, it looks like your passwords don't match."));
 		}
 
 		//Load the userViewModel
@@ -255,6 +272,84 @@ class Account extends Controller {
 
 	function changeprofilepicture()
 	{
+		//Hey Darren
+
+		//You have access to the following functions in the AccountModel:
+
+		// getPictureMetadataByPictureId($pictureId)
+			// Returns a PictureViewModel
+		// getCurrentBackgroundPictureMetadata($userId)
+			// Returns a PictureViewModel
+		// getCurrentProfilePictureMetadata($userId)
+			// Returns a PictureViewModel
+		// saveUserImageMetadata($userId, $pictureViewModel, $imageType)
+			// Returns a picture id
+
+
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+		
+		//This loads up your model for talking to the database
+		//it contains all functions needed to update database
+		$model = $this->loadModel('AccountModel');
+
+		//Load the userViewModel
+		$pictureViewModel = $this->loadViewModel('shared/PictureViewModel');
+
+		//Execute code if a post back
+		//This just checks to see if a form was submitted
+		if($this->isPost())
+		{	
+			//Map post values to the userViewModel
+			$pictureViewModel = AutoMapper::mapPost($pictureViewModel);
+
+			//Validate data that was posted to the server
+			//This will also set the temp errors to be shown in the view
+			if($pictureViewModel->validate())
+			{	
+				//Call the database
+				//this function will save image meta data in the database
+				//it will return the image id
+				//1 == profile type image in the database
+				$imageId = $model->saveUserImageMetadata($this->currentUser->UserId, $pictureViewModel, 1);
+
+				if($imageId != 0)
+				{
+					//image saved succefully in database
+					//process image and save in file system
+					//debugit($pictureViewModel);
+
+					//this is your image file
+					//$pictureViewModel->ProfilePicture;
+
+					$savedSuccessfuly = saveImage($cuurentUser->UserId, $pictureViewModel, 1);
+
+					if($savedSuccessfuly == false)
+					{
+						//Ann error occoured you hvae to remove new profile picture meta data from the database
+						$model->removeImageMetaData($imageId);
+
+						//add error message so user knows whats up
+						addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
+					}
+				}
+				else
+				{
+					//add error message so user knows whats up
+					addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
+				}
+
+			}
+
+		}
+		else
+		{
+			$this->redirect("");
+		}
+
+
+		//$this->redirect("account/profile");
 	}
 
 	function changebackgroundpicture()
@@ -296,16 +391,20 @@ class Account extends Controller {
 				}
 				else
 				{
-					$profileViewModel->addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your profile."));
+					addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your profile."));
 				}					
 			}			
 		}
+
+		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+		$privacyDropdownValues = $siteModel->getDropdownValues_ProfilePrivacyType();
 
 		//Load the profile view
 		$view = $this->loadView('profile');
 
 		//Add a variable with old userViewModel data so that it can be accessed in the view
 		$view->set('userViewModel', $profileViewModel);
+		$view->set('privacyDropdownValues', $privacyDropdownValues);
 		
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);

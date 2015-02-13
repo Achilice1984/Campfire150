@@ -2,82 +2,91 @@
 
 class AccountModel extends Model {
 
+	/******************************************************************************************************************
+	*
+	*				Account Authentication
+	*
+	******************************************************************************************************************/
+
 	public function login($loginViewModel)
 	{		
 		$authentication = new Authentication();
 
-		$statement = "SELECT * FROM User WHERE Email = :Email";
+		$statement = "SELECT * FROM user WHERE Email = :Email";
 
 		//Get user that matches email address
 		$user = $this->fetchIntoClass($statement, array(":Email" => $loginViewModel->Email), "shared/UserViewModel");
 
-		if (isset($user)) {
+		if (isset($user[0])) 
+		{
 			$user = $user[0];
-		}
 
-		if($user->VerifiedEmail) //Has user verified email?
-		{
-			$currentTime = new DateTime();
+			if($user->VerifiedEmail) //Has user verified email?
+			{
+				$currentTime = new DateTime();
 
-			// if(!isset($user->LockoutTimes) || strtotime('-15 minutes') > $user->LockoutTimes) //Is user locked out?
-			// {
-				//check to see if user is properly authenticated
-				if($authentication->authenticate($loginViewModel->Password, $user)) //Is user peoperly authenticated?
+				if(!isset($user->LockoutTimes) || strtotime('-15 minutes') > $user->LockoutTimes) //Is user locked out?
 				{
-					//Set login and lockouts back to starting point
-					$statement = "UPDATE User SET FailedLoginAttempt = :FailedLoginAttempt, LockoutTimes = :LockoutTimes";
-					$statement .= " WHERE UserId = :UserId";
-
-					$parameters = array( 					
-						":FailedLoginAttempt" => 0, 
-						":LockoutTimes" => NULL,
-						":UserId" => $user->UserId
-					);
-					
-					$rowCount = $this->fetchRowCount($statement, $parameters);
-
-					//reset lockout 
-					return true;
-				}
-				else //Login failed, update failed attempts
-				{
-					if($user->FailedLoginAttempt >= 5)
+					//check to see if user is properly authenticated
+					if($authentication->authenticate($loginViewModel->Password, $user)) //Is user peoperly authenticated?
 					{
-						//add a failed login attempt and set the lockout time
-						$statement = "UPDATE User SET FailedLoginAttempt = :FailedLoginAttempt, LockoutTimes = :LockoutTimes";
+						//Set login and lockouts back to starting point
+						$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt, LockoutTimes = :LockoutTimes";
 						$statement .= " WHERE UserId = :UserId";
 
-						$parameters = array( 
-							":FailedLoginAttempt" => $user->FailedLoginAttempt + 1, 
-							":LockoutTimes" => $currentTime,
+						$parameters = array( 					
+							":FailedLoginAttempt" => 0, 
+							":LockoutTimes" => NULL,
 							":UserId" => $user->UserId
 						);
 						
 						$rowCount = $this->fetchRowCount($statement, $parameters);
+
+						//reset lockout 
+						return true;
 					}
-					else
+					else //Login failed, update failed attempts
 					{
-						//add a failed login attempt
-						$statement = "UPDATE User SET FailedLoginAttempt = :FailedLoginAttempt";
-						$statement .= " WHERE UserId = :UserId";
+						if($user->FailedLoginAttempt >= 5)
+						{
+							//add a failed login attempt and set the lockout time
+							$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt, LockoutTimes = :LockoutTimes";
+							$statement .= " WHERE UserId = :UserId";
 
-						$parameters = array( 
-							":FailedLoginAttempt" => $user->FailedLoginAttempt + 1, 
-							":UserId" => $user->UserId
-						);
-						
-						$rowCount = $this->fetchRowCount($statement, $parameters);
+							$parameters = array( 
+								":FailedLoginAttempt" => $user->FailedLoginAttempt + 1, 
+								":LockoutTimes" => $currentTime,
+								":UserId" => $user->UserId
+							);
+							
+							$rowCount = $this->fetchRowCount($statement, $parameters);
+						}
+						else
+						{
+							//add a failed login attempt
+							$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt";
+							$statement .= " WHERE UserId = :UserId";
+
+							$parameters = array( 
+								":FailedLoginAttempt" => $user->FailedLoginAttempt + 1, 
+								":UserId" => $user->UserId
+							);
+							
+							$rowCount = $this->fetchRowCount($statement, $parameters);
+						}
 					}
-
-					//add lockout
-					return false;
 				}
-			//}
-		} // End of if($user->VerifiedEmail) //Has user verified email?
-		else
-		{
-			return false; //Email not verified
+			} // End of if($user->VerifiedEmail) //Has user verified email?
 		}
+
+
+
+		return false;
+	}
+
+	public function logout()
+	{	
+		session_destroy();
 	}
 
 	public function updateUserPassword($user, $changePasswordViewModel)
@@ -87,7 +96,7 @@ class AccountModel extends Model {
 		//Updates the password in the database with the new password
 		//Returns true or false if the password was updated properly or not		
 
-		$statement = "SELECT * FROM User WHERE Email = :Email";
+		$statement = "SELECT * FROM user WHERE Email = :Email";
 
 		//Get user that matches email address
 		$dbUser = $this->fetchIntoClass($statement, array(":Email" => $user->Email), "shared/UserViewModel");
@@ -99,7 +108,7 @@ class AccountModel extends Model {
 		
 			if($authentication->verifyPassword($changePasswordViewModel->OldPassword, $dbUser->Password))
 			{
-				$statement = "UPDATE User SET Password = :Password";
+				$statement = "UPDATE user SET Password = :Password";
 				$statement .= " WHERE UserId = :UserId";
 
 				$parameters = array( 
@@ -107,64 +116,11 @@ class AccountModel extends Model {
 					":Password" => $authentication->hashPassword($changePasswordViewModel->Password)
 				);
 				
-				$rowCount = $this->fetchRowCount($statement, $parameters);
-
-				//Success insert
-				if($rowCount >= 1)
-				{
-					return true;
-				}
+				return $this->fetch($statement, $parameters);
 			}
 		}
 
 		return false;
-	}
-
-	public function logout()
-	{	
-		session_destroy();
-	}
-
-	public function registerUserProfile($user)
-	{
-		$authentication = new Authentication();
-
-		$statement = "INSERT INTO User (Email, Password, LanguageType_LanguageId, FirstName, LastName, MidName, Address, PostalCode, PhoneNumber, VerificationCode, VerifiedEmail)";
-		$statement .= " VALUES (:Email, :Password, :LanguageType_LanguageId, :FirstName, :LastName, :MidName, :Address, :PostalCode, :PhoneNumber, :VerificationCode, :VerifiedEmail)";
-
-		$user->Password = $authentication->hashPassword($user->Password);
-
-		$hashedEmailVerification = md5(uniqid());
-
-		$parameters = array( 
-			":Email" => $user->Email, 
-			":Password" => $user->Password,
-			":LanguageType_LanguageId" => $user->LanguageType_LanguageId, 
-			":FirstName" => $user->FirstName, 
-			":LastName" => $user->LastName, 
-			":MidName" => $user->MidName, 
-			":Address" => $user->Address, 
-			":PostalCode" => $user->PostalCode, 
-			":PhoneNumber" => $user->PhoneNumber,			
-			":VerificationCode" => $hashedEmailVerification,
-			":VerifiedEmail" => true
-		);
-		
-		//$this->sendEmailVerification($user->Email, $hashedEmailVerification);
-
-		$rowCount = $this->fetchRowCount($statement, $parameters);
-
-		//Success insert
-		if($rowCount >= 1)
-		{
-			//sendEmailVerification($user->Email, $hashedEmailVerification);
-
-			return true;
-		}
-		else
-		{
-			return false;
-		}
 	}
 
 	public function sendEmailVerification($email, $hashedEmailVerification)
@@ -192,9 +148,9 @@ class AccountModel extends Model {
 		//Sets verified flag to true
 		//return bool
 
-		$statement = "SELECT * FROM User WHERE Email = ? AND HashedVerification = ?";
+		$statement = "SELECT * FROM user WHERE Email = ? AND HashedVerification = ?";
 
-		$user = $this->fetchIntoClass($statement, array($email, $hashedValue), "Shared/User");
+		$user = $this->fetchIntoClass($statement, array($email, $hashedValue), "shared/UserViewModel");
 
 		$verified = false;
 		//Does everything match?
@@ -202,21 +158,172 @@ class AccountModel extends Model {
 		{
 			$updateStatement = "UPDATE User SET Verified = TRUE";
 
-			$rowCount = $this->fetchRowCount($updateStatement, array());
-			//Success insert
-			if($rowCount >= 1)
-			{
-				$verified = true;
-			}
+			$verified = $this->fetch($updateStatement, array());
 		}
 
 		return $verified;
 	}
+
+	/******************************************************************************************************************
+	*
+	*				Account Images
+	*
+	******************************************************************************************************************/
+
+	public function saveUserImageMetadata($userId, $imageViewModel, $imageType)
+	{
+		// 1 = profile
+		// 2 = background
+
+		//If deactivating current image works
+		$safeToSaveImage = true;
+
+		//The returned id of the new picture
+		$pictureId = 0;
+
+		// Select any currently active images the user already has
+		$selectStatement = "SELECT * FROM picture WHERE User_UserId = :User_UserId AND picturetype_PictureTypeId = :picturetype_PictureTypeId AND Active = TRUE";
+
+		$selectParameters = array( 
+			":User_UserId" => $userId,
+			":picturetype_PictureTypeId" => $imageType
+		);
+
+		//Deactivate those images
+		$currentActiveImage = $this->fetchIntoClass($selectStatement, $selectParameters, "shared/PictureViewModel");
+
+		if (isset($currentActiveImage[0])) 
+		{
+			$safeToSaveImage = $this->removeImageMetadata($currentActiveImage[0]->PictureId);
+		}
+
+		if($safeToSaveImage == true)
+		{
+			$statement = "INSERT INTO picture (Title, Description, FileName, Active, InppropriateFlag, User_UserId, picturetype_PictureTypeId, PictureExtension)";
+			$statement .= " VALUES (:Title, :Description, :FileName, :Active, :InppropriateFlag, :User_UserId, :picturetype_PictureTypeId, :PictureExtension)";
+
+
+			$parameters = array( 
+				":Title" => $imageViewModel->Title, 
+				":Description" => $imageViewModel->Description,
+				":FileName" => pathinfo($imageViewModel->PictureFile, PATHINFO_FILENAME), 
+				":Active" => true, 
+				":InppropriateFlag" => false, 
+				":User_UserId" => $userId, 
+				":picturetype_PictureTypeId" => $imageType, 
+				":PictureExtension" => pathinfo($imageViewModel->PictureFile, PATHINFO_EXTENSION)
+			);
+
+			if($this->fetch($statement, $parameters, "shared/PictureViewModel"))
+			{
+				$pictureId = $this->lastInsertId();
+			}
+		}
+
+		return $pictureId;
+	}
+
+	public function removeImageMetadata($pictureId)
+	{
+		$statement = "UPDATE picture SET Active = FALSE";
+		$statement .= " WHERE PictureId = :PictureId";
+
+		$parameters = array( 
+			":PictureId" => $pictureId
+		);
+
+		return $this->fetch($statement, $parameters);
+	}
+
+	public function getCurrentProfilePictureMetadata($userId)
+	{
+		// 1 == profile picture
+		$statement = "SELECT * FROM picture WHERE User_UserId = :User_UserId AND picturetype_PictureTypeId = 1 AND Active = TRUE";
+
+		$pictureViewModel = $this->fetchIntoClass($statement, array(":User_UserId" => $userId), "shared/PictureViewModel");
+
+		if(isset($pictureViewModel))
+		{
+			return $pictureViewModel[0];
+		}
+
+		return null;
+	}
+
+	public function getCurrentBackgroundPictureMetadata($userId)
+	{
+		// 2 == background picture
+		$statement = "SELECT * FROM picture WHERE User_UserId = :User_UserId AND picturetype_PictureTypeId = 2 AND Active = TRUE";
+
+		$pictureViewModel = $this->fetchIntoClass($statement, array(":User_UserId" => $userId), "shared/PictureViewModel");
+
+		if(isset($pictureViewModel))
+		{
+			return $pictureViewModel[0];
+		}
+
+		return null;
+	}
+
+	public function getPictureMetadataByPictureId($pictureId)
+	{
+		$statement = "SELECT * FROM picture WHERE PictureId = :PictureId AND Active = TRUE";
+
+		$pictureViewModel = $this->fetchIntoClass($statement, array(":PictureId" => $pictureId), "shared/PictureViewModel");
+
+		if(isset($pictureViewModel[0]))
+		{
+			return $pictureViewModel[0];
+		}
+
+		return null;
+	}
+
+	
+
+
+	/******************************************************************************************************************
+	*
+	*				Account Profile
+	*
+	******************************************************************************************************************/	
+
+	public function registerUserProfile($user)
+	{
+		$authentication = new Authentication();
+
+		$statement = "INSERT INTO user (Email, Password, LanguageType_LanguageId, FirstName, LastName, MidName, Address, PostalCode, PhoneNumber, VerificationCode, VerifiedEmail, ProfilePrivacyType_PrivacyTypeId)";
+		$statement .= " VALUES (:Email, :Password, :LanguageType_LanguageId, :FirstName, :LastName, :MidName, :Address, :PostalCode, :PhoneNumber, :VerificationCode, :VerifiedEmail, :ProfilePrivacyType_PrivacyTypeId)";
+
+		$user->Password = $authentication->hashPassword($user->Password);
+
+		$hashedEmailVerification = md5(uniqid());
+
+		$parameters = array( 
+			":Email" => $user->Email, 
+			":Password" => $user->Password,
+			":LanguageType_LanguageId" => $user->LanguageType_LanguageId, 
+			":FirstName" => $user->FirstName, 
+			":LastName" => $user->LastName, 
+			":MidName" => $user->MidName, 
+			":Address" => $user->Address, 
+			":PostalCode" => $user->PostalCode, 
+			":PhoneNumber" => $user->PhoneNumber,			
+			":VerificationCode" => $hashedEmailVerification,
+			":VerifiedEmail" => true,
+			":ProfilePrivacyType_PrivacyTypeId" => $user->ProfilePrivacyType_PrivacyTypeId
+		);
+		
+		//$this->sendEmailVerification($user->Email, $hashedEmailVerification);
+
+		return $this->fetch($statement, $parameters);
+	}
+	
 	public function updateUserProfile($user)
 	{
 		$authentication = new Authentication();
 
-		$statement = "UPDATE User SET LanguageType_LanguageId = :LanguageType_LanguageId, Email = :Email, Address = :Address, PostalCode = :PostalCode, PhoneNumber = :PhoneNumber, FirstName = :FirstName, LastName = :LastName, MidName = :MidName";
+		$statement = "UPDATE user SET LanguageType_LanguageId = :LanguageType_LanguageId, Email = :Email, Address = :Address, PostalCode = :PostalCode, PhoneNumber = :PhoneNumber, FirstName = :FirstName, LastName = :LastName, MidName = :MidName, ProfilePrivacyType_PrivacyTypeId = :ProfilePrivacyType_PrivacyTypeId";
 		$statement .= " WHERE UserId = :UserId";
 
 		$parameters = array( 
@@ -228,28 +335,17 @@ class AccountModel extends Model {
 			":LastName" => $user->LastName, 
 			":MidName" => $user->MidName,
 			":UserId" => $user->UserId,
-			":LanguageType_LanguageId" => $user->LanguageType_LanguageId
+			":LanguageType_LanguageId" => $user->LanguageType_LanguageId,
+			":ProfilePrivacyType_PrivacyTypeId" => $user->ProfilePrivacyType_PrivacyTypeId
 		);
 
 		
-		$rowCount = $this->fetchRowCount($statement, $parameters);
-
-		//Success insert
-		if($rowCount >= 1)
-		{
-			//$emailSent = sendEmailVerification($email, $hashedEmailVerification);
-
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return $this->fetch($statement, $parameters);
 	}
 
 	public function updateUserLanguagePreference($userId, $languageId)
 	{
-		$statement = "UPDATE User SET LanguageType_LanguageId = :LanguageType_LanguageId";
+		$statement = "UPDATE user SET LanguageType_LanguageId = :LanguageType_LanguageId";
 		$statement .= " WHERE UserId = :UserId";
 
 		$parameters = array( 
@@ -258,59 +354,76 @@ class AccountModel extends Model {
 		);
 
 		
-		$rowCount = $this->fetchRowCount($statement, $parameters);
-
-		//Success insert
-		if($rowCount >= 1)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return $this->fetch($statement, $parameters);
 	}	
 	
 	public function getUserProfileByEmail($email)
 	{
-		$statement = "SELECT * FROM User WHERE Email = :Email";
+		$statement = "SELECT * FROM user WHERE Email = :Email";
 
 		$user = $this->fetchIntoClass($statement, array(":Email" => $email), "shared/UserViewModel");
 
-		return $user[0];
+		if(isset($user[0]))
+		{
+			return $user[0];
+		}
+
+		return null;
 	}
 	public function getUserProfileByID($userID)
 	{
-		$statement = "SELECT * FROM User WHERE UserId = :UserId";
+		$statement = "SELECT * FROM user WHERE UserId = :UserId";
 
 		$user = $this->fetchIntoClass($statement, array( ":UserId" => $userID), "shared/UserViewModel");
 
-		return $user[0];
+		if(isset($user[0]))
+		{
+			return $user[0];
+		}
+
+		return null;
 	}
 
 	public function getProfileByEmail($email)
 	{
-		$statement = "SELECT * FROM User WHERE Email = :Email";
+		$statement = "SELECT * FROM user WHERE Email = :Email";
 
 		$user = $this->fetchIntoClass($statement, array(":Email" => $email), "Account/ProfileViewModel");
 
-		return $user[0];
+		if(isset($user[0]))
+		{
+			return $user[0];
+		}
+
+		return null;
 	}
 	public function getProfileByID($userID)
 	{
-		$statement = "SELECT * FROM User WHERE UserId = :UserId";
+		$statement = "SELECT * FROM user WHERE UserId = :UserId";
 
 		$user = $this->fetchIntoClass($statement, array( ":UserId" => $userID), "Account/ProfileViewModel");
 
-		return $user[0];
+		if(isset($user[0]))
+		{
+			return $user[0];
+		}
+
+		return null;
 	}
+
+
+	/******************************************************************************************************************
+	*
+	*				Account Stories
+	*
+	******************************************************************************************************************/	
 
 	public function getTotalStoriesApproved($userID)
 	{
 		//Accepts an user id
 		//Gets the total stories written by the user who owns this email address
 		//Returns the total
-		$statement = "SELECT count(*) FROM Story WHERE User_UserId = ?";
+		$statement = "SELECT count(*) FROM story WHERE User_UserId = ?";
 
 		$totalStories = $this->fetchColumn($statement, array($userID));
 
@@ -321,7 +434,7 @@ class AccountModel extends Model {
 		//Accepts an user id
 		//Gets the total stories written by the user who owns this email address
 		//Returns the total
-		$statement = "SELECT count(*) FROM Story WHERE User_UserId = ?";
+		$statement = "SELECT count(*) FROM story WHERE User_UserId = ?";
 
 		$totalStories = $this->fetchColumn($statement, array($userID));
 
@@ -332,18 +445,52 @@ class AccountModel extends Model {
 		//Accepts an user id
 		//Gets the total stories written by the user who owns this email address
 		//Returns the total
-		$statement = "SELECT count(*) FROM Story WHERE User_UserId = ?";
+		$statement = "SELECT count(*) FROM story WHERE User_UserId = ?";
 
 		$totalStories = $this->fetchColumn($statement, array($userID));
 
 		return $totalStories;
 	}
+
+	public function getStoriesWrittenByCurrentUser($userID)
+	{
+		//Accepts a user id
+		//Gets an array of stories written by the owner of this user id
+		//Returns an array of Story class
+
+		$statement = "SELECT * FROM story WHERE User_UserId = ?";
+
+		$stories = $this->fetchIntoClass($statement, array($userID), "shared/Story");
+
+		return $stories;
+	}
+	public function getStoriesRecommendedByFriends($userID)
+	{
+		//Accepts a user id
+		//Gets an array of stories that were recommended to the owner of this user id
+		//Returns an array of Story class
+	}
+
+	public function getStoriesRecommendedByCurrentUser($userID)
+	{
+		//Accepts a user id
+		//Gets an array of stories that were recommended to the owner of this user id
+		//Returns an array of Story class
+	}
+
+
+	/******************************************************************************************************************
+	*
+	*				Account Comments
+	*
+	******************************************************************************************************************/	
+
 	public function getTotalCommentsApproved($userID)
 	{
 		//Accepts an user id
 		//Gets the total stories written by the user who owns this email address
 		//Returns the total
-		$statement = "SELECT count(*) FROM Story WHERE User_UserId = ?";
+		$statement = "SELECT count(*) FROM story WHERE User_UserId = ?";
 
 		$totalStories = $this->fetchColumn($statement, array($userID));
 
@@ -354,19 +501,27 @@ class AccountModel extends Model {
 		//Accepts an user id
 		//Gets the total stories written by the user who owns this email address
 		//Returns the total
-		$statement = "SELECT count(*) FROM Story WHERE User_UserId = ?";
+		$statement = "SELECT count(*) FROM story WHERE User_UserId = ?";
 
 		$totalStories = $this->fetchColumn($statement, array($userID));
 
 		return $totalStories;
 	}
+
+
+	/******************************************************************************************************************
+	*
+	*				Account Followers
+	*
+	******************************************************************************************************************/	
+
 	public function getTotalFollowers($userID)
 	{
 		//Accepts a user id
 		//Gets the total follower for this userid
 		//Returns the total
 
-		$statement = "SELECT count(*) FROM Following WHERE User_UserId = ?";
+		$statement = "SELECT count(*) FROM following WHERE User_UserId = ?";
 
 		$totalFollowing = $this->fetchColumn($statement, array($userID));
 
@@ -396,7 +551,7 @@ class AccountModel extends Model {
 		//Gets the total amount of people the current user is following
 		//Returns the total
 
-		$statement = "SELECT count(*) FROM Following WHERE User_FollowerId = ?";
+		$statement = "SELECT count(*) FROM following WHERE User_FollowerId = ?";
 
 		$totalFollowers = $this->fetchColumn($statement, array($userID));
 
@@ -408,24 +563,14 @@ class AccountModel extends Model {
 		//Gets all users that are following this user id
 		//Returns array of user class
 	}
-	public function getStoriesWrittenByCurrentUser($userID)
-	{
-		//Accepts a user id
-		//Gets an array of stories written by the owner of this user id
-		//Returns an array of Story class
 
-		$statement = "SELECT * FROM Story WHERE User_UserId = ?";
 
-		$stories = $this->fetchIntoClass($statement, array($userID), "Shared/Story");
-
-		return $stories;
-	}
-	public function getStoriesRecommendedByFriends($userID)
-	{
-		//Accepts a user id
-		//Gets an array of stories that were recommended to the owner of this user id
-		//Returns an array of Story class
-	}
+	/******************************************************************************************************************
+	*
+	*				Account Users
+	*
+	******************************************************************************************************************/	
+	
 	public function searchForUser($userSearch, $howMany, $page)
 	{
 		//Accepts a string that will be someones name, how many results to return, what page of results your on
@@ -438,7 +583,7 @@ class AccountModel extends Model {
 
 		$start = $howMany * ($page - 1);
 
-		$user = $this->fetchIntoClass($statement, array($start, $howMany, $userSearch), "Shared/User");
+		$user = $this->fetchIntoClass($statement, array($start, $howMany, $userSearch), "shared/User");
 
 		return $user;
 	}
@@ -455,7 +600,7 @@ class AccountModel extends Model {
 
 		$start = $howMany * ($page - 1);
 
-		$user = $this->fetchIntoClass($statement, array($start, $howMany), "Shared/User");
+		$user = $this->fetchIntoClass($statement, array($start, $howMany), "shared/User");
 
 		return $user;
 	}
@@ -473,37 +618,10 @@ class AccountModel extends Model {
 
 		$start = $howMany * ($page - 1);
 
-		$user = $this->fetchIntoClass($statement, array($start, $howMany), "Shared/User");
+		$user = $this->fetchIntoClass($statement, array($start, $howMany), "shared/User");
 
 		return $user;
 	}
-
-
-	function getListOfStories()
-	{
-
-	}
-	
-	public function get($id)
-	{
-		return $result;
-	}
-
-	public function insert()
-	{
-		return $result;
-	}
-
-	public function update()
-	{
-		return $result;
-	}
-
-	public function delete()
-	{
-		return $result;
-	}
-
 }
 
 ?>

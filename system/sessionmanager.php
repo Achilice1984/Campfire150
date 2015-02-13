@@ -59,6 +59,20 @@ class SessionManager
 		T_setlocale(LC_MESSAGES, $language);
 	}
 
+	public function setLanguagePrefernece()
+	{
+		if(!isset($_SESSION["languagePreference"]))
+		{
+			$language = $_SESSION["languagePreference"] = "en_CA";
+		}
+		else
+		{
+			$language = $_SESSION["languagePreference"];
+		}
+
+		return $language;
+	}
+
 	public function getUserSession()
 	{
 		require_once(APP_DIR .'viewmodels/shared/UserViewModel.php');
@@ -124,6 +138,16 @@ class SessionManager
 		}
 		
 		$_SESSION["errorMessages"]["other"][$key] = $errorMessage;	
+	}
+
+	public function addSuccessMessages($key, $successMessage)
+	{
+		if(!isset($_SESSION["errorMessages"]))
+		{
+			$_SESSION["errorMessages"] = array();			
+		}
+		
+		$_SESSION["successMessages"]["other"][$key] = $successMessage;	
 	}
 }
 ?>

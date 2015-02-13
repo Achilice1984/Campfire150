@@ -20,7 +20,7 @@ class StoryModel extends Model {
 
 			$parameters = array($story->StoryID, $story->User_UserId);
 
-			return $this->execute($statement);
+			return $this->fetch($statement, $parameters);
 		}
 		catch(PDOException $e) 
 		{
@@ -28,7 +28,8 @@ class StoryModel extends Model {
 		}
 	}
 
-	public function changeStoryPrivacySetting($userID, $storyID, $privacyTypeID)
+ //tested
+	public function changeStoryPrivacySetting($storyID, $userID, $privacyTypeID)
 	{
 		//Accepts a user id (owner), a story id, and a privacy type
 		//checks that userid is owner of story
@@ -37,18 +38,19 @@ class StoryModel extends Model {
 
 		try
 		{
-			$statement = "UPDATE story SET PrivacyType_PrivacyTypeId=? WHERE User_UserId=? AND StoryId=?";
+			$statement = "UPDATE story SET StoryPrivacyType_StoryPrivacyTypeId=? WHERE User_UserId=? AND StoryId=?";
 
 			$parameters = array($privacyTypeID, $userID, $storyID);
 
-			return $this->execute($statement);
+			return $this->fetch($statement, $parameters);
 		}
-		catch(PDOException $e)
+		catch(PDOException $e) 
 		{
 			return $e->getMessage();
 		}
 	}
 
+  //tested
 	public function flagStoryAsInapropriate($storyID, $userID)
 	{
 		//Accepts a storyID, a userID, and a bool for if it was thought to be inapropriate
@@ -57,11 +59,12 @@ class StoryModel extends Model {
 
 		try
 		{
+
 			$statement = "INSERT INTO user_recommend_story (Story_StoryId, User_UserId, Opinion) VALUES(?, ?, 0)";
 
 			$parameters = array($storyID, $userID);
 
-			return $this->execute($statement);
+			return $this->fetch($statement, $parameters);		
 		}
 		catch(PDOException $e) 
 		{
@@ -74,21 +77,22 @@ class StoryModel extends Model {
 		//Accepts a user id, and a storyID
 		//Check privacy type
 		//Must be approved
-		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
+		//Checks if user has marked story as inappropriate and if user has recommended story (add these to story viewmodel class)
 		//returns a Story class
 
 		try
 		{
 			$statement = "SELECT * FROM Story User_UserId=? AND StoryId=?";
 
-			$story = $this->fetchIntoClass($statement, array($userID, $storyID), "Shared/Story");
+			$story = $this->fetchIntoClass($statement, array($userID, $storyID), "Shared/StoryView");
 
 			return $story;
 		}
-		catch(PDOException $e)
+		catch(PDOException $e) 
 		{
 			return $e->getMessage();
 		}
+
 	}
 
 	public function getStoryAsAdmin($adminID, $storyID)
@@ -126,7 +130,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/Story");
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryView");
 
 			return $storyList;
 		}
@@ -151,7 +155,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/Story");
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryView");
 
 			return $storyList;
 		}
@@ -179,7 +183,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/Story");
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryView");
 
 			return $storyList;
 		}
@@ -207,7 +211,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/Story");
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryView");
 
 			return $storyList;
 		}
@@ -236,7 +240,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/Story");
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryView");
 
 			return $storyList;
 		}
@@ -275,7 +279,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/Story");
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryView");
 
 			return $storyList;
 		}
@@ -315,7 +319,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$comment = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/Comment");
+			$comment = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/CommentView");
 
 			return $comment;
 		}
@@ -342,7 +346,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$comment = $this->fetchIntoClass($statement, array($start, $howMany), "Shared/Comment");
+			$comment = $this->fetchIntoClass($statement, array($start, $howMany), "Shared/CommentView");
 
 			return $comment;
 		}
@@ -371,9 +375,9 @@ class StoryModel extends Model {
 		
 		try
 		{
-			$statement = "SELECT * FROM comment WHERE User_UserId = ? AND PublishFlag = 0" ORDER BY CommentId;
+			$statement = "SELECT * FROM comment WHERE User_UserId = ? AND PublishFlag = 0 ORDER BY CommentId";
 
-			$comment = $this->fetchIntoClass($statement, array($userID), "Shared/Comment");
+			$comment = $this->fetchIntoClass($statement, array($userID), "Shared/CommentView");
 
 			return $comment;
 		}
