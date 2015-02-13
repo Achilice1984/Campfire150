@@ -240,7 +240,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryView");
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "shared/StoryViewModel");
 
 			return $storyList;
 		}
