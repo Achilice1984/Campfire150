@@ -23,15 +23,16 @@ class PictureViewModel extends ViewModel
 
 	function __construct()
 	{
-		parent::__construct(array());
-		//Add validation decorators
-		// parent::__construct(array('Email' => 
-		// 							array('email' => 'Invalid email',
-		// 									'required' => 'email is required'),
-		// 							'FirstName' =>
-		// 								array('required' => 'the name field is required!')
-		// 						));
-		//}
+		$errors["PictureFile"] = array(
+			'validFileType' =>
+				array(
+					'Message' => gettext('The file you choose is not a valid file type.'),
+					'Properties' => array()
+				)
+		);
+
+		//Pass validation to the View Model
+		parent::__construct($errors);
 	}
 }
 ?>

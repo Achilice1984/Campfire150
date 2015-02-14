@@ -10,12 +10,23 @@ class LoginViewModel extends ViewModel
 
 	function __construct()
 	{		
-		parent::__construct(array('Email' => 
-									array('email' => 'Thats an invalid email!',
-											'required' => 'the email field is required!'),
-									'Password' =>
-										array('required' => 'the password field is required!')
-								));
+		$validate["Email"] = array(
+			'email' =>
+				array(
+					'Message' => gettext('Invalid Email Address.'),
+					'Properties' => array()
+				)
+		);
+		$errors["Password"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The Password field is required!'),
+					'Properties' => array()
+				)
+		);
+
+		//Pass validation to the View Model
+		parent::__construct($errors);
 	}
 }
 ?>

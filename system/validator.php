@@ -9,27 +9,30 @@
 */
 class Validator
 {
+  private $viewModel;
+
   public function validate($viewModel)
   { 
+    $this->viewModel = $viewModel;
     $validationMessages = array();
     $validationDecorators = $viewModel->getValidationDecorators();
 
     if(isset($validationDecorators))
     {
       foreach ($validationDecorators as $property => $validationTypes) {
-        foreach ($validationTypes as $validationType => $errorMessage) {
+        foreach ($validationTypes as $validationType => $validationDetails) {
 
           try
           {
-            //Call a validation method
-            if($this->$validationType($viewModel->$property))
+              //Call a validation method
+              if(!$this->$validationType($viewModel->$property, $validationDetails["Properties"]))
               {
-                $validationMessages[$property][$validationType] = $errorMessage;
+                $validationMessages[$property][$validationType] = $validationDetails["Message"];
               }
             }
             catch(Exception $ex)
             {
-              $validationMessages[$property][$validationType] = "Some unknown error has occurred";
+              $validationMessages[$property][$validationType] = gettext("Some unknown error has occurred");
             }
           }
       }
@@ -42,121 +45,84 @@ class Validator
 
   private function email($propertyValue)
   {
-    return !filter_var($propertyValue, FILTER_VALIDATE_EMAIL);
+    return filter_var($propertyValue, FILTER_VALIDATE_EMAIL);
+  }
+
+  private function fieldMatch($propertyValue, $properties)
+  {
+    return true;
   }
 
   private function required($propertyValue)
   {
-    return empty($propertyValue);
+    return !empty($propertyValue);
   }
 
-	private function name($match){
-    if (preg_match('/^[a-zA-Z -]{2,30}$/', $match)){
-      return true;
-    }
-    else{
-      return false;
-    }
+	private function name($match)
+  {
+    return preg_match('/^[a-zA-Z -]{2,30}$/', $match);
 	}
-  private function firstName($match){
-    if (preg_match('/^[a-zA-Z -]{2,30}$/', $match)){
-      return true;
-    }
-    else{
-      return false;
-    }
+
+  private function phoneThreeDigit($match)
+  {
+    return preg_match('/^[0-9]{3}/', $match);
   }
-  private function lastName($match){
-    if (preg_match('/^[a-zA-Z -]{2,30}$/', $match)){
-      return true;
-    }else{
-      return false;
-    }
+
+  private function phoneAreaCode($match)
+  {
+    return preg_match('/^[0-9]{3}/', $match);
   }
-  private function phoneThreeDigit($match){
-    if (preg_match('/^[0-9]{3}/', $match)){
-      return true;
-    }
-    else{
-      return false;
-    } 
+
+  private function phoneFourDigit($match)
+  {
+    return preg_match('/^[0-9]{4}/', $match);
   }
-  private function phoneAreaCode($match){
-    if (preg_match('/^[0-9]{3}/', $match)){
-      return true;
-    }
-    else{
-      return false;
-    } 
-  }
-  private function phoneFourDigit($match){
-    if (preg_match('/^[0-9]{4}/', $match)){
-      return true;
-    }else{
-      return false;
-    } 
-  }
- private function unitNo($match){
-  if (preg_match('/^[0-9A-Za-z]{1,6}/', $match)){
-   return true;
-  }else{
-   return false;
-  }
+
+ private function unitNo($match)
+ {
+    return preg_match('/^[0-9A-Za-z]{1,6}/', $match);
  }
  private function aptNo($match){
-  if (preg_match('/^[0-9A-Za-z]{1,6}/', $match)){
-   return true;
-  }else{
-   return false;
-  }
+    return preg_match('/^[0-9A-Za-z]{1,6}/', $match);
  }
- private function streetNo($match){
-  if (preg_match('/^[0-9A-Za-z]{1,6}/', $match)){
-   return true;
-  }else{
-   return false;
-  }
+ private function streetNo($match)
+ {
+    return preg_match('/^[0-9A-Za-z]{1,6}/', $match);
  }
- private function street($match){
-  if (preg_match('/^[A-Za-z\- ]{1,30}/', $match)){
-   return true;
-  }else{
-   return false;
-  }
+ private function street($match)
+ {
+    return preg_match('/^[A-Za-z\- ]{1,30}/', $match);
  }
- private function city($match){
-  if (preg_match('/^[A-Za-z\- ]{1,30}/', $match)){
-   return true;
-  }else{
-   return false;
-  }
+ private function city($match)
+ {
+    return preg_match('/^[A-Za-z\- ]{1,30}/', $match);
  }
- private function postalCode($match){
-  if (preg_match('/^[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1} *\d{1}[A-Z]{1}\d{1}$/', $match)){
-   return true;
-  }else{
-   return false;
-  }
+ private function postalCode($match)
+ {
+    return preg_match('/^[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1} *\d{1}[A-Z]{1}\d{1}$/', $match);
  }
  function badWord($string){
-  $string =strtolower($string);
-  $badWords = array("fuck","shit","asshole","bitch","whore","cunt");
-  $matches = array();
-  $matchFound = preg_match_all("/\b(" . implode($badWords,"|") . ")\b/i",$string,$matches);
-  if ($matchFound) {
-   return true;
-  }else{
-   return false;
- }}
-  function validFileType($fileType){
-  $fileType =strtolower($fileType);
-  $validTypes = array("png","jpg","jpeg","bmp","mp4","ogg","mp3");
-  $matches = array();
-  $matchFound = preg_match_all("/\b(" . implode($validTypes,"|") . ")\b/i",$fileType,$matches);
-  if ($matchFound) {
-   return true;
-  }else{
-   return false;
- }}
+    $string =strtolower($string);
+    $badWords = array("fuck","shit","asshole","bitch","whore","cunt");
+    $matches = array();
+    $matchFound = preg_match_all("/\b(" . implode($badWords,"|") . ")\b/i",$string,$matches);
+
+    return $matchFound;
+  }
+
+  function validFileType($file)
+  {
+    // DO NOT TRUST $_FILES['upfile']['mime'] VALUE !!
+    // Check MIME Type by yourself.
+    $finfo = new finfo(FILEINFO_MIME_TYPE);
+
+    if (false === $ext = array_search($finfo->file($file['tmp_name']), 
+      array('jpg' => 'image/jpeg', 'png' => 'image/png', 'gif' => 'image/gif'), true )) 
+    {
+        return false;
+    }
+    
+    return true;
+  }
 }
 ?>
