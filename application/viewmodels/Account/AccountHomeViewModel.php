@@ -21,7 +21,17 @@ class AccountHomeViewModel extends ViewModel
 
 	function __construct()
 	{		
-		parent::__construct(array());
+		// $errors["ProfilePrivacyType_PrivacyTypeId"] = array(
+		// 	'required' =>
+		// 		array(
+		// 			'Message' => gettext('The privacy field is required!'),
+		// 			'Properties' => array()
+		// 		)
+		// );
+
+
+		// //Pass validation to the View Model
+		// parent::__construct($errors);
 	}
 }
 ?>

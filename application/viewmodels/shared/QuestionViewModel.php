@@ -12,13 +12,17 @@ class QuestionViewModel extends ViewModel
 
 	function __construct()
 	{
-		//Add validation decorators
-		// parent::__construct(array('Email' => 
-		// 							array('email' => 'Invalid email',
-		// 									'required' => 'email is required'),
-		// 							'FirstName' =>
-		// 								array('required' => 'the name field is required!')
-		// 						));
+		// $errors["ProfilePrivacyType_PrivacyTypeId"] = array(
+		// 	'required' =>
+		// 		array(
+		// 			'Message' => gettext('The privacy field is required!'),
+		// 			'Properties' => array()
+		// 		)
+		// );
+
+
+		// //Pass validation to the View Model
+		// parent::__construct($errors);
 	}
 	}
 }

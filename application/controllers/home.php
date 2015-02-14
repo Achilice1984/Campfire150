@@ -10,6 +10,7 @@ class Home extends Controller {
 	function index()
 	{
 		$model = $this->loadModel('HomeModel');
+		$models = $this->loadModel('SiteContent/SiteContentModel');
 
 		$homeViewModel = $this->loadViewModel('HomeViewModel');
 

@@ -32,21 +32,76 @@ class ProfileViewModel extends ViewModel
 
 	function __construct()
 	{		
-		parent::__construct(array(
-							'Email' => 
-							array('email' => 'Invalid Email Address',
-									'required' => 'The Email field is required!'),
-							'FirstName' =>
-								array('required' => 'The First Name field is required!'),
-							'LastName' =>
-								array('required' => 'The Last Name is required!'),
-							'Address' =>
-								array('required' => 'The Address field is required!'),
-							'PostalCode' =>
-								array('required' => 'The Postal Code field is required!'),
-							'LanguageType_LanguageId' =>
-								array('required' => 'The Language field is required!')
-						));
+
+		$validate["Email"] = array(
+			'email' =>
+				array(
+					'Message' => gettext('Invalid Email Address.'),
+					'Properties' => array()
+				),
+			'required' =>
+				array(
+					'Message' => gettext('The Email field is required!'),
+					'Properties' => array()
+				)
+		);
+		$errors["FirstName"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The First Name field is required!'),
+					'Properties' => array()
+				)
+		);
+		$errors["LastName"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The Last Name is required!'),
+					'Properties' => array()
+				)
+		);
+		$errors["Password"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The Password field is required!'),
+					'Properties' => array()
+				),
+			'fieldMatch' =>
+				array(
+					'Message' => gettext('The Password field does not match the Re-Type Password field!'),
+					'Properties' => array('RePassword')
+				)
+		);
+		$errors["RePassword"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The The Re-Type Password field is required!'),
+					'Properties' => array()
+				)
+		);
+		$errors["PostalCode"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The Postal Code field is required!'),
+					'Properties' => array()
+				)
+		);
+		$errors["LanguageType_LanguageId"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The Language field is required!'),
+					'Properties' => array()
+				)
+		);
+		$errors["ProfilePrivacyType_PrivacyTypeId"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The privacy field is required!'),
+					'Properties' => array()
+				)
+		);
+
+		//Pass validation to the View Model
+		parent::__construct($errors);
 	}
 }
 ?>

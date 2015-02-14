@@ -120,7 +120,7 @@
 
                 <h2><?php echo gettext("Profile Picture"); ?></h2>
 
-                <form action="<?php echo BASE_URL; ?>Account/changeprofilepicture" method="post">                    
+                <form action="<?php echo BASE_URL; ?>Account/changeprofilepicture" method="post" enctype="multipart/form-data">                    
                     <div class="form-group">
                         <input type="file" id="ProfilePicture" name="PictureFile" placeholder="<?php echo gettext("Re-Type Password"); ?>">
                     </div>
@@ -132,7 +132,7 @@
 
                 <h2><?php echo gettext("Background Picture"); ?></h2>
 
-                <form action="<?php echo BASE_URL; ?>Account/changebackgroundpicture" method="post">
+                <form action="<?php echo BASE_URL; ?>Account/changebackgroundpicture" method="post" enctype="multipart/form-data">
                     <div class="form-group">
                         <!-- <label for="BackgroundPicture"><?php echo gettext("Re-Type Password"); ?></label> -->
                         <input type="file" id="BackgroundPicture" name="PictureFile" placeholder="<?php echo gettext("Re-Type Password"); ?>">

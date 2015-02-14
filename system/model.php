@@ -10,7 +10,8 @@
 
 class Model {
 
-	private $connection;//This is more of a handler now
+	//Use static connection to have one connection per request
+	private static $connection;
 	
 	public function __construct()
 	{
@@ -18,7 +19,11 @@ class Model {
 
 		try 
 		{
-		    $this->connection = new PDO($config['db_dsn'], $config['db_username'], $config['db_password']);
+			//Check if a connection exists
+			if(!isset(self::$connection))
+			{
+		    	self::$connection = new PDO($config['db_dsn'], $config['db_username'], $config['db_password']);
+		    }
 		} 
 		catch (PDOException $e) 
 		{
@@ -28,7 +33,7 @@ class Model {
 
 	public function lastInsertId()
 	{
-		return $this->connection->lastInsertId();
+		return self::$connection->lastInsertId();
 	}
 
 	public function fetchIntoClass($qry, $params=array(), $className)
@@ -39,10 +44,9 @@ class Model {
 		{
 			require_once(APP_DIR .'viewmodels/' . $className .'.php');
 
-			//echo "<br /><br /><br /><br /><br /><br /><br /><br />" . APP_DIR .'viewmodels/' . $className .'.php';
-			 $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			 self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-			 $pdo = $this->connection->prepare($qry);
+			 $pdo = self::$connection->prepare($qry);
 			 $pdo->execute($params);
 
 			 $urlArray = explode("/", $className);
@@ -68,9 +72,9 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
-			$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-			$pdo = $this->connection->prepare($qry);
+			$pdo = self::$connection->prepare($qry);
 			$pdo->execute($params);
 
 			//Fetches data and puts it into object form
@@ -86,9 +90,9 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
-			$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-			$pdo = $this->connection->prepare($qry);
+			$pdo = self::$connection->prepare($qry);
 			$pdo->execute($params);
 
 			return $pdo->rowCount();
@@ -104,9 +108,9 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
-			$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-			$pdo = $this->connection->prepare($qry);
+			$pdo = self::$connection->prepare($qry);
 			$pdo->execute($params);
 
 			return $pdo->fetchColumn();
@@ -122,9 +126,9 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
-			$this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-			$pdo = $this->connection->prepare($qry);			
+			$pdo = self::$connection->prepare($qry);			
 
 			return $pdo->execute($params);
 		}

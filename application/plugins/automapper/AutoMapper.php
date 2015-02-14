@@ -15,6 +15,14 @@ class AutoMapper
 			}
 		}
 
+		foreach($_FILES as $name => $value) 
+		{
+			if(property_exists(get_class($viewModel), $name))
+			{
+				$viewModel->$name = $value;
+			}
+		}
+
 		return $viewModel;
 	}
 }

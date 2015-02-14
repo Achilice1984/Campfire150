@@ -17,14 +17,15 @@ class AccountModel extends Model {
 		//Get user that matches email address
 		$user = $this->fetchIntoClass($statement, array(":Email" => $loginViewModel->Email), "shared/UserViewModel");
 
+		$isUserLoggedIn = false;
+
+		// Does a user exists?
 		if (isset($user[0])) 
 		{
 			$user = $user[0];
 
 			if($user->VerifiedEmail) //Has user verified email?
 			{
-				$currentTime = new DateTime();
-
 				if(!isset($user->LockoutTimes) || strtotime('-15 minutes') > $user->LockoutTimes) //Is user locked out?
 				{
 					//check to see if user is properly authenticated
@@ -40,13 +41,13 @@ class AccountModel extends Model {
 							":UserId" => $user->UserId
 						);
 						
-						$rowCount = $this->fetchRowCount($statement, $parameters);
+						$this->fetch($statement, $parameters);
 
-						//reset lockout 
-						return true;
+						$isUserLoggedIn = true;
 					}
-					else //Login failed, update failed attempts
+					else //User exists BUT Login failed, update failed attempts
 					{
+						//to many failed login attempts, lockout user
 						if($user->FailedLoginAttempt >= 5)
 						{
 							//add a failed login attempt and set the lockout time
@@ -55,11 +56,11 @@ class AccountModel extends Model {
 
 							$parameters = array( 
 								":FailedLoginAttempt" => $user->FailedLoginAttempt + 1, 
-								":LockoutTimes" => $currentTime,
+								":LockoutTimes" => new DateTime(),
 								":UserId" => $user->UserId
 							);
 							
-							$rowCount = $this->fetchRowCount($statement, $parameters);
+							$this->fetch($statement, $parameters);
 						}
 						else
 						{
@@ -72,16 +73,14 @@ class AccountModel extends Model {
 								":UserId" => $user->UserId
 							);
 							
-							$rowCount = $this->fetchRowCount($statement, $parameters);
+							$this->fetch($statement, $parameters);
 						}
 					}
 				}
 			} // End of if($user->VerifiedEmail) //Has user verified email?
 		}
 
-
-
-		return false;
+		return $isUserLoggedIn;
 	}
 
 	public function logout()
@@ -206,12 +205,12 @@ class AccountModel extends Model {
 			$parameters = array( 
 				":Title" => $imageViewModel->Title, 
 				":Description" => $imageViewModel->Description,
-				":FileName" => pathinfo($imageViewModel->PictureFile, PATHINFO_FILENAME), 
+				":FileName" => pathinfo($imageViewModel->PictureFile["name"], PATHINFO_FILENAME), 
 				":Active" => true, 
 				":InppropriateFlag" => false, 
 				":User_UserId" => $userId, 
 				":picturetype_PictureTypeId" => $imageType, 
-				":PictureExtension" => pathinfo($imageViewModel->PictureFile, PATHINFO_EXTENSION)
+				":PictureExtension" => pathinfo($imageViewModel->PictureFile["name"], PATHINFO_EXTENSION)
 			);
 
 			if($this->fetch($statement, $parameters, "shared/PictureViewModel"))
