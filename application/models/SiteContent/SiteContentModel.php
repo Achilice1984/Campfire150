@@ -2,6 +2,15 @@
 
 class SiteContentModel extends Model {	
 
+	private $sessionManager;
+
+	function __construct()
+	{
+		$this->sessionManager = new SessionManager();
+
+		parent::__construct();
+	}
+
 	/******************************************************************************************************************
 	*
 	*				Dropdowns
@@ -10,53 +19,67 @@ class SiteContentModel extends Model {
 
 	public function getDropdownValues_ProfilePrivacyType()
 	{
-		$sessionManager = new SessionManager();
-		$statement;
+		$statement = "SELECT PrivacyTypeId AS Value, " . $this->getLanguage() . " AS Name FROM ProfilePrivacyType";
 
-		if($sessionManager->isEng())
-		{
-			$statement = "SELECT PrivacyTypeId AS Value, NameE AS Name FROM ProfilePrivacyType";
-		}
-		else
-		{
-			$statement = "SELECT PrivacyTypeId AS Value, NameF AS Name FROM ProfilePrivacyType";
-		}
-
-		//Get dropdown values
-		$privacyDropdownValues = $this->fetchIntoClass($statement, null, "shared/DropDownViewModel");
-
-		return $privacyDropdownValues;
+		return $this->fetchDropdownValues($statement);
 	}
 
 	public function getDropdownValues_StoryPrivacyType()
 	{
-		$statement = "SELECT * FROM StoryPrivacyType";
+		$statement = "SELECT StoryPrivacyTypeId AS Value, " . $this->getLanguage() . " AS Name FROM StoryPrivacyType";
 
-		//Get dropdown values
-		$dropdownValues = $this->fetchIntoClass($statement, null, "shared/DropDownViewModel");
-
-		return $dropdownValues;
+		return $this->fetchDropdownValues($statement);
 	}
 
 	public function getDropdownValues_LanguageType()
 	{
-		$statement = "SELECT * FROM languagetype";
+		$statement = "SELECT LanguageId AS Value, " . $this->getLanguage() . " AS Name FROM languagetype";
 
-		//Get dropdown values
-		$dropdownValues = $this->fetchIntoClass($statement, null, "shared/DropDownViewModel");
-
-		return $dropdownValues;
+		return $this->fetchDropdownValues($statement);
 	}
 
 	public function getDropdownValues_PictureType()
 	{
-		$statement = "SELECT * FROM picturetype";
+		$statement = "SELECT PictureTypeId AS Value, " . $this->getLanguage() . " AS Name FROM picturetype";
 
+		return $this->fetchDropdownValues($statement);
+	}
+
+	public function getDropdownValues_GenderType()
+	{
+		$statement = "SELECT GenderTypeId AS Value, " . $this->getLanguage() . " AS Name FROM gendertype";
+
+		return $this->fetchDropdownValues($statement);
+	}
+
+	public function getDropdownValues_SecurityQuestions()
+	{
+		$statement = "SELECT LoginQuestionId AS Value, " . $this->getLanguage() . " AS Name FROM LoginQuestion";
+
+		return $this->fetchDropdownValues($statement);
+	}
+
+
+	/******************************************************************************************************************
+	*
+	*				Private Functions
+	*
+	******************************************************************************************************************/	
+
+	private function fetchDropdownValues($statement)
+	{
 		//Get dropdown values
 		$dropdownValues = $this->fetchIntoClass($statement, null, "shared/DropDownViewModel");
 
 		return $dropdownValues;
 	}
+
+
+	private function getLanguage()
+	{
+		return ($this->sessionManager->isEng() ? "NameE" : "NameF");
+	}
+
 
 
 	/******************************************************************************************************************

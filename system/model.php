@@ -23,6 +23,11 @@ class Model {
 			if(!isset(self::$connection))
 			{
 		    	self::$connection = new PDO($config['db_dsn'], $config['db_username'], $config['db_password']);
+
+		    	if($config["debugMode"] == true)
+				{
+		    		self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	    		}
 		    }
 		} 
 		catch (PDOException $e) 
@@ -42,9 +47,7 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
-			require_once(APP_DIR .'viewmodels/' . $className .'.php');
-
-			 self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			require_once(APP_DIR .'viewmodels/' . $className .'.php');			 
 
 			 $pdo = self::$connection->prepare($qry);
 			 $pdo->execute($params);
@@ -61,7 +64,6 @@ class Model {
 		}
 		catch(PDOException $e) 
 		{
-			echo $e->getMessage();
 			return $e->getMessage();
 		}
 	}
@@ -72,8 +74,6 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
-			self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 			$pdo = self::$connection->prepare($qry);
 			$pdo->execute($params);
 
@@ -90,8 +90,6 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
-			self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 			$pdo = self::$connection->prepare($qry);
 			$pdo->execute($params);
 
@@ -99,7 +97,6 @@ class Model {
 		}
 		catch(PDOException $e) 
 		{
-			echo $e->getMessage();
 			return $e->getMessage();
 		}
 	}
@@ -108,8 +105,6 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
-			self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
 			$pdo = self::$connection->prepare($qry);
 			$pdo->execute($params);
 
@@ -126,9 +121,9 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
-			self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+			$pdo = self::$connection->prepare($qry);	
 
-			$pdo = self::$connection->prepare($qry);			
+			exit;		
 
 			return $pdo->execute($params);
 		}
