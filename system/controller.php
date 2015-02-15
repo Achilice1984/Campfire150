@@ -157,9 +157,7 @@ class Controller {
 	
 	//By placing a location (example, home/index) you can redirect to another url.
 	public function redirect($loc)
-	{
-		global $config;
-		
+	{		
 		header('Location: '. BASE_URL . $loc);
 		exit;
 	}
