@@ -1,0 +1,1 @@
+<h1><?php echo gettext("Error") . " " . gettext("502"); ?></h1>

@@ -42,6 +42,10 @@ class SessionManager
 		$_SESSION["MidName"] 	= $user->MidName;
 		$_SESSION["Address"]    = $user->Address;
 		$_SESSION["PostalCode"] = $user->PostalCode;
+
+		$_SESSION["LanguageType_LanguageId"] = $user->LanguageType_LanguageId;
+
+		$this->setLanguageSession($user->LanguageType_LanguageId);
 	}
 
 	public function setLanguageSession($languageId)

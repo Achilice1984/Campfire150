@@ -2,7 +2,14 @@
 
 $config["debugMode"] = true;
 
-$config['base_url'] = "http://localhost:8084/CampFire150/"; // Base URL including trailing slash (e.g. http://localhost/)
+$config['base_url'] = array("http://localhost:8084/CampFire150/"); // Base URL including trailing slash (e.g. http://localhost/)
+$config['request_url'] = sprintf(
+					    "%s://%s:8084%s",
+					    isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
+					    $_SERVER['SERVER_NAME'],
+					    $_SERVER['REQUEST_URI']
+					  );
+
 
 $config['default_controller'] = 'home'; // Default controller to load
 $config['error_controller'] = 'error'; // Controller used for errors (e.g. 404, 500 etc)
@@ -11,14 +18,5 @@ $config['error_controller'] = 'error'; // Controller used for errors (e.g. 404, 
 $config['db_dsn'] = 'mysql:dbname=CampFire;localhost';
 $config['db_username'] = 'CampFire'; // Database username
 $config['db_password'] = 'CampFire150'; // Database password
-
-
-/*
-*	Kept for historical purposes, to connect to mysql
-*/
-// $config['db_host'] = 'localhost'; // Database host (e.g. localhost)
-// $config['db_name'] = 'CampFire'; // Database name
-// $config['db_username'] = 'CampFire'; // Database username
-// $config['db_password'] = 'CampFire150'; // Database password
 
 ?>
