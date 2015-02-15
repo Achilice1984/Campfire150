@@ -27,25 +27,67 @@ class Controller {
 
 	public function isAuth()
 	{
-		$auth = new Authentication();
+		try
+		{
+			$auth = new Authentication();
 
-		return $auth->isAuthenticated();
+			return $auth->isAuthenticated();
+		}
+		catch(Exception $ex)
+		{
+			// Worst case, exit everything to prevent intrusion
+			exit;
+		}
 	}
 
 	public function isAdmin()
 	{
-		$auth = new Authentication();
+		try
+		{
+			$auth = new Authentication();
 
-		return $auth->isAdmin();
+			return $auth->isAdmin();
+		}
+		catch(Exception $ex)
+		{
+			// Worst case, exit everything to prevent intrusion
+			exit;
+		}
 	}
 
 	public function AuthRequest()
 	{
-		$auth = new Authentication();
-
-		if(!$auth->isAuthenticated())
+		try
 		{
-			$this->redirect("");
+			$auth = new Authentication();
+
+			if(!$auth->isAuthenticated())
+			{
+				$this->redirect("");
+			}
+		}
+		catch(Exception $ex)
+		{
+			// Worst case, exit everything to prevent intrusion
+			exit;
+		}
+	}
+
+	public function AdminRequest()
+	{
+		try
+		{
+			$auth = new Authentication();
+
+			if(!$auth->isAdmin())
+			{
+				$this->redirect("");
+			}
+		}
+		catch(Exception $ex)
+		{
+			// Worst case, exit everything to prevent intrusion
+			exit;
 		}
 	}
 	
@@ -118,7 +160,7 @@ class Controller {
 	{
 		global $config;
 		
-		header('Location: '. $config['base_url'] . $loc);
+		header('Location: '. BASE_URL . $loc);
 		exit;
 	}
 

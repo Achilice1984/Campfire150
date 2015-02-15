@@ -10,14 +10,15 @@ session_start();
 *	Load plugins
 */
 require_once('./application/plugins/gettext/gettext.inc');
-require_once('./application/plugins/automapper/AutoMapper.php');
 require_once('./application/plugins/akismet/akismet.class.php');
 require_once('./application/plugins/mailchimp/Mailchimp.php');
 require_once('./application/plugins/alphaid/alphaID.php');
-require_once('./application/plugins/successanderror/successanderror.php');
-
 //Need this if php version less than 5.5
 require_once('./application/plugins/password/password.php');
+
+//Custom plugins
+require_once('./application/plugins/automapper/AutoMapper.php');
+require_once('./application/plugins/successanderror/successanderror.php');
 
 
 // Defines
@@ -39,7 +40,17 @@ require(ROOT_DIR .'system/sessionmanager.php');
 
 // Define base URL
 global $config;
-define('BASE_URL', $config['base_url']);
+
+//Check if the requested url is included in the array of valid urls
+//and asign the proper url
+if(in_array($config['request_url'], $config['base_url'], true))
+{
+	define('BASE_URL', $config['request_url']);
+}
+else
+{
+	define('BASE_URL', $config['base_url'][0]);
+}
 
 
 // Language Setup
@@ -68,16 +79,17 @@ if($config["debugMode"] == true)
 }
 else
 {
-	error_reporting(-1);
+	error_reporting(0);
 }
 
- //set_error_handler("exception_error_handler");
+set_error_handler("exception_error_handler");
 
 pip();
 
 ?>
 
 <?php
+
 	function debugit($object)
 	{
 		echo "<div style='margin-top:100px;'></div>";
@@ -97,7 +109,7 @@ pip();
 		$_SESSION["errfile"] = $errfile;
 		$_SESSION["errline"] = $errline;
 
-		header('Location: '. $config['base_url'] . "error/generic");
+		header('Location: '. BASE_URL . "error/generic");
 		exit;
 	}	
 ?>
