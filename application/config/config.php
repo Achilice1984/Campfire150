@@ -15,8 +15,8 @@ $config['default_controller'] = 'home'; // Default controller to load
 $config['error_controller'] = 'error'; // Controller used for errors (e.g. 404, 500 etc)
 
 /* Connect to an ODBC database using driver invocation */
-$config['db_dsn'] = 'mysql:dbname=CampFire;localhost';
-$config['db_username'] = 'CampFire'; // Database username
-$config['db_password'] = 'CampFire150'; // Database password
+$config['db_dsn'] = 'mysql:dbname=wwwcoiox_campfire;localhost';
+$config['db_username'] = 'wwwcoiox_campfir'; // Database username
+$config['db_password'] = 'Ep8qNRvHWUV4NXSu'; // Database password
 
 ?>

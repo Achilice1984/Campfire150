@@ -622,7 +622,7 @@ class AccountModel extends Model {
 		//Checks if user is following each user (add this to user viewmodel class)
 		//Returns an array of User class		
 
-		$statement = "SELECT *, MATCH(FirstName, LastName, Email, MidName) AGAINST('$userSearch') AS score FROM User LIMIT ?, ? WHERE MATCH(FirstName, LastName, Email, MidName) AGAINST(?) ORDER BY score DESC";
+		$statement = "SELECT *, MATCH(FirstName, LastName, Email, MidName) AGAINST('$userSearch') AS score FROM user LIMIT ?, ? WHERE MATCH(FirstName, LastName, Email, MidName) AGAINST(?) ORDER BY score DESC";
 
 		$start = $howMany * ($page - 1);
 
@@ -639,7 +639,7 @@ class AccountModel extends Model {
 		//Users must have verified flag set to true
 		//Returns an array of User class
 
-		$statement = "SELECT * FROM User LIMIT ?, ?";
+		$statement = "SELECT * FROM user LIMIT ?, ?";
 
 		$start = $howMany * ($page - 1);
 
@@ -657,7 +657,7 @@ class AccountModel extends Model {
 		//Users must have verified flag set to true
 		//Returns an array of User class
 
-		$statement = "SELECT * FROM User ORDER BY RegisterDate DESC LIMIT ?, ?";
+		$statement = "SELECT * FROM user ORDER BY RegisterDate DESC LIMIT ?, ?";
 
 		$start = $howMany * ($page - 1);
 
