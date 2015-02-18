@@ -30,7 +30,7 @@ class AdminModel extends Model {
 			$statement = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
 
 			$rowCount = $this->fetchRowCount($statement, array($adminID));
-
+			
 			if($rowCount >= 1)
 			{
 				try
@@ -43,7 +43,7 @@ class AdminModel extends Model {
 
 					$parameters = array($howMany, $offset);
 
-					$storyList = $this->fetchIntoClass($statement, $parameters, "Shared/Story");
+					$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 					return $storyList;
 
@@ -93,7 +93,7 @@ class AdminModel extends Model {
 
 					$parameters = array($howMany, $offset);
 
-					$storyList = $this->fetchIntoClass($statement, $parameters, "Shared/Story");
+					$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 					return $storyList;
 				}
