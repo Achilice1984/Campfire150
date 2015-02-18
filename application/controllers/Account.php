@@ -69,7 +69,7 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Admin/AdminModel');
 		
-		$returnData = $model->testStory();
+		$returnData = $model->getStoryListPendingApproval('1' ,'5','1');
 		
 		debugit($returnData);
 	}
@@ -78,7 +78,7 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Story/StoryModel');
 		
-		$returnData = $model->publishNewStory($story);
+		$returnData = $model->getStoryListRecommendedByFriends(1, 5, 1);
 		
 		debugit($returnData);
 	}

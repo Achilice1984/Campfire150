@@ -495,4 +495,11 @@ INSERT INTO `campfire`.`answer_for_question` (`Answer_AnswerId`, `Question_Quest
 --
 -- Dumping data for table `user_inappropriateflag_comment`
 --
+
 INSERT INTO `campfire`.`story_has_answer_for_question` (`Story_StoryId`, `Answer_for_Question_Answer_AnswerId`, `Answer_for_Question_Question_QuestionId`, `TimeStamp`) VALUES ('6', '1', '1', CURRENT_TIMESTAMP), ('6', '2', '1', CURRENT_TIMESTAMP), ('6', '3', '2', CURRENT_TIMESTAMP), ('7', '1', '1', CURRENT_TIMESTAMP), ('7', '3', '2', CURRENT_TIMESTAMP);
+
+--
+-- Dumping data for table `user_inappropriateflag_comment`
+--
+
+INSERT INTO `campfire`.`gendertype` (`GenderTypeId`, `NameE`, `NameF`) VALUES (NULL, 'Male', 'Homme'), (NULL, 'Female', 'Femme'), (NULL, 'LGBT', 'LGBT');
