@@ -1,11 +1,14 @@
-<?php
+<?php4
 
 class StoryModel extends Model {
 
-	public function searchStories($storySearch, $howMany, $page)
+	public function searchStories($storySearch, $userID, $howMany, $page)
 	{
 		//Accepts string to search for a story
-		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
+		//check privacy
+		//check active
+		//check is not equal to the userid 
+		//how many stories will return in the
 		//returns an array of Story class that relate to the search string
 	}
 
