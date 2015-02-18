@@ -85,7 +85,7 @@ class StoryModel extends Model {
 
 		try
 		{
-			$statement = "SELECT * FROM Story User_UserId=? AND StoryId=?";
+			$statement = "SELECT * FROM Story WHERE User_UserId=? AND StoryId=? AND Active=1";
 
 			$story = $this->fetchIntoClass($statement, array($userID, $storyID), "Shared/StoryView");
 
@@ -105,16 +105,73 @@ class StoryModel extends Model {
 		//Does not have to be approved
 		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
 		//returns a Story class
+		try 
+		{
+			$statement = "SELECT * FROM admin_approve_story WHERE User_UserId=? AND StoryId=?";
+
+			$story = $this->fetchIntoClass($statement, array($adminID, $storyID), "Shared/StoryView");
+
+			return $story;
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
 	}
 
-	public function getStoryListByCategoryID($categoryID, $howMany, $page)
+	public function getStoryListByTag($tag, $howMany, $page)
 	{
 		//Accepts a categoryID, how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
 		//Check privacy type
 		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
 		//returns an array of Story class related to a category
+		try 
+		{
+			$statement = "";
+		}
+		
+	}
 
+	public function getStoryListByGenreID($genreID, $howMany, $page)
+	{
+		//Accepts a categoryID, how many results to return, what page of results your on
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Check privacy type
+		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
+		//returns an array of Story class related to a category
+		try 
+		{
+			$statement = "";
+		}
+		
+	}
+
+	public function getStoryListByIssueID($issueID, $howMany, $page)
+	{
+		//Accepts a categoryID, how many results to return, what page of results your on
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Check privacy type
+		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
+		//returns an array of Story class related to a category
+		try 
+		{
+			$statement = "";
+		}
+		
+	}
+
+	public function getStoryListByChallengesID($challengesID, $howMany, $page)
+	{
+		//Accepts a categoryID, how many results to return, what page of results your on
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Check privacy type
+		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
+		//returns an array of Story class related to a category
+		try 
+		{
+			$statement = "";
+		}
 		
 	}
 
