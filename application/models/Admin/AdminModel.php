@@ -43,7 +43,7 @@ class AdminModel extends Model {
 
 					$parameters = array($howMany, $offset);
 
-					$storyList = $this->fetchIntoClass($statement, $parameters, "Shared/Story");
+					$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 					return $storyList;
 

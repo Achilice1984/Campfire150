@@ -84,22 +84,22 @@ INSERT INTO `campfire`.`answer` (`AnswerId`, `AnswerE`, `AnswerF`) VALUES (NULL,
 -- Insert into Tag table
 --
 
-INSERT INTO Tag (NameE, NameF)
-VALUES ("Art", "Art");
-INSERT INTO Tag (NameE, NameF)
-VALUES ("Challenges", "Défis");
-INSERT INTO Tag (NameE, NameF)
-VALUES ("Climate/Weather", "Climat/Temps");
-INSERT INTO Tag (NameE, NameF)
-VALUES ("Environment", "Environnement");
-INSERT INTO Tag (NameE, NameF)
-VALUES ("Family", "Famille");
-INSERT INTO Tag (NameE, NameF)
-VALUES ("Leadership", "Leadership");
-INSERT INTO Tag (NameE, NameF)
-VALUES ("Technology", "Technologie");
-INSERT INTO Tag (NameE, NameF)
-VALUES ("Uncategorized", "Non classé");
+INSERT INTO Tag (Tag)
+VALUES ("Art");
+INSERT INTO Tag (Tag)
+VALUES ("Défis");
+INSERT INTO Tag (Tag)
+VALUES ("Climate/Weather");
+INSERT INTO Tag (Tag)
+VALUES ("Environment");
+INSERT INTO Tag (Tag)
+VALUES ("Family");
+INSERT INTO Tag (Tag)
+VALUES ("Leadership");
+INSERT INTO Tag (Tag)
+VALUES ("Technology");
+INSERT INTO Tag (Tag)
+VALUES ("Uncategorized");
 
 --
 -- Insert into LanguageType table

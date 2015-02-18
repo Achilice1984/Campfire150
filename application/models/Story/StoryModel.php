@@ -211,7 +211,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryView");
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryViewModel");
 
 			return $storyList;
 		}
@@ -240,7 +240,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "shared/StoryViewModel");
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Story/StoryViewModel");
 
 			return $storyList;
 		}
