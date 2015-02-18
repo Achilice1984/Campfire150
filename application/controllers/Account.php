@@ -69,7 +69,7 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Admin/AdminModel');
 		
-		$returnData = $model->getStoryListPendingApproval('1' ,'5','1');
+		$returnData = $model->getStoryListRejected('1' ,'5','1');
 		
 		debugit($returnData);
 	}
