@@ -86,10 +86,10 @@ class Account extends Controller {
 	function testAccount()
 	{
 		$model = $this->loadModel('Account/AccountModel');
+		$model->sendEmailVerification("josh.dvrs@gmail.com", "454545454545454545454");
+		// $returnData = $model->getCurrentProfilePictureMetadata(1);
 		
-		$returnData = $model->getCurrentProfilePictureMetadata(1);
-		
-		debugit($returnData);
+		// debugit($returnData);
 	}
 
 	function login()

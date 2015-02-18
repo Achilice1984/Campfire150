@@ -135,8 +135,13 @@ class AccountModel extends Model {
 		http://localhost:8084/campfire150/account/verifyemail/' . $email . '/' . $hashedEmailVerification . '
 		 
 		'; // Our message above including the link
-		                     
-		$headers = 'From:' . $email . "\r\n"; // Set from headers
+		   
+	   	$headers  = 'MIME-Version: 1.0' . "\r\n";
+		$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";                  
+		$headers = 	'From: webmaster@example.com' . "\r\n" .
+    				'Reply-To: webmaster@example.com' . "\r\n" .
+					'X-Mailer: PHP/' . phpversion(); // Set from headers
+
 		mail($to, $subject, $message, $headers); // Send our email
 	}
 
@@ -373,7 +378,7 @@ class AccountModel extends Model {
 	{
 		$statement = "SELECT * FROM user WHERE UserId = :UserId";
 
-		$user = $this->fetchIntoClass($statement, array( ":UserId" => $userID), "shared/UserViewModel");
+		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/UserViewModel");
 
 		if(isset($user[0]))
 		{
@@ -400,7 +405,7 @@ class AccountModel extends Model {
 	{
 		$statement = "SELECT * FROM user WHERE UserId = :UserId";
 
-		$user = $this->fetchIntoClass($statement, array( ":UserId" => $userID), "Account/ProfileViewModel");
+		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "Account/ProfileViewModel");
 
 		if(isset($user[0]))
 		{
@@ -422,9 +427,9 @@ class AccountModel extends Model {
 		//Accepts an user id
 		//Gets the total stories written by the user who owns this email address
 		//Returns the total
-		$statement = "SELECT count(*) FROM story WHERE User_UserId = ?";
+		$statement = "SELECT count(*) FROM story, admin_approve_story WHERE story.User_UserId = :UserId AND story.Published = TRUE AND admin_approve_story.Approved = TRUE";
 
-		$totalStories = $this->fetchColumn($statement, array($userID));
+		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
 
 		return $totalStories;
 	}
@@ -433,9 +438,9 @@ class AccountModel extends Model {
 		//Accepts an user id
 		//Gets the total stories written by the user who owns this email address
 		//Returns the total
-		$statement = "SELECT count(*) FROM story WHERE User_UserId = ?";
+		$statement = "SELECT count(*) FROM story WHERE User_UserId = :UserId AND story.Published = FALSE";
 
-		$totalStories = $this->fetchColumn($statement, array($userID));
+		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
 
 		return $totalStories;
 	}
@@ -444,9 +449,9 @@ class AccountModel extends Model {
 		//Accepts an user id
 		//Gets the total stories written by the user who owns this email address
 		//Returns the total
-		$statement = "SELECT count(*) FROM story WHERE User_UserId = ?";
+		$statement = "SELECT count(*) FROM story, admin_approve_story WHERE story.User_UserId = :UserId AND admin_approve_story.Approved = FALSE";
 
-		$totalStories = $this->fetchColumn($statement, array($userID));
+		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
 
 		return $totalStories;
 	}
@@ -457,17 +462,56 @@ class AccountModel extends Model {
 		//Gets an array of stories written by the owner of this user id
 		//Returns an array of Story class
 
-		$statement = "SELECT * FROM story WHERE User_UserId = ?";
+		$statement = "SELECT * FROM story WHERE User_UserId = :UserId";
 
-		$stories = $this->fetchIntoClass($statement, array($userID), "shared/Story");
+		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/StoryViewModel");
 
 		return $stories;
 	}
-	public function getStoriesRecommendedByFriends($userID)
+	public function getStoriesRecommendedByFriends_MostPopular($userID)
 	{
 		//Accepts a user id
 		//Gets an array of stories that were recommended to the owner of this user id
 		//Returns an array of Story class
+
+		$statement = "SELECT story.*, COUNT(user_recommend_story.Opinion) AS recommendation_count
+		FROM story LEFT JOIN user_recommend_story
+		ON story.StoryId = user_recommend_story.Story_StoryId
+		WHERE story.User_UserId IN
+		(SELECT DISTINCT following.User_FollowerId
+		FROM following
+		WHERE following.User_UserId = :UserId AND following.Active = TRUE)
+		AND user_recommend_story.Opinion = TRUE
+		AND story.Published = TRUE
+		GROUP BY story.StoryId
+		ORDER BY recommendation_count DESC";
+
+		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/StoryViewModel");
+
+		return $stories;
+	}
+
+	public function getStoriesRecommendedByFriends_Latest($userID)
+	{
+		//Accepts a user id
+		//Gets an array of stories that were recommended to the owner of this user id
+		//Returns an array of Story class
+		
+		$statement = "SELECT story.*, user_recommend_story.LatestChange
+		FROM story LEFT JOIN user_recommend_story 
+		ON story.StoryId = user_recommend_story.Story_StoryId
+		WHERE story.User_UserId IN 
+		(SELECT DISTINCT following.User_FollowerId 
+		FROM following 
+		WHERE following.User_UserId = :UserId AND following.Active = TRUE)
+		AND user_recommend_story.Opinion = TRUE
+		AND story.Published = TRUE
+		GROUP BY story.StoryId
+		ORDER BY user_recommend_story.LatestChange DESC";
+
+		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/StoryViewModel");
+
+		return $stories;
 	}
 
 	public function getStoriesRecommendedByCurrentUser($userID)
@@ -582,7 +626,7 @@ class AccountModel extends Model {
 
 		$start = $howMany * ($page - 1);
 
-		$user = $this->fetchIntoClass($statement, array($start, $howMany, $userSearch), "shared/User");
+		$user = $this->fetchIntoClass($statement, array($start, $howMany, $userSearch), "shared/UserViewModel");
 
 		return $user;
 	}
@@ -599,7 +643,7 @@ class AccountModel extends Model {
 
 		$start = $howMany * ($page - 1);
 
-		$user = $this->fetchIntoClass($statement, array($start, $howMany), "shared/User");
+		$user = $this->fetchIntoClass($statement, array($start, $howMany), "shared/UserViewModel");
 
 		return $user;
 	}
@@ -617,7 +661,7 @@ class AccountModel extends Model {
 
 		$start = $howMany * ($page - 1);
 
-		$user = $this->fetchIntoClass($statement, array($start, $howMany), "shared/User");
+		$user = $this->fetchIntoClass($statement, array($start, $howMany), "shared/UserViewModel");
 
 		return $user;
 	}
