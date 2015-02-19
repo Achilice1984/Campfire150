@@ -202,6 +202,8 @@ class Account extends Controller {
 				//Attempt to register the user with our website				
 				if($model->registerUserProfile($userViewModel))
 				{
+					addSuccessMessage("dbSuccess", gettext("Your Registered! Verify your email and log in!"));
+
 					//If success, send user to the login page
 					$this->redirect("account/login");	
 				}
@@ -210,17 +212,19 @@ class Account extends Controller {
 					addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to register your profile."));
 				}					
 			}			
-		}
-
-		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
-		$privacyDropdownValues = $siteModel->getDropdownValues_ProfilePrivacyType();
+		}		
 
 		//Load the register view
 		$view = $this->loadView('register');
 
 		//Add a variable with old userViewModel data so that it can be accessed in the view
 		$view->set('userViewModel', $userViewModel);
-		$view->set('privacyDropdownValues', $privacyDropdownValues);
+
+		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+
+		$view->set('privacyDropdownValues', $siteModel->getDropdownValues_ProfilePrivacyType());
+		$view->set('genderDropdownValues', $siteModel->getDropdownValues_GenderType());
+		$view->set('secureityQuestionDropdownValues', $siteModel->getDropdownValues_SecurityQuestions());
 		
 		//Render the register view. true indicates to load the layout pages as well
 		$view->render(true);
@@ -228,6 +232,15 @@ class Account extends Controller {
 
 	function verifyemail($email, $hashedEmailVerification)
 	{
+	}
+
+	function changesecurityquestion()
+	{
+		$model = $this->loadModel('AccountModel');
+		$securityAnswerViewModel = $this->loadViewModel('Account/SecurityAnswerViewModel');
+
+		//Map post values to the userViewModel
+		$securityAnswerViewModel = AutoMapper::mapPost($securityAnswerViewModel);
 	}
 
 	function changepassword()
@@ -405,6 +418,8 @@ class Account extends Controller {
 		//Add a variable with old userViewModel data so that it can be accessed in the view
 		$view->set('userViewModel', $profileViewModel);
 		$view->set('privacyDropdownValues', $privacyDropdownValues);
+		$view->set('genderDropdownValues', $siteModel->getDropdownValues_GenderType());
+		$view->set('secureityQuestionDropdownValues', $siteModel->getDropdownValues_SecurityQuestions());
 		
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);

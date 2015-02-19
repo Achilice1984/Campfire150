@@ -13,6 +13,7 @@ class UserViewModel extends ViewModel
 	public $Password;
 	public $RePassword;
 
+	//Flags
 	public $RegisterDate;
 	public $Active;
 	public $AdminFlag;
@@ -21,16 +22,25 @@ class UserViewModel extends ViewModel
 	public $LockoutTimes;
 	public $VerifiedEmail;
 	
-	public $AchievementLevelType_LevelId;
+	//Contact Details
 	public $Address;
 	public $PostalCode;
 	public $Notes;
 	public $FirstName;
 	public $MidName;
 	public $LastName;
+
+	
+	public $Ethnicity;
+	public $Birthday;
+
+	public $Gender_GenderId;
+	public $AchievementLevelType_LevelId;
+	public $ProfilePrivacyType_PrivacyTypeId;
 	public $LanguageType_LanguageId;
 
-	public $ProfilePrivacyType_PrivacyTypeId;
+	public $SecurityQuestionId;
+	public $SecurityAnswer;
 
 	public $UserActionStatement;
 
@@ -110,6 +120,33 @@ class UserViewModel extends ViewModel
 				)
 		);
 
+		$errors["Birthday"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The birthday field is required!'),
+					'Properties' => array()
+				),
+			'date' =>
+				array(
+					'Message' => gettext('The birthday field is not a valid date!'),
+					'Properties' => array()
+				)
+		);
+
+		$errors["Gender_GenderId"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The gender field is required!'),
+					'Properties' => array()
+				)
+		);
+		$errors["UserActionStatement"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The user action statement field is required!'),
+					'Properties' => array()
+				)
+		);
 
 		//Pass validation to the View Model
 		parent::__construct($errors);

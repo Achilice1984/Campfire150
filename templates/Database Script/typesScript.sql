@@ -162,3 +162,7 @@ INSERT INTO `tag` (`TagId`, `Tag`) VALUES
 (6, 'Leadership'),
 (7, 'Technology'),
 (8, 'Uncategorized');
+
+
+INSERT INTO `user` (`UserId`, `Email`, `Password`, `RegisterDate`, `AchievementLevelType_LevelId`, `Address`, `PostalCode`, `Notes`, `FirstName`, `MidName`, `LastName`, `LanguageType_LanguageId`, `Active`, `AdminFlag`, `VerifiedEmail`, `PhoneNumber`, `VerificationCode`, `FailedLoginAttempt`, `LockoutTimes`, `ProfilePrivacyType_PrivacyTypeId`, `Rejected`, `Birthday`, `Ethnicity`, `Gender_GenderId`) VALUES
+(1, 'Jake@g.com', 'www', '2015-02-18 20:21:11', 1, NULL, NULL, NULL, 'Jake', NULL, 'Jake', 1, 1, 0, 0, NULL, NULL, NULL, NULL, 1, 0, NULL, NULL, 1);

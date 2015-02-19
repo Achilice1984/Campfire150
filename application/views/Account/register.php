@@ -18,7 +18,7 @@
                                 include(APP_DIR . 'views/shared/displaySuccess.php'); 
                             ?>
 
-				        	<h3><?php echo gettext("User Details"); ?></h3>
+				        	<h3><?php echo gettext("Profile Details"); ?></h3>
 				        	<hr />
 
 				            <div class="form-group">
@@ -34,6 +34,31 @@
 				                <input type="password" class="form-control" id="RePassword" name="RePassword" placeholder="<?php echo gettext("Re-Type Password"); ?>"><p class="help-block"></p>
 				            </div>
 
+				            <div class="form-group">
+				                <label for="SecurityQuestionId"><?php echo gettext("Security Question"); ?></label>
+				                <select class="form-control" name="SecurityQuestionId">
+                       	 			<?php 
+					                	foreach ($secureityQuestionDropdownValues as $dropdownValue) {
+					                		echo "<option " . ($userViewModel->SecurityQuestionId == $dropdownValue->Value ? 'selected=selected' : "") . " value='" . $dropdownValue->Value . "'>"; 
+					                			echo $dropdownValue->Name;
+					                		echo "</option>";
+					                	} 
+				                	?>
+								</select>
+				            </div>
+				            <div class="form-group">
+				                <label for="SecurityAnswer"><?php echo gettext("Security Question Answer"); ?></label>
+				                <input type="text" class="form-control" id="SecurityAnswer" name="SecurityAnswer" placeholder="<?php echo gettext("Enter Your Answer"); ?>" value="<?php echo $userViewModel->SecurityAnswer; ?>">
+				            </div>
+
+				            <div class="form-group">
+				                <label for="UserActionStatement"><?php echo gettext("User Action Statement"); ?></label>
+				                <input type="text" class="form-control" id="UserActionStatement" name="UserActionStatement" placeholder="<?php echo gettext("Enter Your User Action Statement"); ?>" value="<?php echo $userViewModel->UserActionStatement; ?>">
+				            </div>
+							
+							<h3><?php echo gettext("User Details"); ?></h3>
+				        	<hr />
+
 				            <label for="LanguageType_LanguageId"><?php echo gettext("Language Preference"); ?></label>
                             <div class="form-group">                                
                                 <label class="radio-inline">
@@ -48,13 +73,35 @@
 				                <select class="form-control" name="ProfilePrivacyType_PrivacyTypeId">
                        	 			<?php 
 					                	foreach ($privacyDropdownValues as $dropdownValue) {
-					                		echo "<option value='" . $dropdownValue->Value . "'>"; 
+					                		echo "<option " . ($userViewModel->ProfilePrivacyType_PrivacyTypeId == $dropdownValue->Value ? 'selected=selected' : "") . " value='" . $dropdownValue->Value . "'>"; 
 					                			echo $dropdownValue->Name;
 					                		echo "</option>";
 					                	} 
 				                	?>
 								</select>
 				            </div>
+				            <div class="form-group">
+				                <label for="Gender_GenderId"><?php echo gettext("Gender"); ?></label>
+				                <select class="form-control" name="Gender_GenderId">
+                       	 			<?php 
+					                	foreach ($genderDropdownValues as $dropdownValue) {
+					                		echo "<option " . ($userViewModel->Gender_GenderId == $dropdownValue->Value ? 'selected=selected' : "") . " value='" . $dropdownValue->Value . "'>"; 
+					                			echo $dropdownValue->Name;
+					                		echo "</option>";
+					                	} 
+				                	?>
+								</select>
+				            </div>
+				            <div class="form-group">
+				                <label for="Ethnicity"><?php echo gettext("Ethnicity"); ?></label>
+				                <input type="text" class="form-control" id="Ethnicity" name="Ethnicity" placeholder="<?php echo gettext("Enter Your Ethnicity (optional)"); ?>" value="<?php echo $userViewModel->Ethnicity; ?>">
+				            </div>  
+
+				            <div class="form-group">
+				                <label for="Birthday"><?php echo gettext("Birthday"); ?></label>
+				                <input type="text" class="form-control" id="Birthday" name="Birthday" placeholder="<?php echo gettext("YYYY-MM-DD"); ?>" value="<?php echo $userViewModel->Birthday; ?>">
+				            </div>
+				            
 
 
 				            <h3 style="padding-top:10px;"><?php echo gettext("Contact Details"); ?></h3>
@@ -77,13 +124,14 @@
 				                <input type="text" class="form-control" id="PhoneNumber" name="PhoneNumber" placeholder="<?php echo gettext("Enter Your Phone Number"); ?>" value="<?php echo $userViewModel->PhoneNumber; ?>">
 				            </div> -->
 
-				            <h3 style="padding-top:10px;"><?php echo gettext("Address"); ?></h3>
+				            <!-- <h3 style="padding-top:10px;"><?php echo gettext("Address"); ?></h3>
 				            <hr />
 
 				            <div class="form-group">
 				                <label for="Address"><?php echo gettext("Address"); ?></label>
 				                <input type="text" class="form-control" id="Address" name="Address" placeholder="<?php echo gettext("Enter Your Address"); ?>" value="<?php echo $userViewModel->Address; ?>">
-				            </div>
+				            </div> -->
+				            
 				            <div class="form-group">
 				                <label for="PostalCode"><?php echo gettext("Postal Code"); ?></label>
 				                <input type="text" class="form-control" id="PostalCode" name="PostalCode" placeholder="<?php echo gettext("Enter Your Postal Code"); ?>" value="<?php echo $userViewModel->PostalCode; ?>">

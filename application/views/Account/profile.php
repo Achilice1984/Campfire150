@@ -13,9 +13,9 @@
     <div role="tabpanel">
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
-            <li role="presentation" class="active"><a href="#update_profile" aria-controls="update_profile" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-            <li role="presentation"><a href="#update_password" aria-controls="update_password" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-console"></span> Password</a></li>
-            <li role="presentation"><a href="#update_profile_picture" aria-controls="update_profile_picture" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-picture"></span> Profile Picture</a></li>
+            <li role="presentation" class="active"><a href="#update_profile" aria-controls="update_profile" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Profile"); ?></a></li>
+            <li role="presentation"><a href="#dangerZone" aria-controls="dangerZone" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-console"></span> <?php echo gettext("Danger Zone"); ?></a></li>
+            <li role="presentation"><a href="#update_profile_picture" aria-controls="update_profile_picture" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-picture"></span> <?php echo gettext("Profile Picture"); ?></a></li>
         </ul>
 
         <!-- Tab panes -->
@@ -27,7 +27,7 @@
 
                         <form action="<?php echo BASE_URL; ?>account/profile" method="post">                            
 
-                            <h3><?php echo gettext("User Details"); ?></h3>
+                            <h3><?php echo gettext("Profile Details"); ?></h3>
                             <hr />
 
                             <div class="form-group">
@@ -56,6 +56,27 @@
                                     ?>
                                 </select>
                             </div>
+                            <div class="form-group">
+                                <label for="Gender_GenderId"><?php echo gettext("Gender"); ?></label>
+                                <select class="form-control" name="Gender_GenderId">
+                                    <?php 
+                                        foreach ($genderDropdownValues as $dropdownValue) {
+                                            echo "<option " . ($userViewModel->Gender_GenderId == $dropdownValue->Value ? 'selected=selected' : "") . " value='" . $dropdownValue->Value . "'>"; 
+                                                echo $dropdownValue->Name;
+                                            echo "</option>";
+                                        } 
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="Ethnicity"><?php echo gettext("Ethnicity"); ?></label>
+                                <input type="text" class="form-control" id="Ethnicity" name="Ethnicity" placeholder="<?php echo gettext("Enter Your Ethnicity (optional)"); ?>" value="<?php echo $userViewModel->Ethnicity; ?>">
+                            </div>  
+
+                            <div class="form-group">
+                                <label for="Birthday"><?php echo gettext("Birthday"); ?></label>
+                                <input type="text" class="form-control" id="Birthday" name="Birthday" placeholder="<?php echo gettext("YYYY-MM-DD"); ?>" value="<?php echo $userViewModel->Birthday; ?>">
+                            </div>
 
                             <h3 style="padding-top:10px;"><?php echo gettext("Contact Details"); ?></h3>
                             <hr />
@@ -77,13 +98,13 @@
                                 <input type="phone" class="form-control" id="PhoneNumber" name="PhoneNumber" placeholder="<?php echo gettext("Enter Your Phone Number"); ?>" value="<?php echo $userViewModel->PhoneNumber; ?>">
                             </div> -->
 
-                            <h3 style="padding-top:10px;"><?php echo gettext("Address"); ?></h3>
+                            <!-- <h3 style="padding-top:10px;"><?php echo gettext("Address"); ?></h3>
                             <hr />
 
                             <div class="form-group">
                                 <label for="Address"><?php echo gettext("Address"); ?></label>
                                 <input type="text" class="form-control" id="Address" name="Address" placeholder="<?php echo gettext("Enter Your Address"); ?>" value="<?php echo $userViewModel->Address; ?>">
-                            </div>
+                            </div> -->
                             <div class="form-group">
                                 <label for="PostalCode"><?php echo gettext("Postal Code"); ?></label>
                                 <input type="text" class="form-control" id="PostalCode" name="PostalCode" placeholder="<?php echo gettext("Enter Your Postal Code"); ?>" value="<?php echo $userViewModel->PostalCode; ?>">
@@ -97,24 +118,59 @@
                 </div>
             </div>
 
-            <div role="tabpanel" class="tab-pane" id="update_password">
-                <form action="<?php echo BASE_URL; ?>Account/changepassword" method="post">
-                    <div class="form-group">
-                        <label for="OldPassword"><?php echo gettext("Old Password"); ?></label>
-                        <input type="password" class="form-control" id="OldPassword" name="OldPassword" placeholder="<?php echo gettext("Enter Old Password"); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="Password"><?php echo gettext("Password"); ?></label>
-                        <input type="password" class="form-control" id="Password" name="Password" placeholder="<?php echo gettext("Enter Password"); ?>">
-                    </div>
-                    <div class="form-group">
-                        <label for="RePassword"><?php echo gettext("Re-Type Password"); ?></label>
-                        <input type="password" class="form-control" id="RePassword" name="RePassword" placeholder="<?php echo gettext("Re-Type Password"); ?>">
-                    </div>
+            <div role="tabpanel" class="tab-pane" id="dangerZone">
 
-                    <button style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Change Password"); ?></button>
-                    <br />
-                </form>
+                <div class="row">
+                    <div class="col-md-6"> 
+                        <h2><?php echo gettext("Password"); ?></h2>
+
+                        <form action="<?php echo BASE_URL; ?>Account/changepassword" method="post">
+                            <div class="form-group">
+                                <label for="OldPassword"><?php echo gettext("Old Password"); ?></label>
+                                <input type="password" class="form-control" id="OldPassword" name="OldPassword" placeholder="<?php echo gettext("Enter Old Password"); ?>">
+                            </div>
+                            <div class="form-group">
+                                <label for="Password"><?php echo gettext("Password"); ?></label>
+                                <input type="password" class="form-control" id="Password" name="Password" placeholder="<?php echo gettext("Enter Password"); ?>">
+                            </div>
+                            <div class="form-group">
+                                <label for="RePassword"><?php echo gettext("Re-Type Password"); ?></label>
+                                <input type="password" class="form-control" id="RePassword" name="RePassword" placeholder="<?php echo gettext("Re-Type Password"); ?>">
+                            </div>
+
+                            <button style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Change Password"); ?></button>
+                            <br />
+                        </form>
+                        
+                        <h2><?php echo gettext("Security Question"); ?></h2>
+                        <form action="<?php echo BASE_URL; ?>Account/changesecurityquestion" method="post">
+                            <div class="form-group">
+                                <label for="Password"><?php echo gettext("Password"); ?></label>
+                                <input type="password" class="form-control" id="Password" name="Password" placeholder="<?php echo gettext("Enter Password"); ?>">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="SecurityQuestionId"><?php echo gettext("Security Question"); ?></label>
+                                <select class="form-control" name="SecurityQuestionId">
+                                    <?php 
+                                        foreach ($secureityQuestionDropdownValues as $dropdownValue) {
+                                            echo "<option value='" . $dropdownValue->Value . "'>"; 
+                                                echo $dropdownValue->Name;
+                                            echo "</option>";
+                                        } 
+                                    ?>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="SecurityAnswer"><?php echo gettext("Security Question Answer"); ?></label>
+                                <input type="text" class="form-control" id="SecurityAnswer" name="SecurityAnswer" placeholder="<?php echo gettext("Enter Your Answer"); ?>" value="">
+                            </div>
+
+                            <button style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Change Answer"); ?></button>
+                            <br />
+                        </form>
+                    </div>
+                </div>
             </div>
             <div role="tabpanel" class="tab-pane" id="update_profile_picture">
 

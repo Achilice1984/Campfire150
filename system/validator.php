@@ -13,6 +13,8 @@ class Validator
 
   public function validate($viewModel)
   { 
+    global $config;
+
     $this->viewModel = $viewModel;
     $validationMessages = array();
     $validationDecorators = $viewModel->getValidationDecorators();
@@ -24,10 +26,24 @@ class Validator
 
           try
           {
-              //Call a validation method
-              if(!$this->$validationType($viewModel->$property, $validationDetails["Properties"]))
+              if(method_exists($this, $validationType) && property_exists($viewModel, $property))
               {
-                $validationMessages[$property][$validationType] = $validationDetails["Message"];
+                //Call a validation method
+                if(!$this->$validationType($viewModel->$property, $validationDetails["Properties"]))
+                {
+                  $validationMessages[$property][$validationType] = $validationDetails["Message"];
+                }
+              }
+              else
+              {
+                if($config["debugMode"] == true)
+                {
+                  $validationMessages[$property][$validationType] = "This will only show in debug mode: <br />Failed on: <br />" . $validationType . " " . $property;
+                }
+                else
+                {
+                  $validationMessages[$property][$validationType] = gettext("Some unknown error has occurred");
+                }
               }
             }
             catch(Exception $ex)
@@ -41,6 +57,15 @@ class Validator
     //$validationResult = new ValidationResult($validationMessages);
 
     return $validationMessages;
+  }
+
+  private function date($propertyValue)
+  {
+    $format = "Y-m-d";
+
+    $d = DateTime::createFromFormat($format, $propertyValue);
+
+    return $d && $d->format($format) == $propertyValue;
   }
 
   private function email($propertyValue)

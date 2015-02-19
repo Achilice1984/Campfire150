@@ -1,1 +1,7 @@
 /* CSS Styles */
+
+/* This overides the validation css to make it work on dropdown inputs */
+.form-control-feedback
+{
+	margin-right: 10px;
+}
