@@ -170,9 +170,7 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
-			$pdo = self::$connection->prepare($qry);	
-
-			exit;		
+			$pdo = self::$connection->prepare($qry);		
 
 			return $pdo->execute($params);
 		}

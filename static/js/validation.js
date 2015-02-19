@@ -3,6 +3,7 @@ $(document).ready(function() {
     $('form').not("#loginForm").formValidation({
     	locale: $("#LanguagePreference").val(),
         framework: 'bootstrap',
+        trigger: 'blur',
         //err: { container: "#errorMessageSection"},
         icon: {
             valid: 'glyphicon glyphicon-ok',
@@ -66,7 +67,31 @@ $(document).ready(function() {
 					}
                 }
             },            
-            Gender: {
+            ProfilePrivacyType_PrivacyTypeId: {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            Gender_GenderId: {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            SecurityQuestionId: {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            SecurityAnswer: {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            UserActionStatement: {
                 validators: {
                     notEmpty: {
                     }
@@ -77,7 +102,7 @@ $(document).ready(function() {
                     notEmpty: {
                     },
                     date: {
-                        format: 'YYYY/MM/DD',
+                        format: 'YYYY-MM-DD'
                     }
                 }
             }

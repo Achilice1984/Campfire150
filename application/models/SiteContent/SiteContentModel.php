@@ -19,14 +19,14 @@ class SiteContentModel extends Model {
 
 	public function getDropdownValues_ProfilePrivacyType()
 	{
-		$statement = "SELECT PrivacyTypeId AS Value, " . $this->getLanguage() . " AS Name FROM ProfilePrivacyType";
+		$statement = "SELECT PrivacyTypeId AS Value, " . $this->getLanguage() . " AS Name FROM profileprivacytype";
 
 		return $this->fetchDropdownValues($statement);
 	}
 
 	public function getDropdownValues_StoryPrivacyType()
 	{
-		$statement = "SELECT StoryPrivacyTypeId AS Value, " . $this->getLanguage() . " AS Name FROM StoryPrivacyType";
+		$statement = "SELECT StoryPrivacyTypeId AS Value, " . $this->getLanguage() . " AS Name FROM storyprivacytype";
 
 		return $this->fetchDropdownValues($statement);
 	}
@@ -54,7 +54,7 @@ class SiteContentModel extends Model {
 
 	public function getDropdownValues_SecurityQuestions()
 	{
-		$statement = "SELECT LoginQuestionId AS Value, " . $this->getLanguage() . " AS Name FROM LoginQuestion";
+		$statement = "SELECT SecurityQuestionId AS Value, " . $this->getLanguage() . " AS Name FROM securityquestion";
 
 		return $this->fetchDropdownValues($statement);
 	}

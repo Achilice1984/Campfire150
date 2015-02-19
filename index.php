@@ -37,6 +37,7 @@ require(ROOT_DIR .'system/pip.php');
 require(ROOT_DIR .'system/validator.php');
 require(ROOT_DIR .'system/authentication.php');
 require(ROOT_DIR .'system/sessionmanager.php');
+require(ROOT_DIR .'system/Html.php');
 
 // Define base URL
 global $config;

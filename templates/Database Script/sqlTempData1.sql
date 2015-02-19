@@ -387,9 +387,9 @@ VALUES ("7", "17", TRUE);
 -- Insert into admin_actionon_user table
 --
 
-INSERT INTO `wwwcoiox_campfire`.`admin_actionon_user` (`Admin_UserId`, `user_UserId`, `Action`, `Reason`, `TimeStamp`) 
+INSERT INTO `wwwcoiox_campfire`.`admin_actionon_user` (`Admin_UserId`, `User_UserId`, `Action`, `Reason`, `TimeStamp`) 
 VALUES ('1', '7', '1', 'Interesting Guy', CURRENT_TIMESTAMP), ('2', '13', '0', 'Not so interesting. Always dirty words.', CURRENT_TIMESTAMP);
-INSERT INTO `wwwcoiox_campfire`.`admin_actionon_user` (`Admin_UserId`, `user_UserId`, `Action`, `Reason`, `TimeStamp`) 
+INSERT INTO `wwwcoiox_campfire`.`admin_actionon_user` (`Admin_UserId`, `User_UserId`, `Action`, `Reason`, `TimeStamp`) 
 VALUES ('3', '10', '1', 'Became better', CURRENT_TIMESTAMP), ('3', '9', '1', 'deleted the dirty pictures', CURRENT_TIMESTAMP), 
 ('3', '14', '0', 'terrorism words', CURRENT_TIMESTAMP), ('4', '12', '0', 'inapproprate upload', CURRENT_TIMESTAMP), 
 ('4', '13', '1', 'Innocent one', CURRENT_TIMESTAMP);
@@ -398,7 +398,7 @@ VALUES ('3', '10', '1', 'Became better', CURRENT_TIMESTAMP), ('3', '9', '1', 'de
 -- Insert into admin_reject_comment table
 --
 
-INSERT INTO `wwwcoiox_campfire`.`admin_reject_comment` (`comment_CommentId`, `user_UserId`, `rejected`, `reason`, `TimeStamp`) 
+INSERT INTO `wwwcoiox_campfire`.`admin_reject_comment` (`comment_CommentId`, `User_UserId`, `rejected`, `reason`, `TimeStamp`) 
 VALUES ('1', '2', '1', 'inappropriate words', CURRENT_TIMESTAMP), ('2', '5', '0', 'the user has modified the comment', CURRENT_TIMESTAMP);
 
 --
@@ -429,7 +429,7 @@ VALUES ('7', '5', '1', CURRENT_TIMESTAMP),('8', '9', '1', CURRENT_TIMESTAMP),('9
 -- Insert into useractionstatement table
 --
 
-INSERT INTO `useractionstatement` (`Id`, `user_UserId`, `Active`, `DateCreated`, `DateDeactived`, `ActionStatement`) VALUES
+INSERT INTO `useractionstatement` (`Id`, `User_UserId`, `Active`, `DateCreated`, `DateDeactived`, `ActionStatement`) VALUES
 (1, 7, 1, '2015-02-12 17:31:21', NULL, 'Old brother want to change this world.'),
 (2, 8, 1, '2015-02-12 17:31:21', NULL, 'Not a problem. Let''s go and see.'),
 (3, 9, 1, '2015-02-12 17:44:01', NULL, 'Faster is not equal better.'),

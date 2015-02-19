@@ -293,13 +293,12 @@ class AccountModel extends Model {
 	******************************************************************************************************************/	
 
 	public function registerUserProfile($user)
-	{
+	{	
 		$authentication = new Authentication();
-
-		$statement = "INSERT INTO user (Email, Password, LanguageType_LanguageId, FirstName, LastName, MidName, Address, PostalCode, PhoneNumber, VerificationCode, VerifiedEmail, ProfilePrivacyType_PrivacyTypeId)";
-		$statement .= " VALUES (:Email, :Password, :LanguageType_LanguageId, :FirstName, :LastName, :MidName, :Address, :PostalCode, :PhoneNumber, :VerificationCode, :VerifiedEmail, :ProfilePrivacyType_PrivacyTypeId)";
-
 		$user->Password = $authentication->hashPassword($user->Password);
+
+		$statement = "INSERT INTO user (Email, Password, LanguageType_LanguageId, FirstName, LastName, MidName, Address, PostalCode, PhoneNumber, VerificationCode, VerifiedEmail, ProfilePrivacyType_PrivacyTypeId, Gender_GenderId, Ethnicity, Birthday)";
+		$statement .= " VALUES (:Email, :Password, :LanguageType_LanguageId, :FirstName, :LastName, :MidName, :Address, :PostalCode, :PhoneNumber, :VerificationCode, :VerifiedEmail, :ProfilePrivacyType_PrivacyTypeId, :Gender_GenderId, :Ethnicity, :Birthday)";
 
 		$hashedEmailVerification = md5(uniqid());
 
@@ -315,19 +314,77 @@ class AccountModel extends Model {
 			":PhoneNumber" => $user->PhoneNumber,			
 			":VerificationCode" => $hashedEmailVerification,
 			":VerifiedEmail" => true,
-			":ProfilePrivacyType_PrivacyTypeId" => $user->ProfilePrivacyType_PrivacyTypeId
+			":ProfilePrivacyType_PrivacyTypeId" => $user->ProfilePrivacyType_PrivacyTypeId,
+			":Gender_GenderId" => $user->Gender_GenderId,
+			":Ethnicity" => $user->Ethnicity,
+			":Birthday" => $user->Birthday//DateTime::createFromFormat("d/m/Y", $user->Birthday)->format('Y-m-d H:i:s')
 		);
 		
 		//$this->sendEmailVerification($user->Email, $hashedEmailVerification);
+		$rowCount = $this->fetchRowCount($statement, $parameters);
+		$success = $rowCount > 0;
 
-		return $this->fetch($statement, $parameters);
+		//Successfully added a new user
+		if($success)
+		{
+			$userID = $this->lastInsertId();
+
+			//Add security questions, add action statement
+			if($this->insertSecurityQuestionAnswer($userID, $user->SecurityQuestionId, $user->SecurityAnswer) &&
+				$this->insertUserActionStatement($userID, $user->UserActionStatement))
+			{
+				$success = true;
+			}
+			else
+			{
+				//Something strage happened, delete everything
+				$this->fetch("DELETE FROM securityquestionanswer WHERE user_UserId = :UserId", array(":UserId" => $userID));
+				$this->fetch("DELETE FROM useractionstatement WHERE user_UserId = :UserId", array(":UserId" => $userID));
+				$this->fetch("DELETE FROM user WHERE UserId = :UserId", array(":UserId" => $userID));
+
+				$success = false;
+			}
+		}
+
+		return $success;
+	}
+
+	public function insertSecurityQuestionAnswer($userID, $questionID, $questionAnswer)
+	{
+		$authentication = new Authentication();
+		$questionAnswer = $authentication->hashPassword($questionAnswer);
+
+		$statement = "INSERT INTO securityquestionanswer (user_UserId, SecurityQuestion_SecurityQuestionId, SecurityAnswer)";
+		$statement .= " VALUES (:user_UserId, :SecurityQuestion_SecurityQuestionId, :SecurityAnswer)";
+
+		$parameters = array( 
+			":user_UserId" => $userID, 
+			":SecurityQuestion_SecurityQuestionId" => $questionID,
+			":SecurityAnswer" => $questionAnswer
+		);
+
+		return $this->fetchRowCount($statement, $parameters) > 0;
+	}
+
+	public function insertUserActionStatement($userID, $userActionStatement)
+	{
+		$statement = "INSERT INTO useractionstatement (user_UserId, ActionStatement, Active)";
+		$statement .= " VALUES (:user_UserId, :ActionStatement, :Active)";
+
+		$parameters = array( 
+			":user_UserId" => $userID,
+			":ActionStatement" => $userActionStatement,
+			":Active" => true
+		);
+
+		return $this->fetchRowCount($statement, $parameters) > 0;
 	}
 	
 	public function updateUserProfile($user)
 	{
 		$authentication = new Authentication();
 
-		$statement = "UPDATE user SET LanguageType_LanguageId = :LanguageType_LanguageId, Email = :Email, Address = :Address, PostalCode = :PostalCode, PhoneNumber = :PhoneNumber, FirstName = :FirstName, LastName = :LastName, MidName = :MidName, ProfilePrivacyType_PrivacyTypeId = :ProfilePrivacyType_PrivacyTypeId";
+		$statement = "UPDATE user SET LanguageType_LanguageId = :LanguageType_LanguageId, Email = :Email, Address = :Address, PostalCode = :PostalCode, PhoneNumber = :PhoneNumber, FirstName = :FirstName, LastName = :LastName, MidName = :MidName, ProfilePrivacyType_PrivacyTypeId = :ProfilePrivacyType_PrivacyTypeId, Gender_GenderId = :Gender_GenderId, Ethnicity = :Ethnicity, Birthday = :Birthday";
 		$statement .= " WHERE UserId = :UserId";
 
 		$parameters = array( 
@@ -340,10 +397,42 @@ class AccountModel extends Model {
 			":MidName" => $user->MidName,
 			":UserId" => $user->UserId,
 			":LanguageType_LanguageId" => $user->LanguageType_LanguageId,
-			":ProfilePrivacyType_PrivacyTypeId" => $user->ProfilePrivacyType_PrivacyTypeId
+			":ProfilePrivacyType_PrivacyTypeId" => $user->ProfilePrivacyType_PrivacyTypeId,
+			":Gender_GenderId" => $user->Gender_GenderId,
+			":Ethnicity" => $user->Ethnicity,
+			":Birthday" => $user->Birthday
+		);
+		
+		return $this->fetch($statement, $parameters);
+	}
+
+	public function updateSecurityQuestionAnswer($userID, $questionAnswer)
+	{
+		$statement = "UPDATE securityquestionanswer SET SecurityQuestion_SecurityQuestionId = :SecurityQuestion_SecurityQuestionId, SecurityAnswer = :SecurityAnswer";
+		$statement .= " WHERE user_UserId = :user_UserId";
+
+		$authentication = new Authentication();
+		$questionAnswer = $authentication->hashPassword($questionAnswer);
+
+		$parameters = array( 
+			":user_UserId" => $userID,
+			":SecurityAnswer" => $questionAnswer
 		);
 
-		
+		return $this->fetch($statement, $parameters);
+	}
+
+	public function updateUserActionStatement($userID, $userActionStatement)
+	{
+		$statement = "INSERT INTO useractionstatement (user_UserId, ActionStatement, Active)";
+		$statement .= " VALUES (:user_UserId, :ActionStatement, :Active)";
+
+		$parameters = array( 
+			":user_UserId" => $userID,
+			":ActionStatement" => $userActionStatement,
+			":Active" => false
+		);
+
 		return $this->fetch($statement, $parameters);
 	}
 
@@ -363,7 +452,10 @@ class AccountModel extends Model {
 	
 	public function getUserProfileByEmail($email)
 	{
-		$statement = "SELECT * FROM user WHERE Email = :Email";
+		$statement = "SELECT * FROM user
+						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
+						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
+						WHERE user.Email = :Email";
 
 		$user = $this->fetchIntoClass($statement, array(":Email" => $email), "shared/UserViewModel");
 
@@ -376,7 +468,10 @@ class AccountModel extends Model {
 	}
 	public function getUserProfileByID($userID)
 	{
-		$statement = "SELECT * FROM user WHERE UserId = :UserId";
+		$statement = "SELECT * FROM user
+						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
+						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
+						WHERE user.UserId = :UserId";
 
 		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/UserViewModel");
 
@@ -390,7 +485,10 @@ class AccountModel extends Model {
 
 	public function getProfileByEmail($email)
 	{
-		$statement = "SELECT * FROM user WHERE Email = :Email";
+		$statement = "SELECT * FROM user
+						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
+						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
+						WHERE user.Email = :Email";
 
 		$user = $this->fetchIntoClass($statement, array(":Email" => $email), "Account/ProfileViewModel");
 
@@ -403,7 +501,10 @@ class AccountModel extends Model {
 	}
 	public function getProfileByID($userID)
 	{
-		$statement = "SELECT * FROM user WHERE UserId = :UserId";
+		$statement = "SELECT * FROM user
+						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
+						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
+						WHERE user.UserId = :UserId";
 
 		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "Account/ProfileViewModel");
 
@@ -427,7 +528,12 @@ class AccountModel extends Model {
 		//Accepts an user id
 		//Gets the total stories written by the user who owns this email address
 		//Returns the total
-		$statement = "SELECT count(*) FROM story, admin_approve_story WHERE story.User_UserId = :UserId AND story.Published = TRUE AND admin_approve_story.Approved = TRUE";
+		$statement = "SELECT count(*)
+						FROM story 
+						LEFT JOIN admin_approve_story 
+						ON story.StoryId = admin_approve_story.Story_StoryId
+						WHERE story.User_UserId = :UserId AND story.Published = TRUE 
+						AND admin_approve_story.Approved = TRUE";
 
 		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
 
@@ -438,7 +544,12 @@ class AccountModel extends Model {
 		//Accepts an user id
 		//Gets the total stories written by the user who owns this email address
 		//Returns the total
-		$statement = "SELECT count(*) FROM story WHERE User_UserId = :UserId AND story.Published = FALSE";
+		$statement = "SELECT count(*)
+						FROM story 
+						LEFT JOIN admin_approve_story 
+						ON story.StoryId = admin_approve_story.Story_StoryId
+						WHERE story.User_UserId = :UserId
+						AND admin_approve_story.User_UserId IS NULL";
 
 		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
 
@@ -449,7 +560,12 @@ class AccountModel extends Model {
 		//Accepts an user id
 		//Gets the total stories written by the user who owns this email address
 		//Returns the total
-		$statement = "SELECT count(*) FROM story, admin_approve_story WHERE story.User_UserId = :UserId AND admin_approve_story.Approved = FALSE";
+		$statement = "SELECT count(*)
+						FROM story 
+						LEFT JOIN admin_approve_story 
+						ON story.StoryId = admin_approve_story.Story_StoryId
+						WHERE story.User_UserId = :UserId 
+						AND admin_approve_story.Approved = FALSE";
 
 		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
 

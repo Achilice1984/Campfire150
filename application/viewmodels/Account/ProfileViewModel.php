@@ -28,7 +28,13 @@ class ProfileViewModel extends ViewModel
 	public $LastName;
 	public $LanguageType_LanguageId;
 
+	public $Ethnicity;
+	public $Birthday;
+
 	public $ProfilePrivacyType_PrivacyTypeId;
+	public $Gender_GenderId;
+
+	public $UserActionStatement;
 
 	function __construct()
 	{		
@@ -71,13 +77,7 @@ class ProfileViewModel extends ViewModel
 					'Properties' => array('RePassword')
 				)
 		);
-		$errors["RePassword"] = array(
-			'required' =>
-				array(
-					'Message' => gettext('The The Re-Type Password field is required!'),
-					'Properties' => array()
-				)
-		);
+
 		$errors["PostalCode"] = array(
 			'required' =>
 				array(
@@ -96,6 +96,26 @@ class ProfileViewModel extends ViewModel
 			'required' =>
 				array(
 					'Message' => gettext('The privacy field is required!'),
+					'Properties' => array()
+				)
+		);
+		$errors["Birthday"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The birthday field is required!'),
+					'Properties' => array()
+				),
+			'date' =>
+				array(
+					'Message' => gettext('The birthday field is not a valid date!'),
+					'Properties' => array()
+				)
+		);
+
+		$errors["Gender_GenderId"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The gender field is required!'),
 					'Properties' => array()
 				)
 		);
