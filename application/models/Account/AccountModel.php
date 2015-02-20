@@ -676,7 +676,7 @@ class AccountModel extends Model {
 						WHERE User_UserId = :UserId
 						AND PublishFlag = TRUE";
 
-		$totalStories = $this->fetchColumn($statement, array(":UserId" => $userID));
+		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
 
 		return $totalStories;
 	}
@@ -690,7 +690,7 @@ class AccountModel extends Model {
 						WHERE User_UserId = :UserId
 						AND PublishFlag = FALSE";
 
-		$totalStories = $this->fetchColumn($statement, array(":UserId" => $userID));
+		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
 
 		return $totalStories;
 	}
@@ -713,7 +713,7 @@ class AccountModel extends Model {
 						WHERE User_FollowerId = :UserId
 						AND Active = TRUE";
 
-		$totalFollowers = $this->fetchColumn($statement, array(":UserId" => $userID));
+		$totalFollowers = $this->fetchNum($statement, array(":UserId" => $userID));
 
 		return $totalFollowers;
 	}
@@ -728,7 +728,7 @@ class AccountModel extends Model {
 						WHERE User_UserId = :UserId
 						AND Active = TRUE";
 
-		$totalFollowing = $this->fetchColumn($statement, array(":UserId" => $userID));
+		$totalFollowing = $this->fetchNum($statement, array(":UserId" => $userID));
 
 		return $totalFollowing;
 	}
@@ -744,7 +744,7 @@ class AccountModel extends Model {
 		//Check that user is following other user
 		//Returns bool if saved succesfully
 	}
-	public function getFollowers($userID)
+	public function getFollowers($userID, $howMany, $page)
 	{
 		//Accepts a user id
 		//Gets all users that are following this userid
@@ -754,14 +754,23 @@ class AccountModel extends Model {
 						INNER JOIN following 
 						ON user.UserId = following.User_UserId
 						WHERE following.User_FollowerId = 2
-						AND following.Active = TRUE";
+						AND following.Active = TRUE
+						LIMIT :start, :howmany";
 
-		$totalFollowers = $this->fetchColumn($statement, array(":UserId" => $userID));
+		$start = $this-> getStartValue($howMany, $page);
 
-		return $totalFollowers;
+		$parameters = array(
+			":UserId" => $userID,
+			":start " => $start,
+			":howmany " => $howMany
+			);
+
+		$followers = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+
+		return $followers;
 	}
 	
-	public function getFollowing($userID)
+	public function getFollowing($userID, $howMany, $page)
 	{
 		//Accepts a user id
 		//Gets all users that this user is following
@@ -772,11 +781,20 @@ class AccountModel extends Model {
 						INNER JOIN following 
 						ON user.UserId = following.User_FollowerId
 						WHERE following.User_UserId = 10
-						AND following.Active = TRUE";
+						AND following.Active = TRUE
+						LIMIT :start, :howmany";
 
-		$totalFollowing = $this->fetchColumn($statement, array(":UserId" => $userID));
+		$start = $this-> getStartValue($howMany, $page);
 
-		return $totalFollowing;
+		$parameters = array(
+			":UserId" => $userID,
+			":start " => $start,
+			":howmany " => $howMany
+			);
+
+		$following = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+
+		return $following;
 	}
 
 
@@ -794,14 +812,47 @@ class AccountModel extends Model {
 		//Checks if user is following each user (add this to user viewmodel class)
 		//Returns an array of User class		
 
+		$userSearch = explode(" ", strtolower($userSearch));
 
-		$statement = "SELECT *, MATCH(FirstName, LastName, Email, MidName) AGAINST('$userSearch') AS score FROM user LIMIT ?, ? WHERE MATCH(FirstName, LastName, Email, MidName) AGAINST(?) ORDER BY score DESC";
+		$fName = "";
+		$lName = "";
 
-		$start = $howMany * ($page - 1);
+		if(count($userSearch[0]) > 1)
+		{
+			$fName = $userSearch[0];
+			
+			for ($i=1; $i <= count($userSearch) ; $i++) { 
+				$lName .= $userSearch[$i] . " ";
+			}
 
-		$user = $this->fetchIntoClass($statement, array($start, $howMany, $userSearch), "shared/UserViewModel");
+			$lName = trim($lName);
+		}
+		else
+		{
+			$fName = $userSearch[0];
+			$lName = $userSearch[0];
+		}
 
-		return $user;
+		$statement = "SELECT *,
+						((LOWER(FirstName) LIKE '%:firstName%') + 
+						(LOWER(LastName) LIKE '%:lastName%')) as hits
+						FROM   user
+						HAVING hits > 0
+						ORDER BY hits DESC
+						LIMIT :start, :howmany";
+
+		$start = $this-> getStartValue($howMany, $page);
+
+		$parameters = array(
+			":lastName" => $lName,
+			":firstName" => $fName,
+			":start" => $start,
+			":howmany" => $howMany
+			);
+
+		$users = $this->fetchIntoClass($statement, $parameters, "shared/UserViewModel");
+
+		return $users;
 	}
 
 	public function getUserList($howMany, $page)
@@ -812,13 +863,18 @@ class AccountModel extends Model {
 		//Users must have verified flag set to true
 		//Returns an array of User class
 
-		$statement = "SELECT * FROM user LIMIT ?, ?";
+		$statement = "SELECT * FROM user LIMIT :start, :howmany";
 
-		$start = $howMany * ($page - 1);
+		$start = $this-> getStartValue($howMany, $page);
 
-		$user = $this->fetchIntoClass($statement, array($start, $howMany), "shared/UserViewModel");
+		$parameters = array(
+			":start" => $start,
+			":howmany" => $howMany
+			);
 
-		return $user;
+		$users = $this->fetchIntoClass($statement, $parameters, "shared/UserViewModel");
+
+		return $users;
 	}
 
 	public function getLatestUserList($howMany, $page)
@@ -830,13 +886,18 @@ class AccountModel extends Model {
 		//Users must have verified flag set to true
 		//Returns an array of User class
 
-		$statement = "SELECT * FROM user ORDER BY RegisterDate DESC LIMIT ?, ?";
+		$statement = "SELECT * FROM user ORDER BY RegisterDate DESC LIMIT :start, :howmany";
 
-		$start = $howMany * ($page - 1);
+		$start = $this-> getStartValue($howMany, $page);
 
-		$user = $this->fetchIntoClass($statement, array($start, $howMany), "shared/UserViewModel");
+		$parameters = array(
+			":start" => $start,
+			":howmany" => $howMany
+			);
 
-		return $user;
+		$users = $this->fetchIntoClass($statement, $parameters, "shared/UserViewModel");
+
+		return $users;
 	}
 }
 
