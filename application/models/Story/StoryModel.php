@@ -10,6 +10,49 @@ class StoryModel extends Model {
 		//check is not equal to the userid 
 		//how many stories will return in the
 		//returns an array of Story class that relate to the search string
+		try 
+		{
+			//the first page will start from 1 to 10 and 
+			//the next page will start from 11 to 20
+			//Limit 0, 10. starts from page1 -- (0*10)-10 = 0
+			//limit 10, 10. starts from page2 -- (2*10)-10 = 10
+			$page = $_GET['page'];
+			if($page == 0 || $page ==1)
+			{
+				$page1 = 0;
+			}
+			else
+			{
+				$page1 = ($page * 10) - 10;
+			}
+			
+			// will retrive all the active stories which specific user and private type 
+			$statement = "SELECT s.StoryId, s.User_UserId, s.StoryTitle, s.Content, s.Active
+						  From Story s 
+						  Inner join User u 
+						  On s.User_UserId = u.UserId
+						  Inner join StoryPrivacyType sp 
+						  On s.StoryPrivacyType_StoryPrivacyTypeId = sp.StoryPrivacyTypeId
+						  Where s.Active = 1 AND sp.NameE =? AND u.UserId=?
+						  LIMIT $page1,10";
+			// will generate 10 stories per page
+			$howMany = mysql_num_rows($statement);
+			$storySearch = $howMany/10;
+			$storySearch = ceil($storySearch);
+			for($eachPage=1; $eachPage <= $storySearch; $eachPage++)
+			{
+				echo '<a href=''>$eachPage</a>'; //will display on the url and page number
+			}
+
+			$story = $this->fetchIntoClass($statement, array($storySearch, $userID), "Shared/StoryView");
+
+			return $story;
+
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function publishNewStory($story)
