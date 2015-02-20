@@ -10,6 +10,51 @@ class StoryModel extends Model {
 		//check is not equal to the userid 
 		//how many stories will return in the
 		//returns an array of Story class that relate to the search string
+		try 
+		{
+			//the first page will start from 1 to 10 and 
+			//the next page will start from 11 to 20
+			//Limit 0, 10. starts from page1 -- (0*10)-10 = 0
+			//limit 10, 10. starts from page2 -- (2*10)-10 = 10
+			$page = $_GET['page'];
+			if($page == 0 || $page ==1)
+			{
+				$page1 = 0;
+			}
+			else
+			{
+				$page1 = ($page * 10) - 10;
+			}
+			
+			// will retrive all the active stories which specific user and private type 
+			$statement = "SELECT s.StoryId, s.User_UserId, s.StoryTitle, s.Content, s.DatePosted
+						  From Story s 
+						  Inner join User u 
+						  On s.User_UserId = u.UserId
+						  Inner join StoryPrivacyType sp 
+						  On s.StoryPrivacyType_StoryPrivacyTypeId = sp.StoryPrivacyTypeId
+						  Where s.Active = 1 AND sp.NameE=? AND u.UserId=?
+						  LIMIT $page1,10";
+			// will generate 10 stories per page
+			$howMany = mysql_num_rows($statement);
+			$storySearch = $howMany/10;
+			// ceil function round the number UP to the nerast interger 
+			$storySearch = ceil($storySearch);
+			
+			for($eachPage=1; $eachPage <= $storySearch; $eachPage++)
+			{
+				echo '<a href=''>$eachPage</a>'; //will display on the url and page number
+			}
+
+			$story = $this->fetchIntoClass($statement, array($storySearch, $userID), "Shared/StoryViewModel");
+
+			return $story;
+
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function publishNewStory($story)
@@ -87,7 +132,7 @@ class StoryModel extends Model {
 		{
 			$statement = "SELECT * FROM Story WHERE User_UserId=? AND StoryId=? AND Active=1";
 
-			$story = $this->fetchIntoClass($statement, array($userID, $storyID), "Shared/StoryView");
+			$story = $this->fetchIntoClass($statement, array($userID, $storyID), "Shared/StoryViewModel");
 
 			return $story;
 		}
@@ -109,7 +154,7 @@ class StoryModel extends Model {
 		{
 			$statement = "SELECT * FROM admin_approve_story WHERE User_UserId=? AND StoryId=?";
 
-			$story = $this->fetchIntoClass($statement, array($adminID, $storyID), "Shared/StoryView");
+			$story = $this->fetchIntoClass($statement, array($adminID, $storyID), "Shared/StoryViewModel");
 
 			return $story;
 		}
@@ -128,7 +173,44 @@ class StoryModel extends Model {
 		//returns an array of Story class related to a category
 		try 
 		{
-			$statement = "";
+			$page = $_GET['page'];
+			if($page == 0 || $page ==1)
+			{
+				$page1 = 0;
+			}
+			else
+			{
+				$page1 = ($page * 10) - 10;
+			}
+
+			$statement = "SELECT s.StoryTitle, s.Content, s.DatePosted, t.Tag
+						  From Story s 
+						  Inner join story_has_tag sht
+						  On s.StoryId = sht.Story_StoryId
+						  Inner join tag t 
+						  On sht.Tag_TagId = t.TagId 
+						  Where s.Active=? AND t.TagId=?
+						  Limit $page1,10";
+
+		// will generate 10 stories per page
+			$howMany = mysql_num_rows($statement);
+			$pages = $howMany/10;
+			// ceil function round the number UP to the nerast interger 
+			$pages = ceil($pages);
+			
+			for($eachPage=1; $eachPage <= $pages; $eachPage++)
+			{
+				echo '<a href=''>$eachPage</a>'; //will display on the url and page number
+			}
+
+			$story = $this->fetchIntoClass($statement, array($tag, $pages), "Shared/StoryViewModel");
+
+			return $story;
+
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
 		}
 		
 	}
@@ -142,7 +224,37 @@ class StoryModel extends Model {
 		//returns an array of Story class related to a category
 		try 
 		{
+			$page = $_GET['page'];
+			if($page == 0 || $page ==1)
+			{
+				$page1 = 0;
+			}
+			else
+			{
+				$page1 = ($page * 10) - 10;
+			}
+
 			$statement = "";
+
+		// will generate 10 stories per page
+			$howMany = mysql_num_rows($statement);
+			$storySearch = $howMany/10;
+			// ceil function round the number UP to the nerast interger 
+			$storySearch = ceil($storySearch);
+			
+			for($eachPage=1; $eachPage <= $storySearch; $eachPage++)
+			{
+				echo '<a href=''>$eachPage</a>'; //will display on the url and page number
+			}
+
+			$story = $this->fetchIntoClass($statement, array($storySearch, $userID), "Shared/StoryViewModel");
+
+			return $story;
+
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
 		}
 		
 	}
@@ -156,7 +268,37 @@ class StoryModel extends Model {
 		//returns an array of Story class related to a category
 		try 
 		{
+			$page = $_GET['page'];
+			if($page == 0 || $page ==1)
+			{
+				$page1 = 0;
+			}
+			else
+			{
+				$page1 = ($page * 10) - 10;
+			}
+
 			$statement = "";
+
+		// will generate 10 stories per page
+			$howMany = mysql_num_rows($statement);
+			$storySearch = $howMany/10;
+			// ceil function round the number UP to the nerast interger 
+			$storySearch = ceil($storySearch);
+			
+			for($eachPage=1; $eachPage <= $storySearch; $eachPage++)
+			{
+				echo '<a href=''>$eachPage</a>'; //will display on the url and page number
+			}
+
+			$story = $this->fetchIntoClass($statement, array($storySearch, $userID), "Shared/StoryViewModel");
+
+			return $story;
+
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
 		}
 		
 	}
@@ -170,7 +312,37 @@ class StoryModel extends Model {
 		//returns an array of Story class related to a category
 		try 
 		{
+			$page = $_GET['page'];
+			if($page == 0 || $page ==1)
+			{
+				$page1 = 0;
+			}
+			else
+			{
+				$page1 = ($page * 10) - 10;
+			}
+
 			$statement = "";
+
+		// will generate 10 stories per page
+			$howMany = mysql_num_rows($statement);
+			$storySearch = $howMany/10;
+			// ceil function round the number UP to the nerast interger 
+			$storySearch = ceil($storySearch);
+			
+			for($eachPage=1; $eachPage <= $storySearch; $eachPage++)
+			{
+				echo '<a href=''>$eachPage</a>'; //will display on the url and page number
+			}
+
+			$story = $this->fetchIntoClass($statement, array($storySearch, $userID), "Shared/StoryViewModel");
+
+			return $story;
+
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
 		}
 		
 	}
@@ -190,7 +362,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryView");
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryViewModel");
 
 			return $storyList;
 		}
@@ -215,7 +387,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryView");
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryViewModel");
 
 			return $storyList;
 		}
@@ -243,7 +415,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryView");
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryViewModel");
 
 			return $storyList;
 		}
@@ -300,7 +472,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Story/StoryViewModel");
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryViewModel");
 
 			return $storyList;
 		}
@@ -339,7 +511,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryView");
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryViewModel");
 
 			return $storyList;
 		}
