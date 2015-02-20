@@ -180,6 +180,18 @@ class Model {
 		}
 	}
 
+	public function getStartValue($howMany, $page)
+	{
+		if (!isset($howMany)) {
+			$howMany = 1;
+		}
+		if (!isset($page)) {
+			$page = 1;
+		}
+
+		return $howMany * (($page == 0 ? 1 : $page) - 1);
+	}
+
 	public function escapeString($string)
 	{
 		return mysql_real_escape_string($string);

@@ -565,7 +565,7 @@ class AccountModel extends Model {
 						LEFT JOIN admin_approve_story 
 						ON story.StoryId = admin_approve_story.Story_StoryId
 						WHERE story.User_UserId = :UserId 
-						AND admin_approve_story.Approved = FALSE";
+						AND admin_approve_story.Pending = TRUE";
 
 		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
 
@@ -578,7 +578,14 @@ class AccountModel extends Model {
 		//Gets an array of stories written by the owner of this user id
 		//Returns an array of Story class
 
-		$statement = "SELECT * FROM story WHERE User_UserId = :UserId";
+		$statement = "SELECT *
+						FROM story 
+						LEFT JOIN admin_approve_story 
+						ON story.StoryId = admin_approve_story.Story_StoryId
+						WHERE story.User_UserId = :UserId 
+						AND story.Active = TRUE 
+						AND story.Published = TRUE
+						AND admin_approve_story.Approved = TRUE";
 
 		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/StoryViewModel");
 
@@ -635,6 +642,21 @@ class AccountModel extends Model {
 		//Accepts a user id
 		//Gets an array of stories that were recommended to the owner of this user id
 		//Returns an array of Story class
+
+		$statement = "SELECT *
+						FROM story 
+						LEFT JOIN admin_approve_story 
+						ON story.StoryId = admin_approve_story.Story_StoryId
+						LEFT JOIN user_recommend_story
+						ON story.StoryId = user_recommend_story.Story_StoryId
+						WHERE user_recommend_story.User_UserId = :UserId
+						AND story.Active = TRUE 
+						AND story.Published = TRUE
+						AND admin_approve_story.Approved = TRUE";
+
+		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/StoryViewModel");
+
+		return $stories;
 	}
 
 
@@ -649,9 +671,12 @@ class AccountModel extends Model {
 		//Accepts an user id
 		//Gets the total stories written by the user who owns this email address
 		//Returns the total
-		$statement = "SELECT count(*) FROM story WHERE User_UserId = ?";
+		$statement = "SELECT count(*) 
+						FROM comment 
+						WHERE User_UserId = :UserId
+						AND PublishFlag = TRUE";
 
-		$totalStories = $this->fetchColumn($statement, array($userID));
+		$totalStories = $this->fetchColumn($statement, array(":UserId" => $userID));
 
 		return $totalStories;
 	}
@@ -660,9 +685,12 @@ class AccountModel extends Model {
 		//Accepts an user id
 		//Gets the total stories written by the user who owns this email address
 		//Returns the total
-		$statement = "SELECT count(*) FROM story WHERE User_UserId = ?";
+		$statement = "SELECT count(*) 
+						FROM comment 
+						WHERE User_UserId = :UserId
+						AND PublishFlag = FALSE";
 
-		$totalStories = $this->fetchColumn($statement, array($userID));
+		$totalStories = $this->fetchColumn($statement, array(":UserId" => $userID));
 
 		return $totalStories;
 	}
@@ -680,9 +708,27 @@ class AccountModel extends Model {
 		//Gets the total follower for this userid
 		//Returns the total
 
-		$statement = "SELECT count(*) FROM following WHERE User_UserId = ?";
+		$statement = "SELECT count(*) 
+						FROM following 
+						WHERE User_FollowerId = :UserId
+						AND Active = TRUE";
 
-		$totalFollowing = $this->fetchColumn($statement, array($userID));
+		$totalFollowers = $this->fetchColumn($statement, array(":UserId" => $userID));
+
+		return $totalFollowers;
+	}
+	public function getTotalFollowing($userID)
+	{
+		//Accepts a user id
+		//Gets the total amount of people the current user is following
+		//Returns the total
+
+		$statement = "SELECT count(*) 
+						FROM following 
+						WHERE User_UserId = :UserId
+						AND Active = TRUE";
+
+		$totalFollowing = $this->fetchColumn($statement, array(":UserId" => $userID));
 
 		return $totalFollowing;
 	}
@@ -703,24 +749,34 @@ class AccountModel extends Model {
 		//Accepts a user id
 		//Gets all users that are following this userid
 		//Returns array of user class
-	}
-	public function getTotalFollowing($userID)
-	{
-		//Accepts a user id
-		//Gets the total amount of people the current user is following
-		//Returns the total
+		$statement = "SELECT * 
+						FROM user
+						INNER JOIN following 
+						ON user.UserId = following.User_UserId
+						WHERE following.User_FollowerId = 2
+						AND following.Active = TRUE";
 
-		$statement = "SELECT count(*) FROM following WHERE User_FollowerId = ?";
-
-		$totalFollowers = $this->fetchColumn($statement, array($userID));
+		$totalFollowers = $this->fetchColumn($statement, array(":UserId" => $userID));
 
 		return $totalFollowers;
 	}
+	
 	public function getFollowing($userID)
 	{
 		//Accepts a user id
-		//Gets all users that are following this user id
+		//Gets all users that this user is following
 		//Returns array of user class
+
+		$statement = "SELECT * 
+						FROM user
+						INNER JOIN following 
+						ON user.UserId = following.User_FollowerId
+						WHERE following.User_UserId = 10
+						AND following.Active = TRUE";
+
+		$totalFollowing = $this->fetchColumn($statement, array(":UserId" => $userID));
+
+		return $totalFollowing;
 	}
 
 
@@ -737,6 +793,7 @@ class AccountModel extends Model {
 		//Gets an array of users who most closely match the search string
 		//Checks if user is following each user (add this to user viewmodel class)
 		//Returns an array of User class		
+
 
 		$statement = "SELECT *, MATCH(FirstName, LastName, Email, MidName) AGAINST('$userSearch') AS score FROM user LIMIT ?, ? WHERE MATCH(FirstName, LastName, Email, MidName) AGAINST(?) ORDER BY score DESC";
 
