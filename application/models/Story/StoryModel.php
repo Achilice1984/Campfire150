@@ -132,7 +132,7 @@ class StoryModel extends Model {
 		{
 			$statement = "SELECT * FROM Story WHERE User_UserId=? AND StoryId=? AND Active=1";
 
-			$story = $this->fetchIntoClass($statement, array($userID, $storyID), "Shared/StoryViewModel");
+			$story = $this->fetchIntoClass($statement, array($userID, $storyID), "shared/StoryViewModel");
 
 			return $story;
 		}

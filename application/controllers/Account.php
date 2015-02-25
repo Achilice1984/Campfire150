@@ -69,18 +69,22 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Admin/AdminModel');
 		
-		$returnData = $model->getStoryListRejected('1' ,'5','1');
+		$returnData = $model->updateQuestion(1, 10, "NewtestE", "NewtestF");
+//$returnData = $model->deActivateUser(7, 9, "A bunch of dirty words");
+
+		//$returnData = $model->getUserProfileByID(2);
 		
 		debugit($returnData);
 	}
 
 	function testStory()
 	{
+		echo "hello";
 		$model = $this->loadModel('Story/StoryModel');
 		
-		$returnData = $model->getStoryListRecommendedByFriends(1, 5, 1);
+		// $returnData = $model->getStory(1, 6);
 		
-		debugit($returnData);
+		// debugit($returnData);
 	}
 
 	function testAccount()
