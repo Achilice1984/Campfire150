@@ -67,6 +67,24 @@ class Home extends Controller {
 		$template->render(true);
 	}  
 
+	function about()
+	{
+		//Load the profile view
+		$view = $this->loadView('about');
+
+		//Render the profile view. true indicates to load the layout pages as well
+		$view->render(true);
+	}
+
+	function domore()
+	{
+		//Load the profile view
+		$view = $this->loadView('domore');
+
+		//Render the profile view. true indicates to load the layout pages as well
+		$view->render(true);
+	}
+
 	function terms()
 	{
 		$template = $this->loadView('terms');

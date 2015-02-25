@@ -70,3 +70,5 @@ AND user_recommend_story.Opinion = TRUE
 GROUP BY story.StoryId
 ORDER BY user_recommend_story.LatestChange DESC
 
+LIMIT 0, 50 
+WHERE MATCH(FirstName, LastName, Email, MidName) AGAINST('josh') 

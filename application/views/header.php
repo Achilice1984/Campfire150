@@ -67,8 +67,8 @@
                 echo '<li class="dropdown">';
                   echo '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-cog"></span><span class="caret"></span></a>';
                   echo '<ul class="dropdown-menu" role="menu">';
-                    echo '<li><a href="' . BASE_URL . 'account/login">' . gettext("Login") . '</a></li>';
-                    echo '<li><a href="' . BASE_URL . 'account/register">' . gettext("Register") . '</a></li>';
+                    echo '<li><a href="' . BASE_URL . 'account/login">' . gettext("Login/Register") . '</a></li>';
+                    //echo '<li><a href="' . BASE_URL . 'account/register">' . gettext("Register") . '</a></li>';
                     echo '<li><a href="' . BASE_URL . 'account/changelanguage">' . $language . '</a></li>';
                   echo '</ul>';
                 echo '</li>';

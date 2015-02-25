@@ -51,98 +51,41 @@ class Story extends Controller {
 		}
 	}
 
-	function insert()
+	function search()
 	{
-		//Loads a model from corresponding model folder
-		$model = $this->loadModel('SomeModel');
+		//Load the profile view
+		$view = $this->loadView('search');
 
-		//Loads a view model from corresponding viewmodel folder
-		$viewModel = $this->loadModel('SomeViewModel');
-
-		//Loads a view from corresponding view folder
-		$template = $this->loadView('insert');
-		//Adds a variable or object to that can be accessed in the view
-		$template->set('viewModel', $viewModel);
-		//Renders the view. true indicates to load the layout
-		$template->render(true);
-
-		//Execute code if a post back
-		if($this->isPost())
-		{
-			//Can be used to redirect to another controller
-			//Can add query values ?id=1
-			//$this->redirect("controller/action");
-
-			//Check if request is ajax
-			//$this->isAjax()
-		}
-		else
-		{
-			//Execute this code if NOT a post back
-		}
+		//Render the profile view. true indicates to load the layout pages as well
+		$view->render(true);
 	}
 
-	function update()
+	function add()
 	{
-		//Loads a model from corresponding model folder
-		$model = $this->loadModel('SomeModel');
+		//Load the profile view
+		$view = $this->loadView('add');
 
-		//Loads a view model from corresponding viewmodel folder
-		$viewModel = $this->loadModel('SomeViewModel');
-
-		//Loads a view from corresponding view folder
-		$template = $this->loadView('update');
-		//Adds a variable or object to that can be accessed in the view
-		$template->set('viewModel', $viewModel);
-		//Renders the view. true indicates to load the layout
-		$template->render(true);
-
-		//Execute code if a post back
-		if($this->isPost())
-		{
-			//Can be used to redirect to another controller
-			//Can add query values ?id=1
-			//$this->redirect("controller/action");
-
-			//Check if request is ajax
-			//$this->isAjax()
-		}
-		else
-		{
-			//Execute this code if NOT a post back
-		}
+		//Render the profile view. true indicates to load the layout pages as well
+		$view->render(true);
 	}
 
-	function delete()
+	function edit()
 	{
-		//Loads a model from corresponding model folder
-		$model = $this->loadModel('SomeModel');
+		//Load the profile view
+		$view = $this->loadView('edit');
 
-		//Loads a view model from corresponding viewmodel folder
-		$viewModel = $this->loadModel('SomeViewModel');
+		//Render the profile view. true indicates to load the layout pages as well
+		$view->render(true);
+	}
 
-		//Loads a view from corresponding view folder
-		$template = $this->loadView('delete');
-		//Adds a variable or object to that can be accessed in the view
-		$template->set('viewModel', $viewModel);
-		//Renders the view. true indicates to load the layout
-		$template->render(true);
+	function display()
+	{
+		//Load the profile view
+		$view = $this->loadView('display');
 
-		//Execute code if a post back
-		if($this->isPost())
-		{
-			//Can be used to redirect to another controller
-			//Can add query values ?id=1
-			//$this->redirect("controller/action");
-
-			//Check if request is ajax
-			//$this->isAjax()
-		}
-		else
-		{
-			//Execute this code if NOT a post back
-		}
-	}    
+		//Render the profile view. true indicates to load the layout pages as well
+		$view->render(true);
+	}
 }
 
 ?>
