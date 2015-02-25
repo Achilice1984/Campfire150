@@ -149,5 +149,30 @@ class Validator
     
     return true;
   }
+  function validateYoutubeEmbedTag($embedHtml){
+    /*
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/gauN0gzxTcU" frameborder="0" allowfullscreen></iframe>
+   get everything between src="  and the final closing "
+   if the string isn't a youTube embed tag to begin with it will return false
+  */
+   var $start='src="';
+   var $end='"';
+   if ( preg_match('/<script>/',$embedHtml) && preg_match('/src="/',$embedHtml) && preg_match('/</script>/',$embedHtml)   ) {
+    var $htmlAddress=get_string_between($embedHtml);
+    $start='<iframe width="560" height="315" src="';
+    $end='" frameborder="0" allowfullscreen></iframe>';
+    return $start.$htmlAddress.$end;
+   }else{
+    return gettext('error not a youtube embed tag');
+   }   
+   function get_string_between($string, $start, $end){
+    $string = " ".$string;
+    $ini = strpos($string,$start);
+    if ($ini == 0) return "";
+    $ini += strlen($start);
+    $len = strpos($string,$end,$ini) - $ini;
+    return substr($string,$ini,$len);
+   }   
+  }
 }
 ?>

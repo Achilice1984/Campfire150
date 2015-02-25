@@ -1,22 +1,26 @@
 <?PHP
 /**
  Final structure should look something like
- Application/UserData/images/xxxhasheduserid/StoryImages/large/xxxhashedimageid.jpg
- Application/UserData/images/xxxhasheduserid/StoryImages/medium/xxxhashedimageid.jpg
- Application/UserData/images/xxxhasheduserid/StoryImages/small/xxxhashedimageid.jpg
- Application/UserData/images/xxxhasheduserid/Profile/large/xxxhashedimageid.jpg
- Application/UserData/images/xxxhasheduserid/Profile/medium/xxxhashedimageid.jpg
- Application/UserData/images/xxxhasheduserid/Profile/small/xxxhashedimageid.jpg
- Application/UserData/images/xxxhasheduserid/Background/large/xxxhashedimageid.jpg
- Application/UserData/images/xxxhasheduserid/Background/medium/xxxhashedimageid.jpg
- Application/UserData/images/xxxhasheduserid/Background/small/xxxhashedimageid.jpg
+ Application/UserData/images/xxxhasheduserid/story/xxxHashedStoryID/large_story.jpg
+ Application/UserData/images/xxxhasheduserid/story/xxxHashedStoryID/medium_story.jpg
+ Application/UserData/images/xxxhasheduserid/story/xxxHashedStoryID/small_story.jpg
 **/
- function imageUpload($uploadedImage,$userID,$imageType){
+/**
+ $uploadedImage = This will be the actual $_FILE[] itself
+ 
+ $userID = This will be the current userID
+ 
+ $imageType= ("profile" | "background" | "story" )
+ 
+ $storyID= This will be the current storyID
+**/
+ function imageUpload($uploadedImage,$userID,$imageType,$storyID){
   $userIDhash=md5($userID);
-  $writePath= 'Application/UserData/images/'.$imageType.'/'.$userIDhash;
-  private $largeDir=$writePath.'/large';
-  private $mediumDir=$writePath.'/medium'; 
-  private $smallDir=$writePath.'/small';
+  $storyIDhash=md5($storyID);
+  $writePath= 'Application/UserData/images'.$userIDhash.'/story/'.$storyIDhash;
+  private $largeDir=$writePath.'/large_'.$imageType.'.jpg';
+  private $mediumDir=$writePath.'/medium_'.$imageType.'.jpg'; 
+  private $smallDir=$writePath.'/small_'.$imageType.'.jpg';
   private $imageQuality=100;
   private $largeImageSize=800;
   private $mediumImageSize=400;
@@ -38,8 +42,7 @@
   /*
    Once we have our file
    we first write to the database, this function has yet to be written
-   then
-   we re-size for large,medium,small and write each time
+   then, re-size for large,medium,small and write each time to server HDD
    finally release file memory object 
   */
   $width = imagesx($jpegImage);
@@ -81,13 +84,5 @@
   imagecopyresampled($virtual_image, $jpegImage, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
   imagejpeg($virtual_image,$smallDir);
   imagedestroy($virtual_image);
-/*
- Once the DB write is created and returns the mysql_insert_id() 
- A hash is made and the files are renamed accordingly. 
-  $hashImageDatabaseID=md5( mysql_insert_id() );
-  rename($largeDir.'/'.$imageFileNameWithoutExtention.'jpg',$largeDir.'/'.$hashImageDatabaseID.'jpg');
-  rename($mediumDir.'/'.$imageFileNameWithoutExtention.'jpg',$mediumDir.'/'.$hashImageDatabaseID.'jpg');
-  rename($smallDir.'/'.$imageFileNameWithoutExtention.'jpg',$smallDir.'/'.$hashImageDatabaseID.'jpg');
-*/
  }
 ?>
