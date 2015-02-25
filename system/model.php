@@ -36,6 +36,16 @@ class Model {
 		}
 	}
 
+	private function bindParams($pdo, $params)
+	{
+		if(isset($params))
+		{
+			foreach ($params as $key => $value) {
+			 	$pdo->bindParam($key, $value, !is_numeric($value) ? PDO::PARAM_STR : PDO::PARAM_INT);
+			 }
+		 }
+	}
+
  	// This function allows you to retrieve the last inserted id in the database
  	// Example:
  	//		You insert a new user into the database but need the new id to insert some more data
@@ -61,7 +71,11 @@ class Model {
 			require_once(APP_DIR .'viewmodels/' . $className .'.php');			 
 
 			 $pdo = self::$connection->prepare($qry);
-			 $pdo->execute($params);
+
+			 $this->bindParams($pdo, $params);
+
+			 $pdo->execute();
+			 // $pdo->execute($params);
 
 			 $urlArray = explode("/", $className);
 
@@ -87,7 +101,9 @@ class Model {
 		try 
 		{
 			$pdo = self::$connection->prepare($qry);
-			$pdo->execute($params);
+			$this->bindParams($pdo, $params);
+
+		 	$pdo->execute();
 
 			//Fetches data and puts it into object form
 			return $pdo->fetchAll(PDO::FETCH_OBJ);
@@ -108,7 +124,9 @@ class Model {
 		try 
 		{
 			$pdo = self::$connection->prepare($qry);
-			$pdo->execute($params);
+			$this->bindParams($pdo, $params);
+
+		 	$pdo->execute();
 
 			return $pdo->rowCount();
 		}
@@ -125,7 +143,9 @@ class Model {
 		try 
 		{
 			$pdo = self::$connection->prepare($qry);
-			$pdo->execute($params);
+			$this->bindParams($pdo, $params);
+
+		 	$pdo->execute();
 
 			return $pdo->fetchColumn();
 		}
@@ -146,7 +166,9 @@ class Model {
 		try 
 		{
 			$pdo = self::$connection->prepare($qry);
-			$pdo->execute($params);
+			$this->bindParams($pdo, $params);
+
+		 	$pdo->execute();
 
 			//Fetches data and puts it into object form
 			$row = $pdo->fetch(PDO::FETCH_NUM);

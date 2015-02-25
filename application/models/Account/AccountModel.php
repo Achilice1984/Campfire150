@@ -865,7 +865,7 @@ class AccountModel extends Model {
 
 		$statement = "SELECT * FROM user LIMIT :start, :howmany";
 
-		$start = $this-> getStartValue($howMany, $page);
+		$start = $this->getStartValue($howMany, $page);
 
 		$parameters = array(
 			":start" => $start,
