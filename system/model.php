@@ -28,6 +28,8 @@ class Model {
 				{
 		    		self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	    		}
+
+    			self::$connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);	    		
 		    }
 		} 
 		catch (PDOException $e) 
@@ -74,8 +76,8 @@ class Model {
 
 			 $this->bindParams($pdo, $params);
 
-			 $pdo->execute();
-			 // $pdo->execute($params);
+			 //$pdo->execute();
+			 $pdo->execute($params);
 
 			 $urlArray = explode("/", $className);
 
@@ -103,7 +105,8 @@ class Model {
 			$pdo = self::$connection->prepare($qry);
 			$this->bindParams($pdo, $params);
 
-		 	$pdo->execute();
+		 	//$pdo->execute();
+		 	$pdo->execute($params);
 
 			//Fetches data and puts it into object form
 			return $pdo->fetchAll(PDO::FETCH_OBJ);
@@ -126,7 +129,8 @@ class Model {
 			$pdo = self::$connection->prepare($qry);
 			$this->bindParams($pdo, $params);
 
-		 	$pdo->execute();
+		 	//$pdo->execute();
+		 	$pdo->execute($params);
 
 			return $pdo->rowCount();
 		}
@@ -145,7 +149,8 @@ class Model {
 			$pdo = self::$connection->prepare($qry);
 			$this->bindParams($pdo, $params);
 
-		 	$pdo->execute();
+		 	//$pdo->execute();
+		 	$pdo->execute($params);
 
 			return $pdo->fetchColumn();
 		}
@@ -168,7 +173,8 @@ class Model {
 			$pdo = self::$connection->prepare($qry);
 			$this->bindParams($pdo, $params);
 
-		 	$pdo->execute();
+		 	//$pdo->execute();
+		 	$pdo->execute($params);
 
 			//Fetches data and puts it into object form
 			$row = $pdo->fetch(PDO::FETCH_NUM);

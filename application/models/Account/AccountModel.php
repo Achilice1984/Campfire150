@@ -22,62 +22,61 @@ class AccountModel extends Model {
 		// Does a user exists?
 		if (isset($user[0])) 
 		{
+			//Eliminate array 
 			$user = $user[0];
 
-			if($user->VerifiedEmail) //Has user verified email?
+
+			if($user->VerifiedEmail && !isset($user->LockoutTimes) || strtotime('-15 minutes') > $user->LockoutTimes) //Is user locked out?
 			{
-				if(!isset($user->LockoutTimes) || strtotime('-15 minutes') > $user->LockoutTimes) //Is user locked out?
+				//check to see if user is properly authenticated
+				if($authentication->authenticate($loginViewModel->Password, $user)) //Is user peoperly authenticated?
 				{
-					//check to see if user is properly authenticated
-					if($authentication->authenticate($loginViewModel->Password, $user)) //Is user peoperly authenticated?
+					//Set login and lockouts back to starting point
+					$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt, LockoutTimes = :LockoutTimes";
+					$statement .= " WHERE UserId = :UserId";
+
+					$parameters = array( 					
+						":FailedLoginAttempt" => 0, 
+						":LockoutTimes" => NULL,
+						":UserId" => $user->UserId
+					);
+					
+					$this->fetch($statement, $parameters);
+
+					$isUserLoggedIn = true;
+				}
+				else //User exists BUT Login failed, update failed attempts
+				{
+					//to many failed login attempts, lockout user
+					if($user->FailedLoginAttempt >= 5)
 					{
-						//Set login and lockouts back to starting point
+						//add a failed login attempt and set the lockout time
 						$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt, LockoutTimes = :LockoutTimes";
 						$statement .= " WHERE UserId = :UserId";
 
-						$parameters = array( 					
-							":FailedLoginAttempt" => 0, 
-							":LockoutTimes" => NULL,
+						$parameters = array( 
+							":FailedLoginAttempt" => $user->FailedLoginAttempt + 1, 
+							":LockoutTimes" => new DateTime(),
 							":UserId" => $user->UserId
 						);
 						
 						$this->fetch($statement, $parameters);
-
-						$isUserLoggedIn = true;
 					}
-					else //User exists BUT Login failed, update failed attempts
+					else
 					{
-						//to many failed login attempts, lockout user
-						if($user->FailedLoginAttempt >= 5)
-						{
-							//add a failed login attempt and set the lockout time
-							$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt, LockoutTimes = :LockoutTimes";
-							$statement .= " WHERE UserId = :UserId";
+						//add a failed login attempt
+						$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt";
+						$statement .= " WHERE UserId = :UserId";
 
-							$parameters = array( 
-								":FailedLoginAttempt" => $user->FailedLoginAttempt + 1, 
-								":LockoutTimes" => new DateTime(),
-								":UserId" => $user->UserId
-							);
-							
-							$this->fetch($statement, $parameters);
-						}
-						else
-						{
-							//add a failed login attempt
-							$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt";
-							$statement .= " WHERE UserId = :UserId";
-
-							$parameters = array( 
-								":FailedLoginAttempt" => $user->FailedLoginAttempt + 1, 
-								":UserId" => $user->UserId
-							);
-							
-							$this->fetch($statement, $parameters);
-						}
+						$parameters = array( 
+							":FailedLoginAttempt" => $user->FailedLoginAttempt + 1, 
+							":UserId" => $user->UserId
+						);
+						
+						$this->fetch($statement, $parameters);
 					}
 				}
-			} // End of if($user->VerifiedEmail) //Has user verified email?
+			}
 		}
 
 		return $isUserLoggedIn;
@@ -753,7 +752,7 @@ class AccountModel extends Model {
 						FROM user
 						INNER JOIN following 
 						ON user.UserId = following.User_UserId
-						WHERE following.User_FollowerId = 2
+						WHERE following.User_FollowerId = :UserId
 						AND following.Active = TRUE
 						LIMIT :start, :howmany";
 
@@ -761,11 +760,12 @@ class AccountModel extends Model {
 
 		$parameters = array(
 			":UserId" => $userID,
-			":start " => $start,
-			":howmany " => $howMany
+			":start" => $start,
+			":howmany" => $howMany
 			);
 
-		$followers = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+
+		$followers = $this->fetchIntoClass($statement, $parameters, "shared/UserViewModel");
 
 		return $followers;
 	}
@@ -780,19 +780,19 @@ class AccountModel extends Model {
 						FROM user
 						INNER JOIN following 
 						ON user.UserId = following.User_FollowerId
-						WHERE following.User_UserId = 10
+						WHERE following.User_UserId = :UserId
 						AND following.Active = TRUE
 						LIMIT :start, :howmany";
 
 		$start = $this-> getStartValue($howMany, $page);
 
-		$parameters = array(
-			":UserId" => $userID,
-			":start " => $start,
-			":howmany " => $howMany
+		$parameters = array(			
+			":start" => $start,
+			":howmany" => $howMany,
+			":UserId" => $userID
 			);
 
-		$following = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+		$following = $this->fetchIntoClass($statement, $parameters, "shared/UserViewModel");
 
 		return $following;
 	}
@@ -814,28 +814,29 @@ class AccountModel extends Model {
 
 		$userSearch = explode(" ", strtolower($userSearch));
 
-		$fName = "";
-		$lName = "";
+		$fName = " ";
+		$lName = " ";
 
-		if(count($userSearch[0]) > 1)
+		if(count($userSearch) > 1)
 		{
-			$fName = $userSearch[0];
+			$fName = "%" . $userSearch[0] . "%";
 			
-			for ($i=1; $i <= count($userSearch) ; $i++) { 
+			for ($i=1; $i < count($userSearch); $i++) { 
 				$lName .= $userSearch[$i] . " ";
 			}
 
 			$lName = trim($lName);
+			$lName = "%" . $lName . "%";
 		}
 		else
 		{
-			$fName = $userSearch[0];
-			$lName = $userSearch[0];
+			$fName = "%" . $userSearch[0] . "%";
+			$lName = "%" . $userSearch[0] . "%";
 		}
 
 		$statement = "SELECT *,
-						((LOWER(FirstName) LIKE '%:firstName%') + 
-						(LOWER(LastName) LIKE '%:lastName%')) as hits
+						((LOWER(FirstName) LIKE :firstName) + 
+						(LOWER(LastName) LIKE :lastName)) as hits
 						FROM   user
 						HAVING hits > 0
 						ORDER BY hits DESC
@@ -849,7 +850,7 @@ class AccountModel extends Model {
 			":start" => $start,
 			":howmany" => $howMany
 			);
-
+debugit($parameters);
 		$users = $this->fetchIntoClass($statement, $parameters, "shared/UserViewModel");
 
 		return $users;

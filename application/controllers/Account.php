@@ -78,7 +78,7 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Story/StoryModel');
 		
-		$returnData = $model->getStoryListByTag("Family", 5, 1);
+		$returnData = $model->getStoryListByTag("a", 5, 1);
 		
 		debugit($returnData);
 	}
@@ -86,7 +86,7 @@ class Account extends Controller {
 	function testAccount()
 	{
 		$model = $this->loadModel('Account/AccountModel');
-		$testData = $model->getUserList(1, 5);
+		$testData = $model->getUserList(10, 0);
 		// $returnData = $model->getCurrentProfilePictureMetadata(1);
 		
 		debugit($testData);
