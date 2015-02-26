@@ -69,7 +69,7 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Admin/AdminModel');
 		
-		$returnData = $model->updateQuestion(1, 10, "NewtestE", "NewtestF");
+		$returnData = $model->getStoryListFlaggedInappropriate(2, 2, 1);
 //$returnData = $model->deActivateUser(7, 9, "A bunch of dirty words");
 
 		//$returnData = $model->getUserProfileByID(2);
