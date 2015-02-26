@@ -69,28 +69,31 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Admin/AdminModel');
 		
+<<<<<<< HEAD
 		$returnData = $model->getStoryListFlaggedInappropriate(2, 2, 1);
 //$returnData = $model->deActivateUser(7, 9, "A bunch of dirty words");
 
 		//$returnData = $model->getUserProfileByID(2);
+=======
+		$returnData = $model->getStoryListRejected('1' ,'5','1');
+>>>>>>> origin/master
 		
 		debugit($returnData);
 	}
 
 	function testStory()
 	{
-		echo "hello";
 		$model = $this->loadModel('Story/StoryModel');
 		
-		// $returnData = $model->getStory(1, 6);
+		$returnData = $model->getStoryListByTag("a", 5, 1);
 		
-		// debugit($returnData);
+		debugit($returnData);
 	}
 
 	function testAccount()
 	{
 		$model = $this->loadModel('Account/AccountModel');
-		$testData = $model->getUserList(1, 5);
+		$testData = $model->getUserList(10, 0);
 		// $returnData = $model->getCurrentProfilePictureMetadata(1);
 		
 		debugit($testData);
@@ -138,15 +141,6 @@ class Account extends Controller {
 
 		//Add a variable with old login data so that it can be accessed in the view
 		$view->set('loginViewModel', $loginViewModel);
-
-		//Add a variable with old userViewModel data so that it can be accessed in the view
-		$view->set('userViewModel', $userViewModel);
-
-		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
-
-		$view->set('privacyDropdownValues', $siteModel->getDropdownValues_ProfilePrivacyType());
-		$view->set('genderDropdownValues', $siteModel->getDropdownValues_GenderType());
-		$view->set('secureityQuestionDropdownValues', $siteModel->getDropdownValues_SecurityQuestions());
 
 		//Render the login view. true indicates to load the layout pages as well
 		$view->render(true);
