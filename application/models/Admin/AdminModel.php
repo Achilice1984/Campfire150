@@ -2,11 +2,33 @@
 
 class AdminModel extends Model {
 
+	public function isAdmin($userID)
+	{
+		//Check if the ID is an admin ID
+
+		try
+		{
+			$statement = "SELECT * FROM user WHERE userID = :ID AND AdminFlag = 1";
+
+			$rowCount = $this->fetchRowCount($statement, array("ID" => $userID));
+
+			if($rowCount >= 1)
+				return true;
+			else
+				return false;
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
 	public function searchStoriesPendingApproval($adminID, $storySearch, $howMany, $page)
 	{
 		//Accepts string to search for a story
 		//Checks if user has marked story as inappropriate and if user has recommended story (add these to story viewmodel class)
 		//returns an array of Story class that relate to the search string
+
 	}
 
 	public function searchStoriesRejected($adminID, $storySearch, $howMany, $page)
@@ -423,21 +445,6 @@ class AdminModel extends Model {
 		//returns bool whether it was saved succesfully or not
 	}
 
-	public function disableUserAccount($adminID, $userID, $reason)
-	{
-		//Accepts the adminID, the user id and the reason why it was rejected
-		//Disable a user account
-		//returns bool whether it was saved succesfully or not
-
-	}
-
-	public function enableUserAccount($adminID, $userID, $reason)
-	{
-		//Accepts the adminID, the user id and the reason why it was rejected
-		//Enable a user account
-		//returns bool whether it was saved succesfully or not
-	}
-
 	public function getListUsers($adminID, $howMany, $page)
 	{
 		//Accepts how many, page
@@ -445,45 +452,78 @@ class AdminModel extends Model {
 		//Gets a list of users
 		//returns an array of User class
 
+		if(!($this->isAdmin($adminID)))
+
+			return false;
+
 		try
 		{
-			$statement = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
+			$statement = "SELECT * FROM User ORDER BY UserId ASC LIMIT :start, :howmany";
 
-			$rowCount = $this->fetchRowCount($statement, array($adminID));
+			$start = $this-> getStartValue($howMany, $page);
 
-			if($rowCount >= 1)
-			{
-				try
-				{
-					$statement = "SELECT * FROM User ORDER BY UserId ASC LIMIT ?, ?";
+			$parameters = array(
+				":start" => $start,
+				":howmany" => $howMany
+				);
 
-					$start = $howMany * ($page - 1);
+			$userList = $this->fetchIntoClass($statement, $parameters, "shared/UserViewModel");
 
-					$userList = $this->fetchIntoClass($statement, array($start, $howMany), "Shared/User");
-
-					return $userList;
-				}
-				catch(PDOException $e) 
-				{
-					return $e->getMessage();
-				}
-			}
-			else
-			{
-				return false;
-			}
+			return $userList;
 		}
-		catch(PDOException $e) 
+		catch(PDOException $e)
 		{
 			return $e->getMessage();
 		}
 	}
 
-	public function deActivateUser($user, $admin)
+	public function deActivateUser($userID, $adminID, $reason)
 	{
 		//Accepts a User class for $user and a User class for $admin
 		//Sets the active flag to false in user profile
 		//Uses admin details to say who deactivated the account
+
+		if(!($this->isAdmin($adminID)))
+
+			return false;
+		
+		try
+		{
+			$statement = "SELECT * FROM admin_actionon_user WHERE User_UserId=:UserID AND Admin_UserId=:AdminID AND Action=0";
+
+			$exist = $this->fetchNum($statement, array(":UserID" => $userID, ":AdminID" => $adminID));
+
+			if($exist)
+			{
+				$statement = "UPDATE admin_actionon_user SET Reason = :DeActivateReason";
+				$statement .= "WHERE User_UserId=:UserID AND Admin_UserId=:AdminID ";
+
+				$parameters = array( 
+					":DeActivateReason" => $reason,
+					":userID" => $userID,
+					":AdminID" => $adminID
+				);
+
+				return $this->fetch($statement, $parameters) && $this->fetch("UPDATE user SET Active = 0 WHERE UserId=:UserID", array(":UserID" => $userID));
+			}
+			else
+			{
+				$statement = "INSERT INTO admin_actionon_user (Admin_UserId, User_UserId, Action, Reason)";
+				$statement .= " VALUES (:AdminID, :UserID, 0, :Reason)";
+
+				$parameters = array( 
+					":AdminID" => $adminID,
+					":UserID" => $userID,					
+					":Reason" => $reason
+				);
+
+				return $this->fetch($statement, $parameters) && $this->fetch("UPDATE user SET Active = 0 WHERE UserId=:UserID", array(":UserID" => $userID));
+			}
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function getListUsersDisabled($adminID, $howMany, $page)
@@ -493,35 +533,25 @@ class AdminModel extends Model {
 		//Gets a list of users that have been disabled with reason
 		//returns an array of User class
 
+		if(!($this->isAdmin($adminID)))
+			return false;
+
 		try
 		{
-			$statement = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
+			$statement = "SELECT * FROM User WHERE Active = 0 ORDER BY UserId ASC LIMIT :Start, :HowMany";
 
-			$rowCount = $this->fetchRowCount($statement, array($adminID));
+			$start = $howMany * ($page - 1);
 
-			if($rowCount >= 1)
+			$userList = $this->fetchIntoClass($statement, array(":Start" => $start, ":HowMany" => $howMany), "shared/UserViewModel");
+
+			if(isset($userList[0]))
 			{
-				try
-				{
-					$statement = "SELECT * FROM User WHERE Active = 0 ORDER BY UserId ASC LIMIT ?, ?";
-
-					$start = $howMany * ($page - 1);
-
-					$userList = $this->fetchIntoClass($statement, array($start, $howMany), "Shared/User");
-
-					return $userList;
-				}
-				catch(PDOException $e) 
-				{
-					return $e->getMessage();
-				}
+				return $userList;
 			}
-			else
-			{
-				return false;
-			}
+
+			return null;
 		}
-		catch(PDOException $e) 
+		catch(PDOException $e)
 		{
 			return $e->getMessage();
 		}
@@ -537,16 +567,39 @@ class AdminModel extends Model {
 		
 	}
 
-	public function getListQuestionaireQuestions($adminID)
+	public function getListQuestionaireQuestions($adminID) //TESTED
 	{
 		//Gets a list of all the current questionaire questions
 		//This will include a list of possible answers
+
+		if(!($this->isAdmin($adminID)))
+			return false;
+
+		try
+		{
+			$statement = "SELECT * FROM question LEFT JOIN answer_for_question ON question.QuestionId = answer_for_question.Question_QuestionId";
+
+			$userList = $this->fetchIntoObject($statement, array());
+
+			if(isset($userList))
+			{
+				return $userList;
+			}
+
+			return null;
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function updateQuestionAnswer($adminID, $questionAnswerID, $answerE, $answerF)
 	{
 		//Accepts a question answer id, and english answer, a french answer
 		//returns bool if saved succesfully
+
+
 	}
 	
 	public function addQuestionAnswer($adminID, $questionID, $answerE, $answerF)
@@ -559,12 +612,40 @@ class AdminModel extends Model {
 	{
 		//Accepts a question id, and english question, a french question
 		//returns bool if saved succesfully
+
+		if(!($this->isAdmin($adminID)))
+			return false;
+
+		try
+		{
+			$statement = "UPDATE question SET QuestionE = :QuestionE, QuestionF = :QuestionF WHERE QuestionId = :QuestionId";
+
+			return $this->fetch($statement, array(":QuestionE" => $questionE, ":QuestionF" => $questionF,  ":QuestionId" => $questionID));
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
 	}
 	
-	public function addQuestion($adminID, $questionE, $questionF)
+	public function addQuestion($adminID, $questionE, $questionF)//tested
 	{
 		//Accepts a english questionE, a french questionF
 		//returns bool if saved succesfully
+
+		if(!($this->isAdmin($adminID)))
+			return false;
+
+		try
+		{
+			$statement = "INSERT INTO question (QuestionE, QuestionF) VALUES (:QuestionE, :QuestionF)";
+
+			return $this->fetch($statement, array(":QuestionE" => $questionE, ":QuestionF" => $questionF));
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function getListDropdowns($adminID)
@@ -602,6 +683,7 @@ class AdminModel extends Model {
 	{
 		return $result;
 	}
+
 
 }
 

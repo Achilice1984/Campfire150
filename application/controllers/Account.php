@@ -78,7 +78,7 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Story/StoryModel');
 		
-		$returnData = $model->getStoryListRecommendedByFriends(1, 5, 1);
+		$returnData = $model->getStoryListByTag("Family", 5, 1);
 		
 		debugit($returnData);
 	}

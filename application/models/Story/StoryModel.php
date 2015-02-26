@@ -1,4 +1,4 @@
-<?php4
+<?php
 
 class StoryModel extends Model {
 
@@ -12,41 +12,19 @@ class StoryModel extends Model {
 		//returns an array of Story class that relate to the search string
 		try 
 		{
-			//the first page will start from 1 to 10 and 
-			//the next page will start from 11 to 20
-			//Limit 0, 10. starts from page1 -- (0*10)-10 = 0
-			//limit 10, 10. starts from page2 -- (2*10)-10 = 10
-			$page = $_GET['page'];
-			if($page == 0 || $page ==1)
-			{
-				$page1 = 0;
-			}
-			else
-			{
-				$page1 = ($page * 10) - 10;
-			}
 			
-			// will retrive all the active stories which specific user and private type 
-			$statement = "SELECT s.StoryId, s.User_UserId, s.StoryTitle, s.Content, s.DatePosted
-						  From Story s 
-						  Inner join User u 
-						  On s.User_UserId = u.UserId
-						  Inner join StoryPrivacyType sp 
-						  On s.StoryPrivacyType_StoryPrivacyTypeId = sp.StoryPrivacyTypeId
-						  Where s.Active = 1 AND sp.NameE=? AND u.UserId=?
-						  LIMIT $page1,10";
+			$statement = "SELECT *,((Lower(StoryTitle) like '%?%'))as hits
+						  From Story 
+						  Having hits > 0
+						  Order by hits Desc
+						  LIMIT :start , :howmany";
 			// will generate 10 stories per page
-			$howMany = mysql_num_rows($statement);
-			$storySearch = $howMany/10;
-			// ceil function round the number UP to the nerast interger 
-			$storySearch = ceil($storySearch);
-			
-			for($eachPage=1; $eachPage <= $storySearch; $eachPage++)
-			{
-				echo '<a href=''>$eachPage</a>'; //will display on the url and page number
-			}
+			$start = $this-> getStartValue($howMany, $page);
+ 
+			$parameters = array(": start " => $start,": howmany " => $howMany);
+ 
+			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
-			$story = $this->fetchIntoClass($statement, array($storySearch, $userID), "Shared/StoryViewModel");
 
 			return $story;
 
@@ -130,9 +108,14 @@ class StoryModel extends Model {
 
 		try
 		{
-			$statement = "SELECT * FROM Story WHERE User_UserId=? AND StoryId=? AND Active=1";
+			$statement = "SELECT * FROM Story 
+						  WHERE User_UserId=:userID 
+						  AND StoryId=:storyID 
+						  AND Active=TRUE";
 
-			$story = $this->fetchIntoClass($statement, array($userID, $storyID), "Shared/StoryViewModel");
+			$parameters = array(":userID " => $userID, ":storyID " => $storyID);
+
+			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $story;
 		}
@@ -152,9 +135,10 @@ class StoryModel extends Model {
 		//returns a Story class
 		try 
 		{
-			$statement = "SELECT * FROM admin_approve_story WHERE User_UserId=? AND StoryId=?";
+			$statement = "SELECT * FROM admin_approve_story WHERE User_UserId=:adminID AND StoryId=:storyID";
+			$parameters = array(":adminID " => $adminID, ":storyID " => $storyID);
 
-			$story = $this->fetchIntoClass($statement, array($adminID, $storyID), "Shared/StoryViewModel");
+			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $story;
 		}
@@ -173,37 +157,26 @@ class StoryModel extends Model {
 		//returns an array of Story class related to a category
 		try 
 		{
-			$page = $_GET['page'];
-			if($page == 0 || $page ==1)
-			{
-				$page1 = 0;
-			}
-			else
-			{
-				$page1 = ($page * 10) - 10;
-			}
-
-			$statement = "SELECT s.StoryTitle, s.Content, s.DatePosted, t.Tag
-						  From Story s 
-						  Inner join story_has_tag sht
-						  On s.StoryId = sht.Story_StoryId
-						  Inner join tag t 
-						  On sht.Tag_TagId = t.TagId 
-						  Where s.Active=? AND t.TagId=?
-						  Limit $page1,10";
-
-		// will generate 10 stories per page
-			$howMany = mysql_num_rows($statement);
-			$pages = $howMany/10;
-			// ceil function round the number UP to the nerast interger 
-			$pages = ceil($pages);
 			
-			for($eachPage=1; $eachPage <= $pages; $eachPage++)
-			{
-				echo '<a href=''>$eachPage</a>'; //will display on the url and page number
-			}
+			$statement = "SELECT s.*, t.Tag, aas.Approved
+						  FROM Story s 
+						  INNER JOIN story_has_tag sht
+						  ON s.StoryId = sht.Story_StoryId
+						  INNER JOIN tag t 
+						  ON sht.Tag_TagId = t.TagId 
+						  INNER JOIN admin_approve_story aas
+						  ON s.StoryId = aas.Story_StoryId
+						  WHERE s.Active = TRUE 
+						  AND t.Tag= :tag
+						  AND aas.Approved = TRUE
+						  LIMIT :start , :howmany";
 
-			$story = $this->fetchIntoClass($statement, array($tag, $pages), "Shared/StoryViewModel");
+		
+			$start = $this-> getStartValue($howMany, $page);
+
+			$parameters = array(":tag" => $tag, ":start" => $start, ":howmany" => $howMany);
+			debugit($parameters);
+			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $story;
 
@@ -224,30 +197,11 @@ class StoryModel extends Model {
 		//returns an array of Story class related to a category
 		try 
 		{
-			$page = $_GET['page'];
-			if($page == 0 || $page ==1)
-			{
-				$page1 = 0;
-			}
-			else
-			{
-				$page1 = ($page * 10) - 10;
-			}
-
-			$statement = "";
-
-		// will generate 10 stories per page
-			$howMany = mysql_num_rows($statement);
-			$storySearch = $howMany/10;
-			// ceil function round the number UP to the nerast interger 
-			$storySearch = ceil($storySearch);
 			
-			for($eachPage=1; $eachPage <= $storySearch; $eachPage++)
-			{
-				echo '<a href=''>$eachPage</a>'; //will display on the url and page number
-			}
+			$statement = "SELECT g.genreID FROM gendertype ";
 
-			$story = $this->fetchIntoClass($statement, array($storySearch, $userID), "Shared/StoryViewModel");
+
+			$story = $this->fetchIntoClass($statement, array($storySearch, $userID), "shared/StoryViewModel");
 
 			return $story;
 
@@ -268,30 +222,9 @@ class StoryModel extends Model {
 		//returns an array of Story class related to a category
 		try 
 		{
-			$page = $_GET['page'];
-			if($page == 0 || $page ==1)
-			{
-				$page1 = 0;
-			}
-			else
-			{
-				$page1 = ($page * 10) - 10;
-			}
-
-			$statement = "";
-
-		// will generate 10 stories per page
-			$howMany = mysql_num_rows($statement);
-			$storySearch = $howMany/10;
-			// ceil function round the number UP to the nerast interger 
-			$storySearch = ceil($storySearch);
 			
-			for($eachPage=1; $eachPage <= $storySearch; $eachPage++)
-			{
-				echo '<a href=''>$eachPage</a>'; //will display on the url and page number
-			}
 
-			$story = $this->fetchIntoClass($statement, array($storySearch, $userID), "Shared/StoryViewModel");
+			$story = $this->fetchIntoClass($statement, array($storySearch, $userID), "shared/StoryViewModel");
 
 			return $story;
 
@@ -312,30 +245,9 @@ class StoryModel extends Model {
 		//returns an array of Story class related to a category
 		try 
 		{
-			$page = $_GET['page'];
-			if($page == 0 || $page ==1)
-			{
-				$page1 = 0;
-			}
-			else
-			{
-				$page1 = ($page * 10) - 10;
-			}
-
-			$statement = "";
-
-		// will generate 10 stories per page
-			$howMany = mysql_num_rows($statement);
-			$storySearch = $howMany/10;
-			// ceil function round the number UP to the nerast interger 
-			$storySearch = ceil($storySearch);
 			
-			for($eachPage=1; $eachPage <= $storySearch; $eachPage++)
-			{
-				echo '<a href=''>$eachPage</a>'; //will display on the url and page number
-			}
 
-			$story = $this->fetchIntoClass($statement, array($storySearch, $userID), "Shared/StoryViewModel");
+			$story = $this->fetchIntoClass($statement, array($storySearch, $userID), "shared/StoryViewModel");
 
 			return $story;
 
@@ -358,11 +270,13 @@ class StoryModel extends Model {
 
 		try
 		{
-			$statement = "SELECT * FROM Story ORDER BY StoryId ASC LIMIT ?, ?";
+			$statement = "SELECT * FROM Story ORDER BY StoryId ASC LIMIT :start , :howmany";
 
-			$start = $howMany * ($page - 1);
+			$start = $this-> getStartValue($howMany, $page);
+ 
+			$parameters = array(": start " => $start,": howmany " => $howMany);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryViewModel");
+			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $storyList;
 		}
@@ -383,11 +297,13 @@ class StoryModel extends Model {
 
 		try
 		{
-			$statement = "SELECT * FROM Story WHERE User_UserId=? ORDER BY StoryId ASC LIMIT ?, ?";
+			$statement = "SELECT * FROM Story WHERE User_UserId=? ORDER BY StoryId ASC LIMIT :start , :howmany";
 
-			$start = $howMany * ($page - 1);
+			$start = $this-> getStartValue($howMany, $page);
+ 
+			$parameters = array(": start " => $start,": howmany " => $howMany);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryViewModel");
+			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $storyList;
 		}
@@ -415,7 +331,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryViewModel");
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "shared/StoryViewModel");
 
 			return $storyList;
 		}
@@ -439,11 +355,13 @@ class StoryModel extends Model {
 
 			$statement .= "(SELECT Story_StoryId FROM admin_approve_story WHERE Approved = 1)";
 
-			$statement .= "ORDER BY StoryId ASC LIMIT ?, ?";
+			$statement .= "ORDER BY StoryId ASC LIMIT :start , :howmany";
 
-			$start = $howMany * ($page - 1);
+			$start = $this-> getStartValue($howMany, $page);
+ 
+			$parameters = array(": start " => $start,": howmany " => $howMany);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryViewModel");
+			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $storyList;
 		}
@@ -468,11 +386,13 @@ class StoryModel extends Model {
 
 			$statement .= "(SELECT Story_StoryId FROM user_recommend_story WHERE Opinion = 1)";
 
-			$statement .= "ORDER BY StoryId ASC LIMIT ?, ?";
+			$statement .= "ORDER BY StoryId ASC LIMIT :start , :howmany";
 
-			$start = $howMany * ($page - 1);
+			$start = $this-> getStartValue($howMany, $page);
+ 
+			$parameters = array(": start " => $start,": howmany " => $howMany);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryViewModel");
+			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $storyList;
 		}
@@ -511,7 +431,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/StoryViewModel");
+			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "shared/StoryViewModel");
 
 			return $storyList;
 		}
@@ -551,7 +471,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$comment = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "Shared/CommentView");
+			$comment = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "shared/CommentView");
 
 			return $comment;
 		}
@@ -578,7 +498,7 @@ class StoryModel extends Model {
 
 			$start = $howMany * ($page - 1);
 
-			$comment = $this->fetchIntoClass($statement, array($start, $howMany), "Shared/CommentView");
+			$comment = $this->fetchIntoClass($statement, array($start, $howMany), "shared/CommentView");
 
 			return $comment;
 		}
@@ -609,7 +529,7 @@ class StoryModel extends Model {
 		{
 			$statement = "SELECT * FROM comment WHERE User_UserId = ? AND PublishFlag = 0 ORDER BY CommentId";
 
-			$comment = $this->fetchIntoClass($statement, array($userID), "Shared/CommentView");
+			$comment = $this->fetchIntoClass($statement, array($userID), "shared/CommentView");
 
 			return $comment;
 		}
