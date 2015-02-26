@@ -135,15 +135,6 @@ class Account extends Controller {
 		//Add a variable with old login data so that it can be accessed in the view
 		$view->set('loginViewModel', $loginViewModel);
 
-		//Add a variable with old userViewModel data so that it can be accessed in the view
-		$view->set('userViewModel', $userViewModel);
-
-		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
-
-		$view->set('privacyDropdownValues', $siteModel->getDropdownValues_ProfilePrivacyType());
-		$view->set('genderDropdownValues', $siteModel->getDropdownValues_GenderType());
-		$view->set('secureityQuestionDropdownValues', $siteModel->getDropdownValues_SecurityQuestions());
-
 		//Render the login view. true indicates to load the layout pages as well
 		$view->render(true);
 	}
