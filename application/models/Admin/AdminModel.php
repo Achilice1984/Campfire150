@@ -117,10 +117,10 @@ class AdminModel extends Model {
 
 			$statement = "SELECT *, COUNT(urs.User_UserId) AS NumberOfFlagged FROM story s RIGHT JOIN user_recommend_story urs ";
 			$statement .= "ON s.storyID=urs.Story_StoryId WHERE urs.Opinion = 0 ";
-			$statement .= "GROUP BY s.storyID ORDER BY NumberOfFlagged DESC LIMIT $start, $howMany";
+			$statement .= "GROUP BY s.storyID ORDER BY NumberOfFlagged DESC LIMIT ?, ?";
 
-			//$parameters = array($howMany, $start);
-			$storyList = $this->fetchIntoClass($statement, array(), "shared/StoryViewModel");
+			$parameters = array( $start, $howMany);
+			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $storyList;
 		}
@@ -366,7 +366,7 @@ class AdminModel extends Model {
 
 		try
 		{
-			$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Comment_CommentId = :CommentID AND Active = 1", array($commentID))
+			$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Comment_CommentId = :CommentID AND Active = 1", array($commentID));
 
 			$statement = "SELECT * FROM admin_reject_comment WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
 
@@ -380,7 +380,7 @@ class AdminModel extends Model {
 				$statement2 .= "WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
 
 				$parameters2 = array(":Reason" => $reason, ":UserID" => $adminID, ":CommentID" => $commentID);
-				return $this->fetch($statement2, $parameters2)
+				return $this->fetch($statement2, $parameters2);
 			}
 			else
 			{
@@ -401,7 +401,7 @@ class AdminModel extends Model {
 
 		try
 		{
-			$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Comment_CommentId = :CommentID AND Active = 1", array($commentID))
+			$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Comment_CommentId = :CommentID AND Active = 1", array($commentID));
 
 			$statement = "SELECT * FROM admin_reject_comment WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
 
@@ -415,7 +415,7 @@ class AdminModel extends Model {
 				$statement2 .= "WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
 
 				$parameters2 = array(":Reason" => $reason, ":UserID" => $adminID, ":CommentID" => $commentID);
-				return $this->fetch($statement2, $parameters2)
+				return $this->fetch($statement2, $parameters2);
 			}
 			else
 			{

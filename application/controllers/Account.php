@@ -68,15 +68,8 @@ class Account extends Controller {
 	function testAdmin()
 	{
 		$model = $this->loadModel('Admin/AdminModel');
-		
-<<<<<<< HEAD
-		$returnData = $model->getStoryListFlaggedInappropriate(2, 2, 1);
-//$returnData = $model->deActivateUser(7, 9, "A bunch of dirty words");
 
-		//$returnData = $model->getUserProfileByID(2);
-=======
-		$returnData = $model->getStoryListRejected('1' ,'5','1');
->>>>>>> origin/master
+		$returnData = $model->getStoryListFlaggedInappropriate(2, 2, 1);
 		
 		debugit($returnData);
 	}
