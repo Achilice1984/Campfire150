@@ -78,8 +78,7 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Story/StoryModel');
 		
-		$returnData = $model->getStoryListByTag("a", 5, 1);
-		
+		$returnData = $model->getStoryListApproved(9,5,1);
 		debugit($returnData);
 	}
 
