@@ -223,6 +223,13 @@ class Model {
 		return $howMany * (($page == 0 ? 1 : $page) - 1);
 	}
 
+	public function getDateNow()
+	{
+		return date("Y-m-d H:i:s");
+	}
+
+
+
 	public function escapeString($string)
 	{
 		return mysql_real_escape_string($string);

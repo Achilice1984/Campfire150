@@ -23,7 +23,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function searchStoriesPendingApproval($adminID, $storySearch, $howMany, $page)
+	public function searchStoriesPendingApproval($storySearch, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts string to search for a story
 		//Checks if user has marked story as inappropriate and if user has recommended story (add these to story viewmodel class)
@@ -31,14 +31,14 @@ class AdminModel extends Model {
 
 	}
 
-	public function searchStoriesRejected($adminID, $storySearch, $howMany, $page)
+	public function searchStoriesRejected($storySearch, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts string to search for a story
 		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
 		//returns an array of Story class that relate to the search string
 	}
 
-	public function getStoryListPendingApproval($adminID, $howMany, $page)//tested
+	public function getStoryListPendingApproval($howMany = self::HOWMANY, $page = self::PAGE)//tested
 	{
 		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -46,8 +46,6 @@ class AdminModel extends Model {
 		//Should not contain any published stories
 		//returns an array of Story class
 
-		if(!($this->isAdmin($adminID)))
-			return false;
 		try
 		{
 			$statement = "SELECT *  FROM story WHERE storyID NOT IN ";
@@ -79,7 +77,7 @@ class AdminModel extends Model {
 		}		
 	}
 
-	public function getStoryListRejected($adminID, $howMany, $page) //tested, not finished
+	public function getStoryListRejected($howMany = self::HOWMANY, $page = self::PAGE) //tested, not finished
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -88,12 +86,6 @@ class AdminModel extends Model {
 		//Should have the admin user details an reason for being rejected
 		//returns an array of Story class
 
-		if(!($this->isAdmin($adminID)))
-			return false;
-
-		if(!($this->isAdmin($adminID)))
-			return false;
-echo "is admin";
 		try
 		{
 			$statement = "SELECT *  FROM story s LEFT JOIN admin_approve_story aas ON s.storyID=aas.Story_StoryId ";
@@ -124,16 +116,13 @@ echo "is admin";
 		}
 	}
 
-	public function getStoryListFlaggedInappropriate($adminID, $howMany, $page) //TESTED 
+	public function getStoryListFlaggedInappropriate($howMany = self::HOWMANY, $page = self::PAGE) //TESTED 
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
 		//Gets a list of stories that have been marked as inappropriate by users
 		//Order the list by how many inappropriate flags there are
 		//returns an array of Story class
-		
-		if(!($this->isAdmin($adminID)))
-			return false;
 
 		try
 		{
@@ -167,11 +156,6 @@ echo "is admin";
 	{
 		//Accepts the adminID, the story id and the reason why it was rejected
 		//returns bool whether it was saved succesfully or not
-
-		echo "is admin";
-		if(!($this->isAdmin($adminID)))
-
-			return false;
 
 		try
 		{
@@ -216,10 +200,6 @@ echo "is admin";
 	{
 		//Accepts the adminID and the story id
 		//returns bool whether it was saved succesfully or not
-
-		if(!($this->isAdmin($adminID)))
-
-			return false;
 		
 		try
 		{
@@ -268,9 +248,6 @@ echo "is admin";
 		//Accepts the adminID and the story id
 		//Change a rejected story to an approved story
 		//returns bool whether it was saved succesfully or not
-
-		if(!($this->isAdmin($adminID)))
-			return false;
 
 		try
 		{
@@ -325,16 +302,13 @@ echo "is admin";
 		}
 	}
 
-	public function getCommentListFlaggedInappropriate($adminID, $howMany, $page) //TESTED
+	public function getCommentListFlaggedInappropriate($adminID, $howMany = self::HOWMANY, $page = self::PAGE) //TESTED
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
 		//Gets a list of comments that have been marked as inappropriate by users
 		//Order the list by how many inappropriate flags there are
 		//returns an array of Comment class
-
-		if(!($this->isAdmin($adminID)))
-			return false;
 
 		try
 		{
@@ -361,9 +335,6 @@ echo "is admin";
 		//Allows admin users to hide comments if they feel they are innappropriate
 		//returns bool whether it was saved succesfully or not
 
-		if(!($this->isAdmin($adminID)))
-			return false;
-
 		try
 		{
 			$statement = "INSERT admin_reject_comment (Comment_CommentId, User_UserId, Rejected, Reason) VALUES (:commentID, :UserID, 1, :Reason)";
@@ -383,9 +354,6 @@ echo "is admin";
 		//Accepts the adminID and the comment id
 		//Allows admin users to remove their rejected status placed on comments
 		//returns bool whether it was saved succesfully or not
-
-		if(!($this->isAdmin($adminID)))
-			return false;
 
 		try
 		{
@@ -471,16 +439,12 @@ echo "is admin";
 		}
 	}
 
-	public function getListUsers($adminID, $howMany, $page)
+	public function getListUsers($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
 		//Gets a list of users
 		//returns an array of User class
-
-		if(!($this->isAdmin($adminID)))
-
-			return false;
 
 		try
 		{
@@ -508,10 +472,6 @@ echo "is admin";
 		//Accepts a User class for $user and a User class for $admin
 		//Sets the active flag to false in user profile
 		//Uses admin details to say who deactivated the account
-
-		if(!($this->isAdmin($adminID)))
-
-			return false;
 		
 		try
 		{
@@ -552,15 +512,12 @@ echo "is admin";
 		}
 	}
 
-	public function getListUsersDisabled($adminID, $howMany, $page)
+	public function getListUsersDisabled($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
 		//Gets a list of users that have been disabled with reason
 		//returns an array of User class
-
-		if(!($this->isAdmin($adminID)))
-			return false;
 
 		try
 		{
@@ -589,15 +546,12 @@ echo "is admin";
 	}
 
 //confuse about how to calculate the number of flags
-	public function getListUsersOderedByMostInappropriateFlags($adminID, $howMany, $page)
+	public function getListUsersOderedByMostInappropriateFlags($adminID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
 		//Gets a list of users ordered by how many inapropriate flags they have issued
 		//returns an array of User class
-
-		// if(!($this->isAdmin($adminID)))
-		// 	return false;
 
 		// try
 		// {
@@ -619,13 +573,10 @@ echo "is admin";
 		// }
 	}
 
-	public function getListQuestionaireQuestions($adminID) //TESTED
+	public function getListQuestionaireQuestions() //TESTED
 	{
 		//Gets a list of all the current questionaire questions
 		//This will include a list of possible answers
-
-		if(!($this->isAdmin($adminID)))
-			return false;
 
 		try
 		{
@@ -684,9 +635,6 @@ echo "is admin";
 	{
 		//Accepts a english questionE, a french questionF
 		//returns bool if saved succesfully
-
-		if(!($this->isAdmin($adminID)))
-			return false;
 
 		try
 		{
