@@ -8,61 +8,68 @@ class Account extends Controller {
 	}
 	
 	//The home view will be where a user can view all of their account information
-	function home()
+	function home($userID)
 	{	
-		//Check if users is authenticated for this request
-		//Will kick out if not authenticated
-		$this->AuthRequest();
+		try
+		{
+			//Check if users is authenticated for this request
+			//Will kick out if not authenticated
+			$this->AuthRequest();
 
 
-		/*******************************************
-		*
-		*		Populate data
-		*
-		**********************************************/		
+			/*******************************************
+			*
+			*		Populate data
+			*
+			**********************************************/		
 
-		//Load the accountHomeViewModel
-		$accountHomeViewModel = $this->loadViewModel('AccountHomeViewModel');
+			//Load the accountHomeViewModel
+			$accountHomeViewModel = $this->loadViewModel('AccountHomeViewModel');
 
-		//Load the AccountModel to access account functions
-		$model = $this->loadModel('AccountModel');
+			//Load the AccountModel to access account functions
+			$model = $this->loadModel('AccountModel');
 
-		//Populate data to be shown on the page
-		// $accountHomeViewModel->$recommendedStoryList = $model->getStoriesRecommendedByFriends($currentUser->UserId);
-		// $accountHomeViewModel->$usersStoryList = $model->getStoriesWrittenByCurrentUser($currentUser->UserId);
-		// $accountHomeViewModel->$followingList = $model->getFollowing($currentUser->UserId);
+			//Populate data to be shown on the page
+			$accountHomeViewModel->recommendedStoryList = $model->getStoriesRecommendedByCurrentUser($userID);
+			$accountHomeViewModel->usersStoryList = $model->getStoriesWrittenByCurrentUser($userID);
+			$accountHomeViewModel->followingList = $model->getFollowing($userID);
 
-		// //How many people are they following
-		// $accountHomeViewModel->$totalFollowing = $model->getTotalFollowing($currentUser->UserId);
+			//How many people are they following
+			$accountHomeViewModel->totalFollowing = $model->getTotalFollowing($userID);
 
-		// // How many people are following the user
-		// $accountHomeViewModel->$totalFollowers = $model->totalFollowers($currentUser->UserId);
+			// How many people are following the user
+			$accountHomeViewModel->totalFollowers = $model->getTotalFollowers($userID);
 
-		// //How many approved stories
-		// $accountHomeViewModel->$totalApprovedStories = $model->getTotalStoriesApproved($currentUser->UserId);
+			//How many approved stories
+			$accountHomeViewModel->totalApprovedStories = $model->getTotalStoriesApproved($userID);
 
-		// //How many pending stories
-		// $accountHomeViewModel->$totalPendingStories = $model->getTotalStoriesPending($currentUser->UserId);
+			//How many pending stories
+			$accountHomeViewModel->totalPendingStories = $model->getTotalStoriesPending($userID);
 
-		// //How many denied stories
-		// $accountHomeViewModel->$totalDeniedStories = $model->getTotalStoriesDenied($currentUser->UserId);
+			//How many denied stories
+			$accountHomeViewModel->totalDeniedStories = $model->getTotalStoriesDenied($userID);
 
-		// //How many approved comments
-		// $accountHomeViewModel->$totalApprovedComments = $model->getTotalCommentsApproved($currentUser->UserId);
+			//How many approved comments
+			$accountHomeViewModel->totalApprovedComments = $model->getTotalCommentsApproved($userID);
 
-		// //How many penfing comments
-		// $accountHomeViewModel->$totalPendingComments = $model->getTotalCommentsPending($currentUser->UserId);
+			//How many penfing comments
+			$accountHomeViewModel->totalPendingComments = $model->getTotalCommentsPending($userID);
 
+			$accountHomeViewModel->userDetails = $model->getProfileByID($userID);
 
+			//Load the home view
+			$view = $this->loadView('home');
 
-		//Load the home view
-		$view = $this->loadView('home');
+			//Add a variable with data so that it can be accessed in the view
+			$view->set('accountHomeViewModel', $accountHomeViewModel);
 
-		//Add a variable with data so that it can be accessed in the view
-		$view->set('accountHomeViewModel', $accountHomeViewModel);
+			//Render the home view. true indicates to load the layout pages as well
+			$view->render(true);
+		}
+		catch(Exception $ex)
+		{
 
-		//Render the home view. true indicates to load the layout pages as well
-		$view->render(true);
+		}
 	}	
 
 	function testAdmin()
@@ -78,22 +85,22 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Story/StoryModel');
 		
-		$returnData = $model->getStoryListByTag("a", 5, 1);
-		
+		$returnData = $model->getStoryListApproved(9,5,1);
 		debugit($returnData);
 	}
 
 	function testAccount()
 	{
+		$this->redirect("account/home", array("userID" => 1));
 		$model = $this->loadModel('Account/AccountModel');
-		$testData = $model->getUserList(10, 0);
+		$testData = $model->getLatestUserList();
 		// $returnData = $model->getCurrentProfilePictureMetadata(1);
 		
 		debugit($testData);
 	}
 
 	function login()
-	{	
+	{			
 		//Load the userViewModel
 		$userViewModel = $this->loadViewModel('shared/UserViewModel');
 
@@ -239,6 +246,10 @@ class Account extends Controller {
 
 	function changesecurityquestion()
 	{
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+
 		$model = $this->loadModel('AccountModel');
 		$securityAnswerViewModel = $this->loadViewModel('Account/SecurityAnswerViewModel');
 
@@ -248,6 +259,10 @@ class Account extends Controller {
 
 	function changepassword()
 	{
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+		
 		$model = $this->loadModel('AccountModel');
 
 		//Load the userViewModel

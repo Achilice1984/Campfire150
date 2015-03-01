@@ -62,8 +62,37 @@ class Story extends Controller {
 
 	function add()
 	{
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+
+		//Loads a view model from corresponding viewmodel folder
+		$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			//Map post values to the loginViewModel
+			$loginViewModel = AutoMapper::mapPost($loginViewModel);
+
+			//Load the AccountModel to access account functions
+			$storyModel = $this->loadModel('StoryModel');
+		}		
+
 		//Load the profile view
 		$view = $this->loadView('add');
+
+		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+		$view->set('privacyDropdownValues', $siteModel->getDropdownValues_StoryPrivacyType());
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('storyViewModel', $storyViewModel);
+
+		//Load up some js files
+		$view->setJS(array(
+			array("static/plugins/tinymce/tinymce.min.js", "intern"),
+			array("static/js/tinymce.js", "intern")
+		));
 
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);
@@ -71,17 +100,62 @@ class Story extends Controller {
 
 	function edit()
 	{
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+
+		//Loads a view model from corresponding viewmodel folder
+		$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			//Map post values to the loginViewModel
+			$loginViewModel = AutoMapper::mapPost($loginViewModel);
+
+			//Load the AccountModel to access account functions
+			$storyModel = $this->loadModel('StoryModel');
+		}		
+
 		//Load the profile view
 		$view = $this->loadView('edit');
+
+		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+		$view->set('privacyDropdownValues', $siteModel->getDropdownValues_StoryPrivacyType());
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('storyViewModel', $storyViewModel);
+
+		//Load up some js files
+		$view->setJS(array(
+			array("static/plugins/tinymce/tinymce.min.js", "intern"),
+			array("static/js/tinymce.js", "intern")
+		));
 
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);
 	}
 
-	function display()
+	function display($storyID)
 	{
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+
+
+		//Load the AccountModel to access account functions
+		$model = $this->loadModel('StoryModel');
+
+		//Loads a view model from corresponding viewmodel folder
+		$storyViewModel = $this->loadViewModel('shared/StoryViewModel');	
+
+		$storyViewModel = $model->getStory($this->currentUser->UserId, $storyID);
+
 		//Load the profile view
 		$view = $this->loadView('display');
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('storyViewModel', $storyViewModel);
 
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);
