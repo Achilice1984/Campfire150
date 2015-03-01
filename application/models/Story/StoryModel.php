@@ -100,7 +100,7 @@ class StoryModel extends Model {
 		}
 	}
 
-  //tested
+  //tested flagStoryAsInapropriate(22,1)
 	public function flagStoryAsInapropriate($storyID, $userID)
 	{
 		//Accepts a storyID, a userID, and a bool for if it was thought to be inapropriate
@@ -110,9 +110,10 @@ class StoryModel extends Model {
 		try
 		{
 
-			$statement = "INSERT INTO user_recommend_story (Story_StoryId, User_UserId, Opinion) VALUES(?, ?, 0)";
+			$statement = "INSERT INTO user_recommend_story (Story_StoryId, User_UserId, Opinion) 
+						  VALUES(:Story_StoryId, :User_UserId, 0)";
 
-			$parameters = array($storyID, $userID);
+			$parameters = array(":Story_StoryId" => $storyID, ":User_UserId" => $userID);
 
 			return $this->fetch($statement, $parameters);		
 		}
@@ -221,31 +222,7 @@ class StoryModel extends Model {
 		
 	}
 
-	public function getStoryListByGenreID($genreID, $howMany, $page)
-	{
-		//Accepts a categoryID, how many results to return, what page of results your on
-		//for example, if how many = 10 and page = 2, you would take results 11 to 20
-		//Check privacy type
-		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
-		//returns an array of Story class related to a category
-		try 
-		{
-			
-			$statement = "SELECT g.genreID FROM gendertype ";
-
-
-			$story = $this->fetchIntoClass($statement, array($storySearch, $userID), "shared/StoryViewModel");
-
-			return $story;
-
-		}
-		catch(PDOException $e)
-		{
-			return $e->getMessage();
-		}
-		
-	}
-
+	//Tested getStoryListByIssueID(1,6,1); it works but we need to know the exact issueID
 	public function getStoryListByIssueID($issueID, $howMany, $page)
 	{
 		//Accepts a categoryID, how many results to return, what page of results your on
@@ -256,8 +233,18 @@ class StoryModel extends Model {
 		try 
 		{
 			
+			$statement = "SELECT s.*, saq.answer_for_question_answer_answerId
+						  FROM Story s 
+						  INNER JOIN story_has_answer_for_question saq
+						  ON s.StoryId = saq.Story_StoryId
+						  WHERE saq.answer_for_question_answer_answerId = :issueID
+						  LIMIT :start , :howmany";
 
-			$story = $this->fetchIntoClass($statement, array($storySearch, $userID), "shared/StoryViewModel");
+		
+			$start = $this-> getStartValue($howMany, $page);
+
+			$parameters = array(":issueID" => $issueID, ":start" => $start, ":howmany" => $howMany);
+			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $story;
 
@@ -268,7 +255,7 @@ class StoryModel extends Model {
 		}
 		
 	}
-
+	// it works but we need to know the exact challengesID
 	public function getStoryListByChallengesID($challengesID, $howMany, $page)
 	{
 		//Accepts a categoryID, how many results to return, what page of results your on
@@ -279,8 +266,18 @@ class StoryModel extends Model {
 		try 
 		{
 			
+			$statement = "SELECT s.*, saq.answer_for_question_answer_answerId
+						  FROM Story s 
+						  INNER JOIN story_has_answer_for_question saq
+						  ON s.StoryId = saq.Story_StoryId
+						  WHERE saq.answer_for_question_answer_answerId = :challengesID
+						  LIMIT :start , :howmany";
 
-			$story = $this->fetchIntoClass($statement, array($storySearch, $userID), "shared/StoryViewModel");
+		
+			$start = $this-> getStartValue($howMany, $page);
+
+			$parameters = array(":challengesID" => $challengesID, ":start" => $start, ":howmany" => $howMany);
+			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $story;
 
@@ -292,6 +289,40 @@ class StoryModel extends Model {
 		
 	}
 
+	//it works but we need to know the exact genreID
+	public function getStoryListByGenreID($genreID, $howMany, $page)
+	{
+		//Accepts a categoryID, how many results to return, what page of results your on
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Check privacy type
+		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
+		//returns an array of Story class related to a category
+		try 
+		{
+			
+			$statement = "SELECT s.*, saq.answer_for_question_answer_answerId
+						  FROM Story s 
+						  INNER JOIN story_has_answer_for_question saq
+						  ON s.StoryId = saq.Story_StoryId
+						  WHERE saq.answer_for_question_answer_answerId = :genreID
+						  LIMIT :start , :howmany";
+
+		
+			$start = $this-> getStartValue($howMany, $page);
+
+			$parameters = array(":genreID" => $genreID, ":start" => $start, ":howmany" => $howMany);
+			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+
+			return $story;
+
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+		
+	}
+	
 	//Tested getStoryList(6,1) will show 5 stories 
 	public function getStoryList($howMany, $page)
 	{
@@ -429,6 +460,7 @@ class StoryModel extends Model {
 		}
 	}
 
+	// Tested getStoryListRecommendedByFriends(2,5,1)
 	public function getStoryListRecommendedByFriends($userID, $howMany, $page)
 	{
 		//Accepts a user id, how many, page
@@ -437,22 +469,27 @@ class StoryModel extends Model {
 		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
 		//Should not contain any unpublished stories
 		//returns an array of Story class
-
 		try
 		{
-			$statement = "SELECT * FROM Story WHERE StoryId IN ";
-
-			$statement .= "(SELECT Story_StoryId FROM user_recommend_story WHERE Opinion = 1)";
-
-			$statement .= "ORDER BY StoryId ASC LIMIT :start , :howmany";
+		$statement = "SELECT s.*, urs.opinion, spt.NameE
+					  FROM Story s 
+					  INNER JOIN user_recommend_story urs 
+					  ON s.StoryId = urs.Story_StoryId
+					  INNER JOIN storyprivacytype spt
+					  ON spt.StoryPrivacyTypeId = s.StoryPrivacyType_StoryPrivacyTypeId
+					  WHERE s.Active = TRUE 
+					  AND s.User_UserId = :User_UserId
+					  AND urs.opinion = TRUE
+					  AND spt.StoryPrivacyTypeId = 3
+					  LIMIT :start , :howmany";
 
 			$start = $this-> getStartValue($howMany, $page);
  
-			$parameters = array(": start " => $start,": howmany " => $howMany);
+			$parameters = array(":User_UserId" => $userID, ":start" => $start, ":howmany" => $howMany);
 
-			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
-			return $storyList;
+			return $story;
 		}
 		catch(PDOException $e) 
 		{
@@ -460,6 +497,7 @@ class StoryModel extends Model {
 		}
 	}
 
+	// Tested getStoryListMostRecommended(6,1)
 	public function getStoryListMostRecommended($howMany, $page)
 	{
 		//Accepts how many results to return, what page of results your on
@@ -469,11 +507,35 @@ class StoryModel extends Model {
 		//The list should be ordered by most recommended
 		//Should not contain any unpublished stories
 		//returns an array of Story class related to a category
+		try
+		{
+			$statement = "SELECT DISTINCT(s.StoryId), s.StoryTitle, s.Content, s.DatePosted, urs.DateCreated, urs.DateUpdated
+						  FROM story s
+						  INNER JOIN user_recommend_story urs
+						  ON s.StoryId = urs.Story_StoryId
+						  WHERE opinion = TRUE
+						  ORDER BY StoryTitle ASC 
+						  LIMIT :start, :howmany";
+
+			$start = $this-> getStartValue($howMany, $page);
+ 
+			$parameters = array(":start" => $start,
+								":howmany" => $howMany);
+
+			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+
+			return $story;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
 
 
 	}
 
-	public function getStoryListNewest($howMany, $page)
+	//Tested getStoryListNewest(1,5,1)
+	public function getStoryListNewest($privacyType,$howMany, $page)
 	{
 		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -482,16 +544,28 @@ class StoryModel extends Model {
 		//The list should be ordered by newest story
 		//Should not contain any unpublished stories
 		//returns an array of Story class related to a category
-
 		try
 		{
-			$statement = "SELECT * FROM Story ORDER BY LatestChange DESC LIMIT ?, ?";
+		$statement = "SELECT s.*, aas.Approved, spt.NameE
+					  FROM Story s 
+					  INNER JOIN admin_approve_story aas 
+					  ON s.StoryId = aas.Story_StoryId
+					  INNER JOIN storyprivacytype spt
+					  ON spt.StoryPrivacyTypeId = s.StoryPrivacyType_StoryPrivacyTypeId
+					  WHERE s.Active = TRUE 
+					  AND aas.Approved = TRUE
+					  AND spt.StoryPrivacyTypeId = :StoryPrivacyTypeId
+					  GROUP BY s.StoryId DESC
+					  LIMIT :start , :howmany";
 
-			$start = $howMany * ($page - 1);
+			$start = $this-> getStartValue($howMany, $page);
+ 
+			$parameters = array(":StoryPrivacyTypeId" => $privacyType, 
+				                ":start" => $start, ":howmany" => $howMany);
 
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "shared/StoryViewModel");
+			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
-			return $storyList;
+			return $story;
 		}
 		catch(PDOException $e) 
 		{
@@ -500,6 +574,7 @@ class StoryModel extends Model {
 
 	}
 
+	//This doesn't work related the story FK
 	public function addCommentToStory($comment, $storyID, $userID)
 	{
 		//Accepts a comment class
@@ -602,7 +677,6 @@ class StoryModel extends Model {
 		//Accepts a commentID, a userID, and a bool for if it was thought to be inapropriate
 		//checks to see if user already marked it as inapropriate
 		//returns bool if saved correctly
-	
 		try
 		{
 			$statement = "INSERT INTO user_inappropriateflag_comment VALUES(?, ?)";

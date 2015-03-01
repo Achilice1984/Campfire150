@@ -78,7 +78,7 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Story/StoryModel');
 		
-		$returnData = $model->getStoryListApproved(9,5,1);
+		$returnData = $model->getStoryListByIssueID(1,6,1);
 		debugit($returnData);
 	}
 
