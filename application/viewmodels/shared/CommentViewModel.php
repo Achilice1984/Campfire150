@@ -27,6 +27,5 @@ class CommentViewModel extends ViewModel
 		// //Pass validation to the View Model
 		// parent::__construct($errors);
 	}
-	}
 }
 ?>
