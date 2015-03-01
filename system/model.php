@@ -12,6 +12,9 @@ class Model {
 
 	//Use static connection to have one connection per request
 	private static $connection;
+
+	const PAGE = 0;
+	const HOWMANY = 10;
 	
 	public function __construct()
 	{

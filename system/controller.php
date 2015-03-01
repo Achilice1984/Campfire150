@@ -156,9 +156,18 @@ class Controller {
 	}
 	
 	//By placing a location (example, home/index) you can redirect to another url.
-	public function redirect($loc)
+	public function redirect($loc, $param = array())
 	{		
-		header('Location: '. BASE_URL . $loc);
+		$url = BASE_URL . $loc;
+
+		if(count($param) > 0)
+		{
+			foreach ($param as $key => $value) {
+				$url .= "/" . $value; 			
+			}
+		}
+
+		header('Location: ' . $url);
 		exit;
 	}
 

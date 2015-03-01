@@ -571,7 +571,7 @@ class AccountModel extends Model {
 		return $totalStories;
 	}
 
-	public function getStoriesWrittenByCurrentUser($userID)
+	public function getStoriesWrittenByCurrentUser($userID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts a user id
 		//Gets an array of stories written by the owner of this user id
@@ -584,13 +584,16 @@ class AccountModel extends Model {
 						WHERE story.User_UserId = :UserId 
 						AND story.Active = TRUE 
 						AND story.Published = TRUE
-						AND admin_approve_story.Approved = TRUE";
+						AND admin_approve_story.Approved = TRUE
+						LIMIT :start, :howmany";
 
-		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/StoryViewModel");
+		$start = $this-> getStartValue($howMany, $page);			
+
+		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
 
 		return $stories;
 	}
-	public function getStoriesRecommendedByFriends_MostPopular($userID)
+	public function getStoriesRecommendedByFriends_MostPopular($userID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts a user id
 		//Gets an array of stories that were recommended to the owner of this user id
@@ -606,14 +609,17 @@ class AccountModel extends Model {
 		AND user_recommend_story.Opinion = TRUE
 		AND story.Published = TRUE
 		GROUP BY story.StoryId
-		ORDER BY recommendation_count DESC";
+		ORDER BY recommendation_count DESC
+		LIMIT :start, :howmany";
 
-		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/StoryViewModel");
+		$start = $this-> getStartValue($howMany, $page);
+
+		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
 
 		return $stories;
 	}
 
-	public function getStoriesRecommendedByFriends_Latest($userID)
+	public function getStoriesRecommendedByFriends_Latest($userID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts a user id
 		//Gets an array of stories that were recommended to the owner of this user id
@@ -629,14 +635,17 @@ class AccountModel extends Model {
 		AND user_recommend_story.Opinion = TRUE
 		AND story.Published = TRUE
 		GROUP BY story.StoryId
-		ORDER BY user_recommend_story.LatestChange DESC";
+		ORDER BY user_recommend_story.LatestChange DESC
+		LIMIT :start, :howmany";
 
-		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/StoryViewModel");
+		$start = $this-> getStartValue($howMany, $page);
+
+		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
 
 		return $stories;
 	}
 
-	public function getStoriesRecommendedByCurrentUser($userID)
+	public function getStoriesRecommendedByCurrentUser($userID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts a user id
 		//Gets an array of stories that were recommended to the owner of this user id
@@ -651,9 +660,12 @@ class AccountModel extends Model {
 						WHERE user_recommend_story.User_UserId = :UserId
 						AND story.Active = TRUE 
 						AND story.Published = TRUE
-						AND admin_approve_story.Approved = TRUE";
+						AND admin_approve_story.Approved = TRUE
+						LIMIT :start, :howmany";
 
-		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/StoryViewModel");
+		$start = $this-> getStartValue($howMany, $page);
+
+		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
 
 		return $stories;
 	}
@@ -743,7 +755,7 @@ class AccountModel extends Model {
 		//Check that user is following other user
 		//Returns bool if saved succesfully
 	}
-	public function getFollowers($userID, $howMany, $page)
+	public function getFollowers($userID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts a user id
 		//Gets all users that are following this userid
@@ -770,7 +782,7 @@ class AccountModel extends Model {
 		return $followers;
 	}
 	
-	public function getFollowing($userID, $howMany, $page)
+	public function getFollowing($userID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts a user id
 		//Gets all users that this user is following
@@ -804,7 +816,7 @@ class AccountModel extends Model {
 	*
 	******************************************************************************************************************/	
 	
-	public function searchForUser($userSearch, $howMany, $page)
+	public function searchForUser($userSearch, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts a string that will be someones name, how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -850,13 +862,13 @@ class AccountModel extends Model {
 			":start" => $start,
 			":howmany" => $howMany
 			);
-debugit($parameters);
+
 		$users = $this->fetchIntoClass($statement, $parameters, "shared/UserViewModel");
 
 		return $users;
 	}
 
-	public function getUserList($howMany, $page)
+	public function getUserList($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -878,7 +890,7 @@ debugit($parameters);
 		return $users;
 	}
 
-	public function getLatestUserList($howMany, $page)
+	public function getLatestUserList($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -887,7 +899,7 @@ debugit($parameters);
 		//Users must have verified flag set to true
 		//Returns an array of User class
 
-		$statement = "SELECT * FROM user ORDER BY RegisterDate DESC LIMIT :start, :howmany";
+		$statement = "SELECT * FROM user ORDER BY DateCreated DESC LIMIT :start, :howmany";
 
 		$start = $this-> getStartValue($howMany, $page);
 
