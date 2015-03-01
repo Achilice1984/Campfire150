@@ -69,8 +69,9 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Admin/AdminModel');
 
-		$returnData = $model->getStoryListFlaggedInappropriate(2, 2, 1);
-		
+		//$returnData = $model->rejectStory(1, 10, "became better now");
+		$returnData = $model->isAdmin(1);
+		 echo $returnData;
 		debugit($returnData);
 	}
 

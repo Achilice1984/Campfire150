@@ -38,14 +38,13 @@ class AdminModel extends Model {
 		//returns an array of Story class that relate to the search string
 	}
 
-	public function getStoryListPendingApproval($adminID, $howMany, $page)//tested withou the parameters bind.
+	public function getStoryListPendingApproval($adminID, $howMany, $page)//tested
 	{
 		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
 		//Gets a list of stories that a user has submited but hasn't been apprved yet.
 		//Should not contain any published stories
 		//returns an array of Story class
-		$start = $this->getStartValue($howMany, $page);
 
 		if(!($this->isAdmin($adminID)))
 			return false;
@@ -53,9 +52,14 @@ class AdminModel extends Model {
 		{
 			$statement = "SELECT *  FROM story WHERE storyID NOT IN ";
 			$statement .= "(SELECT Story_StoryId FROM admin_approve_story)";
-			$statement .= "LIMIT ?, ?";
+			$statement .= "LIMIT :Start, :HowMany";
 
-			$parameters = array($start, $howMany);
+			$start = $this->getStartValue($howMany, $page);
+
+			$parameters = array(
+				":Start"=>$start, 
+				":HowMany"=>$howMany
+				);
 
 			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
@@ -68,7 +72,7 @@ class AdminModel extends Model {
 		}		
 	}
 
-	public function getStoryListRejected($adminID, $howMany, $page) //tested, not finished
+	public function getStoryListRejected($adminID, $howMany, $page) //tested
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -84,11 +88,14 @@ class AdminModel extends Model {
 		{
 			$statement = "SELECT *  FROM story s LEFT JOIN admin_approve_story aas ON s.storyID=aas.Story_StoryId ";
 			$statement .= "WHERE aas.Approved = 0 ";
-			$statement .= "LIMIT ?, ?";
+			$statement .= "LIMIT :Start, :HowMany";
 
 			$start = $this->getStartValue($howMany, $page);
 
-			$parameters = array($start, $howMany);
+			$parameters = array(
+				":Start"=>$start, 
+				":HowMany"=>$howMany
+				);
 
 			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
@@ -100,7 +107,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getStoryListFlaggedInappropriate($adminID, $howMany, $page) //TESTED , BUT NOT FINISHED
+	public function getStoryListFlaggedInappropriate($adminID, $howMany, $page) //TESTED
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -117,9 +124,13 @@ class AdminModel extends Model {
 
 			$statement = "SELECT *, COUNT(urs.User_UserId) AS NumberOfFlagged FROM story s RIGHT JOIN user_recommend_story urs ";
 			$statement .= "ON s.storyID=urs.Story_StoryId WHERE urs.Opinion = 0 ";
-			$statement .= "GROUP BY s.storyID ORDER BY NumberOfFlagged DESC LIMIT ?, ?";
+			$statement .= "GROUP BY s.storyID ORDER BY NumberOfFlagged DESC LIMIT :Start, :HowMany";
 
-			$parameters = array( $start, $howMany);
+			$parameters = array(
+				":Start"=>$start, 
+				":HowMany"=>$howMany
+				);
+
 			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $storyList;
@@ -130,41 +141,47 @@ class AdminModel extends Model {
 		}		
 	}
 
-	public function rejectStory($adminID, $storyID, $reason)
+	public function rejectStory($adminID, $storyID, $reason) //tested
 	{
 		//Accepts the adminID, the story id and the reason why it was rejected
 		//returns bool whether it was saved succesfully or not
 
+		echo "is admin";
 		if(!($this->isAdmin($adminID)))
 
 			return false;
 
 		try
 		{
+			$this->fetch("UPDATE admin_approve_story SET Active = 0 WHERE Story_StoryId = :StoryID AND Active = 1", array(":StoryID"=>$storyID));//Set the active record for the story to deactive;
+
 			$statement = "SELECT *  FROM admin_approve_story WHERE User_UserId = :UserID AND Story_StoryId = :StoryID";
 
-			$rowCount = $this->fetchRowCount($statement, array("UserID"=>$adminID, "StoryID"=>$storyID));
+			$rowCount = $this->fetchRowCount($statement, array(":UserID"=>$adminID, ":StoryID"=>$storyID));
 			
-			debugit($rowCount);
-
 			if($rowCount <= 0)
 			{
-				echo "not exist";
-				$statement2 = "INSERT INTO admin_approve_story VALUES(?, ?, ?, NULL, NULL, 0)";
+				$statement2 = "INSERT INTO admin_approve_story VALUES(:AdminID, :StoryID, :Reason, NULL, NULL, 0)";
 
-				$parameters = array($adminID, $storyID, $reason);
+				$parameters = array(
+					":AdminID" => $adminID, 
+					":StoryID" => $storyID, 
+					":Reason" => $reason);
 
 				return $this->fetch($statement2, $parameters);
 			}
 			else
 			{
-				echo "exist";
+				$statement2 = "UPDATE admin_approve_story SET ApprovalCommentE = :Reason, Active = 1, Approved = 0  ";
+				$statement2 .= "WHERE User_UserId = :AdminID AND Story_StoryId = :StoryID";
 
-				$statement2 = "UPDATE admin_approve_story SET ApprovalCommentE =  WHERE User_UserId = ? AND Story_StoryId = ?";
+				$parameters = array(
+					":Reason" => $reason, 
+					":StoryID" => $storyID, 
+					":AdminID" => $adminID
+					);
 
-				$parameters = array( $reason, $adminID, $storyID);
-
-				return $this->fetch($statement2, $parameters);		
+				return $this->fetch($statement2, $parameters);	
 			}
 		}
 		catch(PDOException $e)
@@ -173,7 +190,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function approveStory($adminID, $storyID)
+	public function approveStory($adminID, $storyID, $reason)
 	{
 		//Accepts the adminID and the story id
 		//returns bool whether it was saved succesfully or not
@@ -184,30 +201,35 @@ class AdminModel extends Model {
 		
 		try
 		{
-			// $statement1 = "SELECT *  FROM admin_approve_story WHERE User_UserId = :UserID AND Story_StoryId = :StoryID";
+			$this->fetch("UPDATE admin_approve_story SET Active = 0 WHERE Story_StoryId = :StoryID AND Active = 1", array(":StoryID"=>$storyID));//Set the active record for the story to deactive;
 
-			// $rowCount = $this->fetchRowCount($statement1, array("UserID" => $adminID, "StoryID" => $storyID));
-			$statement = "SELECT *  FROM admin_approve_story WHERE ? AND ?";
+			$statement = "SELECT *  FROM admin_approve_story WHERE User_UserId = :UserID AND Story_StoryId = :StoryID";
 
-			$parameters = array($adminID, $storyID);
-
-			$rowCount = $this->fetchRowCount($statement, $parameters);
-
-			if($rowCount > 0)
+			$rowCount = $this->fetchRowCount($statement, array(":UserID"=>$adminID, ":StoryID"=>$storyID));
+			
+			if($rowCount <= 0)
 			{
-				$statement2 = "UPDATE admin_approve_story SET Approved = 1 WHERE User_UserId = ? AND Story_StoryId = ?";
+				$statement2 = "INSERT INTO admin_approve_story VALUES(:AdminID, :StoryID, :Reason, NULL, NULL, 1)";
 
-				$parameters = array($adminID, $storyID);
+				$parameters = array(
+					":AdminID" => $adminID, 
+					":StoryID" => $storyID, 
+					":Reason" => $reason);
 
 				return $this->fetch($statement2, $parameters);
 			}
 			else
 			{
-				$statement2 = "INSERT INTO admin_approve_story(User_UserId, Story_StoryId, Approved) VALUES(?, ?, 1)";
+				$statement2 = "UPDATE admin_approve_story SET ApprovalCommentE = :Reason, Active = 1, Approved = 1  ";
+				$statement2 .= "WHERE User_UserId = :AdminID AND Story_StoryId = :StoryID";
 
-				$parameters = array($adminID, $storyID);
+				$parameters = array(
+					":Reason" => $reason, 
+					":StoryID" => $storyID, 
+					":AdminID" => $adminID
+					);
 
-				return $this->fetch($statement2, $parameters);				
+				return $this->fetch($statement2, $parameters);	
 			}
 		}
 		catch(PDOException $e)
