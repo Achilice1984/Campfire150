@@ -1,4 +1,4 @@
 tinymce.init({
-    selector: "textarea",
+    selector: ".tinyMCE",
     removed_menuitems: 'newdocument'
  });

@@ -5,8 +5,8 @@
 class AccountHomeViewModel extends ViewModel
 {
 	//Lists of data
-	public $friendsRecommendedStoryList;
-	public $userRecommendedStoryList;
+	//public $friendsRecommendedStoryList;
+	public $recommendedStoryList;
 	public $usersStoryList;
 	public $followingList;
 
@@ -18,6 +18,10 @@ class AccountHomeViewModel extends ViewModel
 	public $totalDeniedStories; //How many denied stories
 	public $totalApprovedComments; //How many approved comments
 	public $totalPendingComments; //How many penfing comments
+
+
+	//ProfileViewModel.php
+	public $userDetails;
 
 	function __construct()
 	{		

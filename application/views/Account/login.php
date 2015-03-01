@@ -1,3 +1,13 @@
+<?php
+
+    //You have access to the Account/LoginViewModel.php
+    
+    //You can access everything from this variable:
+    //uncomment to view structure in browser
+    //debugit($loginViewModel);
+
+?>
+
 <div class="container" style="margin-top:100px;">
     <div class="row">
 
@@ -19,7 +29,7 @@
                             ?>
 
                             <div class="form-group">
-                                <label for="exampleInputEmail1"><?php echo gettext("Email address"); ?></label>
+                                <label for="Email"><?php echo gettext("Email address"); ?></label>
                                 <input type="Email" class="form-control" id="Email" name="Email" placeholder="<?php echo gettext("Enter Email"); ?>" value="<?php echo $loginViewModel->Email; ?>">
                             </div>
                             <div class="form-group">
