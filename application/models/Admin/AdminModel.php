@@ -715,26 +715,6 @@ echo "is admin";
 		//Accepts a english dropdownValueE, a french dropdownValueF
 		//returns bool if saved succesfully
 	}
-
-	public function get($id)
-	{
-		return $result;
-	}
-
-	public function insert()
-	{
-		return $result;
-	}
-
-	public function update()
-	{
-		return $result;
-	}
-
-	public function delete($id)
-	{
-		return $result;
-	}
 }
 
 ?>
