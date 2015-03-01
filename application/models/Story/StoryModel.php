@@ -2,6 +2,7 @@
 
 class StoryModel extends Model {
 
+	// Test doesn't work 
 	public function searchStories($storySearch, $userID, $howMany, $page)
 	{
 		//Accepts string to search for a story
@@ -13,15 +14,19 @@ class StoryModel extends Model {
 		try 
 		{
 			
-			$statement = "SELECT *,((Lower(StoryTitle) like '%?%'))as hits
-						  From Story 
-						  Having hits > 0
-						  Order by hits Desc
-						  LIMIT :start , :howmany";
-			// will generate 10 stories per page
+			$statement = "SELECT *,((Lower(StoryTitle) LIKE '%:sTitle%')) AS hits
+						  FROM Story 
+						  HAVING hits > 0
+						  ORDER BY hits DESC
+						  LIMIT :start, :howmany";
+			
 			$start = $this-> getStartValue($howMany, $page);
  
-			$parameters = array(": start " => $start,": howmany " => $howMany);
+			$parameters = array(":sTitle" => $storySearch, 
+								":userid" => $userID, 
+								":start" => $start, 
+								":howmany" => $howMany
+								);
  
 			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
@@ -35,6 +40,7 @@ class StoryModel extends Model {
 		}
 	}
 
+	// tested User_Id FK issue need to check the user
 	public function publishNewStory($story)
 	{
 		//Accepts a story class
@@ -42,9 +48,22 @@ class StoryModel extends Model {
 		//returns bool if the story was saved succesfully
 		try
 		{
-			$statement = "INSERT INTO story (Story_StoryId, User_UserId, PrivacyType_PrivacyTypeId) VALUES(?, ?, 1)";
-
-			$parameters = array($story->StoryID, $story->User_UserId);
+			// create a php timestamp for inserting into the created and updated date fields in the database 
+			//$timestamp = date('Y-m-d G:i:s');
+			$statement = "INSERT INTO story (StoryId, User_UserId, StoryPrivacyType_StoryPrivacyTypeId, StoryTitle, Content,
+											 published, DateCreated, Active)
+						  VALUES(:StoryId, :User_UserId, :StoryPrivacyType_StoryPrivacyTypeId, :StoryTitle, :Content, 
+						  	     :published, :DateCreated, :Active)";
+ 
+			$parameters = array(":StoryId" => $story, 
+								":User_UserId" => $story,
+								":StoryPrivacyType_StoryPrivacyTypeId" => $story,
+								":StoryTitle" => $story, 
+								":Content" => $story, 
+								":published" => $story, 
+								":DateCreated" => $story, 
+								":Active" => $story
+								);
 
 			return $this->fetch($statement, $parameters);
 		}
@@ -54,7 +73,7 @@ class StoryModel extends Model {
 		}
 	}
 
- //tested
+ 	//tested
 	public function changeStoryPrivacySetting($storyID, $userID, $privacyTypeID)
 	{
 		//Accepts a user id (owner), a story id, and a privacy type
@@ -64,9 +83,14 @@ class StoryModel extends Model {
 
 		try
 		{
-			$statement = "UPDATE story SET StoryPrivacyType_StoryPrivacyTypeId=? WHERE User_UserId=? AND StoryId=?";
+			$statement = "UPDATE story 
+						  SET StoryPrivacyType_StoryPrivacyTypeId=:StoryPrivacyType_StoryPrivacyTypeId 
+						  WHERE User_UserId=:User_UserId 
+						  AND StoryId=:StoryId";
 
-			$parameters = array($privacyTypeID, $userID, $storyID);
+			$parameters = array(":StoryPrivacyType_StoryPrivacyTypeId" => $privacyTypeID, 
+								":User_UserId" => $userID, 
+								":StoryId" => $storyID);
 
 			return $this->fetch($statement, $parameters);
 		}
@@ -98,6 +122,7 @@ class StoryModel extends Model {
 		}
 	}
 
+	// tested getStory(2,11)
 	public function getStory($userID, $storyID)
 	{
 		//Accepts a user id, and a storyID
@@ -109,11 +134,12 @@ class StoryModel extends Model {
 		try
 		{
 			$statement = "SELECT * FROM Story 
-						  WHERE User_UserId=:userID 
-						  AND StoryId=:storyID 
+						  WHERE User_UserId=:User_UserId
+						  AND StoryId=:StoryId 
 						  AND Active=TRUE";
 
-			$parameters = array(":userID " => $userID, ":storyID " => $storyID);
+			$parameters = array(":User_UserId" => $userID, 
+								":StoryId" => $storyID);
 
 			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
@@ -126,6 +152,7 @@ class StoryModel extends Model {
 
 	}
 
+	//Tested getStoryAsAdmin(2,8)
 	public function getStoryAsAdmin($adminID, $storyID)
 	{
 		//Accepts an admin id and a storyID
@@ -135,8 +162,12 @@ class StoryModel extends Model {
 		//returns a Story class
 		try 
 		{
-			$statement = "SELECT * FROM admin_approve_story WHERE User_UserId=:adminID AND StoryId=:storyID";
-			$parameters = array(":adminID " => $adminID, ":storyID " => $storyID);
+			$statement = "SELECT * FROM admin_approve_story 
+						  WHERE User_UserId=:User_UserId 
+						  AND Story_StoryId=:Story_StoryId";
+			
+			$parameters = array(":User_UserId" => $adminID, 
+								":Story_StoryId" => $storyID);
 
 			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
@@ -148,6 +179,7 @@ class StoryModel extends Model {
 		}
 	}
 
+	//Tested getStoryListByTag("Art", 5, 1);
 	public function getStoryListByTag($tag, $howMany, $page)
 	{
 		//Accepts a categoryID, how many results to return, what page of results your on
@@ -169,13 +201,14 @@ class StoryModel extends Model {
 						  WHERE s.Active = TRUE 
 						  AND t.Tag= :tag
 						  AND aas.Approved = TRUE
+						  GROUP BY s.StoryId DESC
 						  LIMIT :start , :howmany";
 
 		
 			$start = $this-> getStartValue($howMany, $page);
 
 			$parameters = array(":tag" => $tag, ":start" => $start, ":howmany" => $howMany);
-			debugit($parameters);
+			//debugit($parameters);
 			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $story;
@@ -259,6 +292,7 @@ class StoryModel extends Model {
 		
 	}
 
+	//Tested getStoryList(6,1) will show 5 stories 
 	public function getStoryList($howMany, $page)
 	{
 		//Accepts how many results to return, what page of results your on
@@ -267,18 +301,21 @@ class StoryModel extends Model {
 		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
 		//Should not contain any unpublished stories
 		//returns an array of Story class
-
 		try
 		{
-			$statement = "SELECT * FROM Story ORDER BY StoryId ASC LIMIT :start , :howmany";
+			$statement = "SELECT StoryId, StoryTitle, Content, DatePosted, DateUpdated
+						  FROM Story 
+						  ORDER BY StoryTitle ASC 
+						  LIMIT :start, :howmany";
 
 			$start = $this-> getStartValue($howMany, $page);
  
-			$parameters = array(": start " => $start,": howmany " => $howMany);
+			$parameters = array(":start" => $start,
+								":howmany" => $howMany);
 
-			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
-			return $storyList;
+			return $story;
 		}
 		catch(PDOException $e) 
 		{
@@ -287,6 +324,7 @@ class StoryModel extends Model {
 
 	}
 
+	//Tested getStoryListPendingApproval(3,5,1);
 	public function getStoryListPendingApproval($userID, $howMany, $page)
 	{
 		//Accepts a user id, how many results to return, what page of results your on
@@ -297,11 +335,19 @@ class StoryModel extends Model {
 
 		try
 		{
-			$statement = "SELECT * FROM Story WHERE User_UserId=? ORDER BY StoryId ASC LIMIT :start , :howmany";
+			$statement = "SELECT s.*, aas.Approved, aas.Pending 
+						  FROM Story s 
+						  INNER JOIN admin_approve_story aas
+						  ON s.StoryId = aas.Story_StoryId
+						  WHERE s.Active = TRUE 
+						  AND s.User_UserId = :User_UserId
+						  AND aas.Approved = FALSE
+						  AND aas.Pending = TRUE
+						  LIMIT :start , :howmany";
 
 			$start = $this-> getStartValue($howMany, $page);
  
-			$parameters = array(": start " => $start,": howmany " => $howMany);
+			$parameters = array(":User_UserId" => $userID, ":start" => $start, ":howmany" => $howMany);
 
 			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
@@ -313,6 +359,7 @@ class StoryModel extends Model {
 		}		
 	}
 
+	//Tested getStoryListRejected(3,5,1);
 	public function getStoryListRejected($userID, $howMany, $page)
 	{
 		//Accepts a user id, how many, page
@@ -323,17 +370,23 @@ class StoryModel extends Model {
 		//returns an array of Story class
 		try
 		{
-			$statement = "SELECT * FROM Story WHERE StoryId IN ";
+			
+			$statement = "SELECT s.*, aas.Approved
+						  FROM Story s 
+						  INNER JOIN admin_approve_story aas
+						  ON s.StoryId = aas.Story_StoryId
+						  WHERE s.Active = TRUE 
+						  AND s.User_UserId = :User_UserId
+						  AND aas.Approved = FALSE
+						  LIMIT :start , :howmany";
 
-			$statement .= "(SELECT Story_StoryId FROM admin_approve_story WHERE Approved = 0)";
+			$start = $this-> getStartValue($howMany, $page);
+ 
+			$parameters = array(":User_UserId" => $userID, ":start" => $start, ":howmany" => $howMany);
 
-			$statement .= "ORDER BY StoryId ASC LIMIT ?, ?";
+			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
-			$start = $howMany * ($page - 1);
-
-			$storyList = $this->fetchIntoClass($statement, array($storyID, $start, $howMany), "shared/StoryViewModel");
-
-			return $storyList;
+			return $story;
 		}
 		catch(PDOException $e) 
 		{
@@ -341,6 +394,7 @@ class StoryModel extends Model {
 		}
 	}
 
+	//Tested getStoryListApproved(9,5,1)
 	public function getStoryListApproved($userID, $howMany, $page)
 	{
 		//Accepts a user id, how many, page
@@ -351,19 +405,23 @@ class StoryModel extends Model {
 
 		try
 		{
-			$statement = "SELECT * FROM Story WHERE StoryId IN ";
-
-			$statement .= "(SELECT Story_StoryId FROM admin_approve_story WHERE Approved = 1)";
-
-			$statement .= "ORDER BY StoryId ASC LIMIT :start , :howmany";
+			
+			$statement = "SELECT s.*, aas.Approved
+						  FROM Story s 
+						  INNER JOIN admin_approve_story aas
+						  ON s.StoryId = aas.Story_StoryId
+						  WHERE s.Active = TRUE 
+						  AND s.User_UserId = :User_UserId
+						  AND aas.Approved = TRUE
+						  LIMIT :start , :howmany";
 
 			$start = $this-> getStartValue($howMany, $page);
  
-			$parameters = array(": start " => $start,": howmany " => $howMany);
+			$parameters = array(":User_UserId" => $userID, ":start" => $start, ":howmany" => $howMany);
 
-			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
-			return $storyList;
+			return $story;
 		}
 		catch(PDOException $e) 
 		{
