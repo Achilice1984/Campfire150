@@ -817,13 +817,13 @@ class StoryModel extends Model {
 		//returns an array of Story class related to a category
 		try
 		{
-			$statement = "SELECT s.*, aas.Approved, spt.NameE
+			$statement = "SELECT s.*, aas.Approved
 					  FROM Story s 
 					  INNER JOIN admin_approve_story aas 
 					  ON s.StoryId = aas.Story_StoryId
 					  WHERE s.Active = TRUE 
 					  AND aas.Approved = TRUE
-					  AND StoryPrivacyType_StoryPrivacyTypeId = 1
+					  AND StoryPrivacyType_StoryPrivacyTypeId = :StoryPrivacyTypeId
 					  GROUP BY s.StoryId DESC
 					  LIMIT :start , :howmany";
 
@@ -868,22 +868,28 @@ class StoryModel extends Model {
 
 		return $totalComments;
 	}
-
 	//This doesn't work related the story FK
 	public function addCommentToStory($comment, $storyID, $userID)
 	{
 		//Accepts a comment class
 		//inserts a new comment with the published flag set to false
 		//returns bool if the comment was saved succesfully
-
-		$statement = "INSERT INTO Comment (Story_StoryId, User_UserId, Content, DateCreated) 
+		try 
+		{
+			$statement = "INSERT INTO Comment (Story_StoryId, User_UserId, Content, DateCreated) 
 						VALUES(:storyID, :userID, :comment, :DateCreated)";
 
-		$parameters = array(":storyID" => $storyID, ":userID" => $userID, ":comment" => $comment, ":DateCreated" => $this->getDateNow());
+			$parameters = array(":storyID" => $storyID, ":userID" => $userID, ":comment" => $comment, ":DateCreated" => $this->getDateNow());
 
-		$this->execute($statement);
+			$this->fetch($statement,$parameters);
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
 	}
 
+	//Tested getCommentsForStory(12,6,1)
 	public function getCommentsForStory($storyID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts a story id, how many results to return, what page of results your on
@@ -892,20 +898,20 @@ class StoryModel extends Model {
 		//Gets a list of comments related to a story
 		//The comments published flag must be true
 		//returns an array of comment class related to a story
-
 		try
 		{
-			$statement = "SELECT * 
-							FROM Comment c
-							WHERE Story_StoryId = :storyID 
+			$statement = "SELECT * FROM Comment c
+							WHERE c.Story_StoryId = :storyID 
 							AND c.Active = TRUE
-							AND c.PublishFlag
-							ORDER BY CommentId 
+							AND c.PublishFlag = TRUE
 							ASC LIMIT :start, :howmany";
 
-			$start = $howMany * ($page - 1);
+			$start = $this-> getStartValue($howMany, $page);
+			$parameters = array(":storyID" => $storyID, 
+				                ":start" => $start, 
+				                ":howmany" => $howMany);
 
-			$comment = $this->fetchIntoClass($statement, array(":storyID" => $storyID, ":start" => $start, ":howmany" => $howMany), "shared/CommentView");
+			$comment = $this->fetchIntoClass($statement, $parameters, "shared/CommentViewModel");
 
 			return $comment;
 		}
@@ -915,6 +921,7 @@ class StoryModel extends Model {
 		}
 	}
 
+	//Tested getCommentListInappropriate(2,6,1)
 	public function getCommentListInappropriate($adminID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many results to return, what page of results your on
@@ -926,13 +933,21 @@ class StoryModel extends Model {
 		try
 		{
 
-			$statement = "SELECT * FROM Comment WHERE PublishFlag = 1 AND CommentId IN ";
+			$statement = "SELECT c.*
+						  FROM comment c
+						  LEFT JOIN user_inappropriateflag_comment uic
+						  ON c.CommentId = uic.Comment_CommentId
+						  WHERE c.Active = TRUE
+						  AND c.User_UserId = :adminID
+						  AND c.PublishFlag = TRUE
+						  LIMIT :start, :howmany";
 
-			$statement .= "(SELECT DISTINCT Comment_CommentId FROM user_inappropriateflag_comment) ORDER BY CommentId LIMIT ?, ?";
+			$start = $this-> getStartValue($howMany, $page);
+			$parameters = array(":adminID" => $adminID, 
+				                ":start" => $start, 
+				                ":howmany" => $howMany);
 
-			$start = $howMany * ($page - 1);
-
-			$comment = $this->fetchIntoClass($statement, array($start, $howMany), "shared/CommentView");
+			$comment = $this->fetchIntoClass($statement, $parameters, "shared/CommentViewModel");
 
 			return $comment;
 		}
@@ -941,7 +956,7 @@ class StoryModel extends Model {
 			return $e->getMessage();
 		}
 	}
-
+	//Tested getCommentListRejected(2,6,1)
 	public function getCommentListRejected($adminID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many results to return, what page of results your on
@@ -950,20 +965,46 @@ class StoryModel extends Model {
 		//Gets a list of comments related to a story
 		//The comments published flag must be true
 		//returns an array of comment class related to a story
-	}
+		try
+		{
+		$statement = "SELECT c.*
+						  FROM comment c
+						  LEFT JOIN admin_reject_comment arc
+						  ON c.CommentId = arc.Comment_CommentId
+						  WHERE c.Active = TRUE
+						  AND c.PublishFlag = TRUE
+						  AND arc.User_UserId = :adminID
+						  AND arc.Rejected = TRUE
+						  LIMIT :start, :howmany";
 
+			$start = $this-> getStartValue($howMany, $page);
+			$parameters = array(":adminID" => $adminID, 
+				                ":start" => $start, 
+				                ":howmany" => $howMany);
+
+			$comment = $this->fetchIntoClass($statement, $parameters, "shared/CommentViewModel");
+
+			return $comment;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+	//Tested getUnpublisedComments(12);
 	public function getUnpublisedComments($userID)
 	{
 		//Accepts a user id
 		//Gets a list of comments that haven't been published by a user
 		//The comments published flag must be flase
 		//returns an array of comment class that haven't been published yet
-		
 		try
 		{
-			$statement = "SELECT * FROM comment WHERE User_UserId = ? AND PublishFlag = 0 ORDER BY CommentId";
-
-			$comment = $this->fetchIntoClass($statement, array($userID), "shared/CommentView");
+			$statement = "SELECT * FROM comment 
+						  WHERE User_UserId = :userID 
+						  AND PublishFlag = FALSE";
+			$parameters = array(":userID" => $userID);
+			$comment = $this->fetchIntoClass($statement, $parameters, "shared/CommentViewModel");
 
 			return $comment;
 		}
@@ -983,11 +1024,12 @@ class StoryModel extends Model {
 			$statement = "INSERT INTO user_inappropriateflag_comment (User_UserId, Comment_CommentId, DateCreated) 
 						  VALUES(:UserId, :CommentID, :DateCreated)
 						  ON DUPLICATE KEY
-						  	UPDATE Active = TRUE";
+						  UPDATE Active = TRUE";
 
 			$parameters = array(":UserId" => $userID, ":CommentID" => $commentID, ":DateCreated" => $this->getDateNow());
 
 			$this->execute($statement);	
+
 		}
 		catch(PDOException $e) 
 		{

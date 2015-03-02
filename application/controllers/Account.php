@@ -88,7 +88,7 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Story/StoryModel');
 		
-		$returnData = $model->getStoryListByIssueID(1,6,1);
+		$returnData = $model->getStoryListNewest(1,5,1);
 		debugit($returnData);
 	}
 
