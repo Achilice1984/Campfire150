@@ -51,6 +51,10 @@ class Model {
 		 }
 	}
 
+	public function quote($string)
+	{
+		return self::$connection->quote($string, PDO::PARAM_STR);
+	}
  	// This function allows you to retrieve the last inserted id in the database
  	// Example:
  	//		You insert a new user into the database but need the new id to insert some more data

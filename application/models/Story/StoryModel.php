@@ -1,4 +1,5 @@
 <?php
+require_once(APP_DIR .'helpers/storysearch.php');
 
 class StoryModel extends Model {
 
@@ -13,83 +14,9 @@ class StoryModel extends Model {
 		//returns an array of Story class that relate to the search string
 		try 
 		{
-			
-			$statement = "SELECT 
+			$searchObject = new StorySearch();
 
-							s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
-
-							urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
-
-							aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
-
-							shp.Story_StoryId, shp.PictureId, shp.Active,
-
-							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active,
-
-							u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
-
-							(
-							    (SELECT COUNT(1)
-							        FROM story_has_tag sht
-							        INNER JOIN tag t
-							        ON t.TagId = sht.Tag_TagId
-							        WHERE Lower(t.Tag) LIKE '%:storySearch%'
-							        AND sht.Story_StoryId = s.StoryId
-							        )
-							    +
-							    ((SELECT COUNT(1)
-							        FROM story_has_tag sht
-							        INNER JOIN tag t
-							        ON t.TagId = sht.Tag_TagId
-							        WHERE Lower(t.Tag) LIKE ':storySearch'
-							        AND sht.Story_StoryId = s.StoryId
-								) * 2)
-							    +
-							    (Lower(s.StoryTitle) LIKE '%:storySearch%')
-							)
-							    
-							AS hits,
-
-							(
-								SELECT COUNT(1)
-								FROM comment c
-								WHERE c.Story_StoryId = s.StoryId
-							    AND c.Active = TRUE
-							) AS totalComments
-							 
-							FROM story s
-
-							INNER JOIN user u
-							ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
-							INNER JOIN admin_approve_story aps
-							ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
-
-							LEFT JOIN user_recommend_story urs
-							ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :userid) AND (urs.Active = TRUE)
-
-							LEFT JOIN story_has_picture shp
-							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
-							LEFT JOIN picture p
-							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
-
-							WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
-							AND s.Active = TRUE
-							AND aps.Active = TRUE
-							AND aps.Approved = TRUE
-							HAVING hits > 0
-							ORDER BY hits DESC
-							LIMIT :start,:howmany";
-			
-			$start = $this-> getStartValue($howMany, $page);
- 
-			$parameters = array(":storySearch" => $storySearch, 
-								":userid" => $userID, 
-								":start" => $start, 
-								":howmany" => $howMany
-								);
- 
-			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
-
+			$story = $searchObject->SearchQuery($storySearch, $userID, $howMany, $page); 
 
 			return $story;
 

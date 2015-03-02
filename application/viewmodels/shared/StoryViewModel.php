@@ -22,6 +22,7 @@ class StoryViewModel extends ViewModel
 	public $Tag;
 	public $TagId;
 
+	public $QuestionAnswers;
 
 	function __construct()
 	{
