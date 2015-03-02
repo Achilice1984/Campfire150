@@ -137,17 +137,24 @@ class Validator
 
   function validFileType($file)
   {
-    // DO NOT TRUST $_FILES['upfile']['mime'] VALUE !!
-    // Check MIME Type by yourself.
-    $finfo = new finfo(FILEINFO_MIME_TYPE);
+      try
+      {
+          // DO NOT TRUST $_FILES['upfile']['mime'] VALUE !!
+          // Check MIME Type by yourself.
+          $finfo = new finfo(FILEINFO_MIME_TYPE);
 
-    if (false === $ext = array_search($finfo->file($file['tmp_name']), 
-      array('jpg' => 'image/jpeg', 'png' => 'image/png', 'gif' => 'image/gif'), true )) 
-    {
-        return false;
-    }
-    
-    return true;
+          if (false === $ext = array_search($finfo->file($file['tmp_name']), 
+            array('jpg' => 'image/jpeg', 'png' => 'image/png', 'gif' => 'image/gif'), true )) 
+          {
+              return false;
+          }
+      }
+      catch(Exception $ex)
+      {
+          return false;
+      }
+      
+      return true;
   }
   function validateYoutubeEmbedTag($embedHtml){
       /*

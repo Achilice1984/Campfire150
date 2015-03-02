@@ -6,7 +6,7 @@ class Account extends Controller {
 	{
 		parent::__construct();
 	}
-	
+
 	//The home view will be where a user can view all of their account information
 	function home($userID)
 	{	
@@ -29,9 +29,12 @@ class Account extends Controller {
 			//Load the AccountModel to access account functions
 			$model = $this->loadModel('AccountModel');
 
+			//Load the AccountModel to access account functions
+			$storyModel = $this->loadModel('Story/StoryModel');
+
 			//Populate data to be shown on the page
-			$accountHomeViewModel->recommendedStoryList = $model->getStoriesRecommendedByCurrentUser($userID);
-			$accountHomeViewModel->usersStoryList = $model->getStoriesWrittenByCurrentUser($userID);
+			$accountHomeViewModel->recommendedStoryList = $storyModel->getStoriesRecommendedByCurrentUser($userID);
+			$accountHomeViewModel->usersStoryList = $storyModel->getStoriesWrittenByCurrentUser($userID);
 			$accountHomeViewModel->followingList = $model->getFollowing($userID);
 
 			//How many people are they following
@@ -41,19 +44,19 @@ class Account extends Controller {
 			$accountHomeViewModel->totalFollowers = $model->getTotalFollowers($userID);
 
 			//How many approved stories
-			$accountHomeViewModel->totalApprovedStories = $model->getTotalStoriesApproved($userID);
+			$accountHomeViewModel->totalApprovedStories = $storyModel->getTotalStoriesApproved($userID);
 
 			//How many pending stories
-			$accountHomeViewModel->totalPendingStories = $model->getTotalStoriesPending($userID);
+			$accountHomeViewModel->totalPendingStories = $storyModel->getTotalStoriesPending($userID);
 
 			//How many denied stories
-			$accountHomeViewModel->totalDeniedStories = $model->getTotalStoriesDenied($userID);
+			$accountHomeViewModel->totalDeniedStories = $storyModel->getTotalStoriesDenied($userID);
 
 			//How many approved comments
-			$accountHomeViewModel->totalApprovedComments = $model->getTotalCommentsApproved($userID);
+			$accountHomeViewModel->totalApprovedComments = $storyModel->getTotalCommentsApproved($userID);
 
 			//How many penfing comments
-			$accountHomeViewModel->totalPendingComments = $model->getTotalCommentsPending($userID);
+			$accountHomeViewModel->totalPendingComments = $storyModel->getTotalCommentsPending($userID);
 
 			$accountHomeViewModel->userDetails = $model->getProfileByID($userID);
 
@@ -331,9 +334,14 @@ class Account extends Controller {
 		//Execute code if a post back
 		//This just checks to see if a form was submitted
 		if($this->isPost())
-		{	
+		{				
 			//Map post values to the userViewModel
 			$pictureViewModel = AutoMapper::mapPost($pictureViewModel);
+
+			$savedSuccessfuly = move_uploaded_file($pictureViewModel->PictureFile["tmp_name"], APP_DIR . "userdata/test.jpg");
+
+
+					echo $pictureViewModel->PictureFile["tmp_name"];
 
 			//Validate data that was posted to the server
 			//This will also set the temp errors to be shown in the view
@@ -354,16 +362,19 @@ class Account extends Controller {
 					//this is your image file
 					//$pictureViewModel->ProfilePicture;
 
-					$savedSuccessfuly = saveImage($cuurentUser->UserId, $pictureViewModel, 1);
+					
 
-					if($savedSuccessfuly == false)
-					{
-						//Ann error occoured you hvae to remove new profile picture meta data from the database
-						$model->removeImageMetaData($imageId);
 
-						//add error message so user knows whats up
-						addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
-					}
+					 //$savedSuccessfuly = saveImage($cuurentUser->UserId, $pictureViewModel, 1);
+					 //echo "<br />" .$savedSuccessfuly;
+					// if($savedSuccessfuly == false)
+					// {
+					// 	//Ann error occoured you hvae to remove new profile picture meta data from the database
+					// 	$model->removeImageMetaData($imageId);
+
+					// 	//add error message so user knows whats up
+					// 	addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
+					// }
 				}
 				else
 				{

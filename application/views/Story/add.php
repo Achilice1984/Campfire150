@@ -6,6 +6,10 @@
     //uncomment to view structure in browser
     //debugit($storyViewModel);
 
+    //$privacyDropdownValues
+    //$storyQuestions
+
+    //debugit($storyQuestions);
 ?>
 
 <div class="container" style="margin-top:100px;">
