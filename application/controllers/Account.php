@@ -118,7 +118,7 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Story/StoryModel');
 		
-		$returnData = $model->searchStories("art", 1);
+		$returnData = $model->searchStories("there is", 1);
 		debugit($returnData);
 	}
 
