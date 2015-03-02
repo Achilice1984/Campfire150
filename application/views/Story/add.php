@@ -34,6 +34,25 @@
                                 include(APP_DIR . 'views/shared/displaySuccess.php'); 
                             ?>
 
+                            <?php foreach ($storyQuestions as $question): ?>
+
+                                <div class="form-group">
+                                    <label for="QuestionAnswers[]"><?php echo $question->Name; ?></label>
+                                    <select class="form-control" name="QuestionAnswers[]">
+                                        <?php 
+                                            echo "<option value=''></option>";
+                                            
+                                            for ($i=0; $i < count($question->Answers); $i++) { 
+                                                echo "<option " . ((isset($storyViewModel->QuestionAnswers[$i]) && $storyViewModel->QuestionAnswers[$i] == $question->Answers[$i]->Value) ? 'selected=selected' : "") . " value='" . $question->Answers[$i]->Value . "'>"; 
+                                                    echo $question->Answers[$i]->Name;
+                                                echo "</option>";
+                                            }
+                                        ?>
+                                    </select>
+                                </div>
+                                
+                            <?php endforeach ?>
+
                             <div class="form-group">
                                 <label for="StoryTitle"><?php echo gettext("Title"); ?></label>
                                 <input type="text" class="form-control" id="StoryTitle" name="StoryTitle" placeholder="<?php echo gettext("Enter Title"); ?>" value="<?php echo $storyViewModel->StoryTitle; ?>">

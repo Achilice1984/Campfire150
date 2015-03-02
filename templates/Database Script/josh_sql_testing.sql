@@ -72,3 +72,353 @@ ORDER BY user_recommend_story.LatestChange DESC
 
 LIMIT 0, 50 
 WHERE MATCH(FirstName, LastName, Email, MidName) AGAINST('josh') 
+
+
+
+SELECT *,((Lower(StoryTitle) LIKE '%:sTitle%')) AS hits
+FROM story s
+INNER JOIN story_has_tag sht
+ON sht.Story_StoryId = s.StoryId
+INNER JOIN tag t
+ON t.TagId = sht.Tag_TagId
+HAVING hits > 0
+ORDER BY hits DESC
+
+
+
+SELECT *,
+((Lower(s.StoryTitle) LIKE '%art%') + 
+ (Lower(t.Tag) LIKE '%art%')) AS hits
+FROM story s
+
+INNER JOIN story_has_tag sht
+ON (sht.Story_StoryId = s.StoryId) AND (sht.Active = TRUE)
+INNER JOIN tag t
+ON (t.TagId = sht.Tag_TagId) AND (t.Active = TRUE)
+INNER JOIN user u
+ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+INNER JOIN admin_approve_story aps
+ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
+
+LEFT JOIN user_recommend_story urs
+ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = 1) AND (urs.Active = TRUE)
+
+INNER JOIN story_has_picture shp
+ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+INNER JOIN picture p
+ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
+HAVING hits > 0
+ORDER BY hits DESC
+LIMIT 0,10
+
+
+
+
+
+
+
+
+
+SELECT 
+
+s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+
+sht.Story_StoryId, sht.Tag_TagId, sht.Active,
+
+t.TagId, t.Tag, t.Active,
+
+urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
+
+aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
+
+shp.Story_StoryId, shp.PictureId, shp.Active,
+
+p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active,
+
+u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
+
+(SELECT COUNT(1)
+	FROM story_has_tag sht
+	INNER JOIN tag t
+	ON t.TagId = sht.Tag_TagId
+	WHERE Lower(t.Tag) LIKE '%tec%'
+	AND sht.Story_StoryId = s.StoryId
+	) AS hits
+
+((Lower(s.StoryTitle) LIKE '%tec%') + 
+ (Lower(t.Tag) LIKE '%tec%')) AS hits
+ 
+FROM story s
+
+INNER JOIN story_has_tag sht
+ON (sht.Story_StoryId = s.StoryId) AND (sht.Active = TRUE)
+INNER JOIN tag t
+ON (t.TagId = sht.Tag_TagId) AND (t.Active = TRUE)
+INNER JOIN user u
+ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+INNER JOIN admin_approve_story aps
+ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
+
+LEFT JOIN user_recommend_story urs
+ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = 1) AND (urs.Active = TRUE)
+
+INNER JOIN story_has_picture shp
+ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+INNER JOIN picture p
+ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
+AND s.Active = TRUE
+AND aps.Active = TRUE
+AND aps.Approved = TRUE
+HAVING hits > 0
+ORDER BY hits DESC
+LIMIT 0,10
+
+
+
+
+SELECT 
+
+s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+
+urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
+
+aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
+
+shp.Story_StoryId, shp.PictureId, shp.Active,
+
+p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active,
+
+u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
+
+(SELECT COUNT(1)
+	FROM story_has_tag sht
+	INNER JOIN tag t
+	ON t.TagId = sht.Tag_TagId
+	WHERE Lower(t.Tag) LIKE '%t%'
+	AND sht.Story_StoryId = s.StoryId
+	) AS hits
+ 
+FROM story s
+
+
+INNER JOIN user u
+ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+INNER JOIN admin_approve_story aps
+ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
+
+LEFT JOIN user_recommend_story urs
+ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = 1) AND (urs.Active = TRUE)
+
+INNER JOIN story_has_picture shp
+ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+INNER JOIN picture p
+ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
+AND s.Active = TRUE
+AND aps.Active = TRUE
+AND aps.Approved = TRUE
+HAVING hits > 0
+ORDER BY hits DESC
+LIMIT 0,10
+
+
+
+
+
+SELECT 
+
+s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+
+urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
+
+aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
+
+shp.Story_StoryId, shp.PictureId, shp.Active,
+
+p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active,
+
+u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
+
+(
+    (SELECT COUNT(1)
+        FROM story_has_tag sht
+        INNER JOIN tag t
+        ON t.TagId = sht.Tag_TagId
+        WHERE Lower(t.Tag) LIKE '%technolog%'
+        AND sht.Story_StoryId = s.StoryId
+        )
+    +
+    ((SELECT COUNT(1)
+        FROM story_has_tag sht
+        INNER JOIN tag t
+        ON t.TagId = sht.Tag_TagId
+        WHERE Lower(t.Tag) LIKE 'technolog'
+        AND sht.Story_StoryId = s.StoryId
+	) * 2)
+    +
+    (Lower(s.StoryTitle) LIKE '%d%')
+)
+    
+AS hits
+ 
+FROM story s
+
+
+INNER JOIN user u
+ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+INNER JOIN admin_approve_story aps
+ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
+
+LEFT JOIN user_recommend_story urs
+ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = 1) AND (urs.Active = TRUE)
+
+INNER JOIN story_has_picture shp
+ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+INNER JOIN picture p
+ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
+AND s.Active = TRUE
+AND aps.Active = TRUE
+AND aps.Approved = TRUE
+HAVING hits > 0
+ORDER BY hits DESC
+LIMIT 0,10
+
+
+
+
+
+
+
+
+
+
+
+SELECT 
+
+s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+
+urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
+
+aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
+
+shp.Story_StoryId, shp.PictureId, shp.Active,
+
+p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active,
+
+u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
+
+(
+    (SELECT COUNT(1)
+        FROM story_has_tag sht
+        INNER JOIN tag t
+        ON t.TagId = sht.Tag_TagId
+        WHERE Lower(t.Tag) LIKE '%t%'
+        AND sht.Story_StoryId = s.StoryId
+        )
+    +
+    ((SELECT COUNT(1)
+        FROM story_has_tag sht
+        INNER JOIN tag t
+        ON t.TagId = sht.Tag_TagId
+        WHERE Lower(t.Tag) LIKE 't'
+        AND sht.Story_StoryId = s.StoryId
+	) * 2)
+    +
+    (Lower(s.StoryTitle) LIKE '%t%')
+)
+    
+AS hits
+ 
+FROM story s
+
+
+INNER JOIN user u
+ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+INNER JOIN admin_approve_story aps
+ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
+
+LEFT JOIN user_recommend_story urs
+ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = 1) AND (urs.Active = TRUE)
+
+INNER JOIN story_has_picture shp
+ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+INNER JOIN picture p
+ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
+AND s.Active = TRUE
+AND aps.Active = TRUE
+AND aps.Approved = TRUE
+HAVING hits > 0
+ORDER BY hits DESC
+LIMIT 0,10
+
+
+
+
+SELECT 
+
+s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+
+urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
+
+aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
+
+shp.Story_StoryId, shp.PictureId, shp.Active,
+
+p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active,
+
+u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
+
+(
+    (SELECT COUNT(1)
+        FROM story_has_tag sht
+        INNER JOIN tag t
+        ON t.TagId = sht.Tag_TagId
+        WHERE Lower(t.Tag) LIKE '%egestas%'
+        AND sht.Story_StoryId = s.StoryId
+        )
+    +
+    ((SELECT COUNT(1)
+        FROM story_has_tag sht
+        INNER JOIN tag t
+        ON t.TagId = sht.Tag_TagId
+        WHERE Lower(t.Tag) LIKE 'egestas'
+        AND sht.Story_StoryId = s.StoryId
+	) * 2)
+    +
+    (Lower(s.StoryTitle) LIKE '%egestas%')
+)
+    
+AS hits
+ 
+FROM story s
+
+
+INNER JOIN user u
+ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+INNER JOIN admin_approve_story aps
+ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
+
+LEFT JOIN user_recommend_story urs
+ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = 1) AND (urs.Active = TRUE)
+
+LEFT JOIN story_has_picture shp
+ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+LEFT JOIN picture p
+ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
+AND s.Active = TRUE
+AND aps.Active = TRUE
+AND aps.Approved = TRUE
+HAVING hits > 0
+ORDER BY hits DESC
+LIMIT 0,10
