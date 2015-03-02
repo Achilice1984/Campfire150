@@ -79,7 +79,7 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Admin/AdminModel');
 	
-		$returnData = $model->getStoryListFlaggedInappropriate(2, 5, 1);
+		$returnData = $model->changeRejectedToApproved(2, 10, "everything is turning right");
 
 		debugit($returnData);
 	}
