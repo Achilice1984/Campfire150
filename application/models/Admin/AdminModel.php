@@ -1,6 +1,7 @@
 <?php
 
 class AdminModel extends Model {
+	require_once(APP_DIR .'helpers/storysearch.php');
 
 	public function isAdmin($userID)  //TESTED
 	{
