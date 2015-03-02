@@ -79,7 +79,8 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Admin/AdminModel');
 	
-		$returnData = $model->getListQuestionaireQuestions(5, 1);
+		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
+		$returnData = $model->addQuestionAnswer(9, "Always", "toujours");
 
 		debugit($returnData);
 	}

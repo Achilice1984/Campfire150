@@ -604,7 +604,6 @@ class AdminModel extends Model {
 				ON c.CommentId = uic.Comment_CommentId 
 				GROUP BY CommentId ORDER BY COUNT(uic.User_UserId) DESC 
 				LIMIT 1, 5";
-
 			
 			$start = $this-> getStartValue($howMany, $page);
 			
@@ -647,24 +646,102 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function updateQuestionAnswer($adminID, $questionAnswerID, $answerE, $answerF)// what does the answer means here. predefined or not?
+	public function addAnswer($answerE, $answerF)//tested
 	{
 		//Accepts a question answer id, and english answer, a french answer
 		//returns bool if saved succesfully
 
 		try
 		{
-			
+			$statement = "INSERT INTO answer (NameE, NameF) VALUES(:AnswerE, :AnswerF)";
+
+			$parameters = array(
+				":AnswerE" => $answerE,
+				":AnswerF" => $answerF
+				);
+
+			return $this->fetch($statement, $parameters);
+
+			//return $this->fetch("INSERT INTO answer_for_question (Question_QuestionId, Answer_AnswerId) VALUES(:QeustionID, :AnswerID)",
+			// array(":QeustionID" => $questionID, ":AnswerID" => $newAnswerID));
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
 		}
 	}
-	
-	public function addQuestionAnswer($adminID, $questionID, $answerE, $answerF)
+
+	public function updateAnswer($answerID, $answerE, $answerF)//tested
+	{
+		//Accepts a question answer id, and english answer, a french answer
+		//returns bool if saved succesfully
+
+		try
+		{
+			$statement = "UPDATE answer SET NameE = :AnswerE, NameF = :AnswerF WHERE AnswerId = :AnswerID";
+			$parameters = array(
+				":AnswerE" => $answerE,
+				":AnswerF" => $answerF,
+				":AnswerID" => $answerID
+				);
+			
+			return $this->fetch($statement, $parameters);
+
+			//return $this->fetch("INSERT INTO answer_for_question (Question_QuestionId, Answer_AnswerId) VALUES(:QeustionID, :AnswerID)",
+			// array(":QeustionID" => $questionID, ":AnswerID" => $newAnswerID));
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function addQuestionAnswerById($questionID, $answerID)//tested
 	{
 		//Accepts a question id, and english answer, a french answer
 		//returns bool if saved succesfully
+
+		try
+		{
+			return $this->fetch("INSERT INTO answer_for_question (Question_QuestionId, Answer_AnswerId) VALUES(:QeustionID, :AnswerID)",
+			 array(":QeustionID" => $questionID, ":AnswerID" => $answerID));
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+	
+	public function addQuestionAnswer($questionID, $answerE, $answerF)//tested
+	{
+		//Accepts a question id, and english answer, a french answer
+		//returns bool if saved succesfully
+
+		try
+		{
+			$statement = "SELECT * FROM answer WHERE NameE = :NameE AND NameF = :NameF";
+
+			$rowCount = $this->fetchRowCount($statement, array("NameE" => $answerE, "NameF" => $answerF));
+
+			if($rowCount < 1)
+			{
+				$this->addAnswer($answerE, $answerF);
+				$answerID = $this->lastInsertId();				
+			}
+			else
+			{
+				$tmpAnswer = $this->fetchIntoObject($statement, array("NameE" => $answerE, "NameF" => $answerF));
+				$answerID = $tmpAnswer[0]->AnswerId;
+			}			
+			return $this->addQuestionAnswerById($questionID, $answerID);
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
 	}
 
-	public function updateQuestion($adminID, $questionID, $questionE, $questionF) //tested
+	public function updateQuestion($questionID, $questionE, $questionF) //tested
 	{
 		//Accepts a question id, and english question, a french question
 		//returns bool if saved succesfully
@@ -681,7 +758,7 @@ class AdminModel extends Model {
 		}
 	}
 	
-	public function addQuestion($adminID, $questionE, $questionF)//tested
+	public function addQuestion($questionE, $questionF)//tested
 	{
 		//Accepts a english questionE, a french questionF
 		//returns bool if saved succesfully
