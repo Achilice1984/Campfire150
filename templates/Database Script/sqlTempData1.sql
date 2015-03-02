@@ -235,7 +235,7 @@ INSERT INTO `wwwcoiox_campfire`.`admin_approve_story` (`User_UserId`, `Story_Sto
 -- Dumping data for table `comment`
 --
 INSERT INTO `wwwcoiox_campfire`.`comment` (`CommentId`, `Story_StoryId`, `User_UserId`, `Content`, `PublishFlag`, `TimeStamp`) VALUES (NULL, '6', '4', 'WONDERFUL, GOOD .', '1', CURRENT_TIMESTAMP), (NULL, '8', '12', 'PERFECT, i LIKE IT', '0', CURRENT_TIMESTAMP);
-
+INSERT INTO `wwwcoiox_campfire`.`comment` (`CommentId`, `Story_StoryId`, `User_UserId`, `Content`, `PublishFlag`, `TimeStamp`) VALUES (NULL, '10', '12', 'Great story.', '0', CURRENT_TIMESTAMP);
 --
 -- Dumping data for table `user_inappropriateflag_comment`
 --
@@ -400,6 +400,7 @@ VALUES ('3', '10', '1', 'Became better', CURRENT_TIMESTAMP), ('3', '9', '1', 'de
 
 INSERT INTO `wwwcoiox_campfire`.`admin_reject_comment` (`comment_CommentId`, `User_UserId`, `rejected`, `reason`, `TimeStamp`) 
 VALUES ('1', '2', '1', 'inappropriate words', CURRENT_TIMESTAMP), ('2', '5', '0', 'the user has modified the comment', CURRENT_TIMESTAMP);
+
 
 --
 -- Insert into answer_for_question table

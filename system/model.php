@@ -12,6 +12,9 @@ class Model {
 
 	//Use static connection to have one connection per request
 	private static $connection;
+
+	const PAGE = 0;
+	const HOWMANY = 10;
 	
 	public function __construct()
 	{
@@ -219,6 +222,13 @@ class Model {
 
 		return $howMany * (($page == 0 ? 1 : $page) - 1);
 	}
+
+	public function getDateNow()
+	{
+		return date("Y-m-d H:i:s");
+	}
+
+
 
 	public function escapeString($string)
 	{

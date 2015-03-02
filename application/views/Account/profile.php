@@ -1,3 +1,13 @@
+<?php
+
+    //You have access to the Account/ProfileViewModel.php
+    
+    //You can access everything from this variable:
+    //uncomment to view structure in browser
+    //debugit($userViewModel);
+
+?>
+
 <div class="container" style="margin-top:100px;">
 
     <div class="row">
