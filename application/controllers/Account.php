@@ -8,8 +8,37 @@ class Account extends Controller {
 	}
 
 	//The home view will be where a user can view all of their account information
-	function home($userID)
+	function home()
 	{	
+		try
+		{
+			//Check if users is authenticated for this request
+			//Will kick out if not authenticated
+			$this->AuthRequest();
+
+			//Load the accountHomeViewModel
+			$accountHomeViewModel = $this->loadViewModel('AccountHomeViewModel');
+
+			//Load the AccountModel to access account functions
+			$model = $this->loadModel('AccountModel');
+
+			//Load the home view
+			$view = $this->loadView('home');
+
+			//Add a variable with data so that it can be accessed in the view
+			$view->set('accountHomeViewModel', $accountHomeViewModel);
+
+			//Render the home view. true indicates to load the layout pages as well
+			$view->render(true);
+		}
+		catch(Exception $ex)
+		{
+
+		}
+	}	
+
+	function user($userID)
+	{
 		try
 		{
 			//Check if users is authenticated for this request
@@ -73,7 +102,7 @@ class Account extends Controller {
 		{
 
 		}
-	}	
+	}
 
 	function testAdmin()
 	{
@@ -88,18 +117,20 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Story/StoryModel');
 		
-		$returnData = $model->getStoryListByIssueID(1,6,1);
+		$returnData = $model->searchStories("art", 1);
 		debugit($returnData);
 	}
 
 	function testAccount()
 	{
-		$this->redirect("account/home", array("userID" => 1));
-		$model = $this->loadModel('Account/AccountModel');
-		$testData = $model->getLatestUserList();
-		// $returnData = $model->getCurrentProfilePictureMetadata(1);
+		echo htmlentities("1234");
+
+		// $this->redirect("account/home", array("userID" => 1));
+		// $model = $this->loadModel('Account/AccountModel');
+		// $testData = $model->getLatestUserList();
+		// // $returnData = $model->getCurrentProfilePictureMetadata(1);
 		
-		debugit($testData);
+		// debugit($testData);
 	}
 
 	function login()

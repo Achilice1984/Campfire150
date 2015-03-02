@@ -51,12 +51,12 @@
 
               if($currentUser->IsAuth)
               {
-                echo '<li><a href="' . BASE_URL . 'account/profile">' . $currentUser->Email . '</a></li>';
+                echo '<li><a href="' . BASE_URL . 'account/home">' . $currentUser->Email . '</a></li>';
 
                 echo '<li class="dropdown">';
                   echo '<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-cog"></span><span class="caret"></span></a>';
                   echo '<ul class="dropdown-menu" role="menu">';
-                    echo '<li><a href="' . BASE_URL . 'account/profile"> ' . gettext("Update Profile") . '</a></li>';
+                    echo '<li><a href="' . BASE_URL . 'account/home"> ' . gettext("Update Profile") . '</a></li>';
                     echo '<li><a href="' . BASE_URL . 'account/logout"> ' . gettext("Logout") . '</a></li>';
                     echo '<li><a href="' . BASE_URL . 'account/changelanguage">' . $language . '</a></li>';
                   echo '</ul>';
