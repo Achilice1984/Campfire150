@@ -36,6 +36,29 @@ class AdminModel extends Model {
 		//Accepts string to search for a story
 		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
 		//returns an array of Story class that relate to the search string
+
+		// try
+		// {
+		// 	$statement = "SELECT *  FROM story WHERE storyID NOT IN ";
+		// 	$statement .= "(SELECT Story_StoryId FROM admin_approve_story)";
+		// 	$statement .= "LIMIT :Start, :HowMany";
+
+		// 	$start = $this->getStartValue($howMany, $page);
+
+		// 	$parameters = array(
+		// 		":Start"=>$start, 
+		// 		":HowMany"=>$howMany
+		// 		);
+
+		// 	$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+
+		// 	return $storyList;
+
+		// }
+		// catch(PDOException $e) 
+		// {
+		// 	return $e->getMessage();
+		// }	
 	}
 
 	public function getStoryListPendingApproval($howMany = self::HOWMANY, $page = self::PAGE)//tested
@@ -70,7 +93,7 @@ class AdminModel extends Model {
 		}		
 	}
 
-	public function getStoryListRejected($howMany = self::HOWMANY, $page = self::PAGE) //tested, not finished
+	public function getStoryListRejected($howMany = self::HOWMANY, $page = self::PAGE) //tested
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -140,7 +163,20 @@ class AdminModel extends Model {
 
 		try
 		{
-			$this->fetch("UPDATE admin_approve_story SET Active = 0 WHERE Story_StoryId = :StoryID AND Active = 1", array(":StoryID"=>$storyID));//Set the active record for the story to deactive;
+// 			$this->fetch("UPDATE admin_approve_story SET Active = 0 WHERE Story_StoryId = :StoryID AND Active = 1", array(":StoryID"=>$storyID));//Set the active record for the story to deactive;
+// echo "test";
+// 			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, ApprovalCommentE, Approved)
+// 				VALUES(:AdminID, :StoryID, :Reason, FALSE);
+// 				ON DUPLICATE KEY
+// 					UPDATE ApprovalCommentE=:Reason, Approved=0, Active=1";
+
+// 			$parameters = array(
+// 					":AdminID" => $adminID,
+// 					":StoryID" => $storyID,
+// 					":Reason" => $reason
+// 					);
+
+// 			return $this->fetch($statement, $parameters);
 
 			$statement = "SELECT *  FROM admin_approve_story WHERE User_UserId = :UserID AND Story_StoryId = :StoryID";
 
@@ -177,7 +213,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function approveStory($adminID, $storyID, $reason)
+	public function approveStory($adminID, $storyID, $reason)//tested
 	{
 		//Accepts the adminID and the story id
 		//returns bool whether it was saved succesfully or not
@@ -234,8 +270,10 @@ class AdminModel extends Model {
 		{
 			$this->fetch("UPDATE admin_approve_story SET Active = 0 WHERE storyID = :StoryID AND Active = 1", array(":StoryID" => $storyID));
 
-			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, ApprovalCommentE, Approved) VALUES(:AdminID, :StoryID, :Reason, 1) ";
-			$statement .= "ON DUPLICATE KEY UPDATE ApprovalCommentE = :Reason, Approved = 1, Active = 1";
+			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, ApprovalCommentE, Approved)
+				VALUES(:AdminID, :StoryID, :Reason, 1) 
+				ON DUPLICATE KEY 
+					UPDATE ApprovalCommentE = :Reason, Approved = 1, Active = 1";
 
 			$parameters = array(
 					":Reason" => $reason, 
@@ -289,13 +327,13 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged FROM comment c LEFT JOIN user_inappropriateflag_comment uic ";
+			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged FROM comment c INNER JOIN user_inappropriateflag_comment uic ";
 			$statement .= "ON c.CommentId = uic.Comment_CommentId ";
 			$statement .= "GROUP BY CommentId ORDER BY COUNT(uic.User_UserId) DESC LIMIT :Start, :HowMany";
 			
-			$start = $this-> getStartValue($howMany, $page);
+			$start = $this->getStartValue($howMany, $page);
 			$parameters = array(
-				":Start"=>$start, 
+				":Start"=>$start,
 				":HowMany"=>$howMany
 				);
 
@@ -309,7 +347,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function rejectCommentAsAdmin($adminID, $commentID, $reason)
+	public function rejectCommentAsAdmin($adminID, $commentID, $reason)//tested
 	{
 		//Accepts the adminID, the comment id and the reason why it was rejected
 		//Allows admin users to hide comments if they feel they are innappropriate
@@ -319,13 +357,14 @@ class AdminModel extends Model {
 		{
 			$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Active = 1 AND Comment_CommentId = :CommentID", array(':CommentID' => $commentID));
 
-			$statement = "INSERT admin_reject_comment (Comment_CommentId, User_UserId, Rejected, Reason) VALUES (:CommentID, :AdminID, 1, :Reason)";
-			$statement .= "ON DUPLICATE KEY UPDATE Reason = :Reason, Rejected = 1, Active = 1";
+			$statement = "INSERT admin_reject_comment (Comment_CommentId, User_UserId, Rejected, Reason) VALUES (:CommentID, :AdminID, 1, :Reason) 
+				ON DUPLICATE KEY UPDATE Reason = :NewReason, Rejected = 1, Active = 1";
 
 			$parameters = array(					 
 					":CommentID" => $commentID, 
 					":AdminID" => $adminID,
-					":Reason" => $reason
+					":Reason" => $reason,
+					":NewReason" => $reason
 					);
 
 			return $this->fetch($statement, $parameters);
@@ -336,7 +375,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function approveCommentAsAdmin($adminID, $commentID, $reason)
+	public function approveCommentAsAdmin($adminID, $commentID, $reason)//tested
 	{
 		//Accepts the adminID and the comment id
 		//Allows admin users to remove their rejected status placed on comments
@@ -346,13 +385,14 @@ class AdminModel extends Model {
 		{
 			$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Active = 1 AND Comment_CommentId = :CommentID", array(':CommentID' => $commentID));
 
-			$statement = "INSERT admin_reject_comment (Comment_CommentId, User_UserId, Rejected, Reason) VALUES (:CommentID, :AdminID, 0, :Reason)";
-			$statement .= "ON DUPLICATE KEY UPDATE Reason = :Reason, Rejected = 0, Active = 1";
+			$statement = "INSERT admin_reject_comment (Comment_CommentId, User_UserId, Rejected, Reason) VALUES (:CommentID, :AdminID, 0, :Reason) 
+				ON DUPLICATE KEY UPDATE Reason = :NewReason, Rejected = 0, Active = 1";
 
-			$parameters = array(
+			$parameters = array(					 
 					":CommentID" => $commentID, 
 					":AdminID" => $adminID,
-					":Reason" => $reason
+					":Reason" => $reason,
+					":NewReason" => $reason
 					);
 
 			return $this->fetch($statement, $parameters);
@@ -433,7 +473,7 @@ class AdminModel extends Model {
 	// 	}
 	// }
 
-	public function getListUsers($howMany = self::HOWMANY, $page = self::PAGE)
+	public function getListUsers($howMany = self::HOWMANY, $page = self::PAGE)//tested
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -469,36 +509,21 @@ class AdminModel extends Model {
 		
 		try
 		{
-			$statement = "SELECT * FROM admin_actionon_user WHERE User_UserId=:UserID AND Admin_UserId=:AdminID AND Action=0";
+			$this->fetch("UPDATE admin_actionon_user SET Active = 0 WHERE User_UserId=:UserID AND Active = 1", array('UserID' => $userID));
 
-			$exist = $this->fetchNum($statement, array(":UserID" => $userID, ":AdminID" => $adminID));
+			$this->fetch("UPDATE user SET Active = 0 WHERE UserId=:UserID", array('UserID' => $userID));
 
-			if($exist)
-			{
-				$statement = "UPDATE admin_actionon_user SET Reason = :DeActivateReason";
-				$statement .= "WHERE User_UserId=:UserID AND Admin_UserId=:AdminID ";
+			$statement = "INSERT INTO admin_actionon_user (Admin_UserId, User_UserId, Action, Reason) VALUES(:AdminID, :UserID, 0, :Reason)
+				ON DUPLICATE KEY UPDATE Action = 0, Active = 1, Reason = :NewReason";
 
-				$parameters = array( 
-					":DeActivateReason" => $reason,
-					":userID" => $userID,
-					":AdminID" => $adminID
-				);
-
-				return $this->fetch($statement, $parameters) && $this->fetch("UPDATE user SET Active = 0 WHERE UserId=:UserID", array(":UserID" => $userID));
-			}
-			else
-			{
-				$statement = "INSERT INTO admin_actionon_user (Admin_UserId, User_UserId, Action, Reason)";
-				$statement .= " VALUES (:AdminID, :UserID, 0, :Reason)";
-
-				$parameters = array( 
+			$parameters = array( 
 					":AdminID" => $adminID,
-					":UserID" => $userID,					
-					":Reason" => $reason
+					":UserID" => $userID,
+					":Reason" => $reason,
+					":NewReason" => $reason
 				);
 
-				return $this->fetch($statement, $parameters) && $this->fetch("UPDATE user SET Active = 0 WHERE UserId=:UserID", array(":UserID" => $userID));
-			}
+			return $this->fetch($statement, $parameters);
 		}
 		catch(PDOException $e)
 		{
@@ -506,7 +531,38 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getListUsersDisabled($howMany = self::HOWMANY, $page = self::PAGE)
+
+	public function activateUser($userID, $adminID, $reason)  //TESTED
+	{
+		//Accepts a User class for $user and a User class for $admin
+		//Sets the active flag to false in user profile
+		//Uses admin details to say who deactivated the account
+		
+		try
+		{
+			$this->fetch("UPDATE admin_actionon_user SET Active = 0 WHERE User_UserId=:UserID AND Active = 1", array('UserID' => $userID));
+
+			$this->fetch("UPDATE user SET Active = 1 WHERE UserId=:UserID", array('UserID' => $userID));
+
+			$statement = "INSERT INTO admin_actionon_user (Admin_UserId, User_UserId, Action, Reason) VALUES(:AdminID, :UserID, 1, :Reason)
+				ON DUPLICATE KEY UPDATE Action = 1, Active = 1, Reason = :NewReason";
+
+			$parameters = array( 
+					":AdminID" => $adminID,
+					":UserID" => $userID,
+					":Reason" => $reason,
+					":NewReason" => $reason
+				);
+
+			return $this->fetch($statement, $parameters);
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function getListUsersDisabled($howMany = self::HOWMANY, $page = self::PAGE)//tested
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -535,31 +591,36 @@ class AdminModel extends Model {
 	}
 
 //confuse about how to calculate the number of flags
-	public function getListUsersOderedByMostInappropriateFlags($adminID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getListUsersOderedByMostInappropriateFlags($adminID, $howMany = self::HOWMANY, $page = self::PAGE)//confuse about how to calculate the number of flags
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
 		//Gets a list of users ordered by how many inapropriate flags they have issued
 		//returns an array of User class
 
-		// try
-		// {
-		// 	$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged FROM comment c LEFT JOIN user_inappropriateflag_comment uic ";
-		// 	$statement .= "ON c.CommentId = uic.Comment_CommentId ";
-		// 	$statement .= "GROUP BY CommentId ORDER BY COUNT(uic.User_UserId) DESC LIMIT 0, 5";
+		try
+		{
+			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged FROM comment c INNER JOIN user_inappropriateflag_comment uic 
+				ON c.CommentId = uic.Comment_CommentId 
+				GROUP BY CommentId ORDER BY COUNT(uic.User_UserId) DESC 
+				LIMIT 1, 5";
 
 			
-		// 	$start = $this-> getStartValue($howMany, $page);
-		// 	$parameters = array($start, $howMany);
+			$start = $this-> getStartValue($howMany, $page);
+			
+			$parameters = array( 
+					":Start" => $start,
+					":HowMany" => $howMany
+				);
 
-		// 	$storyList = $this->fetchIntoClass($statement, array(), "shared/CommentViewModel");
+			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/CommentViewModel");
 
-		// 	return $storyList;
-		// }
-		// catch(PDOException $e) 
-		// {
-		// 	return $e->getMessage();
-		// }
+			return $storyList;
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
 	}
 
 	public function getListQuestionaireQuestions() //TESTED
@@ -591,7 +652,10 @@ class AdminModel extends Model {
 		//Accepts a question answer id, and english answer, a french answer
 		//returns bool if saved succesfully
 
-
+		try
+		{
+			
+		}
 	}
 	
 	public function addQuestionAnswer($adminID, $questionID, $answerE, $answerF)
