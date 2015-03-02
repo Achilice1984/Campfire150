@@ -50,13 +50,6 @@ class AdminModel extends Model {
 		{
 			$statement = "SELECT *  FROM story WHERE storyID NOT IN ";
 			$statement .= "(SELECT Story_StoryId FROM admin_approve_story)";
-			$statement .= "LIMIT ?, ?";
-			
-			$start = $this->getStartValue($howMany, $page);
-			$parameters = array($start, $howMany);
-
-			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
-
 			$statement .= "LIMIT :Start, :HowMany";
 
 			$start = $this->getStartValue($howMany, $page);
@@ -90,13 +83,6 @@ class AdminModel extends Model {
 		{
 			$statement = "SELECT *  FROM story s LEFT JOIN admin_approve_story aas ON s.storyID=aas.Story_StoryId ";
 			$statement .= "WHERE aas.Approved = 0 ";
-
-			$statement .= "LIMIT ?, ?";
-
-			$start = $this->getStartValue($howMany, $page);
-
-			$parameters = array($start, $howMany);
-
 			$statement .= "LIMIT :Start, :HowMany";
 
 			$start = $this->getStartValue($howMany, $page);
@@ -130,11 +116,6 @@ class AdminModel extends Model {
 
 			$statement = "SELECT *, COUNT(urs.User_UserId) AS NumberOfFlagged FROM story s RIGHT JOIN user_recommend_story urs ";
 			$statement .= "ON s.storyID=urs.Story_StoryId WHERE urs.Opinion = 0 ";
-
-			$statement .= "GROUP BY s.storyID ORDER BY NumberOfFlagged DESC LIMIT ?, ?";
-
-			$parameters = array($start, $howMany);
-
 			$statement .= "GROUP BY s.storyID ORDER BY NumberOfFlagged DESC LIMIT :Start, :HowMany";
 
 			$parameters = array(
@@ -243,7 +224,7 @@ class AdminModel extends Model {
 	}
 
 // Is this function necessary?
-	public function changeRejectedToApproved($adminID, $storyID)
+	public function changeRejectedToApproved($adminID, $storyID, $reason)
 	{
 		//Accepts the adminID and the story id
 		//Change a rejected story to an approved story
@@ -251,9 +232,16 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "UPDATE admin_approve_story SET Approved = 1, User_UserId = ? WHERE storyID = ?";
+			$this->fetch("UPDATE admin_approve_story SET Active = 0 WHERE storyID = :StoryID AND Active = 1", array(":StoryID" => $storyID));
 
-			$parameters = array($adminID, $storyID);
+			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, ApprovalCommentE, Approved) VALUES(:AdminID, :StoryID, :Reason, 1) ";
+			$statement .= "ON DUPLICATE KEY UPDATE ApprovalCommentE = :Reason, Approved = 1, Active = 1";
+
+			$parameters = array(
+					":Reason" => $reason, 
+					":StoryID" => $storyID, 
+					":AdminID" => $adminID
+					);
 
 			return $this->fetch($statement, $parameters);
 		}
@@ -272,29 +260,18 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT COUNT(*) FROM user WHERE userID = ? AND AdminFlag = 1";
+			$this->fetch("UPDATE admin_approve_story SET Active = 0 WHERE storyID = :StoryID AND Active = 1", array(":StoryID" => $storyID));
 
-			$rowCount = $this->fetchRowCount($statement, array($adminID));
+			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, ApprovalCommentE, Approved) VALUES(:AdminID, :StoryID, :Reason, 0) ";
+			$statement .= "ON DUPLICATE KEY UPDATE ApprovalCommentE = :Reason, Approved = 0, Active = 1";
 
-			if($rowCount >= 1)
-			{
-				try
-				{
-					$statement = "UPDATE admin_approve_story SET Approved = 0, ApprovalCommentE = ? WHERE userId = ? AND storyID = ?";
+			$parameters = array(
+					":Reason" => $reason, 
+					":StoryID" => $storyID, 
+					":AdminID" => $adminID
+					);
 
-					$parameters = array($reason, $adminID, $storyID);
-
-					return $this->execute($statement);
-				}
-				catch(PDOException $e)
-				{
-					return $e->getMessage();
-				}
-			}
-			else
-			{
-				return false;
-			}
+			return $this->fetch($statement, $parameters);
 		}
 		catch(PDOException $e)
 		{
@@ -314,10 +291,13 @@ class AdminModel extends Model {
 		{
 			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged FROM comment c LEFT JOIN user_inappropriateflag_comment uic ";
 			$statement .= "ON c.CommentId = uic.Comment_CommentId ";
-			$statement .= "GROUP BY CommentId ORDER BY COUNT(uic.User_UserId) DESC LIMIT ?, ?";
-
+			$statement .= "GROUP BY CommentId ORDER BY COUNT(uic.User_UserId) DESC LIMIT :Start, :HowMany";
+			
 			$start = $this-> getStartValue($howMany, $page);
-			$parameters = array($start, $howMany);
+			$parameters = array(
+				":Start"=>$start, 
+				":HowMany"=>$howMany
+				);
 
 			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/CommentViewModel");
 
@@ -337,9 +317,16 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "INSERT admin_reject_comment (Comment_CommentId, User_UserId, Rejected, Reason) VALUES (:commentID, :UserID, 1, :Reason)";
+			$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Active = 1 AND Comment_CommentId = :CommentID", array(':CommentID' => $commentID));
 
-			$parameters = array($commentID, $adminID, $reason);
+			$statement = "INSERT admin_reject_comment (Comment_CommentId, User_UserId, Rejected, Reason) VALUES (:CommentID, :AdminID, 1, :Reason)";
+			$statement .= "ON DUPLICATE KEY UPDATE Reason = :Reason, Rejected = 1, Active = 1";
+
+			$parameters = array(					 
+					":CommentID" => $commentID, 
+					":AdminID" => $adminID,
+					":Reason" => $reason
+					);
 
 			return $this->fetch($statement, $parameters);
 		}
@@ -357,9 +344,16 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "INSERT admin_reject_comment (Comment_CommentId, User_UserId, Rejected, Reason) VALUES (:commentID, :UserID, 0, :Reason)";
+			$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Active = 1 AND Comment_CommentId = :CommentID", array(':CommentID' => $commentID));
 
-			$parameters = array(":CommentID" => $commentID, ":UserID" => $adminID, ":Reason" => $reason);
+			$statement = "INSERT admin_reject_comment (Comment_CommentId, User_UserId, Rejected, Reason) VALUES (:CommentID, :AdminID, 0, :Reason)";
+			$statement .= "ON DUPLICATE KEY UPDATE Reason = :Reason, Rejected = 0, Active = 1";
+
+			$parameters = array(
+					":CommentID" => $commentID, 
+					":AdminID" => $adminID,
+					":Reason" => $reason
+					);
 
 			return $this->fetch($statement, $parameters);
 		}
@@ -369,75 +363,75 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function changeRejectedToApprovedAsAdmin($adminID, $commentID, $reason)
-	{
-		//Accepts the adminID and the comment id
-		//Change a rejected comment to an approved comment
-		//returns bool whether it was saved succesfully or not
+	// public function changeRejectedToApprovedAsAdmin($adminID, $commentID, $reason)
+	// {
+	// 	//Accepts the adminID and the comment id
+	// 	//Change a rejected comment to an approved comment
+	// 	//returns bool whether it was saved succesfully or not
 
-		try
-		{
-			$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Comment_CommentId = :CommentID AND Active = 1", array($commentID));
+	// 	try
+	// 	{
+	// 		$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Comment_CommentId = :CommentID AND Active = 1", array(":CommentID" => $commentID));
 
-			$statement = "SELECT * FROM admin_reject_comment WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
+	// 		$statement = "SELECT * FROM admin_reject_comment WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
 
-			$parameters = array(":UserID" => $adminID, ":CommentID" => $commentID);
+	// 		$parameters = array(":UserID" => $adminID, ":CommentID" => $commentID);
 
-			$rowCount = $this->fetchRowCount($statement, $parameters);
+	// 		$rowCount = $this->fetchRowCount($statement, $parameters);
 
-			if($rowCount >= 1)
-			{
-				$statement2 = "UPDATE admin_reject_comment SET Rejected = 0, Reason = :Reason, Active = 1 ";
-				$statement2 .= "WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
+	// 		if($rowCount >= 1)
+	// 		{
+	// 			$statement2 = "UPDATE admin_reject_comment SET Rejected = 0, Reason = :Reason, Active = 1 ";
+	// 			$statement2 .= "WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
 
-				$parameters2 = array(":Reason" => $reason, ":UserID" => $adminID, ":CommentID" => $commentID);
-				return $this->fetch($statement2, $parameters2);
-			}
-			else
-			{
-				return approveCommentAsAdmin($adminID, $commentID, $reason);
-			}
-		}
-		catch(PDOException $e)
-		{
-			return $e->getMessage();
-		}
-	}
+	// 			$parameters2 = array(":Reason" => $reason, ":UserID" => $adminID, ":CommentID" => $commentID);
+	// 			return $this->fetch($statement2, $parameters2);
+	// 		}
+	// 		else
+	// 		{
+	// 			return approveCommentAsAdmin($adminID, $commentID, $reason);
+	// 		}
+	// 	}
+	// 	catch(PDOException $e)
+	// 	{
+	// 		return $e->getMessage();
+	// 	}
+	// }
 
-	public function changeApprovedToRejectedAsAdmin($adminID, $commentID, $reason)
-	{
-		//Accepts the adminID, the comment id and the reason why it was rejected
-		//Change an approved comment to a rejected comment
-		//returns bool whether it was saved succesfully or not
+	// public function changeApprovedToRejectedAsAdmin($adminID, $commentID, $reason)
+	// {
+	// 	//Accepts the adminID, the comment id and the reason why it was rejected
+	// 	//Change an approved comment to a rejected comment
+	// 	//returns bool whether it was saved succesfully or not
 
-		try
-		{
-			$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Comment_CommentId = :CommentID AND Active = 1", array($commentID));
+	// 	try
+	// 	{
+	// 		$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Comment_CommentId = :CommentID AND Active = 1", array($commentID));
 
-			$statement = "SELECT * FROM admin_reject_comment WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
+	// 		$statement = "SELECT * FROM admin_reject_comment WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
 
-			$parameters = array(":UserID" => $adminID, ":CommentID" => $commentID);
+	// 		$parameters = array(":UserID" => $adminID, ":CommentID" => $commentID);
 
-			$rowCount = $this->fetchRowCount($statement, $parameters);
+	// 		$rowCount = $this->fetchRowCount($statement, $parameters);
 
-			if($rowCount >= 1)
-			{
-				$statement2 = "UPDATE admin_reject_comment SET Rejected = 1, Reason = :Reason, Active = 1 ";
-				$statement2 .= "WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
+	// 		if($rowCount >= 1)
+	// 		{
+	// 			$statement2 = "UPDATE admin_reject_comment SET Rejected = 1, Reason = :Reason, Active = 1 ";
+	// 			$statement2 .= "WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
 
-				$parameters2 = array(":Reason" => $reason, ":UserID" => $adminID, ":CommentID" => $commentID);
-				return $this->fetch($statement2, $parameters2);
-			}
-			else
-			{
-				return rejectCommentAsAdmin($adminID, $commentID, $reason);
-			}
-		}
-		catch(PDOException $e)
-		{
-			return $e->getMessage();
-		}
-	}
+	// 			$parameters2 = array(":Reason" => $reason, ":UserID" => $adminID, ":CommentID" => $commentID);
+	// 			return $this->fetch($statement2, $parameters2);
+	// 		}
+	// 		else
+	// 		{
+	// 			return rejectCommentAsAdmin($adminID, $commentID, $reason);
+	// 		}
+	// 	}
+	// 	catch(PDOException $e)
+	// 	{
+	// 		return $e->getMessage();
+	// 	}
+	// }
 
 	public function getListUsers($howMany = self::HOWMANY, $page = self::PAGE)
 	{
@@ -532,12 +526,7 @@ class AdminModel extends Model {
 
 			$userList = $this->fetchIntoClass($statement, $parameters, "shared/UserViewModel");
 
-			if(isset($userList[0]))
-			{
-				return $userList;
-			}
-
-			return null;
+			return $userList;
 		}
 		catch(PDOException $e)
 		{
@@ -597,7 +586,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function updateQuestionAnswer($adminID, $questionAnswerID, $answerE, $answerF)
+	public function updateQuestionAnswer($adminID, $questionAnswerID, $answerE, $answerF)// what does the answer means here. predefined or not?
 	{
 		//Accepts a question answer id, and english answer, a french answer
 		//returns bool if saved succesfully
@@ -615,9 +604,6 @@ class AdminModel extends Model {
 	{
 		//Accepts a question id, and english question, a french question
 		//returns bool if saved succesfully
-
-		if(!($this->isAdmin($adminID)))
-			return false;
 
 		try
 		{
