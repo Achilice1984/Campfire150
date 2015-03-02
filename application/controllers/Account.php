@@ -109,7 +109,7 @@ class Account extends Controller {
 		$model = $this->loadModel('Admin/AdminModel');
 	
 		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
-		$returnData = $model->addQuestionAnswer(9, "Always", "toujours");
+		$returnData = $model->changeRejectedToApproved(1, 10, 'Not a good reason');
 
 		debugit($returnData);
 	}
@@ -118,7 +118,7 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Story/StoryModel');
 		
-		$returnData = $model->searchStories("art", 1);
+		$returnData = $model->searchStories("ar", 2);
 		debugit($returnData);
 	}
 
