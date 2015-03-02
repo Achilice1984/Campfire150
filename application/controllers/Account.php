@@ -108,7 +108,7 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Admin/AdminModel');
 	
-		$returnData = $model->getStoryListFlaggedInappropriate(2, 5, 1);
+		$returnData = $model->getListQuestionaireQuestions(5, 1);
 
 		debugit($returnData);
 	}
