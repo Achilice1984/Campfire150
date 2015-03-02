@@ -9,13 +9,12 @@ class StorySearch extends Model
 {
 	public function SearchQuery($storySearch, $userID, $howMany = self::HOWMANY, $page = self::PAGE, $approved = TRUE, $active = TRUE)
 	{
-		$statement = $this->BuildQuery();
+		$statement = $this->BuildQuery($storySearch);
 
 		$start = $this-> getStartValue($howMany, $page);	
 
 		$parameters = array(":storySearchTag" => "%" . $storySearch . "%", 
 							":storySearch2Tag" => $storySearch, 
-							":storySearchTitle" => "%" . $storySearch . "%", 
 							":userid" => $userID, 
 							":ActiveStory" => $active, 
 							":ApprovedStory" => $approved, 
@@ -28,9 +27,13 @@ class StorySearch extends Model
 		return $story;
 	}
 
-	private function BuildQuery()
+	private function BuildQuery($storySearch)
 	{
-		return "SELECT 
+		$search = array("\\",  "\x00", "\n",  "\r",  "'",  '"', "\x1a");
+    	$replace = array("\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z");
+		$storySearch = str_replace($search, $replace, strtolower($storySearch));
+
+		$statement = "SELECT 
 					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
 
 					urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
@@ -41,9 +44,22 @@ class StorySearch extends Model
 
 					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active,
 
-					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
+					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, (
 
-					(
+					((Lower(s.StoryTitle) LIKE '%$storySearch%') * 4)";
+
+					foreach (explode(" ", $storySearch) as $word) {
+						$statement .= "+((Lower(s.StoryTitle) LIKE '% $word %') * 2)";
+					}
+
+					for( $i = 0; $i <= strlen($storySearch) + 2; $i++ ) {
+						$storySearch = substr($storySearch, 0, -1);
+						
+						$statement .= "+((Lower(s.StoryTitle) LIKE '$storySearch%'))";
+					} 
+
+					$statement .= "
+						+
 					    (SELECT COUNT(1)
 					        FROM story_has_tag sht
 					        INNER JOIN tag t
@@ -59,8 +75,6 @@ class StorySearch extends Model
 					        WHERE Lower(t.Tag) LIKE :storySearch2Tag
 					        AND sht.Story_StoryId = s.StoryId
 						) * 2)
-					    +
-					    (Lower(s.StoryTitle) LIKE :storySearchTitle)
 					)
 					    
 					AS hits,
@@ -93,7 +107,9 @@ class StorySearch extends Model
 					AND aps.Approved = :ApprovedStory
 					HAVING hits > 0
 					ORDER BY hits DESC
-					LIMIT :start,:howmany";		
+					LIMIT :start,:howmany";	
+
+		return $statement;	
 			
 	}
 }
