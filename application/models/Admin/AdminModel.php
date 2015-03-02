@@ -1,4 +1,5 @@
 <?php
+	require_once(APP_DIR .'helpers/storysearch.php');
 
 class AdminModel extends Model {
 
@@ -23,42 +24,46 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function searchStoriesPendingApproval($storySearch, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function searchStoriesPendingApproval($storySearch, $adminID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts string to search for a story
 		//Checks if user has marked story as inappropriate and if user has recommended story (add these to story viewmodel class)
 		//returns an array of Story class that relate to the search string
 
+		try 
+		{
+			$searchObject = new StorySearch();
+
+			$story = $searchObject->SearchQuery($storySearch, $userID, $howMany, $page, $approved = FALSE, $active = TRUE); 
+
+			return $story;
+
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
 	}
 
-	public function searchStoriesRejected($storySearch, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function searchStoriesRejected($storySearch, $userID, $howMany = self::HOWMANY, $page = self::PAGE)//tested
 	{
 		//Accepts string to search for a story
 		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
 		//returns an array of Story class that relate to the search string
 
-		// try
-		// {
-		// 	$statement = "SELECT *  FROM story WHERE storyID NOT IN ";
-		// 	$statement .= "(SELECT Story_StoryId FROM admin_approve_story)";
-		// 	$statement .= "LIMIT :Start, :HowMany";
+		try 
+		{
+			$searchObject = new StorySearch();
 
-		// 	$start = $this->getStartValue($howMany, $page);
+			$story = $searchObject->SearchQuery($storySearch, $userID, $howMany, $page, $approved = FALSE, $active = TRUE); 
 
-		// 	$parameters = array(
-		// 		":Start"=>$start, 
-		// 		":HowMany"=>$howMany
-		// 		);
+			return $story;
 
-		// 	$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
-
-		// 	return $storyList;
-
-		// }
-		// catch(PDOException $e) 
-		// {
-		// 	return $e->getMessage();
-		// }	
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}	
 	}
 
 	public function getStoryListPendingApproval($howMany = self::HOWMANY, $page = self::PAGE)//tested
@@ -163,49 +168,22 @@ class AdminModel extends Model {
 
 		try
 		{
-// 			$this->fetch("UPDATE admin_approve_story SET Active = 0 WHERE Story_StoryId = :StoryID AND Active = 1", array(":StoryID"=>$storyID));//Set the active record for the story to deactive;
-// echo "test";
-// 			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, ApprovalCommentE, Approved)
-// 				VALUES(:AdminID, :StoryID, :Reason, FALSE);
-// 				ON DUPLICATE KEY
-// 					UPDATE ApprovalCommentE=:Reason, Approved=0, Active=1";
+			$this->fetch("UPDATE admin_approve_story SET Active = 0
+			 WHERE Story_StoryId = :StoryID AND Active = 1", array(":StoryID"=>$storyID));//Set the active record for the story to deactive;
 
-// 			$parameters = array(
-// 					":AdminID" => $adminID,
-// 					":StoryID" => $storyID,
-// 					":Reason" => $reason
-// 					);
+			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved)
+			  VALUES(:AdminID, :StoryID, :Reason, FALSE)
+				ON DUPLICATE KEY
+					UPDATE Reason=:NewReason, Approved=0, Active=1";
 
-// 			return $this->fetch($statement, $parameters);
-
-			$statement = "SELECT *  FROM admin_approve_story WHERE User_UserId = :UserID AND Story_StoryId = :StoryID";
-
-			$rowCount = $this->fetchRowCount($statement, array(":UserID"=>$adminID, ":StoryID"=>$storyID));
-			
-			if($rowCount <= 0)
-			{
-				$statement2 = "INSERT INTO admin_approve_story VALUES(:AdminID, :StoryID, :Reason, NULL, NULL, 0)";
-
-				$parameters = array(
-					":AdminID" => $adminID, 
-					":StoryID" => $storyID, 
-					":Reason" => $reason);
-
-				return $this->fetch($statement2, $parameters);
-			}
-			else
-			{
-				$statement2 = "UPDATE admin_approve_story SET ApprovalCommentE = :Reason, Active = 1, Approved = 0  ";
-				$statement2 .= "WHERE User_UserId = :AdminID AND Story_StoryId = :StoryID";
-
-				$parameters = array(
-					":Reason" => $reason, 
-					":StoryID" => $storyID, 
-					":AdminID" => $adminID
+			$parameters = array(
+					":AdminID" => $adminID,
+					":StoryID" => $storyID,
+					":Reason" => $reason,
+					":NewReason" => $reason
 					);
 
-				return $this->fetch($statement2, $parameters);	
-			}
+			return $this->fetch($statement, $parameters);
 		}
 		catch(PDOException $e)
 		{
@@ -239,7 +217,7 @@ class AdminModel extends Model {
 			}
 			else
 			{
-				$statement2 = "UPDATE admin_approve_story SET ApprovalCommentE = :Reason, Active = 1, Approved = 1  ";
+				$statement2 = "UPDATE admin_approve_story SET Reason = :Reason, Active = 1, Approved = 1  ";
 				$statement2 .= "WHERE User_UserId = :AdminID AND Story_StoryId = :StoryID";
 
 				$parameters = array(
@@ -270,15 +248,16 @@ class AdminModel extends Model {
 		{
 			$this->fetch("UPDATE admin_approve_story SET Active = 0 WHERE storyID = :StoryID AND Active = 1", array(":StoryID" => $storyID));
 
-			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, ApprovalCommentE, Approved)
+			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved)
 				VALUES(:AdminID, :StoryID, :Reason, 1) 
 				ON DUPLICATE KEY 
-					UPDATE ApprovalCommentE = :Reason, Approved = 1, Active = 1";
+					UPDATE Reason = :NewReason, Approved = 1, Active = 1";
 
 			$parameters = array(
 					":Reason" => $reason, 
 					":StoryID" => $storyID, 
-					":AdminID" => $adminID
+					":AdminID" => $adminID,
+					":NewReason" => $reason
 					);
 
 			return $this->fetch($statement, $parameters);
@@ -300,8 +279,8 @@ class AdminModel extends Model {
 		{
 			$this->fetch("UPDATE admin_approve_story SET Active = 0 WHERE storyID = :StoryID AND Active = 1", array(":StoryID" => $storyID));
 
-			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, ApprovalCommentE, Approved) VALUES(:AdminID, :StoryID, :Reason, 0) ";
-			$statement .= "ON DUPLICATE KEY UPDATE ApprovalCommentE = :Reason, Approved = 0, Active = 1";
+			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved) VALUES(:AdminID, :StoryID, :Reason, 0) ";
+			$statement .= "ON DUPLICATE KEY UPDATE Reason = :Reason, Approved = 0, Active = 1";
 
 			$parameters = array(
 					":Reason" => $reason, 
