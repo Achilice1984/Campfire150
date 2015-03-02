@@ -118,11 +118,10 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Story/StoryModel');
 		
-<<<<<<< HEAD
 		$returnData = $model->getStoryListNewest(1,5,1);
-=======
+
 		$returnData = $model->searchStories("there is", 1);
->>>>>>> origin/master
+		
 		debugit($returnData);
 	}
 

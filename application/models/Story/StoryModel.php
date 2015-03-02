@@ -955,7 +955,7 @@ class StoryModel extends Model {
 
 			$parameters = array(":UserId" => $userID, ":CommentID" => $commentID, ":DateCreated" => $this->getDateNow());
 
-			$this->execute($statement);	
+			$this->fetch($statement, $parameters);	
 
 		}
 		catch(PDOException $e) 
