@@ -84,6 +84,7 @@ class Story extends Controller {
 
 		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
 		$view->set('privacyDropdownValues', $siteModel->getDropdownValues_StoryPrivacyType());
+		$view->set('storyQuestions', $siteModel->getStoryQuestions());
 
 		//Add a variable with old login data so that it can be accessed in the view
 		$view->set('storyViewModel', $storyViewModel);

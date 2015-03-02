@@ -817,7 +817,7 @@ class StoryModel extends Model {
 		//returns an array of Story class related to a category
 		try
 		{
-		$statement = "SELECT s.*, aas.Approved, spt.NameE
+			$statement = "SELECT s.*, aas.Approved, spt.NameE
 					  FROM Story s 
 					  INNER JOIN admin_approve_story aas 
 					  ON s.StoryId = aas.Story_StoryId
@@ -841,6 +841,32 @@ class StoryModel extends Model {
 			return $e->getMessage();
 		}
 
+	}
+
+
+	public function getTotalCommentsApproved($userID)
+	{
+
+		$statement = "SELECT count(*)
+						FROM comment c 
+						WHERE c.User_UserId = :UserId
+						AND c.PublishFlag = TRUE";
+
+		$totalComments = $this->fetchNum($statement, array(":UserId" => $userID));
+
+		return $totalComments;
+	}
+
+	public function getTotalCommentsPending($userID)
+	{
+		$statement = "SELECT count(*)
+						FROM comment c 
+						WHERE c.User_UserId = :UserId
+						AND c.PublishFlag = FALSE";
+
+		$totalComments = $this->fetchNum($statement, array(":UserId" => $userID));
+
+		return $totalComments;
 	}
 
 	//This doesn't work related the story FK
@@ -873,6 +899,7 @@ class StoryModel extends Model {
 							FROM Comment c
 							WHERE Story_StoryId = :storyID 
 							AND c.Active = TRUE
+							AND c.PublishFlag
 							ORDER BY CommentId 
 							ASC LIMIT :start, :howmany";
 

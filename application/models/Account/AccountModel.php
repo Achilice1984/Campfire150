@@ -25,8 +25,8 @@ class AccountModel extends Model {
 			//Eliminate array 
 			$user = $user[0];
 
-
-			if($user->VerifiedEmail && !isset($user->LockoutTimes) || strtotime('-15 minutes') > $user->LockoutTimes) //Is user locked out?
+			//echo "<br /><br /><br /><br /><br /><br />". strtotime($user->LockoutTimes) . "<br />" . strtotime('2 minutes') . "<br />" . (strtotime('-1 minutes') > strtotime($user->LockoutTimes));
+			if($user->VerifiedEmail && !isset($user->LockoutTimes) || strtotime('+10 minutes') > strtotime($user->LockoutTimes)) //Is user locked out?
 			{
 				//check to see if user is properly authenticated
 				if($authentication->authenticate($loginViewModel->Password, $user)) //Is user peoperly authenticated?
@@ -48,17 +48,27 @@ class AccountModel extends Model {
 				else //User exists BUT Login failed, update failed attempts
 				{
 					//to many failed login attempts, lockout user
-					if($user->FailedLoginAttempt >= 5)
-					{
+					if($user->FailedLoginAttempt >= 10)
+					{		
 						//add a failed login attempt and set the lockout time
 						$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt, LockoutTimes = :LockoutTimes";
 						$statement .= " WHERE UserId = :UserId";
 
 						$parameters = array( 
 							":FailedLoginAttempt" => $user->FailedLoginAttempt + 1, 
-							":LockoutTimes" => new DateTime(),
+							":LockoutTimes" => $this->getDateNow(),
 							":UserId" => $user->UserId
 						);
+
+						//If this is already set, we need to remove the current values as login attempts are reset
+						if(isset($user->LockoutTimes))	
+						{
+							$parameters = array( 
+								":FailedLoginAttempt" => 1, 
+								":LockoutTimes" => NULL,
+								":UserId" => $user->UserId
+							);
+						}
 						
 						$this->fetch($statement, $parameters);
 					}
@@ -437,8 +447,8 @@ class AccountModel extends Model {
 
 	public function updateUserLanguagePreference($userId, $languageId)
 	{
-		$statement = "UPDATE user SET LanguageType_LanguageId = :LanguageType_LanguageId";
-		$statement .= " WHERE UserId = :UserId";
+		$statement = "UPDATE user SET LanguageType_LanguageId = :LanguageType_LanguageId
+			 			WHERE UserId = :UserId";
 
 		$parameters = array( 
 			":UserId" => $userId,
@@ -454,7 +464,8 @@ class AccountModel extends Model {
 		$statement = "SELECT * FROM user
 						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
 						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
-						WHERE user.Email = :Email";
+						WHERE user.Email = :Email
+						AND user.Active = TRUE";
 
 		$user = $this->fetchIntoClass($statement, array(":Email" => $email), "shared/UserViewModel");
 
@@ -470,7 +481,8 @@ class AccountModel extends Model {
 		$statement = "SELECT * FROM user
 						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
 						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
-						WHERE user.UserId = :UserId";
+						WHERE user.UserId = :UserId
+						AND user.Active = TRUE";
 
 		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/UserViewModel");
 
@@ -487,7 +499,8 @@ class AccountModel extends Model {
 		$statement = "SELECT * FROM user
 						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
 						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
-						WHERE user.Email = :Email";
+						WHERE user.Email = :Email
+						AND user.Active = TRUE";
 
 		$user = $this->fetchIntoClass($statement, array(":Email" => $email), "Account/ProfileViewModel");
 
@@ -503,7 +516,8 @@ class AccountModel extends Model {
 		$statement = "SELECT * FROM user
 						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
 						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
-						WHERE user.UserId = :UserId";
+						WHERE user.UserId = :UserId
+						AND user.Active = TRUE";
 
 		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "Account/ProfileViewModel");
 
@@ -513,198 +527,7 @@ class AccountModel extends Model {
 		}
 
 		return null;
-	}
-
-
-	/******************************************************************************************************************
-	*
-	*				Account Stories
-	*
-	******************************************************************************************************************/	
-
-	public function getTotalStoriesApproved($userID)
-	{
-		//Accepts an user id
-		//Gets the total stories written by the user who owns this email address
-		//Returns the total
-		$statement = "SELECT count(*)
-						FROM story 
-						LEFT JOIN admin_approve_story 
-						ON story.StoryId = admin_approve_story.Story_StoryId
-						WHERE story.User_UserId = :UserId AND story.Published = TRUE 
-						AND admin_approve_story.Approved = TRUE";
-
-		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
-
-		return $totalStories;
-	}
-	public function getTotalStoriesPending($userID)
-	{
-		//Accepts an user id
-		//Gets the total stories written by the user who owns this email address
-		//Returns the total
-		$statement = "SELECT count(*)
-						FROM story 
-						LEFT JOIN admin_approve_story 
-						ON story.StoryId = admin_approve_story.Story_StoryId
-						WHERE story.User_UserId = :UserId
-						AND admin_approve_story.User_UserId IS NULL";
-
-		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
-
-		return $totalStories;
-	}
-	public function getTotalStoriesDenied($userID)
-	{
-		//Accepts an user id
-		//Gets the total stories written by the user who owns this email address
-		//Returns the total
-		$statement = "SELECT count(*)
-						FROM story 
-						LEFT JOIN admin_approve_story 
-						ON story.StoryId = admin_approve_story.Story_StoryId
-						WHERE story.User_UserId = :UserId 
-						AND admin_approve_story.Pending = TRUE";
-
-		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
-
-		return $totalStories;
-	}
-
-	public function getStoriesWrittenByCurrentUser($userID, $howMany = self::HOWMANY, $page = self::PAGE)
-	{
-		//Accepts a user id
-		//Gets an array of stories written by the owner of this user id
-		//Returns an array of Story class
-
-		$statement = "SELECT *
-						FROM story 
-						LEFT JOIN admin_approve_story 
-						ON story.StoryId = admin_approve_story.Story_StoryId
-						WHERE story.User_UserId = :UserId 
-						AND story.Active = TRUE 
-						AND story.Published = TRUE
-						AND admin_approve_story.Approved = TRUE
-						LIMIT :start, :howmany";
-
-		$start = $this-> getStartValue($howMany, $page);			
-
-		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
-
-		return $stories;
-	}
-	public function getStoriesRecommendedByFriends_MostPopular($userID, $howMany = self::HOWMANY, $page = self::PAGE)
-	{
-		//Accepts a user id
-		//Gets an array of stories that were recommended to the owner of this user id
-		//Returns an array of Story class
-
-		$statement = "SELECT story.*, COUNT(user_recommend_story.Opinion) AS recommendation_count
-		FROM story LEFT JOIN user_recommend_story
-		ON story.StoryId = user_recommend_story.Story_StoryId
-		WHERE story.User_UserId IN
-		(SELECT DISTINCT following.User_FollowerId
-		FROM following
-		WHERE following.User_UserId = :UserId AND following.Active = TRUE)
-		AND user_recommend_story.Opinion = TRUE
-		AND story.Published = TRUE
-		GROUP BY story.StoryId
-		ORDER BY recommendation_count DESC
-		LIMIT :start, :howmany";
-
-		$start = $this-> getStartValue($howMany, $page);
-
-		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
-
-		return $stories;
-	}
-
-	public function getStoriesRecommendedByFriends_Latest($userID, $howMany = self::HOWMANY, $page = self::PAGE)
-	{
-		//Accepts a user id
-		//Gets an array of stories that were recommended to the owner of this user id
-		//Returns an array of Story class
-		
-		$statement = "SELECT story.*, user_recommend_story.LatestChange
-		FROM story LEFT JOIN user_recommend_story 
-		ON story.StoryId = user_recommend_story.Story_StoryId
-		WHERE story.User_UserId IN 
-		(SELECT DISTINCT following.User_FollowerId 
-		FROM following 
-		WHERE following.User_UserId = :UserId AND following.Active = TRUE)
-		AND user_recommend_story.Opinion = TRUE
-		AND story.Published = TRUE
-		GROUP BY story.StoryId
-		ORDER BY user_recommend_story.LatestChange DESC
-		LIMIT :start, :howmany";
-
-		$start = $this-> getStartValue($howMany, $page);
-
-		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
-
-		return $stories;
-	}
-
-	public function getStoriesRecommendedByCurrentUser($userID, $howMany = self::HOWMANY, $page = self::PAGE)
-	{
-		//Accepts a user id
-		//Gets an array of stories that were recommended to the owner of this user id
-		//Returns an array of Story class
-
-		$statement = "SELECT *
-						FROM story 
-						LEFT JOIN admin_approve_story 
-						ON story.StoryId = admin_approve_story.Story_StoryId
-						LEFT JOIN user_recommend_story
-						ON story.StoryId = user_recommend_story.Story_StoryId
-						WHERE user_recommend_story.User_UserId = :UserId
-						AND story.Active = TRUE 
-						AND story.Published = TRUE
-						AND admin_approve_story.Approved = TRUE
-						LIMIT :start, :howmany";
-
-		$start = $this-> getStartValue($howMany, $page);
-
-		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
-
-		return $stories;
-	}
-
-
-	/******************************************************************************************************************
-	*
-	*				Account Comments
-	*
-	******************************************************************************************************************/	
-
-	public function getTotalCommentsApproved($userID)
-	{
-		//Accepts an user id
-		//Gets the total stories written by the user who owns this email address
-		//Returns the total
-		$statement = "SELECT count(*) 
-						FROM comment 
-						WHERE User_UserId = :UserId
-						AND PublishFlag = TRUE";
-
-		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
-
-		return $totalStories;
-	}
-	public function getTotalCommentsPending($userID)
-	{
-		//Accepts an user id
-		//Gets the total stories written by the user who owns this email address
-		//Returns the total
-		$statement = "SELECT count(*) 
-						FROM comment 
-						WHERE User_UserId = :UserId
-						AND PublishFlag = FALSE";
-
-		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
-
-		return $totalStories;
-	}
+	}	
 
 
 	/******************************************************************************************************************
@@ -748,12 +571,47 @@ class AccountModel extends Model {
 		//Accepts a user id and the id of the user to follow
 		//Check that not already following other user
 		//Returns bool if saved succesfully
+
+		try
+		{
+			$statement = "INSERT INTO following (User_UserId, User_FollowerId, DateCreated) 
+						  VALUES(:User_UserId, :User_FollowerId, :DateCreated)
+						  ON DUPLICATE KEY
+						  	UPDATE Active = TRUE";
+
+			$parameters = array(":User_UserId" => $userID, ":User_FollowerId" => $userToFollowID, ":DateCreated" => $this->getDateNow());
+
+			return $this->fetch($statement, $parameters);		
+		}
+		catch(Exception $e) 
+		{
+			return $e->getMessage();
+		}
 	}
 	public function unfollowUser($userID, $userToUnFollowID)
 	{
 		//Accepts a user id and the id of the user to stop following
 		//Check that user is following other user
 		//Returns bool if saved succesfully
+
+		try
+		{
+			$statement = "UPDATE following SET Active = FALSE
+			 			WHERE User_UserId = :User_UserId
+			 			AND User_FollowerId = :User_FollowerId";
+
+			$parameters = array( 
+				":User_UserId" => $userId,
+				":User_FollowerId" => $userToUnFollowID
+			);
+
+			
+			return $this->fetch($statement, $parameters);	
+		}
+		catch(Exception $e) 
+		{
+			return $e->getMessage();
+		}
 	}
 	public function getFollowers($userID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
@@ -850,6 +708,7 @@ class AccountModel extends Model {
 						((LOWER(FirstName) LIKE :firstName) + 
 						(LOWER(LastName) LIKE :lastName)) as hits
 						FROM   user
+						WHERE user.Active = TRUE
 						HAVING hits > 0
 						ORDER BY hits DESC
 						LIMIT :start, :howmany";
@@ -876,7 +735,10 @@ class AccountModel extends Model {
 		//Users must have verified flag set to true
 		//Returns an array of User class
 
-		$statement = "SELECT * FROM user LIMIT :start, :howmany";
+		$statement = "SELECT * 
+						FROM user 
+						WHERE user.Active = TRUE  
+						LIMIT :start, :howmany";
 
 		$start = $this->getStartValue($howMany, $page);
 
@@ -899,7 +761,11 @@ class AccountModel extends Model {
 		//Users must have verified flag set to true
 		//Returns an array of User class
 
-		$statement = "SELECT * FROM user ORDER BY DateCreated DESC LIMIT :start, :howmany";
+		$statement = "SELECT * 
+						FROM user 
+						WHERE user.Active = TRUE
+						ORDER BY DateCreated DESC 
+						LIMIT :start, :howmany";
 
 		$start = $this-> getStartValue($howMany, $page);
 
