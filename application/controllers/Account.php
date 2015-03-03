@@ -118,7 +118,7 @@ class Account extends Controller {
 	{
 		$model = $this->loadModel('Story/StoryModel');
 		
-		$returnData = $model->searchStories("ar", 2);
+		$returnData = $model->searchStories("this is", 2);
 		debugit($returnData);
 	}
 
@@ -493,6 +493,55 @@ class Account extends Controller {
 
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);
+	}
+
+	function follow($userID)
+	{
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+		$result;
+
+		//Load the AccountModel to access account functions
+		$accountModel = $this->loadModel('AccountModel');
+
+		if($userID != $this->currentUser->UserId)
+		{
+			$result = $accountModel->followUser($this->currentUser->UserId, $userID);
+		}
+
+		if ($this->isAjax()) {
+			return $result;			
+		}
+		else
+		{
+			$this->redirect("account/home");
+		}
+	}
+
+	function unfollow($userID)
+	{
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+
+		$result;
+
+		//Load the AccountModel to access account functions
+		$accountModel = $this->loadModel('AccountModel');
+
+		if($userID != $this->currentUser->UserId)
+		{
+			$result = $accountModel->unfollowUser($this->currentUser->UserId, $userID);
+		}
+
+		if ($this->isAjax()) {
+			return $result;			
+		}
+		else
+		{
+			$this->redirect("account/home");
+		}
 	}
 }
 

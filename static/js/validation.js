@@ -105,7 +105,56 @@ $(document).ready(function() {
                         format: 'YYYY-MM-DD'
                     }
                 }
-            }
+            },
+            //Story Add
+            'QuestionAnswers[2][]': {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            'QuestionAnswers[3][]': {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            'QuestionAnswers[4][]': {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            'QuestionAnswers[5][]': {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            'QuestionAnswers[6][]': {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            'QuestionAnswers[7][]': {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            StoryTitle: {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            StoryPrivacyType_StoryPrivacyTypeId: {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
         }
     });
 });
