@@ -24,7 +24,7 @@
                 <div class="panel-body">
                     <div class="col-md-6"> 
 
-                        <form action="<?php echo BASE_URL; ?>story/add" method="post" id="loginForm">
+                        <form action="<?php echo BASE_URL; ?>story/add" method="post" enctype="multipart/form-data">
 
                             <?php 
                                 //Add error message block to the page
@@ -34,16 +34,26 @@
                                 include(APP_DIR . 'views/shared/displaySuccess.php'); 
                             ?>
 
-                            <?php foreach ($storyQuestions as $question): ?>
+                            <?php foreach ($storyQuestions as $question): 
+
+                                $multiple = "";
+                                $className = "";
+
+                                if($question->Value == 1 || $question->Value == 2)
+                                {
+                                    $multiple = "multiple";
+                                    $className = "multiSelect5";
+                                }                                
+                            ?>
 
                                 <div class="form-group">
                                     <label for="QuestionAnswers[]"><?php echo $question->Name; ?></label>
-                                    <select class="form-control" name="QuestionAnswers[]">
+                                    <select class="form-control <?php echo $className; ?>" name="QuestionAnswers[<?php echo $question->Value; ?>][]" <?php echo $multiple; ?> >
                                         <?php 
                                             echo "<option value=''></option>";
                                             
                                             for ($i=0; $i < count($question->Answers); $i++) { 
-                                                echo "<option " . ((isset($storyViewModel->QuestionAnswers[$i]) && $storyViewModel->QuestionAnswers[$i] == $question->Answers[$i]->Value) ? 'selected=selected' : "") . " value='" . $question->Answers[$i]->Value . "'>"; 
+                                                echo "<option " . ((isset($_POST["QuestionAnswers"][$question->Value]) && in_array($question->Answers[$i]->Value, $_POST["QuestionAnswers"][$question->Value])) ? 'selected=selected' : "") . " value='" . $question->Answers[$i]->Value . "'>"; 
                                                     echo $question->Answers[$i]->Name;
                                                 echo "</option>";
                                             }
@@ -68,6 +78,28 @@
                                         } 
                                     ?>
                                 </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Tags[]"><?php echo gettext("Story Tags"); ?></label>
+                                <select class="form-control multiSelectTag" name="Tags[]" multiple>
+                                    <option value=""></option>
+                                    <?php 
+                                        if(is_array($storyViewModel->Tags) && count($storyViewModel->Tags) > 0)
+                                        {
+                                            foreach ($storyViewModel->Tags as $tag) {
+                                                echo "<option value='$tag->id' selected=selected>"; 
+                                                    echo $tag->text;
+                                                echo "</option>";
+                                            } 
+                                        }
+                                    ?>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Images"><?php echo gettext("Story Image"); ?></label>
+                                <input type="file" id="Images" name="Images" placeholder="<?php echo gettext("Add an Image"); ?>" value="<?php //echo $storyViewModel->Image; ?>">
                             </div>
 							
 							<div class="form-group">
