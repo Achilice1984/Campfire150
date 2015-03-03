@@ -36,7 +36,9 @@ class Admin extends Controller {
 			//array("static/js/tinymce.js", "intern")
 			//array("http://www.example.com/static.js", "extern")
 		));
-
+		 $template->setCSS(array(
+			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
+		));
 		//Adds a variable or object to that can be accessed in the view
 		//$template->set('viewModel', $viewModel);
 
@@ -388,6 +390,8 @@ class Admin extends Controller {
 		}
 
 		//Process story list into array like below:	
+
+		$output = $adminModel->getStoryListPendingApproval($adminID, $howMany, $page);
 
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
