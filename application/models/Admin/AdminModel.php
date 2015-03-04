@@ -480,7 +480,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function deActivateUser($userID, $adminID, $reason)  //TESTED
+	public function deActivateUser($userID, $adminID, $reason)
 	{
 		//Accepts a User class for $user and a User class for $admin
 		//Sets the active flag to false in user profile
@@ -650,7 +650,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function updateAnswer($answerID, $answerE, $answerF)//tested
+	public function updateAnswer($answerID, $answerE, $answerF)
 	{
 		//Accepts a question answer id, and english answer, a french answer
 		//returns bool if saved succesfully
@@ -770,12 +770,12 @@ class AdminModel extends Model {
 			return $e->getMessage();
 		}
 	}
-	public function addDropdownValue($adminID, $dropdownValueE, $dropdownValueF)
+	public function addDropdownValue($tableName, $dropdownValueE, $dropdownValueF)
 	{
 		//Accepts a english dropdownValueE, a french dropdownValueF
 		//returns bool if saved succesfully
 	}
-	public function updateDropdownValue($adminID, $dropdownValueE, $dropdownValueF)
+	public function updateDropdownValue($tableName, $dropdownValueE, $dropdownValueF)
 	{
 		//Accepts a english dropdownValueE, a french dropdownValueF
 		//returns bool if saved succesfully
