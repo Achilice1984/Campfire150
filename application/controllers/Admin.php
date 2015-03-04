@@ -61,6 +61,87 @@ class Admin extends Controller {
 		}
 	}
 
+	function storyeditpending($storyId)
+	{
+
+		//Loads a model from corresponding model folder
+		$model = $this->loadModel('AdminModel');
+
+		/***********************************
+		*Get the story
+		************************************/
+		//Loads a model from corresponding model folder
+		$storyModel = $this->loadModel('Story/StoryModel');
+		//Load the loginViewModel
+		$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
+		$storyViewModel = $storyModel->getStory($this->currentUser->UserId, $storyId);
+
+		/***********************************
+		*Get the usewr details for the story
+		************************************/
+		//Loads a model from corresponding model folder
+		$accountModel = $this->loadModel('Account/AccountModel');
+		$userViewModel = $this->loadViewModel('shared/UserViewModel');		
+
+		if(isset($storyViewModel[0]))
+		{
+			//eliminate array
+			$storyViewModel = $storyViewModel[0];
+
+			$userViewModel = $accountModel->getUserProfileByID($storyViewModel->UserId);
+		}
+		
+		//Loads a model from corresponding model folder
+		$model = $this->loadModel('AdminModel');
+
+		//Load the approval view model
+		$aprovalViewModel = $this->loadViewModel('ApprovalViewModel');
+
+		//Map post values to the loginViewModel
+		$aprovalViewModel  = AutoMapper::mapPost($aprovalViewModel );
+
+		$aprovalViewModel->Id = $storyId;
+
+		//addSuccessMessage("dbError", "Errror!");
+		//addErrorMessage("dbError", "Errror!");
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			if($aprovalViewModel ->validate())
+			{
+				// Save data
+
+				//$this->redirect("admin/index");
+			}
+
+			//validate and save data
+			//$_POST["filedName"]
+		}
+
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('storyeditpending');
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('aprovalViewModel', $aprovalViewModel);
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('storyViewModel', $storyViewModel);
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('userViewModel', $userViewModel);
+
+		//Renders the view. true indicates to load the layout
+		$view->render(true);
+	}
+
+
+	/**************************************************************************************************
+	*
+	*						AJAX FUNCTIONS
+	*
+	***************************************************************************************************/
+
 	function AjaxUserList()
 	{
 		// [start] => 0
@@ -87,6 +168,12 @@ class Admin extends Controller {
 			$adminModel = $this->loadModel('AdminModel');
 
 			$userList = $adminModel->getListUsersDisabled($adminID, $howMany, $page);
+
+			// $resultData = array();
+
+			// foreach ($userList as $user)
+			// 	$resultData[] = array($user->FirstName  );
+			// }
 		}
 
 		//Process user list into array like below:	
@@ -95,7 +182,7 @@ class Admin extends Controller {
 	        "draw" => intval($_POST["draw"]),
 	        "recordsTotal" => 50,
 	        "recordsFiltered" =>50,
-	        "data" => array(
+	        "data" => array( //$resultData
 	        	array("Airi",
 				      "Satou",
 				      "Accountant",
