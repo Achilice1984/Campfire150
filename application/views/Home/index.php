@@ -27,8 +27,7 @@
     </div>
 
     <div class="row">
-         <canvas id="wordCloudCanvas" width="500" height="400"
- ></canvas> 
+         <canvas id="wordCloudCanvas" width="500" height="400"></canvas> 
     </div>
 </div>
     

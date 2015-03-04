@@ -44,6 +44,8 @@ class UserViewModel extends ViewModel
 
 	public $UserActionStatement;
 
+	public $PicUrl;
+
 	function __construct()
 	{
 		$validate = array();

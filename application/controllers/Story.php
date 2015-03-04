@@ -51,10 +51,51 @@ class Story extends Controller {
 		}
 	}
 
+	function ajaxSearch()
+	{
+		$storyModel = $this->loadModel("Story/StoryModel");
+		$searchResults = array();
+
+		if(isset($_POST["StorySearch"]))
+		{
+			$searchResults = $storyModel->searchStories($_POST["StorySearch"], $this->currentUser->UserId, 10, isset($_POST["StorySearchPage"]) ? $_POST["StorySearchPage"] : 1);
+		}
+
+		if (isset($searchResults)) {
+			foreach ($searchResults as $story)
+			{
+				include(APP_DIR . "views/Story/_searchPanel.php");
+			}
+		}
+	}
+
 	function search()
 	{
+		$storyModel = $this->loadModel("Story/StoryModel");
+		$searchResults = array();
+
+		if($this->isPost())
+		{
+			if(isset($_POST["StorySearch"]))
+			{
+				$searchResults = $storyModel->searchStories($_POST["StorySearch"], $this->currentUser->UserId);
+			}
+		}
+		
+		//$recommendedResults = $storyModel->searchStories($_POST["StorySearch"], $this->currentUser->UserId);
+
 		//Load the profile view
 		$view = $this->loadView('search');
+
+		$view->set('searchResults', $searchResults);
+
+		//Load up some js files
+		$view->setJS(array(
+			array("static/js/storysearch.js", "intern")
+		));
+		$view->setCSS(array(
+			array("static/css/storysearch.css", "intern")
+		));
 
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);
