@@ -19,7 +19,7 @@ class AdminModel extends Model {
 				return false;
 		}
 		catch(PDOException $e)
-		{
+		{ 
 			return $e->getMessage();
 		}
 	}
