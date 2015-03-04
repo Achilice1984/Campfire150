@@ -199,6 +199,34 @@ class Model {
 		}
 	}
 
+	public function fetchAll($qry, $params=array())
+	{
+		//Example array: array(':calories' => $calories, ':colour' => $colour)
+		//Or by order array($calories, $colour)
+		try 
+		{
+			$pdo = self::$connection->prepare($qry);
+			$this->bindParams($pdo, $params);
+
+		 	//$pdo->execute();
+		 	$pdo->execute($params);
+
+			//Fetches data and puts it into object form
+			$rows= $pdo->fetchAll();
+
+			if(isset($rows))
+			{
+				return $rows;
+			}
+
+			return 0;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
 	// This function will return a bool based on whether the query was executed successfuly or not
 	public function fetch($qry, $params=array()){
 		//Example array: array(':calories' => $calories, ':colour' => $colour)

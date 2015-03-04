@@ -1,33 +1,6 @@
 <?php
 
-class Home extends Controller {
-
-	function __construct()
-	{
-		parent::__construct();
-	}
-	
-	function index()
-	{
-		$model = $this->loadModel('HomeModel');
-		$models = $this->loadModel('SiteContent/SiteContentModel');
-
-		$homeViewModel = $this->loadViewModel('HomeViewModel');
-
-		if($this->isPost())
-		{
-			$homeViewModel = AutoMapper::mapPost($homeViewModel);
-
-			$homeViewModel->validate();
-
-			if($homeViewModel->getValidationResult()->isValid())
-			{
-				$this->redirect("");
-			}
-		}
-
-
-		// $comment = array(
+	// $comment = array(
 	 //            'author'    => 'joshdvrs',
 	 //            'email'     => 'josh.dvrs@gmail.com',
 	 //            'website'   => 'http://www.example.com/',
@@ -61,6 +34,19 @@ class Home extends Controller {
 		//             ));
 		// print_r($result);
 
+class Home extends Controller {
+
+	function __construct()
+	{
+		parent::__construct();
+	}
+	
+	function index()
+	{
+		$storyModel = $this->loadModel('Story/StoryModel');
+		$homeViewModel = $this->loadViewModel('HomeViewModel');
+		
+		$homeViewModel->WordCloud = json_encode($storyModel->getTagsForWordCloud());	
 
 
 		$view = $this->loadView('index');
@@ -72,7 +58,7 @@ class Home extends Controller {
 		));
 
 
-		$view->set('viewModel', $homeViewModel);
+		$view->set('homeViewModel', $homeViewModel);
 		$view->render(true);
 	}  
 

@@ -1,10 +1,14 @@
 $(function(){
 	WordCloud(
 			document.getElementById('wordCloudCanvas'), 
-			{ list: [['foo', 30], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6], ['bar', 6]],
+			{ list: WordCloudWords,
 			
-			  gridSize: 19,
-			  weightFactor: 3,
+			  gridSize: Math.round(16 * $('#wordCloudCanvas').width() / 4000),
+			  weightFactor: function (size) {
+
+			    return size * $('#wordCloudCanvas').width() / 25;
+			  },
+			  rotateRatio: 0.1,
 			  fontFamily: 'Finger Paint, cursive, sans-serif',
 			  color: '#f0f0c0',
 			  hover: window.drawBox,
@@ -13,4 +17,7 @@ $(function(){
 			  },
 			  backgroundColor: '#485969'		
 		 });
+
+	
 });
+
