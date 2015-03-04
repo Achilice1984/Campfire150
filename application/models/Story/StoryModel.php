@@ -965,7 +965,7 @@ class StoryModel extends Model {
 
 			$start = $this-> getStartValue($howMany, $page);
 
-			$comment = $this->fetchIntoClass($statement, array($start, $howMany), "shared/CommentView");
+			$comment = $this->fetchIntoClass($statement, array($start, $howMany), "shared/CommentViewModel");
 
 			return $comment;
 		}
@@ -996,7 +996,7 @@ class StoryModel extends Model {
 		{
 			$statement = "SELECT * FROM comment WHERE User_UserId = ? AND PublishFlag = 0 ORDER BY CommentId";
 
-			$comment = $this->fetchIntoClass($statement, array($userID), "shared/CommentView");
+			$comment = $this->fetchIntoClass($statement, array($userID), "shared/CommentViewModel");
 
 			return $comment;
 		}
