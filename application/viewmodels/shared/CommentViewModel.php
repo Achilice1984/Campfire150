@@ -15,17 +15,25 @@ class CommentViewModel extends ViewModel
 	
 	function __construct()
 	{
-		// $errors["ProfilePrivacyType_PrivacyTypeId"] = array(
-		// 	'required' =>
-		// 		array(
-		// 			'Message' => gettext('The privacy field is required!'),
-		// 			'Properties' => array()
-		// 		)
-		// );
+		$errors["Story_StoryId"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('Please refresh the page.'),
+					'Properties' => array()
+				)
+		);
+
+		$errors["Content"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The comment field is required!'),
+					'Properties' => array()
+				)
+		);
 
 
-		// //Pass validation to the View Model
-		// parent::__construct($errors);
+		//Pass validation to the View Model
+		parent::__construct($errors);
 	}
 }
 ?>

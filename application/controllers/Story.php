@@ -60,8 +60,11 @@ class Story extends Controller {
 		$view->render(true);
 	}
 
+
 	function add()
 	{
+		require_once(APP_DIR .'viewmodels/shared/TagViewModel.php');
+
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
 		$this->AuthRequest();
@@ -73,10 +76,23 @@ class Story extends Controller {
 		if($this->isPost())
 		{
 			//Map post values to the loginViewModel
-			$loginViewModel = AutoMapper::mapPost($loginViewModel);
+			$storyViewModel = AutoMapper::mapPost($storyViewModel);
 
 			//Load the AccountModel to access account functions
 			$storyModel = $this->loadModel('StoryModel');
+
+			if($storyViewModel->validate() && $this->validateDynamicContent($storyModel))
+			{
+				$storyModel->publishNewStory($storyViewModel, $this->currentUser->UserId);
+				$storyId = $storyModel->lastInsertId();
+
+				$this->saveQuestionAnswers($storyModel, $storyId);
+				$this->saveTags($storyModel, $storyId);
+			}
+
+			$storyViewModel->Tags = $this->getTags($storyModel);
+
+			$this->redirect("account/home");
 		}		
 
 		//Load the profile view
@@ -92,12 +108,104 @@ class Story extends Controller {
 		//Load up some js files
 		$view->setJS(array(
 			array("static/plugins/tinymce/tinymce.min.js", "intern"),
-			array("static/js/tinymce.js", "intern")
+			array("static/js/tinymce.js", "intern"),
+			array("static/js/select2.js", "intern")
 		));
 
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);
 	}
+
+	private function saveQuestionAnswers($storyModel, $storyID)
+	{
+		foreach ($_POST["QuestionAnswers"] as $questionID => $answers) {
+
+			foreach ($answers as $answerID) {
+				$storyModel->addAnswerToStoryQuestion($storyID, $questionID, $answerID);
+			}			
+		}
+	}
+
+	private function saveTags($storyModel, $storyID)
+	{
+		foreach ($_POST["Tags"] as $tagID) {
+			if(!is_numeric($tagID))
+			{
+				if($storyModel->addNewTag($tagID))
+				{
+					$tagID = $storyModel->lastInsertId();
+				}
+			}	
+
+			if(is_numeric($tagID))
+			{
+				$storyModel->addTagToStory($storyID, $tagID);						
+			}		
+		}
+	}
+
+	private function validateDynamicContent($storyModel)
+	{
+		if(count($_POST["QuestionAnswers"]) != $storyModel->getActiveQuestionCount())
+		{
+			addErrorMessage("dbError", gettext("Please answer all questions on the form."));
+
+			return FALSE;
+		}
+
+		foreach ($_POST["QuestionAnswers"] as $questionID => $answers) {
+
+			if($questionID == 1 || $questionID == 2)
+			{
+				if(count($answers) > 5)
+				{
+					addErrorMessage("dbError", gettext("Some fields contain to many answers."));
+
+					return FALSE;
+				}
+			}
+			elseif (count($answers) > 1) {
+				addErrorMessage("dbError", gettext("Some fields contain to many answers."));
+
+				return FALSE;
+			}
+
+			foreach ($answers as $answerID) {
+				if($storyModel->isValidAnswer($questionID, $answerID) == FALSE)
+				{
+					addErrorMessage("dbError", gettext("Some fields contain invalid choices."));
+
+					return FALSE;
+				}
+			}			
+		}
+
+		return TRUE;
+	}
+
+	private function getTags($storyModel)
+	{
+		$tags = array();
+
+		if(isset($_POST["Tags"]))
+		{
+			foreach ($_POST["Tags"] as $tagId) {
+
+				if(is_numeric($tagId))
+				{
+					$tag = $storyModel->getTagByID($tagId);
+					
+					if(isset($tag[0]) && is_object($tag[0]) && is_a($tag[0], "TagViewModel"))
+					{
+						$tags[] = $tag[0];
+					}
+				}
+			}
+		}
+
+		return $tags;
+	}
+
 
 	function edit()
 	{
@@ -143,6 +251,8 @@ class Story extends Controller {
 		//Will kick out if not authenticated
 		$this->AuthRequest();
 
+		//Load the profile view
+		$view = $this->loadView('display');
 
 		//Load the AccountModel to access account functions
 		$model = $this->loadModel('StoryModel');
@@ -151,15 +261,175 @@ class Story extends Controller {
 		$storyViewModel = $this->loadViewModel('shared/StoryViewModel');	
 
 		$storyViewModel = $model->getStory($this->currentUser->UserId, $storyID);
+		if(isset($storyViewModel[0]))
+		{
+			$storyViewModel = $storyViewModel[0];
+			$storyViewModel->Tags = $model->getTagsForStory($storyID);
+			$storyViewModel->QuestionAnswers = $model->getQuestionAnswersForStory($storyID);
+			$storyViewModel->Images = $model->getPicturesForStory($storyID);
+			$storyViewModel->Comments = $model->getCommentsForStory($storyID);
 
-		//Load the profile view
-		$view = $this->loadView('display');
+			$accountModel = $this->loadModel('Account/AccountModel');
+			$storyViewModel->UserProfile = $accountModel->getProfileByID($storyViewModel->UserId);
+
+			$relatedStories = $this->getRelatedStories($storyViewModel, $model);
+			$view->set('relatedStories', $relatedStories);
+		}	
+		else
+		{
+			addErrorMessage("dbError", gettext("There was an error loading the selected story."));
+		}		
+
+		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+		$view->set('storyQuestions', $siteModel->getStoryQuestions());
 
 		//Add a variable with old login data so that it can be accessed in the view
 		$view->set('storyViewModel', $storyViewModel);
 
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);
+	}
+
+	private function getRelatedStories($storyViewModel, $model)
+	{
+		$totalPerTag = floor(10 / (count($storyViewModel->Tags) > 0 ? count($storyViewModel->Tags) : 1));
+		$relatedStories = array();
+
+		if(isset($storyViewModel->Tags))
+		{
+			for ($i=0; $i < count($storyViewModel->Tags); $i++) { 
+				$tmp = null;
+				$tmp = $model->getStoryListByTag($storyViewModel->Tags[$i]->Tag);
+
+				if(isset($tmp) && count($tmp) > 0)
+				{
+					foreach ($tmp as $story) {
+						$relatedStories[] = $story;
+					}
+				}
+			}			
+		}		
+
+		if(!(count($relatedStories) >= 10))
+		{
+			$tmp = null;
+			$tmp = $model->searchStories($storyViewModel->StoryTitle, 10 - count($relatedStories));
+
+			if(isset($tmp) && count($tmp) > 0)
+			{
+				foreach ($tmp as $story) {
+					$relatedStories[] = $story;
+				}				
+			}
+		}
+
+		try
+		{
+			$relatedStories = array_map("unserialize", array_unique(array_map("serialize", $relatedStories)));
+		}
+		catch (Exception $ex)
+		{
+			return $relatedStories;
+		}
+
+		for ($i=0; $i < count($relatedStories); $i++) { 
+			if($storyViewModel->StoryId == $relatedStories[$i]->StoryId)
+			{
+				unset($relatedStories[$i]);
+			}
+		}
+		
+		return $relatedStories;
+	}
+
+	function recommendStory($storyID)
+	{
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+
+		$result;
+
+		//Load the AccountModel to access account functions
+		$storyModel = $this->loadModel('StoryModel');
+
+		$result = $storyModel->recommendStory($storyID, $this->currentUser->UserId);
+
+		if ($this->isAjax()) {
+			return $result;			
+		}
+		else
+		{
+			$this->redirect("account/home");
+		}
+	}
+
+	function unRecommendStory($storyID)
+	{
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+
+		$result;
+
+		//Load the AccountModel to access account functions
+		$storyModel = $this->loadModel('StoryModel');
+
+		$result = $storyModel->unRecommendStory($storyID, $this->currentUser->UserId);
+
+		if ($this->isAjax()) {
+			return $result;			
+		}
+		else
+		{			
+			$this->redirect("account/home");
+		}
+	}
+
+	function searchtag()
+	{
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+
+		$tags;
+
+		//Loads a view model from corresponding viewmodel folder
+		$storyViewModel = $this->loadViewModel('shared/TagViewModel');
+
+		//Load the AccountModel to access account functions
+		$storyModel = $this->loadModel('StoryModel');
+
+		$tags = $storyModel->searchTags(isset($_GET["q"]) ? $_GET["q"] : "");
+
+		return json_encode($tags);
+	}
+
+	function addComment()
+	{
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+
+		//Loads a view model from corresponding viewmodel folder
+		$commentViewModel = $this->loadViewModel('shared/CommentViewModel');
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			//Map post values to the loginViewModel
+			$commentViewModel = AutoMapper::mapPost($commentViewModel);
+
+			//Load the AccountModel to access account functions
+			$storyModel = $this->loadModel('StoryModel');
+
+			if($commentViewModel->validate())
+			{
+				echo $storyModel->addCommentToStory($commentViewModel->Content, $commentViewModel->Story_StoryId, $this->currentUser->UserId);
+			}			
+		}	
+
+		//$this->redirect("account/display", array($commentViewModel->Story_StoryId));
 	}
 }
 

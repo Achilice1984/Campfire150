@@ -601,7 +601,7 @@ class AccountModel extends Model {
 			 			AND User_FollowerId = :User_FollowerId";
 
 			$parameters = array( 
-				":User_UserId" => $userId,
+				":User_UserId" => $userID,
 				":User_FollowerId" => $userToUnFollowID
 			);
 

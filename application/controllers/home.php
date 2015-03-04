@@ -62,9 +62,18 @@ class Home extends Controller {
 		// print_r($result);
 
 
-		$template = $this->loadView('index');
-		$template->set('viewModel', $homeViewModel);
-		$template->render(true);
+
+		$view = $this->loadView('index');
+
+		//Load up some js files
+		$view->setJS(array(
+			array("static/plugins/wordcloud/wordcloud2.js", "intern"),
+			array("static/js/wordcloud.js", "intern")
+		));
+
+
+		$view->set('viewModel', $homeViewModel);
+		$view->render(true);
 	}  
 
 	function about()

@@ -13,7 +13,20 @@
     ?>
 
     <div class="row">
-        home page       
+        <a href="<?php echo BASE_URL . "account/search/"; ?>">Users</a>    
+        <br />
+        <a href="<?php echo BASE_URL . "story/search/"; ?>">Stories</a>    
+        <br />
+        <a href="<?php echo BASE_URL . "home/about/"; ?>">About</a>
+        <br />
+        <a href="<?php echo BASE_URL . "home/domore/"; ?>">Do More</a>
+        <br />
+        <a href="<?php echo BASE_URL . "story/add/"; ?>">Write a Story</a>
+    </div>
+
+    <div class="row">
+         <canvas id="wordCloudCanvas" width="500" height="400"
+ ></canvas> 
     </div>
 </div>
     

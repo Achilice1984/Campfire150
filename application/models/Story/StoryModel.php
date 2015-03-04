@@ -60,6 +60,59 @@ class StoryModel extends Model {
 		}
 	}
 
+	// tested User_Id FK issue need to check the user
+	public function addAnswerToStoryQuestion($storyId, $questionID, $answerId)
+	{
+		//Accepts a story class
+		//inserts a new story with the publish flag set to false
+		//returns bool if the story was saved succesfully
+		try
+		{
+			// create a php timestamp for inserting into the created and updated date fields in the database 
+			//$timestamp = date('Y-m-d G:i:s');
+			$statement = "INSERT INTO story_has_answer_for_question (Story_StoryId, Answer_for_Question_Question_QuestionId, Answer_for_Question_Answer_AnswerId, DateCreated)
+						  VALUES(:StoryId, :Answer_for_Question_Question_QuestionId, :Answer_for_Question_Answer_AnswerId, :DateCreated)";
+ 
+			$parameters = array(":StoryId" => $storyId, 
+								":Answer_for_Question_Question_QuestionId" => $questionID,
+								":Answer_for_Question_Answer_AnswerId" => $answerId, 
+								":DateCreated" => $this->getDateNow()
+								);
+
+			return $this->fetch($statement, $parameters);
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+	// tested User_Id FK issue need to check the user
+	public function addTagToStory($storyId, $tagId)
+	{
+		//Accepts a story class
+		//inserts a new story with the publish flag set to false
+		//returns bool if the story was saved succesfully
+		try
+		{
+			// create a php timestamp for inserting into the created and updated date fields in the database 
+			//$timestamp = date('Y-m-d G:i:s');
+			$statement = "INSERT INTO story_has_tag (Story_StoryId, Tag_TagId, DateCreated)
+						  VALUES(:StoryId, :Tag_TagId, :DateCreated)";
+ 
+			$parameters = array(":StoryId" => $storyId, 
+								":Tag_TagId" => $tagId, 
+								":DateCreated" => $this->getDateNow()
+								);
+
+			return $this->fetch($statement, $parameters);
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
  	//tested
 	public function changeStoryPrivacySetting($storyID, $userID, $privacyTypeID)
 	{
@@ -111,6 +164,55 @@ class StoryModel extends Model {
 						  	UPDATE Active = TRUE, Opinion = FALSE";
 
 			$parameters = array(":Story_StoryId" => $storyID, ":User_UserId" => $userID, ":DateCreated" => $this->getDateNow());
+
+			return $this->fetch($statement, $parameters);		
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+	//tested flagStoryAsInapropriate(22,1)
+	public function recommendStory($storyID, $userID)
+	{
+		//Accepts a storyID, a userID, and a bool for if it was thought to be inapropriate
+		//checks to see if user already marked it as inapropriate
+		//returns bool if saved correctly
+
+		try
+		{
+
+			$statement = "INSERT INTO user_recommend_story (Story_StoryId, User_UserId, Opinion, DateCreated) 
+						  VALUES(:Story_StoryId, :User_UserId, TRUE, :DateCreated)
+						  ON DUPLICATE KEY
+						  	UPDATE Active = TRUE, Opinion = TRUE";
+
+			$parameters = array(":Story_StoryId" => $storyID, ":User_UserId" => $userID, ":DateCreated" => $this->getDateNow());
+
+			return $this->fetch($statement, $parameters);		
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+	//tested flagStoryAsInapropriate(22,1)
+	public function unRecommendStory($storyID, $userID)
+	{
+		//Accepts a storyID, a userID, and a bool for if it was thought to be inapropriate
+		//checks to see if user already marked it as inapropriate
+		//returns bool if saved correctly
+
+		try
+		{
+
+			$statement = "UPDATE user_recommend_story SET Active = FALSE 
+						  WHERE user_recommend_story.User_UserId = :User_UserId
+						  AND Story_StoryId = :Story_StoryId";
+
+			$parameters = array(":Story_StoryId" => $storyID, ":User_UserId" => $userID);
 
 			return $this->fetch($statement, $parameters);		
 		}
@@ -219,11 +321,11 @@ class StoryModel extends Model {
 
 							INNER JOIN user u
 							ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
-							INNER JOIN admin_approve_story aps
+							LEFT JOIN admin_approve_story aps
 							ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
 
 							LEFT JOIN user_recommend_story urs
-							ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :userid) AND (urs.Active = TRUE)
+							ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :User_UserId) AND (urs.Active = TRUE)
 
 							LEFT JOIN story_has_picture shp
 							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
@@ -233,9 +335,10 @@ class StoryModel extends Model {
 							WHERE s.StoryId = :StoryId
 							AND StoryPrivacyType_StoryPrivacyTypeId = 1
 							AND s.Active = TRUE
-							AND aps.Active = TRUE
-							AND aps.Approved = TRUE";
-
+							AND u.ProfilePrivacyType_PrivacyTypeId = 1
+							";
+							// AND aps.Active = TRUE
+							// AND aps.Approved = TRUE
 			$parameters = array(":User_UserId" => $userID, 
 								":StoryId" => $storyID);
 
@@ -267,12 +370,12 @@ class StoryModel extends Model {
 						  ON s.StoryId = sht.Story_StoryId
 						  INNER JOIN tag t 
 						  ON sht.Tag_TagId = t.TagId 
-						  INNER JOIN admin_approve_story aas
+						  LEFT JOIN admin_approve_story aas
 						  ON s.StoryId = aas.Story_StoryId
 						  WHERE s.Active = TRUE 
 						  AND StoryPrivacyType_StoryPrivacyTypeId = 1
 						  AND t.Tag= :tag
-						  AND aas.Approved = TRUE
+						  
 						  GROUP BY s.StoryId DESC
 						  LIMIT :start , :howmany";
 
@@ -808,7 +911,7 @@ class StoryModel extends Model {
 
 		$parameters = array(":storyID" => $storyID, ":userID" => $userID, ":comment" => $comment, ":DateCreated" => $this->getDateNow());
 
-		$this->execute($statement);
+		return $this->fetch($statement, $parameters);
 	}
 
 	public function getCommentsForStory($storyID, $howMany = self::HOWMANY, $page = self::PAGE)
@@ -822,17 +925,20 @@ class StoryModel extends Model {
 
 		try
 		{
-			$statement = "SELECT * 
+			$statement = "SELECT c.*, u.FirstName, u.LastName  
 							FROM Comment c
+							LEFT JOIN user u
+							ON u.UserId = c.User_UserId
 							WHERE Story_StoryId = :storyID 
 							AND c.Active = TRUE
 							AND c.PublishFlag
+							AND u.Active = TRUE
 							ORDER BY CommentId 
 							ASC LIMIT :start, :howmany";
 
-			$start = $howMany * ($page - 1);
+			$start = $this-> getStartValue($howMany, $page);
 
-			$comment = $this->fetchIntoClass($statement, array(":storyID" => $storyID, ":start" => $start, ":howmany" => $howMany), "shared/CommentView");
+			$comment = $this->fetchIntoClass($statement, array(":storyID" => $storyID, ":start" => $start, ":howmany" => $howMany), "shared/CommentViewModel");
 
 			return $comment;
 		}
@@ -857,9 +963,9 @@ class StoryModel extends Model {
 
 			$statement .= "(SELECT DISTINCT Comment_CommentId FROM user_inappropriateflag_comment) ORDER BY CommentId LIMIT ?, ?";
 
-			$start = $howMany * ($page - 1);
+			$start = $this-> getStartValue($howMany, $page);
 
-			$comment = $this->fetchIntoClass($statement, array($start, $howMany), "shared/CommentView");
+			$comment = $this->fetchIntoClass($statement, array($start, $howMany), "shared/CommentViewModel");
 
 			return $comment;
 		}
@@ -890,7 +996,7 @@ class StoryModel extends Model {
 		{
 			$statement = "SELECT * FROM comment WHERE User_UserId = ? AND PublishFlag = 0 ORDER BY CommentId";
 
-			$comment = $this->fetchIntoClass($statement, array($userID), "shared/CommentView");
+			$comment = $this->fetchIntoClass($statement, array($userID), "shared/CommentViewModel");
 
 			return $comment;
 		}
@@ -914,13 +1020,171 @@ class StoryModel extends Model {
 
 			$parameters = array(":UserId" => $userID, ":CommentID" => $commentID, ":DateCreated" => $this->getDateNow());
 
-			$this->execute($statement);	
+			return $this->fetch($statement, $parameters);	
 		}
 		catch(PDOException $e) 
 		{
 			return $e->getMessage();
 		}
 	}
+
+	public function searchTags($query, $howMany = self::HOWMANY, $page = self::PAGE)
+	{
+		try
+		{
+			$query .= "%";
+			$statement = "SELECT t.TagId as id, t.Tag as text
+							FROM tag t 
+							WHERE LOWER(t.Tag) LIKE :query
+							LIMIT :start, :howmany";
+
+			$start = $this-> getStartValue($howMany, $page);
+
+			$tags = $this->fetchIntoClass($statement, array(":query" => strtolower($query), ":start" => $start, ":howmany" => $howMany), "shared/TagViewModel");
+
+			return $tags;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function getTagByID($tagId)
+	{
+		try
+		{
+			$statement = "SELECT t.TagId as id, t.Tag as text
+							FROM tag t 
+							WHERE t.TagId = :TagID";
+
+			$tags = $this->fetchIntoClass($statement, array(":TagID" => $tagId), "shared/TagViewModel");
+
+			return $tags;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function isValidAnswer($questionID, $answerID)
+	{
+		try
+		{
+			$statement = "SELECT COUNT(*)
+							FROM answer_for_question
+							WHERE Question_QuestionId = :QuestionID
+							AND Answer_AnswerId = :AnswerID";
+
+			$count = $this->fetchNum($statement, array(":QuestionID" => $questionID, ":AnswerID" =>$answerID));
+
+			return $count > 0;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function getActiveQuestionCount()
+	{
+		try
+		{
+			$statement = "SELECT COUNT(*)
+							FROM question q
+							WHERE q.Active = TRUE";
+
+			$count = $this->fetchNum($statement, array());
+
+			return $count;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function addNewTag($tag)
+	{
+		try
+		{
+			$statement = "INSERT INTO tag (Tag, DateCreated) 
+						  VALUES(:Tag, :DateCreated)";
+
+			$parameters = array(":Tag" => $tag, ":DateCreated" => $this->getDateNow());
+
+			return $this->fetch($statement, $parameters);	
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function getTagsForStory($storyID)
+	{
+		try
+		{
+			$statement = "SELECT *
+							FROM tag t
+							INNER JOIN story_has_tag sht
+							ON sht.Tag_TagId = t.TagId
+							WHERE t.Active = TRUE
+							AND sht.Story_StoryId = :storyID";
+
+			$result = $this->fetchIntoObject($statement, array(":storyID" => $storyID));
+
+			return $result;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function getQuestionAnswersForStory($storyID)
+	{
+		try
+		{
+			$statement = "SELECT *
+							FROM story_has_answer_for_question
+							WHERE Story_StoryId = :storyID
+							ORDER BY
+							Answer_for_Question_Question_QuestionId";
+
+			$result = $this->fetchIntoObject($statement, array(":storyID" => $storyID));
+
+			return $result;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function getPicturesForStory($storyID)
+	{
+		try
+		{
+			$statement = "SELECT *
+							FROM picture p
+							INNER JOIN story_has_picture shp
+							ON shp.PictureId = p.PictureId
+							WHERE shp.Story_StoryId = :storyID
+							AND shp.Active = TRUE
+							AND p.Active = TRUE";
+
+			$result = $this->fetchIntoObject($statement, array(":storyID" => $storyID));
+
+			return $result;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
 }
 
 ?>

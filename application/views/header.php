@@ -10,6 +10,7 @@
     <!-- Bootstrap -->
     <link href="<?php echo BASE_URL; ?>/static/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="<?php echo BASE_URL; ?>/static/plugins/validation/css/formValidation.min.css" rel="stylesheet">
+    <link href="<?php echo BASE_URL; ?>/static/plugins/select2/css/select2.min.css" rel="stylesheet">
 
     <link href="<?php echo BASE_URL; ?>/static/css/style.css" rel="stylesheet">
    

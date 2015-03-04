@@ -7,6 +7,10 @@ class StoryViewModel extends ViewModel
 	//Story properties same as in database
 	public $StoryId;
 	public $User_UserId;
+	public $UserId;
+
+	//UserProfileViewModel
+	public $UserProfile;
 
 	public $DatePosted;	
 	public $DateCreated;
@@ -19,14 +23,18 @@ class StoryViewModel extends ViewModel
 	public $Published;
 	public $StoryPrivacyType_StoryPrivacyTypeId;
 
-	public $Tag;
-	public $TagId;
+	public $Images;
 
-	public $QuestionAnswers;
+	public $Comments;
+
+	public $Tags;
+	public $TagIds;
+
+	public $QuestionAnswers;//StoryQuestionViewModel
 
 	function __construct()
 	{
-		$errors["ProfilePrivacyType_PrivacyTypeId"] = array(
+		$errors["StoryPrivacyType_StoryPrivacyTypeId"] = array(
 			'required' =>
 				array(
 					'Message' => gettext('The privacy field is required!'),
@@ -34,6 +42,29 @@ class StoryViewModel extends ViewModel
 				)
 		);
 
+		$errors["StoryTitle"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The title field is required!'),
+					'Properties' => array()
+				)
+		);
+
+		$errors["Tags"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The tags field is required!'),
+					'Properties' => array()
+				)
+		);
+
+		$errors["Content"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The content field is required!'),
+					'Properties' => array()
+				)
+		);
 
 		//Pass validation to the View Model
 		parent::__construct($errors);
