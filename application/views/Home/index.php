@@ -1,4 +1,6 @@
-   
+<script type="text/javascript">
+    var WordCloudWords = <?php echo $homeViewModel->WordCloud; ?>;
+</script>   
 
 <div class="container">
 

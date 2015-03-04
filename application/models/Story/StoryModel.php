@@ -1143,6 +1143,45 @@ class StoryModel extends Model {
 		}
 	}
 
+	public function getTagsForWordCloud()
+	{
+		try
+		{
+			$statement = "SELECT t.Tag,
+							(
+							    SELECT COUNT(*)
+							    FROM story_has_tag sht
+							    WHERE t.TagId = sht.Tag_TagId
+							    
+							) AS count
+							FROM tag t
+							ORDER BY count DESC
+							LIMIT 0,50";
+
+			$result = $this->fetchIntoObject($statement, array());
+
+			$jsonFormat = array();
+
+			$totalValue = 0;
+
+			foreach ($result as $tag) {
+				$totalValue += $tag->count;
+
+				$jsonFormat[] = array($tag->Tag, $tag->count);
+			}
+
+			for ($i=0; $i < count($jsonFormat); $i++) { 
+				$jsonFormat[$i][1] = round( (($jsonFormat[$i][1] / $totalValue) * 100));
+			}
+
+			return $jsonFormat;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
 	public function getQuestionAnswersForStory($storyID)
 	{
 		try
