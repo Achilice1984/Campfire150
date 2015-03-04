@@ -44,7 +44,23 @@ class StorySearch extends Model
 
 					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active,
 
-					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, (
+					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+					(
+						SELECT COUNT(1)
+						FROM user_recommend_story 
+						WHERE user_recommend_story.Story_StoryId = s.StoryId
+					    AND user_recommend_story.Active = TRUE
+					    AND user_recommend_story.Opinion = FALSE
+					) AS totalFlags,
+					(
+						SELECT COUNT(1)
+						FROM user_recommend_story 
+						WHERE user_recommend_story.Story_StoryId = s.StoryId
+					    AND user_recommend_story.Active = TRUE
+					    AND user_recommend_story.Opinion = TRUE
+					) AS totalRecommends,
+
+					(
 
 					((Lower(s.StoryTitle) LIKE '%$storySearch%') * 4)";
 
@@ -105,6 +121,7 @@ class StorySearch extends Model
 					AND s.Active = :ActiveStory
 					AND aps.Active = TRUE
 					AND aps.Approved = :ApprovedStory
+					AND u.Active = TRUE
 					HAVING hits > 0
 					ORDER BY hits DESC
 					LIMIT :start,:howmany";	
