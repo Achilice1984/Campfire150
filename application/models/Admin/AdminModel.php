@@ -3,7 +3,7 @@
 
 class AdminModel extends Model {
 
-	public function isAdmin($userID)  //TESTED
+	public function isAdmin($userID)
 	{
 		//Check if the ID is an admin ID
 
@@ -45,7 +45,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function searchStoriesRejected($storySearch, $userID, $howMany = self::HOWMANY, $page = self::PAGE)//tested
+	public function searchStoriesRejected($storySearch, $userID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts string to search for a story
 		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
@@ -66,7 +66,7 @@ class AdminModel extends Model {
 		}	
 	}
 
-	public function getStoryListPendingApproval($howMany = self::HOWMANY, $page = self::PAGE)//tested
+	public function getStoryListPendingApproval($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -98,7 +98,7 @@ class AdminModel extends Model {
 		}		
 	}
 
-	public function getStoryListRejected($howMany = self::HOWMANY, $page = self::PAGE) //tested
+	public function getStoryListRejected($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -130,7 +130,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getStoryListFlaggedInappropriate($howMany = self::HOWMANY, $page = self::PAGE) //TESTED 
+	public function getStoryListFlaggedInappropriate($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -161,7 +161,7 @@ class AdminModel extends Model {
 		}		
 	}
 
-	public function rejectStory($adminID, $storyID, $reason) //tested
+	public function rejectStory($adminID, $storyID, $reason)
 	{
 		//Accepts the adminID, the story id and the reason why it was rejected
 		//returns bool whether it was saved succesfully or not
@@ -191,7 +191,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function approveStory($adminID, $storyID, $reason)//tested
+	public function approveStory($adminID, $storyID, $reason)
 	{
 		//Accepts the adminID and the story id
 		//returns bool whether it was saved succesfully or not
@@ -296,7 +296,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getCommentListFlaggedInappropriate($adminID, $howMany = self::HOWMANY, $page = self::PAGE) //TESTED
+	public function getCommentListFlaggedInappropriate($adminID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -326,7 +326,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function rejectCommentAsAdmin($adminID, $commentID, $reason)//tested
+	public function rejectCommentAsAdmin($adminID, $commentID, $reason)
 	{
 		//Accepts the adminID, the comment id and the reason why it was rejected
 		//Allows admin users to hide comments if they feel they are innappropriate
@@ -354,7 +354,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function approveCommentAsAdmin($adminID, $commentID, $reason)//tested
+	public function approveCommentAsAdmin($adminID, $commentID, $reason)
 	{
 		//Accepts the adminID and the comment id
 		//Allows admin users to remove their rejected status placed on comments
@@ -452,7 +452,7 @@ class AdminModel extends Model {
 	// 	}
 	// }
 
-	public function getListUsers($howMany = self::HOWMANY, $page = self::PAGE)//tested
+	public function getListUsers($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -511,7 +511,7 @@ class AdminModel extends Model {
 	}
 
 
-	public function activateUser($userID, $adminID, $reason)  //TESTED
+	public function activateUser($userID, $adminID, $reason)
 	{
 		//Accepts a User class for $user and a User class for $admin
 		//Sets the active flag to false in user profile
@@ -541,7 +541,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getListUsersDisabled($howMany = self::HOWMANY, $page = self::PAGE)//tested
+	public function getListUsersDisabled($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -601,7 +601,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getListQuestionaireQuestions() //TESTED
+	public function getListQuestionaireQuestions()
 	{
 		//Gets a list of all the current questionaire questions
 		//This will include a list of possible answers
@@ -625,7 +625,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function addAnswer($answerE, $answerF)//tested
+	public function addAnswer($answerE, $answerF)
 	{
 		//Accepts a question answer id, and english answer, a french answer
 		//returns bool if saved succesfully
@@ -675,7 +675,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function addQuestionAnswerById($questionID, $answerID)//tested
+	public function addQuestionAnswerById($questionID, $answerID)
 	{
 		//Accepts a question id, and english answer, a french answer
 		//returns bool if saved succesfully
@@ -691,7 +691,7 @@ class AdminModel extends Model {
 		}
 	}
 	
-	public function addQuestionAnswer($questionID, $answerE, $answerF)//tested
+	public function addQuestionAnswer($questionID, $answerE, $answerF)
 	{
 		//Accepts a question id, and english answer, a french answer
 		//returns bool if saved succesfully
@@ -720,7 +720,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function updateQuestion($questionID, $questionE, $questionF) //tested
+	public function updateQuestion($questionID, $questionE, $questionF)
 	{
 		//Accepts a question id, and english question, a french question
 		//returns bool if saved succesfully
@@ -737,7 +737,7 @@ class AdminModel extends Model {
 		}
 	}
 	
-	public function addQuestion($questionE, $questionF)//tested
+	public function addQuestion($questionE, $questionF)
 	{
 		//Accepts a english questionE, a french questionF
 		//returns bool if saved succesfully
@@ -754,10 +754,21 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getListDropdowns($adminID)
+	public function getListDropdowns($tableName)
 	{
 		//Accepts admin id
 		//returns list of dropdowns and their values
+
+		try
+		{
+			$statement = "SELECT * FROM :TableName";
+
+			return $this->fetchIntoObject($statement, array(":TableName" => $tableName));
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
 	}
 	public function addDropdownValue($adminID, $dropdownValueE, $dropdownValueF)
 	{
