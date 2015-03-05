@@ -109,7 +109,8 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT *  FROM story s LEFT JOIN admin_approve_story aas ON s.storyID=aas.Story_StoryId ";
+			$statement = "SELECT *  FROM story s LEFT JOIN admin_approve_story aas ON s.storyID=aas.Story_StoryId 
+				INNER JOIN user u ON s.User_UserId = u.UserId ";
 			$statement .= "WHERE aas.Approved = 0 ";
 			$statement .= "LIMIT :Start, :HowMany";
 
@@ -142,8 +143,8 @@ class AdminModel extends Model {
 		{
 			$start = $this->getStartValue($howMany, $page);
 
-			$statement = "SELECT *, COUNT(urs.User_UserId) AS NumberOfFlagged FROM story s RIGHT JOIN user_recommend_story urs ";
-			$statement .= "ON s.storyID=urs.Story_StoryId WHERE urs.Opinion = 0 ";
+			$statement = "SELECT *, COUNT(urs.User_UserId) AS NumberOfFlagged FROM story s RIGHT JOIN user_recommend_story urs 
+				ON s.storyID=urs.Story_StoryId INNER JOIN user u ON s.User_UserId=u.UserId WHERE urs.Opinion = 0 ";
 			$statement .= "GROUP BY s.storyID ORDER BY NumberOfFlagged DESC LIMIT :Start, :HowMany";
 
 			$parameters = array(
@@ -296,7 +297,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getCommentListFlaggedInappropriate($adminID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getCommentListFlaggedInappropriate($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -306,9 +307,8 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged FROM comment c INNER JOIN user_inappropriateflag_comment uic ";
-			$statement .= "ON c.CommentId = uic.Comment_CommentId ";
-			$statement .= "GROUP BY CommentId ORDER BY COUNT(uic.User_UserId) DESC LIMIT :Start, :HowMany";
+			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged FROM comment c INNER JOIN user_inappropriateflag_comment uic 
+				ON c.CommentId = uic.Comment_CommentId INNER JOIN story s ON c.Story_StoryId = s.StoryId INNER JOIN user u ON c.User_UserId=u.UserId GROUP BY CommentId ORDER BY COUNT(uic.User_UserId) DESC LIMIT :Start, :HowMany";
 			
 			$start = $this->getStartValue($howMany, $page);
 			$parameters = array(
@@ -461,7 +461,11 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT * FROM User ORDER BY UserId ASC LIMIT :start, :howmany";
+			$statement = "SELECT *,
+							(SELECT COUNT(*) FROM user) AS totalUsers
+							FROM user
+							ORDER BY UserId ASC
+							LIMIT :start, :howmany";
 
 			$start = $this-> getStartValue($howMany, $page);
 
