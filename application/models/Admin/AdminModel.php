@@ -33,11 +33,9 @@ class AdminModel extends Model {
 		try 
 		{
 			$searchObject = new StorySearch();
-
 			$story = $searchObject->SearchQuery($storySearch, $userID, $howMany, $page, $approved = FALSE, $active = TRUE); 
 
 			return $story;
-
 		}
 		catch(PDOException $e)
 		{
@@ -58,7 +56,6 @@ class AdminModel extends Model {
 			$story = $searchObject->SearchQuery($storySearch, $userID, $howMany, $page, $approved = FALSE, $active = TRUE); 
 
 			return $story;
-
 		}
 		catch(PDOException $e)
 		{
