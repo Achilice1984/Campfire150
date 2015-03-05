@@ -109,7 +109,7 @@ class Account extends Controller {
 		$model = $this->loadModel('Admin/AdminModel');
 	
 		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
-		$returnData = $model->changeRejectedToApproved(1, 10, 'Not a good reason');
+		$returnData = $model->getListUsers(5, 1);
 
 		debugit($returnData);
 	}
