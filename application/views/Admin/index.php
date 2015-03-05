@@ -32,8 +32,7 @@
                                 <tr>
                                     <th>Title</th>
                                     <th>Owner</th>
-                                    <th>Email</th>
-                                    <th>Uploaded Date</th>                                    
+                                    <th>Posted Date</th>                                    
                                    
                                 </tr>
                             </thead>
@@ -47,8 +46,7 @@
                                 <tr>
                                     <th>Title</th>
                                     <th>Owner</th>
-                                    <th>Email</th>
-                                    <th>Uploaded Date</th>                                    
+                                    <th>Posted Date</th>                                    
                                    
                                 </tr>
                             </thead>
@@ -62,8 +60,7 @@
                                 <tr>
                                     <th>Title</th>
                                     <th>Owner</th>
-                                    <th>Email</th>
-                                    <th>Uploaded Date</th>                                    
+                                    <th>Posted Date</th>                                    
                                    
                                 </tr>
                             </thead>
@@ -131,9 +128,8 @@
                                 <tr>
                                     <th>First Name</th>
                                     <th>Last Name</th>
-                                    <th>User Type</th>
                                     <th>Email</th>
-                                    <th>Disabled</th>
+                                    <th>DateCreated</th>
                                    
                                 </tr>
                             </thead>
@@ -148,9 +144,8 @@
                                 <tr>
                                     <th>First Name</th>
                                     <th>Last Name</th>
-                                    <th>User Type</th>
                                     <th>Email</th>
-                                    <th>Disabled</th>
+                                    <th>DateCreated</th>
                                    
                                 </tr>
                             </thead>
@@ -165,9 +160,8 @@
                                 <tr>
                                     <th>First Name</th>
                                     <th>Last Name</th>
-                                    <th>User Type</th>
                                     <th>Email</th>
-                                    <th>Disabled</th>
+                                    <th>DateCreated</th>
                                    
                                 </tr>
                             </thead>
