@@ -19,26 +19,26 @@ $("#StorySearchMoreButton").click(function(){
 	});
 });
 
-$("#StorySearchForm").submit(function(event){
+// $("#StorySearchForm").submit(function(event){	
+	
+// 	$("#StorySearchPage").val(1);
 
-	// event.preventDefault();
-	// $("#StorySearchPage").val(1);
+// 	$("#StorySearchContainer").hide();
 
-	// $("#StorySearchContainer").hide();
+// 	$.ajax({
+// 		type: "POST",
+// 		url: $("#StorySearchForm").attr("data-ajax-action"),
+// 		data: $("#StorySearchForm").serialize(),
+// 		success: function(data){		
 
-	// $.ajax({
-	// 	type: "POST",
-	// 	url: $("#StorySearchForm").attr("data-ajax-action"),
-	// 	data: $("#StorySearchForm").serialize(),
-	// 	success: function(data){		
+// 			$("#StorySearchContainer").html(data).show("slow");
 
-	// 		$("#StorySearchContainer").html(data).show("slow");
+// 			if(data)
+// 			{
+// 				$("#StorySearchMoreButton").show();
+// 			}
+// 		}
+// 	});
 
-	// 		if(data)
-	// 		{
-	// 			$("#StorySearchMoreButton").show();
-	// 		}
-	// 	}
-	// });
-
-});
+// 	return false;
+// });

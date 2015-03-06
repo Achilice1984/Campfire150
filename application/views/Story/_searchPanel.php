@@ -28,13 +28,19 @@
 	</div>
 	<div class="col-md-1">	
 		<div class="row">
-			<h4 style="font-size: 2em;"><span class="glyphicon glyphicon-comment"></span> <?php echo $story->totalComments; ?></h4>
+			<a class="StoryActionButtons" href="<?php echo BASE_URL . "story/display/" . $story->StoryId;  ?>">
+				<h4 style="font-size: 2em;"><span class="glyphicon glyphicon-comment"></span> <?php echo $story->totalComments; ?></h4>
+			</a>
 		</div>
 		<div class="row">
-			<h4 style="font-size: 2em;"><span class="glyphicon glyphicon-thumbs-up"></span> <?php echo $story->totalRecommends; ?></h4>
+			<a class="<?php echo (isset($story->Opinion) && $story->Opinion == TRUE) ? "text-default" : "StoryActionButtons"; ?>" href="<?php echo BASE_URL . "story/recommendStory/" . $story->StoryId . "/" . TRUE; ?>">
+				<h4 style="font-size: 2em;"><span class="glyphicon glyphicon-thumbs-up"></span> <?php echo $story->totalRecommends; ?></h4>
+			</a>
 		</div>	
 		<div class="row">
-			<h4 style="font-size: 2em;"><span class="glyphicon glyphicon-flag"></span> <?php echo $story->totalFlags; ?></h4>
+			<a class="<?php echo (isset($story->Opinion) && $story->Opinion == FALSE) ? "text-danger" : "StoryActionButtons"; ?>" href="<?php echo BASE_URL . "story/recommendStory/" . $story->StoryId . "/" . FALSE; ?>">
+				<h4 style="font-size: 2em;"><span class="glyphicon glyphicon-flag"></span> <?php echo $story->totalFlags; ?></h4>
+			</a>
 		</div>	
 	</div>
 </div>  

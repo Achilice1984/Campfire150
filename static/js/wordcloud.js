@@ -8,8 +8,8 @@ $(function(){
 
 			    return size * $('#wordCloudCanvas').width() / 25;
 			  },
-			  rotateRatio: 0.1,
-			  fontFamily: 'Finger Paint, cursive, sans-serif',
+			  rotateRatio: 0,
+			  fontFamily: 'Times, serif',
 			  color: '#f0f0c0',
 			  hover: window.drawBox,
 			  click: function(item) {

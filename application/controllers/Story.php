@@ -383,7 +383,7 @@ class Story extends Controller {
 		return $relatedStories;
 	}
 
-	function recommendStory($storyID)
+	function recommendStory($storyID, $recommend)
 	{
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
@@ -394,35 +394,20 @@ class Story extends Controller {
 		//Load the AccountModel to access account functions
 		$storyModel = $this->loadModel('StoryModel');
 
-		$result = $storyModel->recommendStory($storyID, $this->currentUser->UserId);
+		if($recommend)
+		{
+			$result = $storyModel->recommendStory($storyID, $this->currentUser->UserId);
+		}
+		else
+		{
+			$result = $storyModel->unRecommendStory($storyID, $this->currentUser->UserId);
+		}
 
 		if ($this->isAjax()) {
 			return $result;			
 		}
 		else
 		{
-			$this->redirect("account/home");
-		}
-	}
-
-	function unRecommendStory($storyID)
-	{
-		//Check if users is authenticated for this request
-		//Will kick out if not authenticated
-		$this->AuthRequest();
-
-		$result;
-
-		//Load the AccountModel to access account functions
-		$storyModel = $this->loadModel('StoryModel');
-
-		$result = $storyModel->unRecommendStory($storyID, $this->currentUser->UserId);
-
-		if ($this->isAjax()) {
-			return $result;			
-		}
-		else
-		{			
 			$this->redirect("account/home");
 		}
 	}
