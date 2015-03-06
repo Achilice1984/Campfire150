@@ -13,6 +13,16 @@ class Admin extends Controller {
 		// }
 	}
 	
+	function testAdmin()
+	{
+		$model = $this->loadModel('Admin/AdminModel');
+	
+		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
+		$returnData = $model->addDropdownValue("gendertype","xxE", "xxF");
+
+		debugit($returnData);
+	}
+	
 	//Main action for controller, equivelent to: www.site.com/controller/
 	function index()
 	{
@@ -77,7 +87,7 @@ class Admin extends Controller {
 		$storyViewModel = $storyModel->getStory($this->currentUser->UserId, $storyId);
 
 		/***********************************
-		*Get the usewr details for the story
+		*Get the useer details for the story
 		************************************/
 		//Loads a model from corresponding model folder
 		$accountModel = $this->loadModel('Account/AccountModel');
@@ -144,522 +154,222 @@ class Admin extends Controller {
 
 	function AjaxUserList()
 	{
-		// [start] => 0
-		 //    [length] => 10
-		 //    [search] => Array
-		 //        (
-		 //            [value] => 
-		 //            [regex] => false
-		 //        )
 		$userList;
 		$howMany = $_POST["length"]; //How many results to return
-		$page = $_POST["draw"]; //What page number in results
-		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+		$start = $_POST["start"]; //What page number in results
+		$page = ($start / $howMany) + 1;
+		$resultData = array();
+
+		$adminModel = $this->loadModel('AdminModel');
+		//$this->currentUser->UserId;
 
 		if(!empty($_POST["search"]["value"]))
-		{
-			$accountModel = $this->loadModel('Account/AccountModel');
-			
+		{			
 			//Perform a search
-			$userList = $accountModel->searchForUser($userSearch, $howMany, $page);
+			$userList = $adminModel->searchForUser($userSearch, $howMany, $page);
 		}
 		else
 		{
-			$adminModel = $this->loadModel('AdminModel');
-
-			$userList = $adminModel->getListUsersDisabled($adminID, $howMany, $page);
-
-			// $resultData = array();
-
-			// foreach ($userList as $user)
-			// 	$resultData[] = array($user->FirstName  );
-			// }
+			$userList = $adminModel->getListUsers($howMany, $page);
 		}
 
+		$recordsNum = isset($userList[0]) ?  $userList[0]->totalUsers : 0;
+
+		foreach ($userList as $user)
+			$resultData[] = array($user->FirstName, $user->LastName,
+			  $user->Email, $user->DateCreated);
+			
 		//Process user list into array like below:	
 
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
-	        "recordsTotal" => 50,
-	        "recordsFiltered" =>50,
-	        "data" => array( //$resultData
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	)
+	        "recordsTotal" => $recordsNum,
+	        "recordsFiltered" => $recordsNum,
+	        "data" => $resultData
 	    );
+
 		echo json_encode($output);
 	}
 
 	function AjaxUserListDisabled()
 	{
-		// [start] => 0
-	 //    [length] => 10
-	 //    [search] => Array
-	 //        (
-	 //            [value] => 
-	 //            [regex] => false
-	 //        )
 		$userList;
 		$howMany = $_POST["length"]; //How many results to return
-		$page = $_POST["draw"]; //What page number in results
-		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+		$start = $_POST["start"]; //What page number in results
+		$page = ($start / $howMany) + 1;
+		$resultData = array();
+
+		$adminModel = $this->loadModel('AdminModel');
 
 		if(!empty($_POST["search"]["value"]))
-		{
-			$accountModel = $this->loadModel('Account/AccountModel');
-			
+		{			
 			//Perform a search
-			$userList = $accountModel->searchForUser($userSearch, $howMany, $page);
+			$userList = $adminModel->searchForUser($userSearch, $howMany, $page);
 		}
 		else
 		{
-			$adminModel = $this->loadModel('AdminModel');
-
-			$userList = $adminModel->getListUsersDisabled($adminID, $howMany, $page);
+			$userList = $adminModel->getListUsersDisabled($howMany, $page);
 		}
 
-		//Process user list into array like below:		
+		$recordsNum = isset($userList[0]) ?  $userList[0]->totalUsers : 0;
+
+		foreach ($userList as $user)
+			$resultData[] = array($user->FirstName, $user->LastName,
+			  $user->Email, $user->DateCreated);
+			
+		//Process user list into array like below:	
 
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
-	        "recordsTotal" => 50,
-	        "recordsFiltered" =>50,
-	        "data" => array(
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	)
+	        "recordsTotal" => $recordsNum,
+	        "recordsFiltered" => $recordsNum,
+	        "data" => $resultData
 	    );
+
 		echo json_encode($output);
 	}
 
 	function AjaxUserListInappropriate()
 	{
-		// [start] => 0
-		 //    [length] => 10
-		 //    [search] => Array
-		 //        (
-		 //            [value] => 
-		 //            [regex] => false
-		 //        )
 		$userList;
 		$howMany = $_POST["length"]; //How many results to return
-		$page = $_POST["draw"]; //What page number in results
+		$start = $_POST["start"]; 
+		$page = ($start / $howMany) + 1; //What page number in results
 		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+
+		$adminModel = $this->loadModel('AdminModel');
 
 		if(!empty($_POST["search"]["value"]))
 		{
-			$accountModel = $this->loadModel('Account/AccountModel');
-			
 			//Perform a search
 			$userList = $accountModel->searchForUser($userSearch, $howMany, $page);
 		}
 		else
 		{
-			$adminModel = $this->loadModel('AdminModel');
-
-			$userList = $adminModel->getListUsersDisabled($adminID, $howMany, $page);
+			$userList = $adminModel->getCommentListFlaggedInappropriate($howMany, $page);
 		}
 
-		//Process user list into array like below:	
+		$resultData = array();
 
+		foreach ($userList as $user)
+			$resultData[] = array($user->FirstName, $user->LastName,
+			  $user->Email, $user->DateCreated);
+			
+		//Process user list into array like below:	
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
 	        "recordsTotal" => 50,
 	        "recordsFiltered" =>50,
-	        "data" => array(
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo",
-				      "28th Nov 08",
-				      "$162,700"),
-	        	)
+	        "data" => $resultData
 	    );
+
 		echo json_encode($output);
 	}
 
 	function AjaxStoryListPending()
 	{
-		// [start] => 0
-		 //    [length] => 10
-		 //    [search] => Array
-		 //        (
-		 //            [value] => 
-		 //            [regex] => false
-		 //        )
 		$storyList;
 		$howMany = $_POST["length"]; //How many results to return
-		$page = $_POST["draw"]; //What page number in results
+		$start = $_POST["start"]; 
+		$page = ($start / $howMany) + 1; //What page number in results
 		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+		$resultData = array();
+
+		$adminModel = $this->loadModel('AdminModel');
 
 		if(!empty($_POST["search"]["value"]))
-		{
-			$adminModel = $this->loadModel('AdminModel');
-			
+		{			
 			//Perform a search
-			$storyList = $adminModel->searchStoriesPendingApproval($userSearch, $howMany, $page);
+			$storyList = $adminModel->searchForUser($userSearch, $howMany, $page);
 		}
 		else
 		{
-			$adminModel = $this->loadModel('AdminModel');
-
-			$storyList = $adminModel->getStoryListPendingApproval($adminID, $howMany, $page);
+			$storyList = $adminModel->getStoryListPendingApproval($howMany, $page);
 		}
 
-		//Process story list into array like below:	
+		$recordsNum = isset($storyList[0]) ?  $storyList[0]->totalStories : 0;
 
-		$output = $adminModel->getStoryListPendingApproval($adminID, $howMany, $page);
+		//Process story list into array like below:	
+		foreach ($storyList as $story)
+			$resultData[] = array($story->StoryTitle, $story->LastName.' '.$story->FirstName, $story->DatePosted);
 
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
-	        "recordsTotal" => 50,
-	        "recordsFiltered" =>50,
-	        "data" => array(
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo")
-	        	)
+	        "recordsTotal" => $recordsNum,
+	        "recordsFiltered" => $recordsNum,
+	        "data" => $resultData
 	    );
 		echo json_encode($output);
 	}
 
 	function AjaxStoryListRejected()
 	{
-		// [start] => 0
-		 //    [length] => 10
-		 //    [search] => Array
-		 //        (
-		 //            [value] => 
-		 //            [regex] => false
-		 //        )
 		$storyList;
 		$howMany = $_POST["length"]; //How many results to return
-		$page = $_POST["draw"]; //What page number in results
+		$start = $_POST["start"]; 
+		$page = ($start / $howMany) + 1; //What page number in results
 		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+		$resultData = array();
+
+		$adminModel = $this->loadModel('AdminModel');
 
 		if(!empty($_POST["search"]["value"]))
-		{
-			$adminModel = $this->loadModel('AdminModel');
-			
+		{			
 			//Perform a search
-			$storyList = $adminModel->searchStoriesRejected($adminID, $userSearch, $howMany, $page);
+			$storyList = $adminModel->searchForUser($userSearch, $howMany, $page);
 		}
 		else
 		{
-			$adminModel = $this->loadModel('AdminModel');
-
-			$storyList = $adminModel->getStoryListRejected($adminID, $howMany, $page);
+			$storyList = $adminModel->getStoryListRejected($howMany, $page);
 		}
 
+		$recordsNum = isset($storyList[0]) ?  $storyList[0]->totalStories : 0;
+
 		//Process story list into array like below:	
+		foreach ($storyList as $story)
+			$resultData[] = array($story->StoryTitle, $story->LastName, $story->DatePosted);
 
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
-	        "recordsTotal" => 50,
-	        "recordsFiltered" =>50,
-	        "data" => array(
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo")
-	        	)
+	        "recordsTotal" => $recordsNum,
+	        "recordsFiltered" => $recordsNum,
+	        "data" => $resultData
 	    );
 		echo json_encode($output);
 	}
 
 	function AjaxStoryListInappropriate()
 	{
-		// [start] => 0
-		 //    [length] => 10
-		 //    [search] => Array
-		 //        (
-		 //            [value] => 
-		 //            [regex] => false
-		 //        )
 		$storyList;
 		$howMany = $_POST["length"]; //How many results to return
-		$page = $_POST["draw"]; //What page number in results
+		$start = $_POST["start"]; 
+		$page = ($start / $howMany) + 1; //What page number in results
 		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+		$resultData = array();
+
+		$adminModel = $this->loadModel('AdminModel');
 
 		if(!empty($_POST["search"]["value"]))
-		{
-			$storyModel = $this->loadModel('Story/StoryModel');
-			
+		{			
 			//Perform a search
-			$storyList = $storyModel->searchStories($userSearch, $howMany, $page);
+			$storyList = $adminModel->searchForUser($userSearch, $howMany, $page);
 		}
 		else
 		{
-			$adminModel = $this->loadModel('AdminModel');
-
-			$storyList = $adminModel->getStoryListFlaggedInappropriate($adminID, $howMany, $page);
+			$storyList = $adminModel->getStoryListFlaggedInappropriate($howMany, $page);
 		}
 
+		$recordsNum = isset($storyList[0]) ?  $storyList[0]->totalStories : 0;
+
 		//Process story list into array like below:	
+		foreach ($storyList as $story)
+			$resultData[] = array($story->StoryTitle, $story->LastName, $story->DatePosted);
 
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
-	        "recordsTotal" => 50,
-	        "recordsFiltered" =>50,
-	        "data" => array(
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo")
-	        	)
+	        "recordsTotal" => $recordsNum,
+	        "recordsFiltered" => $recordsNum,
+	        "data" => $resultData
 	    );
 		echo json_encode($output);
 	}
@@ -673,24 +383,30 @@ class Admin extends Controller {
 		 //            [value] => 
 		 //            [regex] => false
 		 //        )
+		// $commentList;
+		// $howMany = $_POST["length"]; //How many results to return
+		// $page = $_POST["draw"]; //What page number in results
+		// $adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
 		$commentList;
-		$howMany = $_POST["length"]; //How many results to return
-		$page = $_POST["draw"]; //What page number in results
+		$howMany = 5; //How many results to return
+		$page = 1; //What page number in results
 		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
 
+		$adminModel = $this->loadModel('AdminModel');
+
 		if(!empty($_POST["search"]["value"]))
-		{
-			$commentList = $this->loadModel('Story/StoryModel');
-			
+		{			
 			//Perform a search
-			$commentList = $storyModel->searchStories($userSearch, $howMany, $page);
+			$commentList = $adminModel->searchStories($userSearch, $howMany, $page);
 		}
 		else
 		{
-			$adminModel = $this->loadModel('Story/StoryModel');
-
-			$commentList = $adminModel->getCommentListInappropriate($adminID, $howMany, $page);
+			$commentList = $adminModel->getCommentListFlaggedInappropriate($howMany, $page);
 		}
+
+		foreach ($commentList as $comment)
+			$resultData[] = array($comment->StoryTitle,
+			  $comment->FirstName,  $comment->Email, $comment->DatePosted);
 
 		//Process comment list into array like below:	
 
@@ -698,39 +414,7 @@ class Admin extends Controller {
 	        "draw" => intval($_POST["draw"]),
 	        "recordsTotal" => 50,
 	        "recordsFiltered" =>50,
-	        "data" => array(
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo")
-	        	)
+	        "data" => $resultData
 	    );
 		echo json_encode($output);
 	}
@@ -806,18 +490,81 @@ class Admin extends Controller {
 		echo json_encode($output);
 	}
 
-	function insert()
+	function commenteditinappropriate()
 	{
 		//Loads a model from corresponding model folder
-		$model = $this->loadModel('SomeModel');
+		$model = $this->loadModel('AdminModel');
 
 		//Loads a view model from corresponding viewmodel folder
-		$viewModel = $this->loadModel('SomeViewModel');
+		//$viewModel = $this->loadModel('SomeViewModel');
 
 		//Loads a view from corresponding view folder
-		$template = $this->loadView('insert');
+		$template = $this->loadView('commenteditinappropriate');
+
+		//  $template->setCSS(array(
+		// 	array("static/css/style.css", "intern")
+		// 	array("http://www.example.com/default.css", "extern")
+		// ));
+		$template->setJS(array(
+			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
+			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
+			array("static/js/adminDataTables.js", "intern")//,
+			//array("static/js/tinymce.js", "intern")
+			//array("http://www.example.com/static.js", "extern")
+		));
+		 $template->setCSS(array(
+			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
+		));
 		//Adds a variable or object to that can be accessed in the view
-		$template->set('viewModel', $viewModel);
+		//$template->set('viewModel', $viewModel);
+
+		//Renders the view. true indicates to load the layout
+		$template->render(true);
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			//Can be used to redirect to another controller
+			//Can add query values ?id=1
+			//$this->redirect("controller/action");
+
+			//Check if request is ajax
+			//$this->isAjax()
+		}
+		else
+		{
+			//Execute this code if NOT a post back
+		}
+	}  
+
+	function commenteditreject()
+	{
+		//Loads a model from corresponding model folder
+		$model = $this->loadModel('AdminModel');
+
+		//Loads a view model from corresponding viewmodel folder
+		//$viewModel = $this->loadModel('SomeViewModel');
+
+		//Loads a view from corresponding view folder
+		$template = $this->loadView('commenteditreject');
+
+		//  $template->setCSS(array(
+		// 	array("static/css/style.css", "intern")
+		// 	array("http://www.example.com/default.css", "extern")
+		// ));
+		$template->setJS(array(
+			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
+			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
+			array("static/js/adminDataTables.js", "intern")//,
+			//array("static/js/tinymce.js", "intern")
+			//array("http://www.example.com/static.js", "extern")
+		));
+		 $template->setCSS(array(
+			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
+		));
+		//Adds a variable or object to that can be accessed in the view
+		//$template->set('viewModel', $viewModel);
+
 		//Renders the view. true indicates to load the layout
 		$template->render(true);
 
@@ -837,18 +584,34 @@ class Admin extends Controller {
 		}
 	}
 
-	function update()
+	function dropdownansweredit()
 	{
 		//Loads a model from corresponding model folder
-		$model = $this->loadModel('SomeModel');
+		$model = $this->loadModel('AdminModel');
 
 		//Loads a view model from corresponding viewmodel folder
-		$viewModel = $this->loadModel('SomeViewModel');
+		//$viewModel = $this->loadModel('SomeViewModel');
 
 		//Loads a view from corresponding view folder
-		$template = $this->loadView('update');
+		$template = $this->loadView('dropdownansweredit');
+
+		//  $template->setCSS(array(
+		// 	array("static/css/style.css", "intern")
+		// 	array("http://www.example.com/default.css", "extern")
+		// ));
+		$template->setJS(array(
+			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
+			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
+			array("static/js/adminDataTables.js", "intern")//,
+			//array("static/js/tinymce.js", "intern")
+			//array("http://www.example.com/static.js", "extern")
+		));
+		 $template->setCSS(array(
+			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
+		));
 		//Adds a variable or object to that can be accessed in the view
-		$template->set('viewModel', $viewModel);
+		//$template->set('viewModel', $viewModel);
+
 		//Renders the view. true indicates to load the layout
 		$template->render(true);
 
@@ -868,18 +631,34 @@ class Admin extends Controller {
 		}
 	}
 
-	function delete()
+	function dropdownedit()
 	{
 		//Loads a model from corresponding model folder
-		$model = $this->loadModel('SomeModel');
+		$model = $this->loadModel('AdminModel');
 
 		//Loads a view model from corresponding viewmodel folder
-		$viewModel = $this->loadModel('SomeViewModel');
+		//$viewModel = $this->loadModel('SomeViewModel');
 
 		//Loads a view from corresponding view folder
-		$template = $this->loadView('delete');
+		$template = $this->loadView('dropdownedit');
+
+		//  $template->setCSS(array(
+		// 	array("static/css/style.css", "intern")
+		// 	array("http://www.example.com/default.css", "extern")
+		// ));
+		$template->setJS(array(
+			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
+			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
+			array("static/js/adminDataTables.js", "intern")//,
+			//array("static/js/tinymce.js", "intern")
+			//array("http://www.example.com/static.js", "extern")
+		));
+		 $template->setCSS(array(
+			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
+		));
 		//Adds a variable or object to that can be accessed in the view
-		$template->set('viewModel', $viewModel);
+		//$template->set('viewModel', $viewModel);
+
 		//Renders the view. true indicates to load the layout
 		$template->render(true);
 
@@ -897,7 +676,289 @@ class Admin extends Controller {
 		{
 			//Execute this code if NOT a post back
 		}
-	}    
+	} 
+
+	function storyansweredit()
+	{
+		//Loads a model from corresponding model folder
+		$model = $this->loadModel('AdminModel');
+
+		//Loads a view model from corresponding viewmodel folder
+		//$viewModel = $this->loadModel('SomeViewModel');
+
+		//Loads a view from corresponding view folder
+		$template = $this->loadView('storyansweredit');
+
+		//  $template->setCSS(array(
+		// 	array("static/css/style.css", "intern")
+		// 	array("http://www.example.com/default.css", "extern")
+		// ));
+		$template->setJS(array(
+			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
+			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
+			array("static/js/adminDataTables.js", "intern")//,
+			//array("static/js/tinymce.js", "intern")
+			//array("http://www.example.com/static.js", "extern")
+		));
+		 $template->setCSS(array(
+			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
+		));
+		//Adds a variable or object to that can be accessed in the view
+		//$template->set('viewModel', $viewModel);
+
+		//Renders the view. true indicates to load the layout
+		$template->render(true);
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			//Can be used to redirect to another controller
+			//Can add query values ?id=1
+			//$this->redirect("controller/action");
+
+			//Check if request is ajax
+			//$this->isAjax()
+		}
+		else
+		{
+			//Execute this code if NOT a post back
+		}
+	}
+
+	function storyeditinappropriate()
+	{
+		//Loads a model from corresponding model folder
+		$model = $this->loadModel('AdminModel');
+
+		//Loads a view model from corresponding viewmodel folder
+		//$viewModel = $this->loadModel('SomeViewModel');
+
+		//Loads a view from corresponding view folder
+		$template = $this->loadView('storyeditinappropriate');
+
+		//  $template->setCSS(array(
+		// 	array("static/css/style.css", "intern")
+		// 	array("http://www.example.com/default.css", "extern")
+		// ));
+		$template->setJS(array(
+			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
+			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
+			array("static/js/adminDataTables.js", "intern")//,
+			//array("static/js/tinymce.js", "intern")
+			//array("http://www.example.com/static.js", "extern")
+		));
+		 $template->setCSS(array(
+			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
+		));
+		//Adds a variable or object to that can be accessed in the view
+		//$template->set('viewModel', $viewModel);
+
+		//Renders the view. true indicates to load the layout
+		$template->render(true);
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			//Can be used to redirect to another controller
+			//Can add query values ?id=1
+			//$this->redirect("controller/action");
+
+			//Check if request is ajax
+			//$this->isAjax()
+		}
+		else
+		{
+			//Execute this code if NOT a post back
+		}
+	} 
+
+	// function storyeditpending()
+	// {
+	// 	//Loads a model from corresponding model folder
+	// 	$model = $this->loadModel('AdminModel');
+
+	// 	//Loads a view model from corresponding viewmodel folder
+	// 	//$viewModel = $this->loadModel('SomeViewModel');
+
+	// 	//Loads a view from corresponding view folder
+	// 	$template = $this->loadView('storyeditpending');
+
+	// 	//  $template->setCSS(array(
+	// 	// 	array("static/css/style.css", "intern")
+	// 	// 	array("http://www.example.com/default.css", "extern")
+	// 	// ));
+	// 	$template->setJS(array(
+	// 		//array("static/plugins/tinymce/tinymce.min.js", "intern"),
+	// 		array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
+	// 		array("static/js/adminDataTables.js", "intern")//,
+	// 		//array("static/js/tinymce.js", "intern")
+	// 		//array("http://www.example.com/static.js", "extern")
+	// 	));
+	// 	 $template->setCSS(array(
+	// 		array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
+	// 	));
+	// 	//Adds a variable or object to that can be accessed in the view
+	// 	//$template->set('viewModel', $viewModel);
+
+	// 	//Renders the view. true indicates to load the layout
+	// 	$template->render(true);
+
+	// 	//Execute code if a post back
+	// 	if($this->isPost())
+	// 	{
+	// 		//Can be used to redirect to another controller
+	// 		//Can add query values ?id=1
+	// 		//$this->redirect("controller/action");
+
+	// 		//Check if request is ajax
+	// 		//$this->isAjax()
+	// 	}
+	// 	else
+	// 	{
+	// 		//Execute this code if NOT a post back
+	// 	}
+	// } 
+
+	function storyeditreject()
+	{
+		//Loads a model from corresponding model folder
+		$model = $this->loadModel('AdminModel');
+
+		//Loads a view model from corresponding viewmodel folder
+		//$viewModel = $this->loadModel('SomeViewModel');
+
+		//Loads a view from corresponding view folder
+		$template = $this->loadView('storyeditreject');
+
+		//  $template->setCSS(array(
+		// 	array("static/css/style.css", "intern")
+		// 	array("http://www.example.com/default.css", "extern")
+		// ));
+		$template->setJS(array(
+			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
+			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
+			array("static/js/adminDataTables.js", "intern")//,
+			//array("static/js/tinymce.js", "intern")
+			//array("http://www.example.com/static.js", "extern")
+		));
+		 $template->setCSS(array(
+			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
+		));
+		//Adds a variable or object to that can be accessed in the view
+		//$template->set('viewModel', $viewModel);
+
+		//Renders the view. true indicates to load the layout
+		$template->render(true);
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			//Can be used to redirect to another controller
+			//Can add query values ?id=1
+			//$this->redirect("controller/action");
+
+			//Check if request is ajax
+			//$this->isAjax()
+		}
+		else
+		{
+			//Execute this code if NOT a post back
+		}
+	} 
+
+	function storyquestionedit()
+	{
+		//Loads a model from corresponding model folder
+		$model = $this->loadModel('AdminModel');
+
+		//Loads a view model from corresponding viewmodel folder
+		//$viewModel = $this->loadModel('SomeViewModel');
+
+		//Loads a view from corresponding view folder
+		$template = $this->loadView('storyquestionedit');
+
+		//  $template->setCSS(array(
+		// 	array("static/css/style.css", "intern")
+		// 	array("http://www.example.com/default.css", "extern")
+		// ));
+		$template->setJS(array(
+			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
+			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
+			array("static/js/adminDataTables.js", "intern")//,
+			//array("static/js/tinymce.js", "intern")
+			//array("http://www.example.com/static.js", "extern")
+		));
+		 $template->setCSS(array(
+			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
+		));
+		//Adds a variable or object to that can be accessed in the view
+		//$template->set('viewModel', $viewModel);
+
+		//Renders the view. true indicates to load the layout
+		$template->render(true);
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			//Can be used to redirect to another controller
+			//Can add query values ?id=1
+			//$this->redirect("controller/action");
+
+			//Check if request is ajax
+			//$this->isAjax()
+		}
+		else
+		{
+			//Execute this code if NOT a post back
+		}
+	}
+
+	function yougen()
+	{
+		$model = $this->loadModel('AdminModel');
+
+		//Loads a view model from corresponding viewmodel folder
+		//$viewModel = $this->loadModel('SomeViewModel');
+
+		//Loads a view from corresponding view folder
+		$template = $this->loadView('yougen');
+
+		//  $template->setCSS(array(
+		// 	array("static/css/style.css", "intern")
+		// 	array("http://www.example.com/default.css", "extern")
+		// ));
+		$template->setJS(array(
+			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
+			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
+			array("static/js/adminDataTables.js", "intern")//,
+			//array("static/js/tinymce.js", "intern")
+			//array("http://www.example.com/static.js", "extern")
+		));
+		 $template->setCSS(array(
+			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
+		));
+		//Adds a variable or object to that can be accessed in the view
+		//$template->set('viewModel', $viewModel);
+
+		//Renders the view. true indicates to load the layout
+		$template->render(true);
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			//Can be used to redirect to another controller
+			//Can add query values ?id=1
+			//$this->redirect("controller/action");
+
+			//Check if request is ajax
+			//$this->isAjax()
+		}
+		else
+		{
+			//Execute this code if NOT a post back
+		}
+
+	} 
 }
 
 ?>

@@ -9,7 +9,8 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT * FROM user WHERE userID = :ID AND AdminFlag = 1";
+			$statement = "SELECT * FROM user 
+							WHERE userID = :ID AND AdminFlag = 1";
 
 			$rowCount = $this->fetchRowCount($statement, array("ID" => $userID));
 
@@ -33,11 +34,9 @@ class AdminModel extends Model {
 		try 
 		{
 			$searchObject = new StorySearch();
-
 			$story = $searchObject->SearchQuery($storySearch, $userID, $howMany, $page, $approved = FALSE, $active = TRUE); 
 
 			return $story;
-
 		}
 		catch(PDOException $e)
 		{
@@ -58,7 +57,6 @@ class AdminModel extends Model {
 			$story = $searchObject->SearchQuery($storySearch, $userID, $howMany, $page, $approved = FALSE, $active = TRUE); 
 
 			return $story;
-
 		}
 		catch(PDOException $e)
 		{
@@ -76,9 +74,16 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT *  FROM story WHERE storyID NOT IN ";
-			$statement .= "(SELECT Story_StoryId FROM admin_approve_story)";
-			$statement .= "LIMIT :Start, :HowMany";
+			$statement = "SELECT *, 
+								(SELECT COUNT(*) FROM story WHERE storyID 
+									NOT IN (SELECT Story_StoryId FROM admin_approve_story)
+									) AS totalStories
+							FROM story s
+							INNER JOIN user u
+							ON s.User_UserId = u.UserId
+							WHERE storyID 
+							NOT IN (SELECT Story_StoryId FROM admin_approve_story) 
+							LIMIT :Start, :HowMany";
 
 			$start = $this->getStartValue($howMany, $page);
 
@@ -109,9 +114,16 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT *  FROM story s LEFT JOIN admin_approve_story aas ON s.storyID=aas.Story_StoryId ";
-			$statement .= "WHERE aas.Approved = 0 ";
-			$statement .= "LIMIT :Start, :HowMany";
+			$statement = "SELECT *,
+								(SELECT COUNT(*) FROM story s LEFT JOIN admin_approve_story aas ON s.storyID=aas.Story_StoryId 
+									INNER JOIN user u ON s.User_UserId = u.UserId WHERE aas.Approved = 0) AS totalStories
+							FROM story s 
+							LEFT JOIN admin_approve_story aas 
+							ON s.storyID=aas.Story_StoryId 
+							INNER JOIN user u 
+							ON s.User_UserId = u.UserId 
+							WHERE aas.Approved = 0 
+							LIMIT :Start, :HowMany";
 
 			$start = $this->getStartValue($howMany, $page);
 
@@ -142,9 +154,22 @@ class AdminModel extends Model {
 		{
 			$start = $this->getStartValue($howMany, $page);
 
-			$statement = "SELECT *, COUNT(urs.User_UserId) AS NumberOfFlagged FROM story s RIGHT JOIN user_recommend_story urs ";
-			$statement .= "ON s.storyID=urs.Story_StoryId WHERE urs.Opinion = 0 ";
-			$statement .= "GROUP BY s.storyID ORDER BY NumberOfFlagged DESC LIMIT :Start, :HowMany";
+			$statement = "SELECT *, COUNT(urs.User_UserId) AS NumberOfFlagged,
+								(SELECT COUNT(*) FROM (SELECT StoryId
+									FROM story s
+									INNER JOIN user_recommend_story u ON StoryID = Story_StoryId
+									WHERE Opinion =0
+									GROUP BY StoryID) tmptable
+								) AS totalStories
+							FROM story s 
+							INNER JOIN user_recommend_story urs 
+							ON s.StoryID=urs.Story_StoryId 
+							LEFT JOIN user u 
+							ON s.User_UserId=u.UserId 
+							WHERE urs.Opinion = 0 
+							GROUP BY s.StoryID 
+							ORDER BY NumberOfFlagged DESC 
+							LIMIT :Start, :HowMany";
 
 			$parameters = array(
 				":Start"=>$start, 
@@ -168,13 +193,17 @@ class AdminModel extends Model {
 
 		try
 		{
-			$this->fetch("UPDATE admin_approve_story SET Active = 0
-			 WHERE Story_StoryId = :StoryID AND Active = 1", array(":StoryID"=>$storyID));//Set the active record for the story to deactive;
+			$this->fetch(
+				"UPDATE admin_approve_story 
+				SET Active = 0
+			 	WHERE Story_StoryId = :StoryID AND Active = 1", 
+			 	array(":StoryID"=>$storyID)
+			 	);//Set the active record for the story to deactive;
 
 			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved)
-			  VALUES(:AdminID, :StoryID, :Reason, FALSE)
-				ON DUPLICATE KEY
-					UPDATE Reason=:NewReason, Approved=0, Active=1";
+			  				VALUES(:AdminID, :StoryID, :Reason, FALSE)
+							ON DUPLICATE KEY
+							UPDATE Reason=:NewReason, Approved=0, Active=1";
 
 			$parameters = array(
 					":AdminID" => $adminID,
@@ -198,15 +227,21 @@ class AdminModel extends Model {
 		
 		try
 		{
-			$this->fetch("UPDATE admin_approve_story SET Active = 0 WHERE Story_StoryId = :StoryID AND Active = 1", array(":StoryID"=>$storyID));//Set the active record for the story to deactive;
+			$this->fetch(
+				"UPDATE admin_approve_story SET Active = 0 WHERE Story_StoryId = :StoryID AND Active = 1", 
+				array(":StoryID"=>$storyID)
+				);//Set the active record for the story to deactive;
 
-			$statement = "SELECT *  FROM admin_approve_story WHERE User_UserId = :UserID AND Story_StoryId = :StoryID";
+			$statement = "SELECT *  
+							FROM admin_approve_story 
+							WHERE User_UserId = :UserID AND Story_StoryId = :StoryID";
 
 			$rowCount = $this->fetchRowCount($statement, array(":UserID"=>$adminID, ":StoryID"=>$storyID));
 			
 			if($rowCount <= 0)
 			{
-				$statement2 = "INSERT INTO admin_approve_story VALUES(:AdminID, :StoryID, :Reason, NULL, NULL, 1)";
+				$statement2 = "INSERT INTO admin_approve_story 
+								VALUES(:AdminID, :StoryID, :Reason, NULL, NULL, 1)";
 
 				$parameters = array(
 					":AdminID" => $adminID, 
@@ -217,7 +252,8 @@ class AdminModel extends Model {
 			}
 			else
 			{
-				$statement2 = "UPDATE admin_approve_story SET Reason = :Reason, Active = 1, Approved = 1  ";
+				$statement2 = "UPDATE admin_approve_story 
+								SET Reason = :Reason, Active = 1, Approved = 1  ";
 				$statement2 .= "WHERE User_UserId = :AdminID AND Story_StoryId = :StoryID";
 
 				$parameters = array(
@@ -246,7 +282,10 @@ class AdminModel extends Model {
 
 		try
 		{
-			$this->fetch("UPDATE admin_approve_story SET Active = 0 WHERE storyID = :StoryID AND Active = 1", array(":StoryID" => $storyID));
+			$this->fetch(
+				"UPDATE admin_approve_story SET Active = 0 WHERE storyID = :StoryID AND Active = 1", 
+				array(":StoryID" => $storyID)
+				);
 
 			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved)
 				VALUES(:AdminID, :StoryID, :Reason, 1) 
@@ -277,10 +316,15 @@ class AdminModel extends Model {
 
 		try
 		{
-			$this->fetch("UPDATE admin_approve_story SET Active = 0 WHERE storyID = :StoryID AND Active = 1", array(":StoryID" => $storyID));
+			$this->fetch(
+				"UPDATE admin_approve_story SET Active = 0 WHERE storyID = :StoryID AND Active = 1", 
+				array(":StoryID" => $storyID)
+				);
 
-			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved) VALUES(:AdminID, :StoryID, :Reason, 0) ";
-			$statement .= "ON DUPLICATE KEY UPDATE Reason = :Reason, Approved = 0, Active = 1";
+			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved) 
+							VALUES(:AdminID, :StoryID, :Reason, 0)
+							ON DUPLICATE KEY 
+							UPDATE Reason = :Reason, Approved = 0, Active = 1";
 
 			$parameters = array(
 					":Reason" => $reason, 
@@ -296,7 +340,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getCommentListFlaggedInappropriate($adminID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getCommentListFlaggedInappropriate($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -306,9 +350,17 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged FROM comment c INNER JOIN user_inappropriateflag_comment uic ";
-			$statement .= "ON c.CommentId = uic.Comment_CommentId ";
-			$statement .= "GROUP BY CommentId ORDER BY COUNT(uic.User_UserId) DESC LIMIT :Start, :HowMany";
+			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged 
+							FROM comment c 
+							INNER JOIN user_inappropriateflag_comment uic 
+							ON c.CommentId = uic.Comment_CommentId 
+							INNER JOIN story s 
+							ON c.Story_StoryId = s.StoryId 
+							INNER JOIN user u 
+							ON c.User_UserId=u.UserId 
+							GROUP BY CommentId 
+							ORDER BY COUNT(uic.User_UserId) DESC 
+							LIMIT :Start, :HowMany";
 			
 			$start = $this->getStartValue($howMany, $page);
 			$parameters = array(
@@ -334,10 +386,15 @@ class AdminModel extends Model {
 
 		try
 		{
-			$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Active = 1 AND Comment_CommentId = :CommentID", array(':CommentID' => $commentID));
+			$this->fetch(
+				"UPDATE admin_reject_comment SET Active = 0 WHERE Active = 1 AND Comment_CommentId = :CommentID", 
+				array(':CommentID' => $commentID)
+				);
 
-			$statement = "INSERT admin_reject_comment (Comment_CommentId, User_UserId, Rejected, Reason) VALUES (:CommentID, :AdminID, 1, :Reason) 
-				ON DUPLICATE KEY UPDATE Reason = :NewReason, Rejected = 1, Active = 1";
+			$statement = "INSERT INTO admin_reject_comment (Comment_CommentId, User_UserId, Rejected, Reason) 
+							VALUES (:CommentID, :AdminID, 1, :Reason) 
+							ON DUPLICATE KEY 
+							UPDATE Reason = :NewReason, Rejected = 1, Active = 1";
 
 			$parameters = array(					 
 					":CommentID" => $commentID, 
@@ -362,10 +419,15 @@ class AdminModel extends Model {
 
 		try
 		{
-			$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Active = 1 AND Comment_CommentId = :CommentID", array(':CommentID' => $commentID));
+			$this->fetch(
+				"UPDATE admin_reject_comment SET Active = 0 WHERE Active = 1 AND Comment_CommentId = :CommentID", 
+				array(':CommentID' => $commentID)
+				);
 
-			$statement = "INSERT admin_reject_comment (Comment_CommentId, User_UserId, Rejected, Reason) VALUES (:CommentID, :AdminID, 0, :Reason) 
-				ON DUPLICATE KEY UPDATE Reason = :NewReason, Rejected = 0, Active = 1";
+			$statement = "INSERT INTO admin_reject_comment (Comment_CommentId, User_UserId, Rejected, Reason) 
+							VALUES (:CommentID, :AdminID, 0, :Reason) 
+							ON DUPLICATE KEY 
+							UPDATE Reason = :NewReason, Rejected = 0, Active = 1";
 
 			$parameters = array(					 
 					":CommentID" => $commentID, 
@@ -461,7 +523,11 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT * FROM User ORDER BY UserId ASC LIMIT :start, :howmany";
+			$statement = "SELECT *,
+							(SELECT COUNT(*) FROM user) AS totalUsers
+							FROM user
+							ORDER BY UserId ASC
+							LIMIT :start, :howmany";
 
 			$start = $this-> getStartValue($howMany, $page);
 
@@ -488,12 +554,20 @@ class AdminModel extends Model {
 		
 		try
 		{
-			$this->fetch("UPDATE admin_actionon_user SET Active = 0 WHERE User_UserId=:UserID AND Active = 1", array('UserID' => $userID));
+			$this->fetch(
+				"UPDATE admin_actionon_user SET Active = 0 WHERE User_UserId=:UserID AND Active = 1", 
+				array('UserID' => $userID)
+				);
 
-			$this->fetch("UPDATE user SET Active = 0 WHERE UserId=:UserID", array('UserID' => $userID));
+			$this->fetch(
+				"UPDATE user SET Active = 0 WHERE UserId=:UserID", 
+				array('UserID' => $userID)
+				);
 
-			$statement = "INSERT INTO admin_actionon_user (Admin_UserId, User_UserId, Action, Reason) VALUES(:AdminID, :UserID, 0, :Reason)
-				ON DUPLICATE KEY UPDATE Action = 0, Active = 1, Reason = :NewReason";
+			$statement = "INSERT INTO admin_actionon_user (Admin_UserId, User_UserId, Action, Reason)
+							VALUES(:AdminID, :UserID, 0, :Reason)
+							ON DUPLICATE KEY 
+							UPDATE Action = 0, Active = 1, Reason = :NewReason";
 
 			$parameters = array( 
 					":AdminID" => $adminID,
@@ -519,12 +593,20 @@ class AdminModel extends Model {
 		
 		try
 		{
-			$this->fetch("UPDATE admin_actionon_user SET Active = 0 WHERE User_UserId=:UserID AND Active = 1", array('UserID' => $userID));
+			$this->fetch(
+				"UPDATE admin_actionon_user SET Active = 0 WHERE User_UserId=:UserID AND Active = 1", 
+				array('UserID' => $userID)
+				);
 
-			$this->fetch("UPDATE user SET Active = 1 WHERE UserId=:UserID", array('UserID' => $userID));
+			$this->fetch(
+				"UPDATE user SET Active = 1 WHERE UserId=:UserID", 
+				array('UserID' => $userID)
+				);
 
-			$statement = "INSERT INTO admin_actionon_user (Admin_UserId, User_UserId, Action, Reason) VALUES(:AdminID, :UserID, 1, :Reason)
-				ON DUPLICATE KEY UPDATE Action = 1, Active = 1, Reason = :NewReason";
+			$statement = "INSERT INTO admin_actionon_user (Admin_UserId, User_UserId, Action, Reason) 
+							VALUES(:AdminID, :UserID, 1, :Reason)
+							ON DUPLICATE KEY 
+							UPDATE Action = 1, Active = 1, Reason = :NewReason";
 
 			$parameters = array( 
 					":AdminID" => $adminID,
@@ -550,7 +632,12 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT * FROM User WHERE Active = 0 ORDER BY UserId ASC LIMIT :Start, :HowMany";
+			$statement = "SELECT * ,
+								(SELECT COUNT(*) FROM user WHERE Active = 0) AS totalUsers
+							FROM user 
+							WHERE Active = 0 
+							ORDER BY UserId ASC 
+							LIMIT :Start, :HowMany";
 
 			$start = $this->getStartValue($howMany, $page);
 
@@ -569,8 +656,8 @@ class AdminModel extends Model {
 		}
 	}
 
-//confuse about how to calculate the number of flags
-	public function getListUsersOderedByMostInappropriateFlags($adminID, $howMany = self::HOWMANY, $page = self::PAGE)//confuse about how to calculate the number of flags
+////////////////////////////////////////confuse about how to calculate the number of flags////////////////////
+	public function getListUsersOderedByMostInappropriateFlags($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -579,10 +666,16 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged FROM comment c INNER JOIN user_inappropriateflag_comment uic 
-				ON c.CommentId = uic.Comment_CommentId 
-				GROUP BY CommentId ORDER BY COUNT(uic.User_UserId) DESC 
-				LIMIT 1, 5";
+			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged 
+							FROM comment c 
+							INNER JOIN user u
+							ON c.User_UserId = u.UserId
+							INNER JOIN story s
+							ON u.UserId = s.User_UserId
+							INNER JOIN user_inappropriateflag_comment uic 
+							ON c.CommentId = uic.Comment_CommentId					
+							GROUP BY u.UserId
+							LIMIT :Start, :HowMany";
 			
 			$start = $this-> getStartValue($howMany, $page);
 			
@@ -591,9 +684,9 @@ class AdminModel extends Model {
 					":HowMany" => $howMany
 				);
 
-			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/CommentViewModel");
+			$userList = $this->fetchIntoClass($statement, $parameters, "shared/CommentViewModel");
 
-			return $storyList;
+			return $userList;
 		}
 		catch(PDOException $e)
 		{
@@ -608,7 +701,9 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT * FROM question LEFT JOIN answer_for_question ON question.QuestionId = answer_for_question.Question_QuestionId";
+			$statement = "SELECT * FROM question 
+							LEFT JOIN answer_for_question 
+							ON question.QuestionId=answer_for_question.Question_QuestionId";
 
 			$userList = $this->fetchIntoObject($statement, array());
 
@@ -632,7 +727,8 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "INSERT INTO answer (NameE, NameF) VALUES(:AnswerE, :AnswerF)";
+			$statement = "INSERT INTO answer (NameE, NameF) 
+							VALUES(:AnswerE, :AnswerF)";
 
 			$parameters = array(
 				":AnswerE" => $answerE,
@@ -657,7 +753,10 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "UPDATE answer SET NameE = :AnswerE, NameF = :AnswerF WHERE AnswerId = :AnswerID";
+			$statement = "UPDATE answer 
+							SET NameE = :AnswerE, NameF = :AnswerF 
+							WHERE AnswerId = :AnswerID";
+
 			$parameters = array(
 				":AnswerE" => $answerE,
 				":AnswerF" => $answerF,
@@ -682,8 +781,10 @@ class AdminModel extends Model {
 
 		try
 		{
-			return $this->fetch("INSERT INTO answer_for_question (Question_QuestionId, Answer_AnswerId) VALUES(:QeustionID, :AnswerID)",
-			 array(":QeustionID" => $questionID, ":AnswerID" => $answerID));
+			return $this->fetch(
+				"INSERT INTO answer_for_question (Question_QuestionId, Answer_AnswerId) VALUES(:QeustionID, :AnswerID)",
+			 	array(":QeustionID" => $questionID, ":AnswerID" => $answerID)
+			 	);
 		}
 		catch(PDOException $e)
 		{
@@ -698,7 +799,9 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT * FROM answer WHERE NameE = :NameE AND NameF = :NameF";
+			$statement = "SELECT * 
+							FROM answer 
+							WHERE NameE = :NameE AND NameF = :NameF";
 
 			$rowCount = $this->fetchRowCount($statement, array("NameE" => $answerE, "NameF" => $answerF));
 
@@ -727,9 +830,17 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "UPDATE question SET QuestionE = :QuestionE, QuestionF = :QuestionF WHERE QuestionId = :QuestionId";
+			$statement = "UPDATE question 
+							SET QuestionE = :QuestionE, QuestionF = :QuestionF 
+							WHERE QuestionId = :QuestionId";
 
-			return $this->fetch($statement, array(":QuestionE" => $questionE, ":QuestionF" => $questionF,  ":QuestionId" => $questionID));
+			$parameters = array(
+				":QuestionE" => $questionE,
+				":QuestionF" => $questionF,
+				":QuestionId" => $questionID
+				);
+
+			return $this->fetch($statement, $parameters);
 		}
 		catch(PDOException $e)
 		{
@@ -744,9 +855,15 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "INSERT INTO question (QuestionE, QuestionF) VALUES (:QuestionE, :QuestionF)";
+			$statement = "INSERT INTO question (QuestionE, QuestionF) 
+							VALUES (:QuestionE, :QuestionF)";
 
-			return $this->fetch($statement, array(":QuestionE" => $questionE, ":QuestionF" => $questionF));
+			$parameters = array(
+				":QuestionE" => $questionE,
+				":QuestionF" => $questionF
+				);
+
+			return $this->fetch($statement, $parameters);
 		}
 		catch(PDOException $e)
 		{
@@ -761,9 +878,36 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT * FROM :TableName";
+			$statement = "";
 
-			return $this->fetchIntoObject($statement, array(":TableName" => $tableName));
+			switch(true)
+			{
+				case strtolower($tableName) == "languagetype":
+					$statement = "SELECT * FROM languagetype";
+					break;
+				case strtolower($tableName) == "gendertype":
+					$statement = "SELECT * FROM gendertype";
+					break;
+				case strtolower($tableName) == "achievementleveltype":
+					$statement = "SELECT * FROM languagetype";
+					break;
+				case strtolower($tableName) == "securityquestion":
+					$statement = "SELECT * FROM securityquestion";
+					break;
+				case strtolower($tableName) == "picturetype":
+					$statement = "SELECT * FROM picturetype";
+					break;
+				case strtolower($tableName) == "profileprivacytype":
+					$statement = "SELECT * FROM profileprivacytype";
+					break;
+				case strtolower($tableName) == "storyprivacytype":
+					$statement = "SELECT * FROM storyprivacytype";
+					break;
+				default:
+					return $tableName." is not a proper table name";
+			}			
+
+			return $this->fetchIntoObject($statement, array());
 		}
 		catch(PDOException $e)
 		{
@@ -774,11 +918,73 @@ class AdminModel extends Model {
 	{
 		//Accepts a english dropdownValueE, a french dropdownValueF
 		//returns bool if saved succesfully
+
+		try
+		{
+			$statement = "";
+
+			switch(true)
+			{
+				case strtolower($tableName) == "languagetype":
+					$statement = "INSERT INTO languagetype (NameE, NameF) VALUES (:NameE, :NameF)";
+					break;
+				case strtolower($tableName) == "gendertype":
+					$statement = "INSERT INTO gendertype (NameE, NameF) VALUES (:NameE, :NameF)";
+					break;
+				case strtolower($tableName) == "achievementleveltype":
+					$statement = "INSERT INTO achievementleveltype (NameE, NameF) VALUES (:NameE, :NameF)";
+					break;
+				case strtolower($tableName) == "securityquestion":
+					$statement = "INSERT INTO securityquestion (NameE, NameF) VALUES (:NameE, :NameF)";
+					break;
+				case strtolower($tableName) == "picturetype":
+					$statement = "INSERT INTO picturetype (NameE, NameF) VALUES (:NameE, :NameF)";
+					break;
+				case strtolower($tableName) == "profileprivacytype":
+					$statement = "INSERT INTO profileprivacytype (NameE, NameF) VALUES (:NameE, :NameF)";
+					break;
+				case strtolower($tableName) == "storyprivacytype":
+					$statement = "INSERT INTO storyprivacytype (NameE, NameF) VALUES (:NameE, :NameF)";
+					break;
+				default:
+					return $tableName." is not a proper table name";
+			}
+
+			$parameters = array(
+				":NameE" => $dropdownValueE,
+				":NameF" => $dropdownValueF
+				);
+
+			return $this->fetch($statement, $parameters);
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
 	}
-	public function updateDropdownValue($tableName, $dropdownValueE, $dropdownValueF)
+	public function updateDropdownValue($tableName, $id, $dropdownValueE, $dropdownValueF)
 	{
 		//Accepts a english dropdownValueE, a french dropdownValueF
 		//returns bool if saved succesfully
+
+		try
+		{
+			$statement = "UPDATE :TableName 
+							SET NameE = :NameE, NameF = :NameF 
+							WHERE typeId = :Id";
+
+			$parameters = array(
+				":NameE" => $dropdownValueE,
+				":NameF" => $dropdownValueF,
+				":Id" => $id
+				);
+
+			return $this->fetch($statement, $parameters);
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
 	}
 }
 
