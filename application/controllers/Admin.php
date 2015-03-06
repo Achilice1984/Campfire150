@@ -77,6 +77,24 @@ class Admin extends Controller {
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
 
+		//Loads a view from corresponding view folder
+		$template = $this->loadView('storyeditpending');
+
+		//  $template->setCSS(array(
+		// 	array("static/css/style.css", "intern")
+		// 	array("http://www.example.com/default.css", "extern")
+		// ));
+		$template->setJS(array(
+			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
+			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
+			array("static/js/adminDataTables.js", "intern")//,
+			//array("static/js/tinymce.js", "intern")
+			//array("http://www.example.com/static.js", "extern")
+		));
+		 $template->setCSS(array(
+			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
+		));
+
 		/***********************************
 		*Get the story
 		************************************/
@@ -819,7 +837,7 @@ class Admin extends Controller {
 	// 	}
 	// } 
 
-	function storyeditreject()
+	function storyeditreject($storyId)
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
@@ -959,6 +977,56 @@ class Admin extends Controller {
 		}
 
 	} 
+	/**********************
+	* Test Form 
+	***********************/
+	function testForm()
+	{
+		//Loads a model from corresponding model folder
+		$model = $this->loadModel('AdminModel');
+
+		//Loads a view model from corresponding viewmodel folder
+		//$viewModel = $this->loadModel('SomeViewModel');
+
+		//Loads a view from corresponding view folder
+		$template = $this->loadView('testform');
+
+		//  $template->setCSS(array(
+		// 	array("static/css/style.css", "intern")
+		// 	array("http://www.example.com/default.css", "extern")
+		// ));
+		$template->setJS(array(
+			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
+			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
+			array("static/js/adminDataTables.js", "intern")//,
+			//array("static/js/tinymce.js", "intern")
+			//array("http://www.example.com/static.js", "extern")
+		));
+		 $template->setCSS(array(
+			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
+		));
+		//Adds a variable or object to that can be accessed in the view
+		//$template->set('viewModel', $viewModel);
+
+		//Renders the view. true indicates to load the layout
+		$template->render(true);
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			//Can be used to redirect to another controller
+			//Can add query values ?id=1
+			//$this->redirect("controller/action");
+
+			//Check if request is ajax
+			//$this->isAjax()
+		}
+		else
+		{
+			//Execute this code if NOT a post back
+		}
+	}
+
 }
 
 ?>

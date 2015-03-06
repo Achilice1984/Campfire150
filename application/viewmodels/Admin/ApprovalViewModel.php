@@ -4,19 +4,19 @@
 */
 class ApprovalViewModel extends ViewModel
 {
-	public $Id; //Id of story, or comment
+	//public $Id; //Id of story, or comment
 	public $Content; // Comment from admin
 	public $Approved; // if story is apporved or not
 
 	function __construct()
 	{		
-		$errors["Id"] = array(
+		/*$errors["Id"] = array(
 			'required' =>
 				array(
 					'Message' => gettext('The Id field is required!'),
 					'Properties' => array()
 				)
-		);
+		);*/
 		$errors["Content"] = array(
 			'required' =>
 				array(
