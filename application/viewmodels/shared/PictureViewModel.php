@@ -14,7 +14,7 @@ class PictureViewModel extends ViewModel
 	public $InppropriateFlag;
 	public $User_UserId;
 	public $TimeStamp;
-	public $picturetype_PictureTypeId;
+	public $Picturetype_PictureTypeId;
 	public $PictureExtension;	
 
 	public $PictureUrl;

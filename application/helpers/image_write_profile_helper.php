@@ -1,50 +1,34 @@
 <?PHP
-/**
- Final structure should look something like
- Application/UserData/images/xxxhasheduserid/large_profile.jpg
- Application/UserData/images/xxxhasheduserid/medium_profile.jpg
- Application/UserData/images/xxxhasheduserid/small_.jpg
-**/
-/**
- $uploadedImage = This will be the actual $_FILE[] itself
- 
- $userID = This will be the current userID
- 
- $imageType= ("profile" | "background" | "story" )
- 
- $storyID= This will be the current storyID
-**/
- function imageUpload($uploadedImage,$userID,$imageType){
-  $userIDhash=md5($userID);
-  $storyIDhash=md5($storyID);
-  $writePath= 'Application/UserData/images'.$userIDhash;
-  private $largeDir=$writePath.'/large_'.$imageType.'.jpg';
-  private $mediumDir=$writePath.'/medium_'.$imageType.'.jpg'; 
-  private $smallDir=$writePath.'/small_'.$imageType.'.jpg';
-  private $imageQuality=100;
-  private $largeImageSize=800;
-  private $mediumImageSize=400;
-  private $smallImageSize=150;
-  $imageFileNameWithoutExtention=basename($uploadedImage); 
-  $imageFileType = pathinfo($uploadedImage,PATHINFO_EXTENSION);
-  /*
-   Once we know what kind of image file it is we universally convert that file to 'jpeg'
-  */
-  if($imageFileType=='png'){
-   $jpegImage = imagecreatefrompng($uploadedImage);
+
+ function imageUploadProfile($uploadedImageObject,$userid,$imageid){
+  $imageFile=$uploadedImageObject->PictureFile;
+  $imageFileType= $uploadedImageObject->PictureFile['type'];
+  $imageFileName= $uploadedImageObject->PictureFile['name'];
+  $useridhash=md5($userid);
+  $imageFunctionType='profile';
+  $imageQuality=100;
+  $largeImageSize=800;
+  $mediumImageSize=400;
+  $smallImageSize=150;
+/*  $imageFileType=$uploadedImageObject->PictureFile; */
+/*debugit($uploadedImageObject); */
+  $writePath= ROOT_DIR . 'static\\userdata\\images\\profile\\'.$useridhash.'\\';
+  $writePath= str_replace("/","\\",$writePath);
+  createPath($writePath);   
+  move_uploaded_file($imageFile['tmp_name'], $writePath.$imageFileName);
+  $currentFilePath=$writePath.$imageFileName;
+  $largeDir=$writePath.'large_'.$imageFunctionType.'.jpg';
+  $mediumDir=$writePath.'medium_'.$imageFunctionType.'.jpg'; 
+  $smallDir=$writePath.'small_'.$imageFunctionType.'.jpg';  
+  if($imageFileType=='image/png'){
+   $jpegImage = imagecreatefrompng($currentFilePath);
   }
-  if($imageFileType=='gif'){
-   $jpegImage = imagecreatefromgif($uploadedImage);   
+  if($imageFileType=='image/gif'){
+   $jpegImage = imagecreatefromgif($currentFilePath);   
   }
-  if($imageFileType=='jpeg'){
-   $jpegImage=$uploadedImage;
+  if($imageFileType=='image/jpeg'){
+   $jpegImage=imagecreatefromjpeg($currentFilePath);
   }
-  /*
-   Once we have our file
-   we first write to the database, this function has yet to be written
-   then, re-size for large,medium,small and write each time to server HDD
-   finally release file memory object 
-  */
   $width = imagesx($jpegImage);
   $height = imagesy($jpegImage); 
   if ($height > $width) {   
@@ -84,5 +68,12 @@
   imagecopyresampled($virtual_image, $jpegImage, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
   imagejpeg($virtual_image,$smallDir);
   imagedestroy($virtual_image);
+  unlink($currentFilePath); 
+ }
+ 
+ function createPath($path) {
+  if (!file_exists($path)) {
+    mkdir($path, 0777, true);
+  }
  }
 ?>

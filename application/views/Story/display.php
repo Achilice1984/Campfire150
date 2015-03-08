@@ -6,14 +6,19 @@
     //uncomment to view structure in browser
 
 	//debugit($storyQuestions);
-    debugit($storyViewModel);
+    //debugit($storyViewModel);
     //debugit($relatedStories);
 
 ?>
-<?php echo $storyViewModel->StoryTitle; ?>
+
+
 <h1>Display Story</h1>
 
-<div class="col-md-6"> 
+    <img src="<?php echo $storyViewModel->Images["PictureUrl"]; ?>" alt="<?php echo gettext("Story Picture"); ?>" />
+
+
+<div class="col-md-12"> 
+
 
     <form action="<?php echo BASE_URL; ?>story/addcomment" method="post">
 

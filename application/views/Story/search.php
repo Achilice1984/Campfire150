@@ -43,10 +43,10 @@
 
 
 	    <div role="tabpanel" class="tab-pane" id="Story_Recommended">
-			<input type="hidden" name="RecommendedStoryPage" id="RecommendedStoryPage" value="1">
+
 			<div id="RecommendedStoryContainer">
 				<?php 
-					foreach ($searchResults as $story)
+					foreach ($mostRecommendedResults as $story)
 					{
 						include(APP_DIR . "views/Story/_searchPanel.php");
 					}			
@@ -57,18 +57,21 @@
 		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 			</div>
+			
+			<input type="hidden" name="RecommendedStoryPage" id="RecommendedStoryPage" value="1">
+			<input type="hidden" name="RecommendedStoryUrl" id="RecommendedStoryUrl" value="<?php echo BASE_URL; ?>story/recommendedstories">
 
-			<div class="row text-center" style="margin-bottom: 100px;">
+			<div class="row text-center" id="RecommendedStoryMoreButton" style="margin-bottom: 100px;">
 				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 			</div>
 	    </div>   <!-- <div role="tabpanel" class="tab-pane active" id="Story_Recommended"> -->
 
 
 	    <div role="tabpanel" class="tab-pane" id="Story_Latest">
-			<input type="hidden" name="LatestStoryPage" id="RecommendedStoryPage" value="1">
+			
 			<div id="LatestStoryContainer">
 				<?php 
-					foreach ($searchResults as $story)
+					foreach ($latestResults as $story)
 					{
 						include(APP_DIR . "views/Story/_searchPanel.php");
 					}			
@@ -80,7 +83,10 @@
 		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 			</div>
 
-			<div class="row text-center" style="margin-bottom: 100px;">
+			<input type="hidden" name="LatestStoryPage" id="LatestStoryPage" value="1">
+			<input type="hidden" name="LatestStoryUrl" id="LatestStoryUrl" value="<?php echo BASE_URL; ?>story/lateststories">
+
+			<div class="row text-center" id="LatestStoryMoreButton" style="margin-bottom: 100px;">
 				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 			</div>
 	    </div> 

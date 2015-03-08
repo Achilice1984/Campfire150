@@ -1,0 +1,85 @@
+#StoryTitle {
+	border-width:0px;
+	border:none;
+	box-shadow: none;
+	height: 80px;
+	font-size: 3em;
+}
+
+.select2-container--default {
+	
+	height: 40px;
+	font-size: 1.5em;
+}
+
+.fileUpload {
+	position: relative;
+	overflow: hidden;
+	margin: 10px;
+}
+.fileUpload input.upload {
+	position: absolute;
+	top: 0;
+	right: 0;
+	margin: 0;
+	padding: 0;
+	font-size: 20px;
+	cursor: pointer;
+	opacity: 0;
+	filter: alpha(opacity=0);
+}
+
+#addImageDiv {
+	
+	padding-right: 20px;
+
+}
+.fileUpload{
+	margin-top: 300px;
+	width:100%;
+}
+
+.mce-menubar {
+	background-color: white !important;
+	width: 100% !important;
+}
+#tinymce {
+	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif !important;
+	color: #333 !important;
+}
+.mce-path {/* CSS */
+    display: none !important;    
+}
+.mce-statusbar {
+	border-width: 0px !important;
+}
+.fixed{
+	position: fixed;
+    top: 0px;
+    width: 100%;
+    border-bottom: 1px solid grey !important;
+    border-left: 1px solid grey !important;
+    border-right: 1px solid grey !important;
+}
+
+/*.mce-tinymce{
+	border-width: 0px !important;
+}*/
+/*#mceu_1 {
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    border-bottom: 1px solid grey !important;
+    border-left: 1px solid grey !important;
+    border-right: 1px solid grey !important;
+}*/
+/*.mce-flow-layout{
+	display: none !important;
+}
+.mce-container-body {
+	
+}*/
+
+/*.mce-statusbar{
+	display: none !important;
+}*/

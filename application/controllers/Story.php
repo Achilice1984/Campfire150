@@ -49,6 +49,42 @@ class Story extends Controller {
 			$view->set('stories', $stories);
 			$view->render(true);//true = add header foot
 		}
+	}	
+
+	function search()
+	{
+		$storyModel = $this->loadModel("Story/StoryModel");
+		$searchResults = array();
+
+		if($this->isPost())
+		{
+			if(isset($_POST["StorySearch"]))
+			{
+				$searchResults = $storyModel->searchStories($_POST["StorySearch"], $this->currentUser->UserId);
+			}
+		}
+
+		$mostRecommendedResults = $storyModel->getStoryListMostRecommended($this->currentUser->UserId);
+
+		$latestResults = $storyModel->getStoryListNewest($this->currentUser->UserId);
+
+		//Load the profile view
+		$view = $this->loadView('search');
+
+		$view->set('searchResults', $searchResults);
+		$view->set('mostRecommendedResults', $mostRecommendedResults);
+		$view->set('latestResults', $latestResults);
+
+		//Load up some js files
+		$view->setJS(array(
+			array("static/js/storysearch.js", "intern")
+		));
+		$view->setCSS(array(
+			array("static/css/storysearch.css", "intern")
+		));
+
+		//Render the profile view. true indicates to load the layout pages as well
+		$view->render(true);
 	}
 
 	function ajaxSearch()
@@ -69,42 +105,92 @@ class Story extends Controller {
 		}
 	}
 
-	function search()
+	function recommendedstories()
 	{
 		$storyModel = $this->loadModel("Story/StoryModel");
 		$searchResults = array();
 
-		if($this->isPost())
-		{
-			if(isset($_POST["StorySearch"]))
+		$searchResults = $storyModel->getStoryListMostRecommended($this->currentUser->UserId, 10, isset($_POST["RecommendedStoryPage"]) ? $_POST["RecommendedStoryPage"] : 1);
+
+		if (isset($searchResults)) {
+			foreach ($searchResults as $story)
 			{
-				$searchResults = $storyModel->searchStories($_POST["StorySearch"], $this->currentUser->UserId);
+				include(APP_DIR . "views/Story/_searchPanel.php");
 			}
 		}
-		
-		//$recommendedResults = $storyModel->searchStories($_POST["StorySearch"], $this->currentUser->UserId);
+	}	
+
+	function lateststories()
+	{
+		$storyModel = $this->loadModel("Story/StoryModel");
+		$searchResults = array();
+
+		$searchResults = $storyModel->getStoryListNewest($this->currentUser->UserId, 10, isset($_POST["LatestStoryPage"]) ? $_POST["LatestStoryPage"] : 1);
+
+		if (isset($searchResults)) {
+			foreach ($searchResults as $story)
+			{
+				include(APP_DIR . "views/Story/_searchPanel.php");
+			}
+		}
+	}
+
+	function publish($storyId)
+	{
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+
+		//Load the AccountModel to access account functions
+		$storyModel = $this->loadModel('StoryModel');
+
+		$storyViewModel = $storyModel->getStory($this->currentUser->UserId, $storyId);
+
+		if(isset($storyViewModel[0]) 
+			&& $storyViewModel[0]->UserId == $this->currentUser->UserId
+			&& $storyViewModel[0]->Published == FALSE)
+		{
+			//Execute code if a post back
+			if($this->isPost())
+			{
+				
+				if($this->validateDynamicContent($storyModel))
+				{
+					$this->saveQuestionAnswers($storyModel, $storyId);
+
+					$storyModel->setPublishFlag($storyId, $this->currentUser->UserId, true);
+
+					$this->redirect("account/home");
+				}
+			}
+		}
+		else
+		{
+			$this->redirect("home");
+		}
 
 		//Load the profile view
-		$view = $this->loadView('search');
+		$view = $this->loadView('publish');
 
-		$view->set('searchResults', $searchResults);
+		$view->set('storyViewModel', $storyViewModel[0]);
+
+		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+		$view->set('storyQuestions', $siteModel->getStoryQuestions());
+
 
 		//Load up some js files
 		$view->setJS(array(
-			array("static/js/storysearch.js", "intern")
-		));
-		$view->setCSS(array(
-			array("static/css/storysearch.css", "intern")
+			array("static/js/select2.js", "intern")
 		));
 
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);
 	}
 
-
 	function add()
 	{
 		require_once(APP_DIR .'viewmodels/shared/TagViewModel.php');
+		require_once(APP_DIR.'helpers/image_write_story_helper.php');
 
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
@@ -117,23 +203,41 @@ class Story extends Controller {
 		if($this->isPost())
 		{
 			//Map post values to the loginViewModel
-			$storyViewModel = AutoMapper::mapPost($storyViewModel);
+			$storyViewModel = AutoMapper::mapPost($storyViewModel);			
 
-			//Load the AccountModel to access account functions
-			$storyModel = $this->loadModel('StoryModel');
+			// //Load the AccountModel to access account functions
+		 	$storyModel = $this->loadModel('StoryModel');
 
-			if($storyViewModel->validate() && $this->validateDynamicContent($storyModel))
+			$storyId;
+
+			if($storyViewModel->validate())
 			{
+				$storyViewModel->Published = FALSE;
+
 				$storyModel->publishNewStory($storyViewModel, $this->currentUser->UserId);
 				$storyId = $storyModel->lastInsertId();
 
-				$this->saveQuestionAnswers($storyModel, $storyId);
+				//$this->saveQuestionAnswers($storyModel, $storyId);
 				$this->saveTags($storyModel, $storyId);
+
+				$imageId = $storyModel->saveStoryImageMetadata($this->currentUser->UserId, $storyViewModel->Images, $storyId);
+
+				if(isset($imageId) && $imageId > 0)
+				{
+					imageUploadStory($storyViewModel->Images, $this->currentUser->UserId, $imageId); 
+				}
+
+				if(isset($_POST["publish"]))
+				{
+					$this->redirect("story/publish", array($storyId));
+				}
+				else
+				{
+					$this->redirect("account/home");
+				}
 			}
 
-			$storyViewModel->Tags = $this->getTags($storyModel);
-
-			$this->redirect("account/home");
+			$storyViewModel->Tags = $this->getTags($storyModel);			
 		}		
 
 		//Load the profile view
@@ -141,7 +245,6 @@ class Story extends Controller {
 
 		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
 		$view->set('privacyDropdownValues', $siteModel->getDropdownValues_StoryPrivacyType());
-		$view->set('storyQuestions', $siteModel->getStoryQuestions());
 
 		//Add a variable with old login data so that it can be accessed in the view
 		$view->set('storyViewModel', $storyViewModel);
@@ -150,7 +253,17 @@ class Story extends Controller {
 		$view->setJS(array(
 			array("static/plugins/tinymce/tinymce.min.js", "intern"),
 			array("static/js/tinymce.js", "intern"),
-			array("static/js/select2.js", "intern")
+			array("static/js/select2.js", "intern"),
+			array("static/js/addstory.js", "intern"),
+			array("static/plugins/cropper/cropper.min.js", "intern")
+			// array("static/plugins/jcrop/js/jquery.Jcrop.min.js", "intern"),
+			// array("static/plugins/jcrop/js/jquery.color.js", "intern")
+		));
+
+		$view->setCSS(array(
+			array("static/css/addstory.css", "intern"),
+			//array("static/plugins/jcrop/css/jquery.Jcrop.min.css", "intern")
+			array("static/plugins/cropper/cropper.min.css", "intern")
 		));
 
 		//Render the profile view. true indicates to load the layout pages as well
@@ -288,6 +401,8 @@ class Story extends Controller {
 
 	function display($storyID)
 	{
+		require_once(APP_DIR.'helpers/image_get_path.php');
+			
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
 		$this->AuthRequest();
@@ -306,10 +421,13 @@ class Story extends Controller {
 		{
 			$storyViewModel = $storyViewModel[0];
 			$storyViewModel->Tags = $model->getTagsForStory($storyID);
-			$storyViewModel->QuestionAnswers = $model->getQuestionAnswersForStory($storyID);
-			$storyViewModel->Images = $model->getPicturesForStory($storyID);
+			$storyViewModel->QuestionAnswers = $model->getQuestionAnswersForStory($storyID);			
 			$storyViewModel->Comments = $model->getCommentsForStory($storyID);
 
+			$storyViewModel->Images = $model->getPicturesForStory($storyID);
+			$storyViewModel->Images["PictureUrl"] = returnImagePath($storyViewModel->UserId, $storyViewModel->Images[0], 'large');
+
+			debugit($storyViewModel->Images);
 			$accountModel = $this->loadModel('Account/AccountModel');
 			$storyViewModel->UserProfile = $accountModel->getProfileByID($storyViewModel->UserId);
 
@@ -320,6 +438,16 @@ class Story extends Controller {
 		{
 			addErrorMessage("dbError", gettext("There was an error loading the selected story."));
 		}		
+
+
+		$view->setCSS(array(
+			array("static/css/displaystory.css", "intern")
+		));
+
+		//Load up some js files
+		$view->setJS(array(
+			array("static/js/displaystory.js", "intern")
+		));
 
 		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
 		$view->set('storyQuestions', $siteModel->getStoryQuestions());
@@ -401,6 +529,35 @@ class Story extends Controller {
 		else
 		{
 			$result = $storyModel->unRecommendStory($storyID, $this->currentUser->UserId);
+		}
+
+		if ($this->isAjax()) {
+			return $result;			
+		}
+		else
+		{
+			$this->redirect("account/home");
+		}
+	}
+
+	function flagInappropriate($storyID, $flag)
+	{
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+
+		$result;
+
+		//Load the AccountModel to access account functions
+		$storyModel = $this->loadModel('StoryModel');
+
+		if($flag)
+		{
+			$result = $storyModel->flagStoryAsInapropriate($storyID, $this->currentUser->UserId);
+		}
+		else
+		{
+			$result = $storyModel->unFlagStoryAsInapropriate($storyID, $this->currentUser->UserId);
 		}
 
 		if ($this->isAjax()) {

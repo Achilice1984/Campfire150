@@ -4,10 +4,11 @@ $(function(){
 	// 	placeholder:""
 	// });
 
-	$('.multiSelectTag').select2({
+	$('#Tags').select2({
 		tags: true,
 		tokenSeparators: [',', ' '],
 		minimumInputLength: 1,	
+		placeholder: $('#Tags').attr("placeholder"),
 		createSearchChoice: function(term) {
 			alert("ss");
 	  	},
