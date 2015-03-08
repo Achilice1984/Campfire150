@@ -143,18 +143,18 @@ $(document).ready(function() {
                     }
                 }
             },
-            StoryTitle: {
-                validators: {
-                    notEmpty: {
-                    }
-                }
-            },
-            StoryPrivacyType_StoryPrivacyTypeId: {
-                validators: {
-                    notEmpty: {
-                    }
-                }
-            },
+            // StoryTitle: {
+            //     validators: {
+            //         notEmpty: {
+            //         }
+            //     }
+            // },
+            // StoryPrivacyType_StoryPrivacyTypeId: {
+            //     validators: {
+            //         notEmpty: {
+            //         }
+            //     }
+            // },
         }
     });
 });

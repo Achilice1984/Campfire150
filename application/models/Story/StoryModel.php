@@ -47,12 +47,35 @@ class StoryModel extends Model {
 								":StoryPrivacyType_StoryPrivacyTypeId" => $story->StoryPrivacyType_StoryPrivacyTypeId,
 								":StoryTitle" => $story->StoryTitle, 
 								":Content" => $story->Content, 
-								":published" => TRUE, 
+								":published" => $story->Published, 
 								":DateCreated" => $this->getDateNow(), 
 								":Active" => TRUE
 								);
 
 			return $this->fetch($statement, $parameters);
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function setPublishFlag($storyID, $userID, $publish)
+	{
+		//Accepts a storyID, a userID, and a bool for if it was thought to be inapropriate
+		//checks to see if user already marked it as inapropriate
+		//returns bool if saved correctly
+
+		try
+		{
+
+			$statement = "UPDATE story s SET Published = :Published
+							WHERE s.User_UserId = :User_UserId
+							AND s.StoryId = :StoryId";
+
+			$parameters = array(":StoryId" => $storyID, ":User_UserId" => $userID, ":Published" => $publish);
+
+			return $this->fetch($statement, $parameters);		
 		}
 		catch(PDOException $e) 
 		{
@@ -113,6 +136,43 @@ class StoryModel extends Model {
 		}
 	}
 
+	public function saveStoryImageMetadata($userId, $image, $storyId)
+	{
+		// 3 = story picture
+
+		//The returned id of the new picture
+		$pictureId = 0;
+
+		$statement = "INSERT INTO picture (FileName, Active, InppropriateFlag, User_UserId, picturetype_PictureTypeId, PictureExtension, DateCreated)
+						VALUES (:FileName, :Active, :InppropriateFlag, :User_UserId, :picturetype_PictureTypeId, :PictureExtension, NOW())";
+
+
+		$parameters = array( 
+			":FileName" => pathinfo($image["name"], PATHINFO_FILENAME), 
+			":Active" => true, 
+			":InppropriateFlag" => false, 
+			":User_UserId" => $userId, 
+			":picturetype_PictureTypeId" => 3, 
+			":PictureExtension" => pathinfo($image["name"], PATHINFO_EXTENSION)
+		);
+
+		if($this->fetch($statement, $parameters))
+		{
+			$pictureId = $this->lastInsertId();
+
+			$statement = "INSERT INTO story_has_picture(Story_StoryId, PictureId, DateCreated)
+						VALUES(:Story_StoryId, :PictureId, NOW())";
+			$parameters = array( 
+				":PictureId" => $pictureId, 
+				":Story_StoryId" => $storyId
+			);
+
+			$this->fetch($statement, $parameters);
+		}
+
+		return $pictureId;
+	}
+
  	//tested
 	public function changeStoryPrivacySetting($storyID, $userID, $privacyTypeID)
 	{
@@ -164,6 +224,29 @@ class StoryModel extends Model {
 						  	UPDATE Active = TRUE, Opinion = FALSE";
 
 			$parameters = array(":Story_StoryId" => $storyID, ":User_UserId" => $userID, ":DateCreated" => $this->getDateNow());
+
+			return $this->fetch($statement, $parameters);		
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function unFlagStoryAsInapropriate($storyID, $userID)
+	{
+		//Accepts a storyID, a userID, and a bool for if it was thought to be inapropriate
+		//checks to see if user already marked it as inapropriate
+		//returns bool if saved correctly
+
+		try
+		{
+
+			$statement = "UPDATE user_recommend_story SET Active = FALSE
+							WHERE user_recommend_story.Story_StoryId = :Story_StoryId
+							AND user_recommend_story.User_UserId = :User_UserId";
+
+			$parameters = array(":Story_StoryId" => $storyID, ":User_UserId" => $userID);
 
 			return $this->fetch($statement, $parameters);		
 		}
@@ -235,7 +318,7 @@ class StoryModel extends Model {
 		{
 			$statement = "SELECT 
 
-							s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+							s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, s.Published,
 
 							urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
 
@@ -298,7 +381,7 @@ class StoryModel extends Model {
 		{
 			$statement = "SELECT 
 
-							s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+							s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, s.Published,
 
 							urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
 
@@ -804,7 +887,7 @@ class StoryModel extends Model {
 	}
 
 	// Tested getStoryListMostRecommended(6,1)
-	public function getStoryListMostRecommended($howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoryListMostRecommended($userid, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -814,29 +897,89 @@ class StoryModel extends Model {
 		//Should not contain any unpublished stories
 		//returns an array of Story class related to a category
 
-		$statement = "SELECT story.*, COUNT(user_recommend_story.Opinion) AS recommendation_count
-						FROM story LEFT JOIN user_recommend_story
-						ON story.StoryId = user_recommend_story.Story_StoryId
-						WHERE story.User_UserId IN
-						(SELECT DISTINCT following.User_FollowerId
-						FROM following
-						WHERE following.Active = TRUE)
-						AND user_recommend_story.Opinion = TRUE
-						AND story.Published = TRUE
-						AND StoryPrivacyType_StoryPrivacyTypeId = 1
-						GROUP BY story.StoryId
-						ORDER BY recommendation_count DESC
-						LIMIT :start, :howmany";
+		// $statement = "SELECT story.*, COUNT(user_recommend_story.Opinion) AS recommendation_count
+		// 				FROM story LEFT JOIN user_recommend_story
+		// 				ON story.StoryId = user_recommend_story.Story_StoryId
+		// 				WHERE story.User_UserId IN
+		// 				(SELECT DISTINCT following.User_FollowerId
+		// 				FROM following
+		// 				WHERE following.Active = TRUE)
+		// 				AND user_recommend_story.Opinion = TRUE
+		// 				AND story.Published = TRUE
+		// 				AND StoryPrivacyType_StoryPrivacyTypeId = 1
+		// 				GROUP BY story.StoryId
+		// 				ORDER BY recommendation_count DESC
+		// 				LIMIT :start, :howmany";
+
+
+		$statement = "SELECT 
+					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+
+					urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
+
+					aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
+
+					shp.Story_StoryId, shp.PictureId, shp.Active,
+
+					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active,
+
+					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+					(
+						SELECT COUNT(1)
+						FROM user_recommend_story 
+						WHERE user_recommend_story.Story_StoryId = s.StoryId
+					    AND user_recommend_story.Active = TRUE
+					    AND user_recommend_story.Opinion = FALSE
+					) AS totalFlags,
+					(
+						SELECT COUNT(1)
+						FROM user_recommend_story 
+						WHERE user_recommend_story.Story_StoryId = s.StoryId
+					    AND user_recommend_story.Active = TRUE
+					    AND user_recommend_story.Opinion = TRUE
+					) AS totalRecommends,
+
+					(
+						SELECT COUNT(1)
+						FROM comment c
+						WHERE c.Story_StoryId = s.StoryId
+					    AND c.Active = TRUE
+					) AS totalComments
+					 
+					FROM story s
+
+					INNER JOIN user u
+					ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+					LEFT JOIN admin_approve_story aps
+					ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
+
+					LEFT JOIN user_recommend_story urs
+					ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :userid) AND (urs.Active = TRUE)
+
+					LEFT JOIN story_has_picture shp
+					ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+					LEFT JOIN picture p
+					ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+					WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
+					AND s.Active = TRUE
+					AND aps.Active = TRUE
+					AND aps.Approved = TRUE
+					AND u.Active = TRUE
+		
+					ORDER BY totalRecommends DESC
+					LIMIT :start,:howmany";
+
 
 		$start = $this-> getStartValue($howMany, $page);
 
-		$stories = $this->fetchIntoClass($statement, array(":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
+		$stories = $this->fetchIntoClass($statement, array(":start" => $start, ":howmany" => $howMany, ":userid" => $userid), "shared/StoryViewModel");
 
 		return $stories;
 	}
 
 	//Tested getStoryListNewest(1,5,1)
-	public function getStoryListNewest($privacyType, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoryListNewest($userid, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -847,20 +990,77 @@ class StoryModel extends Model {
 		//returns an array of Story class related to a category
 		try
 		{
-			$statement = "SELECT s.*, aas.Approved, spt.NameE
-					  FROM Story s 
-					  INNER JOIN admin_approve_story aas 
-					  ON s.StoryId = aas.Story_StoryId
-					  WHERE s.Active = TRUE 
-					  AND aas.Approved = TRUE
-					  AND StoryPrivacyType_StoryPrivacyTypeId = 1
-					  GROUP BY s.StoryId DESC
-					  LIMIT :start , :howmany";
+			// $statement = "SELECT s.*, aas.Approved, spt.NameE
+			// 		  FROM Story s 
+			// 		  INNER JOIN admin_approve_story aas 
+			// 		  ON s.StoryId = aas.Story_StoryId
+			// 		  WHERE s.Active = TRUE 
+			// 		  AND aas.Approved = TRUE
+			// 		  AND StoryPrivacyType_StoryPrivacyTypeId = 1
+			// 		  GROUP BY s.StoryId DESC
+			// 		  LIMIT :start , :howmany";
+
+			$statement = "SELECT 
+					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+
+					urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
+
+					aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
+
+					shp.Story_StoryId, shp.PictureId, shp.Active,
+
+					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active,
+
+					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+					(
+						SELECT COUNT(1)
+						FROM user_recommend_story 
+						WHERE user_recommend_story.Story_StoryId = s.StoryId
+					    AND user_recommend_story.Active = TRUE
+					    AND user_recommend_story.Opinion = FALSE
+					) AS totalFlags,
+					(
+						SELECT COUNT(1)
+						FROM user_recommend_story 
+						WHERE user_recommend_story.Story_StoryId = s.StoryId
+					    AND user_recommend_story.Active = TRUE
+					    AND user_recommend_story.Opinion = TRUE
+					) AS totalRecommends,
+
+					(
+						SELECT COUNT(1)
+						FROM comment c
+						WHERE c.Story_StoryId = s.StoryId
+					    AND c.Active = TRUE
+					) AS totalComments
+					 
+					FROM story s
+
+					INNER JOIN user u
+					ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+					LEFT JOIN admin_approve_story aps
+					ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
+
+					LEFT JOIN user_recommend_story urs
+					ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :userid) AND (urs.Active = TRUE)
+
+					LEFT JOIN story_has_picture shp
+					ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+					LEFT JOIN picture p
+					ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+					WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
+					AND s.Active = TRUE
+					AND aps.Active = TRUE
+					AND aps.Approved = TRUE
+					AND u.Active = TRUE
+		
+					ORDER BY s.DatePosted DESC
+					LIMIT :start,:howmany";
 
 			$start = $this-> getStartValue($howMany, $page);
  
-			$parameters = array(":StoryPrivacyTypeId" => $privacyType, 
-				                ":start" => $start, ":howmany" => $howMany);
+			$parameters = array(":start" => $start, ":howmany" => $howMany, ":userid" => $userid);
 
 			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 

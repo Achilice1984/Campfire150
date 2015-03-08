@@ -227,7 +227,7 @@ class AccountModel extends Model {
 				":PictureExtension" => pathinfo($imageViewModel->PictureFile["name"], PATHINFO_EXTENSION)
 			);
 
-			if($this->fetch($statement, $parameters, "shared/PictureViewModel"))
+			if($this->fetch($statement, $parameters))
 			{
 				$pictureId = $this->lastInsertId();
 			}

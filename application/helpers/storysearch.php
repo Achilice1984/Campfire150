@@ -34,7 +34,7 @@ class StorySearch extends Model
 		$storySearch = str_replace($search, $replace, strtolower($storySearch));
 
 		$statement = "SELECT 
-					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, s.Published,
 
 					urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
 
@@ -119,6 +119,7 @@ class StorySearch extends Model
 
 					WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
 					AND s.Active = :ActiveStory
+					AND s.Published = TRUE
 					AND aps.Active = TRUE
 					AND aps.Approved = :ApprovedStory
 					AND u.Active = TRUE
