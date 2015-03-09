@@ -48,7 +48,9 @@
             <article class="row">
                 <div class="col-md-2 col-sm-2 hidden-xs">
                     <figure class="thumbnail">
-                        <img class="img-responsive" style="height: 150px;" src="<?php echo image_get_path_basic($storyViewModel->UserId, 0, 1, IMG_SMALL); ?>" />
+                        <a href="<?php echo BASE_URL . "account/user/" . $storyViewModel->UserId; ?>">
+                            <img class="img-responsive" style="height: 150px;" src="<?php echo image_get_path_basic($storyViewModel->UserId, 0, 1, IMG_SMALL); ?>" />
+                        </a>
                     </figure>
                 </div>
                 <div style="padding-top: 25px; font-size: 1.2em;" class="col-md-8 col-sm-8">
@@ -63,7 +65,17 @@
                     </div>
                 </div>
                 <div style="padding-top: 60px; font-size: 1.2em;" class="col-md-2 col-sm-2">
-                    <button class="btn btn-default btn-lg"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Follow"); ?></button>
+                    <?php
+                        if(isset($storyViewModel->FollowingUser) && $storyViewModel->FollowingUser == TRUE)
+                        {
+                            echo '<button data-userId="' . $storyViewModel->UserId . '" data-additional-text="' . gettext("Follow") . '" data-ajaxurl="' . BASE_URL . 'account/follow" class="FollowButton btn btn-info btn-lg"><span class="glyphicon glyphicon-user"></span> ' . gettext("Following") . '</button>';
+                        }
+                        else
+                        {
+                            echo '<button data-userId="' . $storyViewModel->UserId . '" data-additional-text="' . gettext("Following") . '" data-ajaxurl="' . BASE_URL . 'account/follow" class="FollowButton btn btn-default btn-lg"><span class="glyphicon glyphicon-user"></span> ' . gettext("Follow") . '</button>';
+                        }
+                    ?>
+                    
                 </div>
             </article>
 

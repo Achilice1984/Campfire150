@@ -495,28 +495,38 @@ class Account extends Controller {
 		$view->render(true);
 	}
 
-	function follow($userID)
+	function follow()
 	{
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
 		$this->AuthRequest();
+
 		$result;
 
 		//Load the AccountModel to access account functions
 		$accountModel = $this->loadModel('AccountModel');
 
-		if($userID != $this->currentUser->UserId)
+		if(isset($_POST["UserID"]) && isset($_POST["FollowUser"]) && $_POST["UserID"] != $this->currentUser->UserId)
 		{
-			$result = $accountModel->followUser($this->currentUser->UserId, $userID);
+			if($_POST["FollowUser"] == TRUE)
+			{
+				$result = $accountModel->followUser($this->currentUser->UserId, $_POST["UserID"]);
+			}
+			else
+			{
+				$result = $accountModel->unfollowUser($this->currentUser->UserId, $_POST["UserID"]);
+			}		
+
+			if ($this->isAjax()) {
+				return $result;			
+			}
+			else
+			{
+				$this->redirect("account/home");
+			}
 		}
 
-		if ($this->isAjax()) {
-			return $result;			
-		}
-		else
-		{
-			$this->redirect("account/home");
-		}
+		echo json_encode($result);
 	}
 
 	function unfollow($userID)

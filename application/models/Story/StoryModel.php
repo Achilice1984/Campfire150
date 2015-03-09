@@ -407,6 +407,9 @@ class StoryModel extends Model {
 							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
 
 							u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
+							
+							f.Active AS FollowingUser,
+
 							(
 								SELECT COUNT(1)
 								FROM user_recommend_story 
@@ -443,6 +446,9 @@ class StoryModel extends Model {
 							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
 							LEFT JOIN picture p
 							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+							LEFT JOIN following f
+							ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
 
 							WHERE s.StoryId = :StoryId
 							AND StoryPrivacyType_StoryPrivacyTypeId = 1
@@ -526,7 +532,7 @@ class StoryModel extends Model {
 							LEFT JOIN story_has_picture shp
 							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
 							LEFT JOIN picture p
-							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)							
 
 							WHERE s.StoryId = :StoryId
 							AND StoryPrivacyType_StoryPrivacyTypeId = 1
@@ -1038,6 +1044,9 @@ class StoryModel extends Model {
 					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
 
 					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+
+					f.Active AS FollowingUser,
+
 					(
 						SELECT COUNT(1)
 						FROM user_recommend_story 
@@ -1076,12 +1085,16 @@ class StoryModel extends Model {
 					LEFT JOIN picture p
 					ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
 
+					LEFT JOIN following f
+					ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
+
 					WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
 					AND s.Active = TRUE
 					AND aps.Active = TRUE
 					AND aps.Approved = TRUE
 					AND u.Active = TRUE
-		
+					AND s.Published = TRUE
+					AND u.ProfilePrivacyType_PrivacyTypeId = 1		
 					ORDER BY totalRecommends DESC
 					LIMIT :start,:howmany";
 
@@ -1127,6 +1140,9 @@ class StoryModel extends Model {
 					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
 
 					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+
+					f.Active AS FollowingUser,
+					
 					(
 						SELECT COUNT(1)
 						FROM user_recommend_story 
@@ -1165,8 +1181,12 @@ class StoryModel extends Model {
 					LEFT JOIN picture p
 					ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
 
+					LEFT JOIN following f
+					ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
+
 					WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
 					AND s.Active = TRUE
+					AND u.ProfilePrivacyType_PrivacyTypeId = 1
 					AND aps.Active = TRUE
 					AND aps.Approved = TRUE
 					AND u.Active = TRUE

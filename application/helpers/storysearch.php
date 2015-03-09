@@ -45,6 +45,9 @@ class StorySearch extends Model
 					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
 
 					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+
+					f.Active AS FollowingUser,
+					
 					(
 						SELECT COUNT(1)
 						FROM user_recommend_story 
@@ -118,12 +121,16 @@ class StorySearch extends Model
 					LEFT JOIN picture p
 					ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
 
+					LEFT JOIN following f
+					ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
+
 					WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
 					AND s.Active = :ActiveStory
 					AND s.Published = TRUE
 					AND aps.Active = TRUE
 					AND aps.Approved = :ApprovedStory
 					AND u.Active = TRUE
+					AND u.ProfilePrivacyType_PrivacyTypeId = 1
 					HAVING hits > 0
 					ORDER BY hits DESC
 					LIMIT :start,:howmany";	
