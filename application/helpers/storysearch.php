@@ -42,7 +42,7 @@ class StorySearch extends Model
 
 					shp.Story_StoryId, shp.PictureId, shp.Active,
 
-					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active,
+					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
 
 					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
 					(
@@ -100,6 +100,7 @@ class StorySearch extends Model
 						FROM comment c
 						WHERE c.Story_StoryId = s.StoryId
 					    AND c.Active = TRUE
+					    AND c.PublishFlag = TRUE
 					) AS totalComments
 					 
 					FROM story s

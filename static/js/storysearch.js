@@ -14,6 +14,8 @@ $("#StorySearchMoreButton").click(function(){
 			else
 			{
 				$("#StorySearchInfoBar").show();
+
+				$("#StorySearchMoreButton").hide();
 			}
 		}
 	});
@@ -35,6 +37,8 @@ $("#RecommendedStoryMoreButton").click(function(){
 			else
 			{
 				$("#RecommendedStoryInfoBar").show();
+
+				$("#RecommendedStoryMoreButton").hide();
 			}
 		}
 	});
@@ -56,6 +60,8 @@ $("#LatestStoryMoreButton").click(function(){
 			else
 			{
 				$("#LatestStoryhInfoBar").show();
+
+				$("#LatestStoryMoreButton").hide();
 			}
 		}
 	});

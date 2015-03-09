@@ -144,7 +144,7 @@ class Story extends Controller {
 		//Load the AccountModel to access account functions
 		$storyModel = $this->loadModel('StoryModel');
 
-		$storyViewModel = $storyModel->getStory($this->currentUser->UserId, $storyId);
+		$storyViewModel = $storyModel->getStory_unpublished($this->currentUser->UserId, $storyId, FALSE);
 
 		if(isset($storyViewModel[0]) 
 			&& $storyViewModel[0]->UserId == $this->currentUser->UserId
@@ -190,7 +190,7 @@ class Story extends Controller {
 	function add()
 	{
 		require_once(APP_DIR .'viewmodels/shared/TagViewModel.php');
-		require_once(APP_DIR.'helpers/image_write_story_helper.php');
+		require_once(APP_DIR.'helpers/image_save.php');
 
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
@@ -224,7 +224,8 @@ class Story extends Controller {
 
 				if(isset($imageId) && $imageId > 0)
 				{
-					imageUploadStory($storyViewModel->Images, $this->currentUser->UserId, $imageId); 
+					image_save($storyViewModel->Images, $this->currentUser->UserId, $imageId, 'story', 
+									 $_POST["image_height"], $_POST["image_width"], $_POST["image_x"], $_POST["image_y"]); 
 				}
 
 				if(isset($_POST["publish"]))
@@ -425,9 +426,11 @@ class Story extends Controller {
 			$storyViewModel->Comments = $model->getCommentsForStory($storyID);
 
 			$storyViewModel->Images = $model->getPicturesForStory($storyID);
-			$storyViewModel->Images["PictureUrl"] = returnImagePath($storyViewModel->UserId, $storyViewModel->Images[0], 'large');
+			$storyViewModel->Images["PictureUrl"] = image_get_path_basic($storyViewModel->UserId, 
+																	isset($storyViewModel->Images[0]) ? $storyViewModel->Images[0]->PictureId : 0, 
+																	isset($storyViewModel->Images[0]) ? $storyViewModel->Images[0]->Picturetype_PictureTypeId : IMG_STORY, 
+																	IMG_LARGE);
 
-			debugit($storyViewModel->Images);
 			$accountModel = $this->loadModel('Account/AccountModel');
 			$storyViewModel->UserProfile = $accountModel->getProfileByID($storyViewModel->UserId);
 
@@ -436,7 +439,8 @@ class Story extends Controller {
 		}	
 		else
 		{
-			addErrorMessage("dbError", gettext("There was an error loading the selected story."));
+			$this->redirect("");
+			//addErrorMessage("dbError", gettext("There was an error loading the selected story."));
 		}		
 
 
@@ -608,12 +612,46 @@ class Story extends Controller {
 
 			if($commentViewModel->validate())
 			{
-				echo $storyModel->addCommentToStory($commentViewModel->Content, $commentViewModel->Story_StoryId, $this->currentUser->UserId);
+				echo json_encode($storyModel->addCommentToStory($commentViewModel->Content, $commentViewModel->Story_StoryId, $this->currentUser->UserId));
+				
+				if($this->isAjax() == FALSE)
+				{
+					if(isset($commentViewModel->Story_StoryId))
+					{
+						$this->redirect("story/display", array($commentViewModel->Story_StoryId . "#comments"));
+					}
+					else
+					{
+						$this->redirect("");
+					}
+				}
 			}			
 		}	
 
 		//$this->redirect("account/display", array($commentViewModel->Story_StoryId));
 	}
+
+	function getStoryComments()
+	{
+		require_once(APP_DIR.'helpers/image_get_path.php');
+
+		$storyModel = $this->loadModel("Story/StoryModel");
+		$commentResults = array();
+
+		if(isset($_POST["Comment_StoryId"]))
+		{
+			$commentResults = $storyModel->getCommentsForStory($_POST["Comment_StoryId"], 10, isset($_POST["CommentPage"]) ? $_POST["CommentPage"] : 1);
+
+			if (isset($commentResults)) {
+				foreach ($commentResults as $comment)
+				{
+					include(APP_DIR . "views/Story/_comments.php");
+				}
+			}
+		}
+	}
+
+
 }
 
 ?>

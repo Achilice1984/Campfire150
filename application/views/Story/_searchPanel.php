@@ -1,3 +1,5 @@
+<?php require_once(APP_DIR . 'helpers/image_get_path.php'); ?>
+
 <div class="row StoryRowSection" style="margin-top: 40px; padding:20px; padding-bottom: 0px;">
 	<div class="col-md-2">
 		<div class="row">
@@ -16,7 +18,7 @@
 		<div class="media">
 				<div class="media-left">
 			    <a href="<?php echo BASE_URL . "story/display/" . $story->StoryId; ?>">
-			      	<img style="width: 250px;" class="media-object" src="<?php echo BASE_URL; ?>static/images/default_story_image.jpg" alt="...">
+			      	<img style="width: 250px;" class="media-object" src="<?php echo image_get_path_basic($story->UserId, $story->PictureId, isset($story->Picturetype_PictureTypeId) ? $story->Picturetype_PictureTypeId : IMG_STORY, IMG_SMALL); ?>" alt="...">
 			    </a>
 				</div>
 	  		<div class="media-body">
@@ -29,7 +31,7 @@
 	<div class="col-md-1">	
 		<div class="row">			
 				<h4 style="font-size: 2em;">
-					<a style="text-decoration: none;" class="StoryActionButtons" href="<?php echo BASE_URL . "story/display/" . $story->StoryId;  ?>">
+					<a style="text-decoration: none;" class="StoryActionButtons" href="<?php echo BASE_URL . "story/display/" . $story->StoryId . "#comments";  ?>">
 						<span class="glyphicon glyphicon-comment"></span> 
 					</a>
 					<span class="totalCommentSpan"><?php echo $story->totalComments; ?></span>

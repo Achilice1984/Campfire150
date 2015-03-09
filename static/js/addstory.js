@@ -42,11 +42,11 @@ function initCrop(url) {
 			zoomable: false,
 			crop: function(data) {
 
-				$("#dataX").val(Math.round(data.x));
-				$("#dataY").val(Math.round(data.y));
-				$("#dataHeight").val(Math.round(data.height));
-				$("#dataWidth").val(Math.round(data.width));
-				$("#dataRotate").val(Math.round(data.rotate));
+				$("#image_x").val(Math.round(data.x));
+				$("#image_y").val(Math.round(data.y));
+				$("#image_height").val(Math.round(data.height));
+				$("#image_width").val(Math.round(data.width));
+				//$("#dataRotate").val(Math.round(data.rotate));
 			},
 			 built: cropper_handler,
 			dragmove: cropper_handler,
