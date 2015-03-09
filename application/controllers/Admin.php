@@ -18,7 +18,7 @@ class Admin extends Controller {
 		$model = $this->loadModel('Admin/AdminModel');
 	
 		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
-		$returnData = $model->addDropdownValue("gendertype","xxE", "xxF");
+		$returnData = $model->getCommentListFlaggedInappropriate(15,1);
 
 		debugit($returnData);
 	}
@@ -394,44 +394,40 @@ class Admin extends Controller {
 
 	function AjaxCommentListInappropriate()
 	{
-		// [start] => 0
-		 //    [length] => 10
-		 //    [search] => Array
-		 //        (
-		 //            [value] => 
-		 //            [regex] => false
-		 //        )
-		// $commentList;
-		// $howMany = $_POST["length"]; //How many results to return
-		// $page = $_POST["draw"]; //What page number in results
-		// $adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
-		$commentList;
-		$howMany = 5; //How many results to return
-		$page = 1; //What page number in results
+		$storyList;
+		$howMany = $_POST["length"]; //How many results to return
+		$start = $_POST["start"]; 
+		$page = ($start / $howMany) + 1; //What page number in results
 		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+		$resultData = array();
 
 		$adminModel = $this->loadModel('AdminModel');
 
 		if(!empty($_POST["search"]["value"]))
 		{			
 			//Perform a search
-			$commentList = $adminModel->searchStories($userSearch, $howMany, $page);
+			$commentList = $adminModel->searchForUser($userSearch, $howMany, $page);
 		}
 		else
 		{
 			$commentList = $adminModel->getCommentListFlaggedInappropriate($howMany, $page);
 		}
 
-		foreach ($commentList as $comment)
-			$resultData[] = array($comment->StoryTitle,
-			  $comment->FirstName,  $comment->Email, $comment->DatePosted);
+		$recordsNum = isset($commentList[0]) ?  $commentList[0]->TotalComments : 0;
 
-		//Process comment list into array like below:	
+		//Process story list into array like below:	
+		foreach ($commentList as $comment){
+			$Name = $comment->FirstName;
+			$Name .=  ", ";
+			$Name .= $comment->LastName;
 
+			$resultData[] = array($comment->StoryTitle, $Name, $comment->DateUpdated);
+		}
+			
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
-	        "recordsTotal" => 50,
-	        "recordsFiltered" =>50,
+	        "recordsTotal" => $recordsNum,
+	        "recordsFiltered" => $recordsNum,
 	        "data" => $resultData
 	    );
 		echo json_encode($output);
@@ -439,74 +435,87 @@ class Admin extends Controller {
 
 	function AjaxCommentListRejected()
 	{
-		// [start] => 0
-		 //    [length] => 10
-		 //    [search] => Array
-		 //        (
-		 //            [value] => 
-		 //            [regex] => false
-		 //        )
-		$commentList;
+		$storyList;
 		$howMany = $_POST["length"]; //How many results to return
-		$page = $_POST["draw"]; //What page number in results
+		$start = $_POST["start"]; 
+		$page = ($start / $howMany) + 1; //What page number in results
 		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+		$resultData = array();
+
+		$adminModel = $this->loadModel('AdminModel');
 
 		if(!empty($_POST["search"]["value"]))
-		{
-			$commentList = $this->loadModel('Story/StoryModel');
-			
+		{			
 			//Perform a search
-			$commentList = $storyModel->searchStories($userSearch, $howMany, $page);
+			$commentList = $adminModel->searchForUser($userSearch, $howMany, $page);
 		}
 		else
 		{
-			$adminModel = $this->loadModel('Story/StoryModel');
-
-			$commentList = $adminModel->getCommentListRejected($adminID, $adminID, $howMany, $page);
+			$commentList = $adminModel->getCommentListRejected($howMany, $page);
 		}
 
-		//Process comment list into array like below:	
+		$recordsNum = isset($commentList[0]) ?  $commentList[0]->TotalComments : 0;
 
+		//Process story list into array like below:	
+		foreach ($commentList as $comment){
+			$Name = $comment->FirstName;
+			$Name .=  ", ";
+			$Name .= $comment->LastName;
+			
+			$resultData[] = array($comment->StoryTitle, $Name, $comment->DateUpdated);
+		}
+			
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
-	        "recordsTotal" => 50,
-	        "recordsFiltered" =>50,
-	        "data" => array(
-	        	array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo"),array("Airi",
-				      "Satou",
-				      "Accountant",
-				      "Tokyo")
-	        	)
+	        "recordsTotal" => $recordsNum,
+	        "recordsFiltered" => $recordsNum,
+	        "data" => $resultData
 	    );
 		echo json_encode($output);
 	}
+
+	function AjaxStoryQuestionList()
+	{
+		$storyList;
+		$howMany = $_POST["length"]; //How many results to return
+		$start = $_POST["start"]; 
+		$page = ($start / $howMany) + 1; //What page number in results
+		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+		$resultData = array();
+
+		$adminModel = $this->loadModel('AdminModel');
+
+		if(!empty($_POST["search"]["value"]))
+		{			
+			//Perform a search
+			$questionList = $adminModel->searchForUser($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$questionList = $adminModel->getListQuestionaireQuestions($howMany, $page);
+		}
+
+		$recordsNum = isset($questionList[0]) ?  $questionList[0]->TotalQuestions : 0;
+
+		//Process story list into array like below:	
+		foreach ($questionList as $question){
+			$resultData[] = array($question->NameE, $question->NameF, $question->DateCreated);
+		}
+			
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => $recordsNum,
+	        "recordsFiltered" => $recordsNum,
+	        "data" => $resultData
+	    );
+		echo json_encode($output);
+	}
+
+	/**************************************************************************************************
+	*
+	*						Display FUNCTIONS
+	*
+	***************************************************************************************************/
 
 	function commenteditinappropriate()
 	{
