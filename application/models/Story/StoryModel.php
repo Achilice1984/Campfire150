@@ -38,9 +38,9 @@ class StoryModel extends Model {
 			// create a php timestamp for inserting into the created and updated date fields in the database 
 			//$timestamp = date('Y-m-d G:i:s');
 			$statement = "INSERT INTO story (StoryId, User_UserId, StoryPrivacyType_StoryPrivacyTypeId, StoryTitle, Content,
-											 published, DateCreated, Active)
+											 published, DateCreated, DatePosted, Active)
 						  VALUES(:StoryId, :User_UserId, :StoryPrivacyType_StoryPrivacyTypeId, :StoryTitle, :Content, 
-						  	     :published, :DateCreated, :Active)";
+						  	     :published, :DateCreated, :DatePosted, :Active)";
  
 			$parameters = array(":StoryId" => $story->StoryId, 
 								":User_UserId" => $userId,
@@ -49,6 +49,7 @@ class StoryModel extends Model {
 								":Content" => $story->Content, 
 								":published" => $story->Published, 
 								":DateCreated" => $this->getDateNow(), 
+								":DatePosted" => $this->getDateNow(), 
 								":Active" => TRUE
 								);
 
@@ -326,15 +327,29 @@ class StoryModel extends Model {
 
 							shp.Story_StoryId, shp.PictureId, shp.Active,
 
-							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active,
+							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
 
 							u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
-
+							(
+								SELECT COUNT(1)
+								FROM user_recommend_story 
+								WHERE user_recommend_story.Story_StoryId = s.StoryId
+							    AND user_recommend_story.Active = TRUE
+							    AND user_recommend_story.Opinion = FALSE
+							) AS totalFlags,
+							(
+								SELECT COUNT(1)
+								FROM user_recommend_story 
+								WHERE user_recommend_story.Story_StoryId = s.StoryId
+							    AND user_recommend_story.Active = TRUE
+							    AND user_recommend_story.Opinion = TRUE
+							) AS totalRecommends,
 							(
 								SELECT COUNT(1)
 								FROM comment c
 								WHERE c.Story_StoryId = s.StoryId
 							    AND c.Active = TRUE
+							    AND c.PublishFlag = TRUE
 							) AS totalComments
 							 
 							FROM story s
@@ -389,15 +404,29 @@ class StoryModel extends Model {
 
 							shp.Story_StoryId, shp.PictureId, shp.Active,
 
-							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active,
+							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
 
 							u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
-
+							(
+								SELECT COUNT(1)
+								FROM user_recommend_story 
+								WHERE user_recommend_story.Story_StoryId = s.StoryId
+							    AND user_recommend_story.Active = TRUE
+							    AND user_recommend_story.Opinion = FALSE
+							) AS totalFlags,
+							(
+								SELECT COUNT(1)
+								FROM user_recommend_story 
+								WHERE user_recommend_story.Story_StoryId = s.StoryId
+							    AND user_recommend_story.Active = TRUE
+							    AND user_recommend_story.Opinion = TRUE
+							) AS totalRecommends,
 							(
 								SELECT COUNT(1)
 								FROM comment c
 								WHERE c.Story_StoryId = s.StoryId
 							    AND c.Active = TRUE
+							    AND c.PublishFlag = TRUE
 							) AS totalComments
 							 
 							FROM story s
@@ -419,6 +448,91 @@ class StoryModel extends Model {
 							AND StoryPrivacyType_StoryPrivacyTypeId = 1
 							AND s.Active = TRUE
 							AND u.ProfilePrivacyType_PrivacyTypeId = 1
+							AND s.Published = TRUE
+							AND aps.Active = TRUE
+							AND aps.Approved = TRUE
+							";
+							
+			$parameters = array(":User_UserId" => $userID, 
+								":StoryId" => $storyID);
+
+			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+
+			return $story;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+
+	}
+
+	// tested getStory(2,11)
+	public function getStory_unpublished($userID, $storyID)
+	{
+		//Accepts a user id, and a storyID
+		//Check privacy type
+		//Must be approved
+		//Checks if user has marked story as inappropriate and if user has recommended story (add these to story viewmodel class)
+		//returns a Story class
+
+		try
+		{
+			$statement = "SELECT 
+
+							s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, s.Published,
+
+							urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
+
+							aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
+
+							shp.Story_StoryId, shp.PictureId, shp.Active,
+
+							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
+
+							u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
+							(
+								SELECT COUNT(1)
+								FROM user_recommend_story 
+								WHERE user_recommend_story.Story_StoryId = s.StoryId
+							    AND user_recommend_story.Active = TRUE
+							    AND user_recommend_story.Opinion = FALSE
+							) AS totalFlags,
+							(
+								SELECT COUNT(1)
+								FROM user_recommend_story 
+								WHERE user_recommend_story.Story_StoryId = s.StoryId
+							    AND user_recommend_story.Active = TRUE
+							    AND user_recommend_story.Opinion = TRUE
+							) AS totalRecommends,
+							(
+								SELECT COUNT(1)
+								FROM comment c
+								WHERE c.Story_StoryId = s.StoryId
+							    AND c.Active = TRUE
+							    AND c.PublishFlag = TRUE
+							) AS totalComments
+							 
+							FROM story s
+
+							INNER JOIN user u
+							ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+							LEFT JOIN admin_approve_story aps
+							ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
+
+							LEFT JOIN user_recommend_story urs
+							ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :User_UserId) AND (urs.Active = TRUE)
+
+							LEFT JOIN story_has_picture shp
+							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+							LEFT JOIN picture p
+							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+							WHERE s.StoryId = :StoryId
+							AND StoryPrivacyType_StoryPrivacyTypeId = 1
+							AND s.Active = TRUE
+							AND u.ProfilePrivacyType_PrivacyTypeId = 1
+							AND s.Published = FALSE
 							";
 							// AND aps.Active = TRUE
 							// AND aps.Approved = TRUE
@@ -921,7 +1035,7 @@ class StoryModel extends Model {
 
 					shp.Story_StoryId, shp.PictureId, shp.Active,
 
-					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active,
+					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
 
 					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
 					(
@@ -944,6 +1058,7 @@ class StoryModel extends Model {
 						FROM comment c
 						WHERE c.Story_StoryId = s.StoryId
 					    AND c.Active = TRUE
+					    AND c.PublishFlag = TRUE
 					) AS totalComments
 					 
 					FROM story s
@@ -1009,7 +1124,7 @@ class StoryModel extends Model {
 
 					shp.Story_StoryId, shp.PictureId, shp.Active,
 
-					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active,
+					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
 
 					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
 					(
@@ -1032,6 +1147,7 @@ class StoryModel extends Model {
 						FROM comment c
 						WHERE c.Story_StoryId = s.StoryId
 					    AND c.Active = TRUE
+					    AND c.PublishFlag = TRUE
 					) AS totalComments
 					 
 					FROM story s

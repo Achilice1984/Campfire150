@@ -26,6 +26,14 @@ require_once('./application/plugins/successanderror/successanderror.php');
 define('ROOT_DIR', realpath(dirname(__FILE__)) .'/');
 define('APP_DIR', ROOT_DIR .'application/');
 
+define('IMG_LARGE', 'large');
+define('IMG_MEDIUM', 'medium');
+define('IMG_SMALL', 'small');
+
+define('IMG_PROFILE', 1);
+define('IMG_BACKGROUND', 2);
+define('IMG_STORY', 3);
+
 // Includes
 require(APP_DIR .'config/config.php');
 require(ROOT_DIR .'system/model.php');
