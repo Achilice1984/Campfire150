@@ -4,7 +4,7 @@
 */
 class ApprovalViewModel extends ViewModel
 {
-	//public $Id; //Id of story, or comment
+	public $Id; //Id of story, or comment
 	public $Content; // Comment from admin
 	public $Approved; // if story is apporved or not
 

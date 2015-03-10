@@ -32,8 +32,7 @@
                                 <tr>
                                     <th>Title</th>
                                     <th>Owner</th>
-                                    <th>Posted Date</th>
-                                    <th>Action</th>                                 
+                                    <th>Posted Date</th>                               
                                 </tr>
                             </thead>
                             <tbody>
@@ -175,8 +174,7 @@
              <!--   List of questions for story questionaire -->
                 <ul class="nav nav-pills">
                     <li role="presentation" class="active"><a href="#Questions_Find" aria-controls="Users_Find" role="tab" data-toggle="tab">Find Questions</a></li>
-                    <li role="presentation"><a href="#Users_Disabled_Account" aria-controls="Users_Disabled_Account" role="tab" data-toggle="tab">Disabled Accounts</a></li>
-                    <li role="presentation"><a href="#Users_Inappropriate" aria-controls="Users_Inappropriate" role="tab" data-toggle="tab">Ranked By Inappropriate Flags Issued</a></li>
+                    <li role="presentation"><a href="#Story_Answers_Find" aria-controls="Story_Answers_Find" role="tab" data-toggle="tab">Find Answers</a></li>
                 </ul>   
 
                 <div class="tab-content" style="padding:20px;">
@@ -185,8 +183,9 @@
                         <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxStoryQuestionList" style="display:none;">
                             <thead>
                                 <tr>
-                                    <th>English Name</th>
-                                    <th>French Name</th>
+                                    <th>Question ID</th>
+                                    <th>English Version</th>
+                                    <th>French Version</th>
                                     <th>Date Created</th>
                                    
                                 </tr>
@@ -195,15 +194,41 @@
                             </tbody>
                         </table>
                     </div>  
-                    <div role="tabpanel" class="tab-pane" id="Users_Disabled_Account">
+                    <div role="tabpanel" class="tab-pane" id="Story_Answers_Find">
                         <!--This table will contain all users that are disabled -->
-                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxUserListDisabled" style="display:none;">
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxStoryAnswerList" style="display:none;">
                             <thead>
                                 <tr>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Email</th>
-                                    <th>DateCreated</th>
+                                    <th>Question ID</th>
+                                    <th>Answer English Version</th>
+                                    <th>Answer French Version</th>
+                                    <th>Date Created</th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+            <div role="tabpanel" class="tab-pane" id="User_Questions">
+
+                <ul class="nav nav-pills">
+                    <li role="presentation" class="active"><a href="#User_Questions_Find" aria-controls="User_Questions_Find" role="tab" data-toggle="tab">Find User' Questions</a></li>
+                </ul>   
+
+                <div class="tab-content" style="padding:20px;">
+                    <div role="tabpanel" class="tab-pane active" id="User_Questions_Find">
+                        <!--This table will contain all users -->
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxUserSecurityQuestionList" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>Security Question ID</th>
+                                    <th>English Version</th>
+                                    <th>French Version</th>
+                                    <th>Date Updated</th>
                                    
                                 </tr>
                             </thead>
@@ -211,33 +236,112 @@
                             </tbody>
                         </table>
                     </div>  
-                    <div role="tabpanel" class="tab-pane" id="Users_Inappropriate">
-                        <!--This table will contain all users but order them by most inappropriate flags issued -->
-                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxUserListInappropriate" style="display:none;">
+                </div>
+
+            </div>
+            <div role="tabpanel" class="tab-pane" id="Website_Dropdowns">
+
+                <ul class="nav nav-pills">
+                    <li role="presentation" class="active"><a href="#LanguageType_Find" aria-controls="LanguageType_Find" role="tab" data-toggle="tab">Language Type</a></li>
+                    <li role="presentation"><a href="#GenderType_Find" aria-controls="GenderType_Find" role="tab" data-toggle="tab">Gender Type</a></li>
+                    <li role="presentation"><a href="#AchievementLevelType_Find" aria-controls="AchievementLevelType_Find" role="tab" data-toggle="tab">Achievement Level Type</a></li>
+                    <li role="presentation"><a href="#PictureType_Find" aria-controls="PictureType_Find" role="tab" data-toggle="tab">Picture Type</a></li>
+                    <li role="presentation"><a href="#ProfilePrivacyType_Find" aria-controls="ProfilePrivacyType_Find" role="tab" data-toggle="tab">Profile Privacy Type</a></li>
+                    <li role="presentation"><a href="#StoryPrivacyType_Find" aria-controls="StoryPrivacyType_Find" role="tab" data-toggle="tab">Story Privacy Type</a></li>
+                </ul>   
+
+                <div class="tab-content" style="padding:20px;">
+                    <div role="tabpanel" class="tab-pane active" id="LanguageType_Find">
+                        <!--This table will contain all users -->
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxLanguageList" style="display:none;">
                             <thead>
                                 <tr>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Email</th>
-                                    <th>DateCreated</th>
+                                    <th>English Version</th>
+                                    <th>French Version</th>
+                                    <th>Date Updated</th>
                                    
                                 </tr>
                             </thead>
                             <tbody>
                             </tbody>
                         </table>
-                    </div> 
+                    </div>  
+                    <div role="tabpanel" class="tab-pane" id="GenderType_Find">
+                        <!--This table will contain all users that are disabled -->
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxGenderList" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>English Version</th>
+                                    <th>French Version</th>
+                                    <th>Date Updated</th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane active" id="AchievementLevelType_Find">
+                        <!--This table will contain all users -->
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxAchievementLevelList" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>English Version</th>
+                                    <th>French Version</th>
+                                    <th>Date Updated</th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>  
+                    <div role="tabpanel" class="tab-pane" id="PictureType_Find">
+                        <!--This table will contain all users that are disabled -->
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxPictureTypeList" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>English Version</th>
+                                    <th>French Version</th>
+                                    <th>Date Updated</th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane active" id="ProfilePrivacyType_Find">
+                        <!--This table will contain all users -->
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxProfilePrivacyTypeList" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>English Version</th>
+                                    <th>French Version</th>
+                                    <th>Date Updated</th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>  
+                    <div role="tabpanel" class="tab-pane" id="StoryPrivacyType_Find">
+                        <!--This table will contain all users that are disabled -->
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxStoryPrivacyTypeList" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>English Version</th>
+                                    <th>French Version</th>
+                                    <th>Date Updated</th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-
-            </div>
-            <div role="tabpanel" class="tab-pane" id="User_Questions">
-
-                List of questions that may be asked
-
-            </div>
-            <div role="tabpanel" class="tab-pane" id="Website_Dropdowns">
-
-                List of dropdowns used in the website
 
             </div>
         </div>

@@ -783,6 +783,44 @@ class AdminModel extends Model {
 		}
 	}
 
+	public function getListQuestionaireAnswers()
+	{
+		//Gets a list of all the current questionaire questions
+		//This will include a list of possible answers
+
+		try
+		{
+			$statement = "SELECT * , a.NameE AS AnswerE, a.NameF AS AnswerF, 
+							q.NameE AS QuestionE, q.NameE AS QuestionF, (
+								SELECT COUNT(*) 
+								FROM answer
+								LEFT JOIN answer_for_question
+								ON AnswerId = Answer_AnswerId
+								LEFT JOIN question q
+								ON QuestionId = Question_QuestionId
+							) AS TotalAnswers
+							FROM answer a
+							LEFT JOIN answer_for_question afq
+							ON a.AnswerId = afq.Answer_AnswerId
+							LEFT JOIN question q
+							ON q.QuestionId = afq.Question_QuestionId
+							ORDER BY afq.Question_QuestionId";
+
+			$answerList = $this->fetchIntoObject($statement, array());
+
+			if(isset($answerList))
+			{
+				return $answerList;
+			}
+
+			return null;
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
 	public function addAnswer($answerE, $answerF)
 	{
 		//Accepts a question answer id, and english answer, a french answer
@@ -946,25 +984,25 @@ class AdminModel extends Model {
 			switch(true)
 			{
 				case strtolower($tableName) == "languagetype":
-					$statement = "SELECT * FROM languagetype";
+					$statement = "SELECT *, (SELECT COUNT(*) FROM languagetype) AS TotalNumber FROM languagetype";
 					break;
 				case strtolower($tableName) == "gendertype":
-					$statement = "SELECT * FROM gendertype";
+					$statement = "SELECT *, (SELECT COUNT(*) FROM gendertype) AS TotalNumber FROM gendertype";
 					break;
 				case strtolower($tableName) == "achievementleveltype":
-					$statement = "SELECT * FROM languagetype";
+					$statement = "SELECT *, (SELECT COUNT(*) FROM languagetype) AS TotalNumber FROM languagetype";
 					break;
 				case strtolower($tableName) == "securityquestion":
-					$statement = "SELECT * FROM securityquestion";
+					$statement = "SELECT *, (SELECT COUNT(*) FROM securityquestion) AS TotalNumber FROM securityquestion";
 					break;
 				case strtolower($tableName) == "picturetype":
-					$statement = "SELECT * FROM picturetype";
+					$statement = "SELECT *, (SELECT COUNT(*) FROM picturetype) AS TotalNumber FROM picturetype";
 					break;
 				case strtolower($tableName) == "profileprivacytype":
-					$statement = "SELECT * FROM profileprivacytype";
+					$statement = "SELECT *, (SELECT COUNT(*) FROM profileprivacytype) AS TotalNumber FROM profileprivacytype";
 					break;
 				case strtolower($tableName) == "storyprivacytype":
-					$statement = "SELECT * FROM storyprivacytype";
+					$statement = "SELECT *, (SELECT COUNT(*) FROM storyprivacytype) AS TotalNumber FROM storyprivacytype";
 					break;
 				default:
 					return $tableName." is not a proper table name";

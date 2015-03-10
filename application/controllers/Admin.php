@@ -15,12 +15,37 @@ class Admin extends Controller {
 	
 	function testAdmin()
 	{
-		$model = $this->loadModel('Admin/AdminModel');
-	
-		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
-		$returnData = $model->getCommentListFlaggedInappropriate(15,1);
+		//Loads a model from corresponding model folder
+	//	$model = $this->loadModel('Admin/AdminModel');
 
-		debugit($returnData);
+	//	$returndata = $model->getListDropdowns("securityquestion");
+
+	//	debugit($returndata);
+		$tableName ="picturetype";
+		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+		$resultData = array();
+
+		$adminModel = $this->loadModel('AdminModel');
+
+		if(!empty($_POST["search"]["value"]))
+		{			
+			//Perform a search
+			$list = $adminModel->searchForUser($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$list = $adminModel->getListDropdowns($tableName);
+		}
+
+		$recordsNum = isset($list[0]) ?  $list[0]->TotalNumber : 0;
+
+		//Process story list into array like below:	
+		foreach ($list as $item){
+			$resultData[] = array($item->NameE, $item->NameF, $item->DateUpdated);
+			
+		}
+
+		debugit($list);
 	}
 	
 	//Main action for controller, equivelent to: www.site.com/controller/
@@ -71,97 +96,97 @@ class Admin extends Controller {
 		}
 	}
 
-	function storyeditpending($storyId)
-	{
+	// function storyeditpending($storyId)
+	// {
 
-		//Loads a model from corresponding model folder
-		$model = $this->loadModel('AdminModel');
+	// 	//Loads a model from corresponding model folder
+	// 	$model = $this->loadModel('AdminModel');
 
-		//Loads a view from corresponding view folder
-		$template = $this->loadView('storyeditpending');
+	// 	//Loads a view from corresponding view folder
+	// 	$template = $this->loadView('storyeditpending');
 
-		//  $template->setCSS(array(
-		// 	array("static/css/style.css", "intern")
-		// 	array("http://www.example.com/default.css", "extern")
-		// ));
-		$template->setJS(array(
-			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
-			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
-			array("static/js/adminDataTables.js", "intern")//,
-			//array("static/js/tinymce.js", "intern")
-			//array("http://www.example.com/static.js", "extern")
-		));
-		 $template->setCSS(array(
-			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
-		));
+	// 	//  $template->setCSS(array(
+	// 	// 	array("static/css/style.css", "intern")
+	// 	// 	array("http://www.example.com/default.css", "extern")
+	// 	// ));
+	// 	$template->setJS(array(
+	// 		//array("static/plugins/tinymce/tinymce.min.js", "intern"),
+	// 		array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
+	// 		array("static/js/adminDataTables.js", "intern")//,
+	// 		//array("static/js/tinymce.js", "intern")
+	// 		//array("http://www.example.com/static.js", "extern")
+	// 	));
+	// 	 $template->setCSS(array(
+	// 		array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
+	// 	));
 
-		/***********************************
-		*Get the story
-		************************************/
-		//Loads a model from corresponding model folder
-		$storyModel = $this->loadModel('Story/StoryModel');
-		//Load the loginViewModel
-		$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
-		$storyViewModel = $storyModel->getStory($this->currentUser->UserId, $storyId);
+	// 	/***********************************
+	// 	*Get the story
+	// 	************************************/
+	// 	//Loads a model from corresponding model folder
+	// 	$storyModel = $this->loadModel('Story/StoryModel');
+	// 	//Load the loginViewModel
+	// 	$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
+	// 	$storyViewModel = $storyModel->getStory($this->currentUser->UserId, $storyId);
 
-		/***********************************
-		*Get the useer details for the story
-		************************************/
-		//Loads a model from corresponding model folder
-		$accountModel = $this->loadModel('Account/AccountModel');
-		$userViewModel = $this->loadViewModel('shared/UserViewModel');		
+	// 	/***********************************
+	// 	*Get the useer details for the story
+	// 	************************************/
+	// 	//Loads a model from corresponding model folder
+	// 	$accountModel = $this->loadModel('Account/AccountModel');
+	// 	$userViewModel = $this->loadViewModel('shared/UserViewModel');		
 
-		if(isset($storyViewModel[0]))
-		{
-			//eliminate array
-			$storyViewModel = $storyViewModel[0];
+	// 	if(isset($storyViewModel[0]))
+	// 	{
+	// 		//eliminate array
+	// 		$storyViewModel = $storyViewModel[0];
 
-			$userViewModel = $accountModel->getUserProfileByID($storyViewModel->UserId);
-		}
+	// 		$userViewModel = $accountModel->getUserProfileByID($storyViewModel->UserId);
+	// 	}
 		
-		//Loads a model from corresponding model folder
-		$model = $this->loadModel('AdminModel');
+	// 	//Loads a model from corresponding model folder
+	// 	$model = $this->loadModel('AdminModel');
 
-		//Load the approval view model
-		$aprovalViewModel = $this->loadViewModel('ApprovalViewModel');
+	// 	//Load the approval view model
+	// 	$aprovalViewModel = $this->loadViewModel('ApprovalViewModel');
 
-		//Map post values to the loginViewModel
-		$aprovalViewModel  = AutoMapper::mapPost($aprovalViewModel );
+	// 	//Map post values to the loginViewModel
+	// 	$aprovalViewModel  = AutoMapper::mapPost($aprovalViewModel );
 
-		$aprovalViewModel->Id = $storyId;
+	// 	$aprovalViewModel->Id = $storyId;
 
-		//addSuccessMessage("dbError", "Errror!");
-		//addErrorMessage("dbError", "Errror!");
+	// 	//addSuccessMessage("dbError", "Errror!");
+	// 	//addErrorMessage("dbError", "Errror!");
 
-		//Execute code if a post back
-		if($this->isPost())
-		{
-			if($aprovalViewModel ->validate())
-			{
-				// Save data
+	// 	//Execute code if a post back
+	// 	if($this->isPost())
+	// 	{
+	// 		if($aprovalViewModel ->validate())
+	// 		{
+	// 			// Save data
 
-				//$this->redirect("admin/index");
-			}
+	// 			$this->redirect("admin/index");
+	// 		}
 
-			//validate and save data
-			//$_POST["filedName"]
-		}
+	// 		//validate and save data
+	// 		//$_POST["filedName"]
+	// 	}
 
-		//Loads a view from corresponding view folder
-		$view = $this->loadView('storyeditpending');
+	// 	//Loads a view from corresponding view folder
+	// 	$view = $this->loadView('storyeditpending');
 
-		//Add a variable with old login data so that it can be accessed in the view
-		$view->set('aprovalViewModel', $aprovalViewModel);
+	// 	//Add a variable with old login data so that it can be accessed in the view
+	// 	$view->set('aprovalViewModel', $aprovalViewModel);
 
-		//Add a variable with old login data so that it can be accessed in the view
-		$view->set('storyViewModel', $storyViewModel);
+	// 	//Add a variable with old login data so that it can be accessed in the view
+	// 	$view->set('storyViewModel', $storyViewModel);
 
-		//Add a variable with old login data so that it can be accessed in the view
-		$view->set('userViewModel', $userViewModel);
+	// 	//Add a variable with old login data so that it can be accessed in the view
+	// 	$view->set('userViewModel', $userViewModel);
 
-		//Renders the view. true indicates to load the layout
-		$view->render(true);
-	}
+	// 	//Renders the view. true indicates to load the layout
+	// 	$view->render(true);
+	// }
 
 
 	/**************************************************************************************************
@@ -169,120 +194,6 @@ class Admin extends Controller {
 	*						AJAX FUNCTIONS
 	*
 	***************************************************************************************************/
-
-	function AjaxUserList()
-	{
-		$userList;
-		$howMany = $_POST["length"]; //How many results to return
-		$start = $_POST["start"]; //What page number in results
-		$page = ($start / $howMany) + 1;
-		$resultData = array();
-
-		$adminModel = $this->loadModel('AdminModel');
-		//$this->currentUser->UserId;
-
-		if(!empty($_POST["search"]["value"]))
-		{			
-			//Perform a search
-			$userList = $adminModel->searchForUser($userSearch, $howMany, $page);
-		}
-		else
-		{
-			$userList = $adminModel->getListUsers($howMany, $page);
-		}
-
-		$recordsNum = isset($userList[0]) ?  $userList[0]->totalUsers : 0;
-
-		foreach ($userList as $user)
-			$resultData[] = array($user->FirstName, $user->LastName,
-			  $user->Email, $user->DateCreated);
-			
-		//Process user list into array like below:	
-
-		$output = array(
-	        "draw" => intval($_POST["draw"]),
-	        "recordsTotal" => $recordsNum,
-	        "recordsFiltered" => $recordsNum,
-	        "data" => $resultData
-	    );
-
-		echo json_encode($output);
-	}
-
-	function AjaxUserListDisabled()
-	{
-		$userList;
-		$howMany = $_POST["length"]; //How many results to return
-		$start = $_POST["start"]; //What page number in results
-		$page = ($start / $howMany) + 1;
-		$resultData = array();
-
-		$adminModel = $this->loadModel('AdminModel');
-
-		if(!empty($_POST["search"]["value"]))
-		{			
-			//Perform a search
-			$userList = $adminModel->searchForUser($userSearch, $howMany, $page);
-		}
-		else
-		{
-			$userList = $adminModel->getListUsersDisabled($howMany, $page);
-		}
-
-		$recordsNum = isset($userList[0]) ?  $userList[0]->totalUsers : 0;
-
-		foreach ($userList as $user)
-			$resultData[] = array($user->FirstName, $user->LastName,
-			  $user->Email, $user->DateCreated);
-			
-		//Process user list into array like below:	
-
-		$output = array(
-	        "draw" => intval($_POST["draw"]),
-	        "recordsTotal" => $recordsNum,
-	        "recordsFiltered" => $recordsNum,
-	        "data" => $resultData
-	    );
-
-		echo json_encode($output);
-	}
-
-	function AjaxUserListInappropriate()
-	{
-		$userList;
-		$howMany = $_POST["length"]; //How many results to return
-		$start = $_POST["start"]; 
-		$page = ($start / $howMany) + 1; //What page number in results
-		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
-
-		$adminModel = $this->loadModel('AdminModel');
-
-		if(!empty($_POST["search"]["value"]))
-		{
-			//Perform a search
-			$userList = $accountModel->searchForUser($userSearch, $howMany, $page);
-		}
-		else
-		{
-			$userList = $adminModel->getCommentListFlaggedInappropriate($howMany, $page);
-		}
-
-		$resultData = array();
-
-		foreach ($userList as $user)
-			$resultData[] = array($user->FirstName, $user->LastName,
-			  $user->Email, $user->DateCreated);
-			
-		//Process user list into array like below:	
-		$output = array(
-	        "draw" => intval($_POST["draw"]),
-	        "recordsTotal" => 50,
-	        "recordsFiltered" =>50,
-	        "data" => $resultData
-	    );
-
-		echo json_encode($output);
-	}
 
 	function AjaxStoryListPending()
 	{
@@ -474,6 +385,120 @@ class Admin extends Controller {
 		echo json_encode($output);
 	}
 
+	function AjaxUserList()
+	{
+		$userList;
+		$howMany = $_POST["length"]; //How many results to return
+		$start = $_POST["start"]; //What page number in results
+		$page = ($start / $howMany) + 1;
+		$resultData = array();
+
+		$adminModel = $this->loadModel('AdminModel');
+		//$this->currentUser->UserId;
+
+		if(!empty($_POST["search"]["value"]))
+		{			
+			//Perform a search
+			$userList = $adminModel->searchForUser($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$userList = $adminModel->getListUsers($howMany, $page);
+		}
+
+		$recordsNum = isset($userList[0]) ?  $userList[0]->totalUsers : 0;
+
+		foreach ($userList as $user)
+			$resultData[] = array($user->FirstName, $user->LastName,
+			  $user->Email, $user->DateCreated);
+			
+		//Process user list into array like below:	
+
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => $recordsNum,
+	        "recordsFiltered" => $recordsNum,
+	        "data" => $resultData
+	    );
+
+		echo json_encode($output);
+	}
+
+	function AjaxUserListDisabled()
+	{
+		$userList;
+		$howMany = $_POST["length"]; //How many results to return
+		$start = $_POST["start"]; //What page number in results
+		$page = ($start / $howMany) + 1;
+		$resultData = array();
+
+		$adminModel = $this->loadModel('AdminModel');
+
+		if(!empty($_POST["search"]["value"]))
+		{			
+			//Perform a search
+			$userList = $adminModel->searchForUser($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$userList = $adminModel->getListUsersDisabled($howMany, $page);
+		}
+
+		$recordsNum = isset($userList[0]) ?  $userList[0]->totalUsers : 0;
+
+		foreach ($userList as $user)
+			$resultData[] = array($user->FirstName, $user->LastName,
+			  $user->Email, $user->DateCreated);
+			
+		//Process user list into array like below:	
+
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => $recordsNum,
+	        "recordsFiltered" => $recordsNum,
+	        "data" => $resultData
+	    );
+
+		echo json_encode($output);
+	}
+
+	function AjaxUserListInappropriate()
+	{
+		$userList;
+		$howMany = $_POST["length"]; //How many results to return
+		$start = $_POST["start"]; 
+		$page = ($start / $howMany) + 1; //What page number in results
+		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+
+		$adminModel = $this->loadModel('AdminModel');
+
+		if(!empty($_POST["search"]["value"]))
+		{
+			//Perform a search
+			$userList = $accountModel->searchForUser($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$userList = $adminModel->getCommentListFlaggedInappropriate($howMany, $page);
+		}
+
+		$resultData = array();
+
+		foreach ($userList as $user)
+			$resultData[] = array($user->FirstName, $user->LastName,
+			  $user->Email, $user->DateCreated);
+			
+		//Process user list into array like below:	
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => 50,
+	        "recordsFiltered" =>50,
+	        "data" => $resultData
+	    );
+
+		echo json_encode($output);
+	}
+
 	function AjaxStoryQuestionList()
 	{
 		$storyList;
@@ -499,7 +524,7 @@ class Admin extends Controller {
 
 		//Process story list into array like below:	
 		foreach ($questionList as $question){
-			$resultData[] = array($question->NameE, $question->NameF, $question->DateCreated);
+			$resultData[] = array($question->QuestionId, gettext($question->NameE), gettext($question->NameF), $question->DateUpdated);
 		}
 			
 		$output = array(
@@ -511,11 +536,227 @@ class Admin extends Controller {
 		echo json_encode($output);
 	}
 
+	function AjaxStoryAnswerList()
+	{
+		$storyList;
+		$howMany = $_POST["length"]; //How many results to return
+		$start = $_POST["start"]; 
+		$page = ($start / $howMany) + 1; //What page number in results
+		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+		$resultData = array();
+
+		$adminModel = $this->loadModel('AdminModel');
+
+		if(!empty($_POST["search"]["value"]))
+		{			
+			//Perform a search
+			$answerList = $adminModel->searchForUser($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$answerList = $adminModel->getListQuestionaireAnswers($howMany, $page);
+		}
+
+		$recordsNum = isset($answerList[0]) ?  $answerList[0]->TotalAnswers : 0;
+
+		//Process story list into array like below:	
+		foreach ($answerList as $answer){
+			$resultData[] = array($answer->QuestionId, gettext($answer->AnswerE), gettext($answer->AnswerF), $answer->DateUpdated);
+		}
+			
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => $recordsNum,
+	        "recordsFiltered" => $recordsNum,
+	        "data" => $resultData
+	    );
+		echo json_encode($output);
+	}
+
+	function AjaxUserSecurityQuestionList()
+	{
+		$questionList;
+		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+		$resultData = array();
+
+		$adminModel = $this->loadModel('AdminModel');
+
+		if(!empty($_POST["search"]["value"]))
+		{			
+			//Perform a search
+			$questionList = $adminModel->searchForUser($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$questionList = $adminModel->getListDropdowns("securityquestion");
+		}
+
+		$recordsNum = isset($questionList[0]) ?  $questionList[0]->TotalNumber : 0;
+
+		//Process story list into array like below:	
+		foreach ($questionList as $question)
+		{
+			$resultData[] = array($question->SecurityQuestionId, gettext($question->NameE), gettext($question->NameF), $question->DateUpdated);
+		}
+			
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => $recordsNum,
+	        "recordsFiltered" => $recordsNum,
+	        "data" => $resultData
+	    );
+		echo json_encode($output);
+	}
+
+	function AjaxLanguageList()
+	{
+		$output = $this->dropdownList("languagetype");
+		echo json_encode($output);
+	}
+
+	function AjaxGenderList()
+	{
+		$output = $this->dropdownList("gendertype");
+		echo json_encode($output);
+	}
+
+	function AjaxAchievementLevelList()
+	{
+		$output = $this->dropdownList("achievementleveltype");
+		echo json_encode($output);
+	}
+
+	function AjaxPictureTypeList()
+	{
+		$output = $this->dropdownList("picturetype");
+		echo json_encode($output);
+	}
+
+	function AjaxProfilePrivacyTypeList()
+	{
+		$output = $this->dropdownList("profileprivacytype");
+		echo json_encode($output);
+	}
+
+	function AjaxStoryPrivacyTypeList()
+	{
+		$output = $this->dropdownList("storyprivacytype");
+		echo json_encode($output);
+	}
+
+	function dropdownList($tableName)
+	{
+		$list = array();
+		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+		$resultData = array();
+
+		$adminModel = $this->loadModel('AdminModel');
+
+		if(!empty($_POST["search"]["value"]))
+		{			
+			//Perform a search
+			$list = $adminModel->searchForUser($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$list = $adminModel->getListDropdowns($tableName);
+		}
+
+		$recordsNum = isset($list[0]) ?  $list[0]->TotalNumber : 0;
+
+		//Process story list into array like below:	
+		foreach ($list as $item){
+			$resultData[] = array(gettext($item->NameE), gettext($item->NameF), $item->DateUpdated);			
+		}
+			
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => $recordsNum,
+	        "recordsFiltered" => $recordsNum,
+	        "data" => $resultData
+	    );
+
+	    return $output;
+	}
+
 	/**************************************************************************************************
 	*
 	*						Display FUNCTIONS
 	*
 	***************************************************************************************************/
+	function storyeditpending($storyId)
+	{
+		//$this->AdminRequest();
+
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('storyeditpending');
+
+		//Loads a model from corresponding model folder
+		if(!isset($storyViewModel) && isset($storyId))
+		{
+			$storyModel = $this->loadModel('Story/StoryModel');
+		//Load the loginViewModel
+			$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
+	//		$storyViewModel = $storyModel->getStoryAsAdmin($this->currentUser->UserId, $storyId);
+			$storyViewModel = $storyModel->getStory($this->currentUser->UserId, $storyId);
+		}
+		
+
+		//Loads a model from corresponding model folder
+		$accountModel = $this->loadModel('Account/AccountModel');
+		$userViewModel = $this->loadViewModel('shared/UserViewModel');	
+
+		if(isset($storyViewModel[0]))
+		{
+			//eliminate array
+			$storyViewModel = $storyViewModel[0];
+			$userViewModel = $accountModel->getUserProfileByID($storyViewModel->UserId);
+		}
+		
+		//Loads a model from corresponding model folder
+		$model = $this->loadModel('AdminModel');
+
+		//Load the approval view model
+		$aprovalViewModel = $this->loadViewModel('ApprovalViewModel');
+
+		$aprovalViewModel->Id = $storyId;
+
+		//addSuccessMessage("dbError", "Errror!");
+		//addErrorMessage("dbError", "Errror!");
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			//Map post values to the loginViewModel
+			$aprovalViewModel  = AutoMapper::mapPost($aprovalViewModel );
+
+			if($aprovalViewModel->validate())
+			{
+				// Save data
+				$model->approveStory($this->currentUser->UserId, $aprovalViewModel->Id, $aprovalViewModel->$reason);
+
+				$this->redirect("admin/index");
+			}
+			else
+			{
+				$this->redirect("");
+			}
+		}
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('storyeditpending');
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('aprovalViewModel', $aprovalViewModel);
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('storyViewModel', $storyViewModel);
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('userViewModel', $userViewModel);
+
+		//Renders the view. true indicates to load the layout
+		$view->render(true);
+	}
 
 	function commenteditinappropriate()
 	{
