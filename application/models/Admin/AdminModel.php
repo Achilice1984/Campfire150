@@ -347,17 +347,24 @@ class AdminModel extends Model {
 		//Gets a list of comments that have been marked as inappropriate by users
 		//Order the list by how many inappropriate flags there are
 		//returns an array of Comment class
-
+		
 		try
 		{
-			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged 
+			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged, (
+								SELECT COUNT( * )
+									FROM (
+									SELECT COUNT( * )
+									FROM user_inappropriateflag_comment
+									GROUP BY Comment_CommentId
+									)tmpTable
+								) AS TotalComments
 							FROM comment c 
 							INNER JOIN user_inappropriateflag_comment uic 
 							ON c.CommentId = uic.Comment_CommentId 
 							INNER JOIN story s 
 							ON c.Story_StoryId = s.StoryId 
 							INNER JOIN user u 
-							ON c.User_UserId=u.UserId 
+							ON c.User_UserId=u.UserId
 							GROUP BY CommentId 
 							ORDER BY COUNT(uic.User_UserId) DESC 
 							LIMIT :Start, :HowMany";
@@ -377,6 +384,54 @@ class AdminModel extends Model {
 			return $e->getMessage();
 		}
 	}
+
+	public function getCommentListRejected($howMany = self::HOWMANY, $page = self::PAGE)
+	{
+		//Accepts how many, page
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Gets a list of comments that have been marked as inappropriate by users
+		//Order the list by how many inappropriate flags there are
+		//returns an array of Comment class
+		
+		try
+		{
+			
+			
+			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged, (
+								SELECT COUNT( * )
+									FROM (
+									SELECT COUNT( * )
+									FROM user_inappropriateflag_comment
+									GROUP BY Comment_CommentId
+									)tmpTable
+								) AS TotalComments
+							FROM comment c 
+							INNER JOIN user_inappropriateflag_comment uic 
+							ON c.CommentId = uic.Comment_CommentId 
+							INNER JOIN story s 
+							ON c.Story_StoryId = s.StoryId 
+							INNER JOIN user u 
+							ON c.User_UserId=u.UserId
+							GROUP BY CommentId 
+							ORDER BY COUNT(uic.User_UserId) DESC 
+							LIMIT :Start, :HowMany";
+			
+			$start = $this->getStartValue($howMany, $page);
+			$parameters = array(
+				":Start"=>$start,
+				":HowMany"=>$howMany
+				);
+
+			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/CommentViewModel");
+
+			return $storyList;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
 
 	public function rejectCommentAsAdmin($adminID, $commentID, $reason)
 	{
@@ -701,15 +756,61 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT * FROM question 
-							LEFT JOIN answer_for_question 
-							ON question.QuestionId=answer_for_question.Question_QuestionId";
+			$statement = "SELECT * , (
+								SELECT COUNT(*) FROM question
+							) AS TotalQuestions
+							FROM question";
+
+			// $statement = "SELECT * , (
+			// 					SELECT COUNT(*) FROM question
+			// 				) AS TotalQuestions
+			// 				FROM question 
+			// 				LEFT JOIN answer_for_question 
+			// 				ON question.QuestionId=answer_for_question.Question_QuestionId";
 
 			$userList = $this->fetchIntoObject($statement, array());
 
 			if(isset($userList))
 			{
 				return $userList;
+			}
+
+			return null;
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function getListQuestionaireAnswers()
+	{
+		//Gets a list of all the current questionaire questions
+		//This will include a list of possible answers
+
+		try
+		{
+			$statement = "SELECT * , a.NameE AS AnswerE, a.NameF AS AnswerF, 
+							q.NameE AS QuestionE, q.NameE AS QuestionF, (
+								SELECT COUNT(*) 
+								FROM answer
+								LEFT JOIN answer_for_question
+								ON AnswerId = Answer_AnswerId
+								LEFT JOIN question q
+								ON QuestionId = Question_QuestionId
+							) AS TotalAnswers
+							FROM answer a
+							LEFT JOIN answer_for_question afq
+							ON a.AnswerId = afq.Answer_AnswerId
+							LEFT JOIN question q
+							ON q.QuestionId = afq.Question_QuestionId
+							ORDER BY afq.Question_QuestionId";
+
+			$answerList = $this->fetchIntoObject($statement, array());
+
+			if(isset($answerList))
+			{
+				return $answerList;
 			}
 
 			return null;
@@ -883,25 +984,25 @@ class AdminModel extends Model {
 			switch(true)
 			{
 				case strtolower($tableName) == "languagetype":
-					$statement = "SELECT * FROM languagetype";
+					$statement = "SELECT *, (SELECT COUNT(*) FROM languagetype) AS TotalNumber FROM languagetype";
 					break;
 				case strtolower($tableName) == "gendertype":
-					$statement = "SELECT * FROM gendertype";
+					$statement = "SELECT *, (SELECT COUNT(*) FROM gendertype) AS TotalNumber FROM gendertype";
 					break;
 				case strtolower($tableName) == "achievementleveltype":
-					$statement = "SELECT * FROM languagetype";
+					$statement = "SELECT *, (SELECT COUNT(*) FROM languagetype) AS TotalNumber FROM languagetype";
 					break;
 				case strtolower($tableName) == "securityquestion":
-					$statement = "SELECT * FROM securityquestion";
+					$statement = "SELECT *, (SELECT COUNT(*) FROM securityquestion) AS TotalNumber FROM securityquestion";
 					break;
 				case strtolower($tableName) == "picturetype":
-					$statement = "SELECT * FROM picturetype";
+					$statement = "SELECT *, (SELECT COUNT(*) FROM picturetype) AS TotalNumber FROM picturetype";
 					break;
 				case strtolower($tableName) == "profileprivacytype":
-					$statement = "SELECT * FROM profileprivacytype";
+					$statement = "SELECT *, (SELECT COUNT(*) FROM profileprivacytype) AS TotalNumber FROM profileprivacytype";
 					break;
 				case strtolower($tableName) == "storyprivacytype":
-					$statement = "SELECT * FROM storyprivacytype";
+					$statement = "SELECT *, (SELECT COUNT(*) FROM storyprivacytype) AS TotalNumber FROM storyprivacytype";
 					break;
 				default:
 					return $tableName." is not a proper table name";

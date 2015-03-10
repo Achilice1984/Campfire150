@@ -9,7 +9,7 @@
 	<h1>Edit inappropriate COMMENT</h1>
 
     <div class="row">
-		
+
 		<div class="col-md-6">
 			<form action="<?php echo BASE_URL; ?>account/login" method="post" id="loginForm">
 

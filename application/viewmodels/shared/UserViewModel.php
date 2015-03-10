@@ -43,6 +43,7 @@ class UserViewModel extends ViewModel
 	public $SecurityAnswer;
 
 	public $UserActionStatement;
+	public $ActionStatement;
 
 	public $PicUrl;
 
