@@ -674,7 +674,7 @@ class AccountModel extends Model {
 	*
 	******************************************************************************************************************/	
 	
-	public function searchForUser($userSearch, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function searchForUser($userSearch, $userId, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts a string that will be someones name, how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -705,11 +705,49 @@ class AccountModel extends Model {
 		}
 
 		$statement = "SELECT *,
+
+						f.Active AS FollowingUser,
+
+						(
+							SELECT COUNT(1)
+							FROM user_recommend_story 
+							WHERE user_recommend_story.User_UserId = u.UserId
+						    AND user_recommend_story.Active = TRUE
+						    AND user_recommend_story.Opinion = TRUE
+						) AS totalRecommends,
+						
+						(
+							SELECT COUNT(1)
+							FROM story 
+							WHERE story.User_UserId = u.UserId
+						    AND story.Active = TRUE
+						    AND story.Published = TRUE
+						) AS totalPublishedStories,
+						
+						(
+							SELECT COUNT(1)
+							FROM comment 
+							WHERE comment.User_UserId = u.UserId
+						    AND comment.Active = TRUE
+						    AND comment.PublishFlag = TRUE
+						) AS totalPublishedComments,
+
+						(
+							SELECT COUNT(1)
+							FROM following 
+							WHERE following.User_FollowerId = u.UserId
+						    AND following.Active = TRUE
+						) AS totalFollowers,
+
 						((LOWER(FirstName) LIKE :firstName) + 
 						(LOWER(LastName) LIKE :lastName)) as hits
-						FROM   user
-						WHERE user.Active = TRUE
-						HAVING hits > 0
+						FROM   user u
+
+						LEFT JOIN following f
+						ON (f.User_FollowerId = :UserId) AND (f.Active = TRUE)
+
+						WHERE u.Active = TRUE
+						
 						ORDER BY hits DESC
 						LIMIT :start, :howmany";
 
@@ -718,6 +756,9 @@ class AccountModel extends Model {
 		$parameters = array(
 			":lastName" => $lName,
 			":firstName" => $fName,
+			":UserId" => $userId,
+			//":UserId2" => $userId,
+			//":UserId3" => $userId,
 			":start" => $start,
 			":howmany" => $howMany
 			);

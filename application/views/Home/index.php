@@ -80,7 +80,7 @@
                         </div>
                     </div>
                 </div>
-                <p class="clearfix"><a href="#" class="btn btn-warning pull-right">View More Stories</a></p>
+                <p class="clearfix"><a href="<?php echo BASE_URL; ?>story/search" class="btn btn-warning pull-right">View More Stories</a></p>
             </div>
         </section>
         <section class="bg-grey text-center text-xl padding-xl">
@@ -109,7 +109,7 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">
-                        <canvas id="wordCloudCanvas"></canvas> 
+                        <canvas id="wordCloudCanvas" height="400" width="500" style="width:75%;"></canvas> 
                     </div>
                     <div class="col-md-6">
                         <h1>How the Campfire Works</h1>
@@ -119,7 +119,7 @@
                             <li>We all create a national story</li>
                             <li>Repeat</li>
                         </ol>
-                        <p><a href="#" class="btn btn-warning btn-lg btn-block">Share a Story</a></p>
+                        <p><a href="<?php echo BASE_URL; ?>story/add" class="btn btn-warning btn-lg btn-block">Share a Story</a></p>
                     </div>
                 </div>
             </div>

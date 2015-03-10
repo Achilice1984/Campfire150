@@ -1,6 +1,6 @@
 
 
-<div class="container" style="margin-bottom: 50px;">
+<div class="container" style="padding-top: 50px; padding-bottom: 50px;">
 
     <div class="row">
         <div class="col-md-12"> 

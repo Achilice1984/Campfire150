@@ -8,7 +8,9 @@
 <article class="row">
 	<div class="col-md-2 col-sm-2 hidden-md hidden-xs">
 		<figure class="thumbnail">
-			<img class="img-responsive" style="height: 150px;" src="<?php echo image_get_path_basic($comment->User_UserId, 0, 1, IMG_SMALL); ?>" />
+			<a href="<?php echo BASE_URL . "account/user/" . $comment->User_UserId; ?>">
+				<img class="img-responsive" style="height: 150px;" src="<?php echo image_get_path_basic($comment->User_UserId, 0, 1, IMG_SMALL); ?>" />
+			</a>
 		</figure>
 	</div>
 	<div class="col-md-10 col-sm-10">
@@ -33,7 +35,7 @@
 					<div class="row hidden-lg">
 						
 						<hr />
-						<div class="col-md-12" style="bottom: 0; right: 0; padding: 25px;  padding-bottom: 30px;">
+						<div class="col-md-12" style="bottom: 0; right: 0;">
 							
 							<span style="padding-right: 5px;" class="glyphicon glyphicon-time"></span>	<strong><?php echo date("m-d-Y", strtotime($comment->DateCreated)); ?></strong>
 							
