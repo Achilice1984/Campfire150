@@ -13,9 +13,9 @@
       			<img src="../../static/images/default-user-image.png" alt="">
   				<h2>Owner Information</h2>
   				<ul>
-  					<li>First name</li>
-  					<li>Last name</li>
-  					<li>Created date</li>
+  					<li><?php echo $userViewModel->FirstName ?></li>
+  					<li><?php echo $userViewModel->LastName ?></li>
+  					<li><?php echo $userViewModel->ActionStatement ?></li>
 					<li>.....</li>
   				</ul>
   			</div>
@@ -24,9 +24,8 @@
   		<div class="col-md-6">
   			<div class="thumbnail">
       			<img src="../../static/images/default_story_image.jpg" alt="">
-  				<h2>Story Title</h2>
-  				<p>As of May 2014, we've discontinued operation of Bootstrap v2.3.2's Customizer. It's been nearly a year since Bootstrap v2.3.2 was released. Bootstrap v3 was released soon after, and is now mature. We continue to encourage new projects to use Bootstrap v3.
-  					As always, you can of course still build Bootstrap v2.3.2 from source yourself. See the Getting started docs and Bootstrap v2.3.2's README for instructions.</p>
+  				<h2><?php echo $storyViewModel->StoryTitle ?></h2>
+  				<p><?php echo $storyViewModel->Content ?></p>
   			</div>
   		</div>
 	</div>
@@ -52,7 +51,7 @@
 	            </div>
 	            <div class="form-group">
 	                <label for="Content"><?php echo gettext("Reason"); ?></label>
-	                <textarea class="form-control" id="Content" name="Content"><?php echo $aprovalViewModel->Content; ?></textarea>
+	                <textarea class="form-control" id="Content" name="Content" value="<?php echo $aprovalViewModel->Content; ?>"></textarea>
 	            </div>
 	            
 
