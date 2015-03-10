@@ -1,4 +1,10 @@
-	
+    </div> <!-- End #c150-body -->
+
+    <div id="c150-foot" class="bg-grey">
+        <footer class="container">
+            <p>&copy <?php echo date("Y"); ?>, Campfire 150</p>
+        </footer>
+    </div> <!-- End #c150-foot -->	
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="<?php echo BASE_URL; ?>/static/plugins/jquery/jquery.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
