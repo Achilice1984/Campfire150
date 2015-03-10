@@ -5,47 +5,22 @@ class Admin extends Controller {
 	function __construct()
 	{
 		parent::__construct();
-
-		//Will limit all these function to admin level of privlidge
-		// if(!$this->isAdmin())
-		// {
-		// 	$this->redirect("");
-		// }
 	}
 	
 	function testAdmin()
 	{
-		//Loads a model from corresponding model folder
-	//	$model = $this->loadModel('Admin/AdminModel');
+		$model = $this->loadModel('Admin/AdminModel');
+	
+		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
+		$returnData = $model->getStory(6);
 
-	//	$returndata = $model->getListDropdowns("securityquestion");
+		debugit($returnData);
 
-	//	debugit($returndata);
-		$tableName ="picturetype";
-		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
-		$resultData = array();
+		// $adminModel = $this->loadModel('Admin/AdminModel');
 
-		$adminModel = $this->loadModel('AdminModel');
-
-		if(!empty($_POST["search"]["value"]))
-		{			
-			//Perform a search
-			$list = $adminModel->searchForUser($userSearch, $howMany, $page);
-		}
-		else
-		{
-			$list = $adminModel->getListDropdowns($tableName);
-		}
-
-		$recordsNum = isset($list[0]) ?  $list[0]->TotalNumber : 0;
-
-		//Process story list into array like below:	
-		foreach ($list as $item){
-			$resultData[] = array($item->NameE, $item->NameF, $item->DateUpdated);
-			
-		}
-
-		debugit($list);
+		// $resultData = $adminModel->getStory(16);
+		// debugit($resultData);
+		// echo "string";
 	}
 	
 	//Main action for controller, equivelent to: www.site.com/controller/
@@ -697,7 +672,6 @@ class Admin extends Controller {
 			$storyModel = $this->loadModel('Story/StoryModel');
 		//Load the loginViewModel
 			$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
-	//		$storyViewModel = $storyModel->getStoryAsAdmin($this->currentUser->UserId, $storyId);
 			$storyViewModel = $storyModel->getStory($this->currentUser->UserId, $storyId);
 		}
 		
@@ -717,23 +691,20 @@ class Admin extends Controller {
 		$model = $this->loadModel('AdminModel');
 
 		//Load the approval view model
-		$aprovalViewModel = $this->loadViewModel('ApprovalViewModel');
+		$approvalViewModel = $this->loadViewModel('ApprovalViewModel');
 
-		$aprovalViewModel->Id = $storyId;
-
-		//addSuccessMessage("dbError", "Errror!");
-		//addErrorMessage("dbError", "Errror!");
+		$approvalViewModel->Id = $storyId;
 
 		//Execute code if a post back
 		if($this->isPost())
 		{
 			//Map post values to the loginViewModel
-			$aprovalViewModel  = AutoMapper::mapPost($aprovalViewModel );
+			$approvalViewModel  = AutoMapper::mapPost($approvalViewModel );
 
-			if($aprovalViewModel->validate())
+			if($approvalViewModel->validate())
 			{
 				// Save data
-				$model->approveStory($this->currentUser->UserId, $aprovalViewModel->Id, $aprovalViewModel->$reason);
+				$model->approveStory($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->$reason);
 
 				$this->redirect("admin/index");
 			}
@@ -746,7 +717,74 @@ class Admin extends Controller {
 		$view = $this->loadView('storyeditpending');
 
 		//Add a variable with old login data so that it can be accessed in the view
-		$view->set('aprovalViewModel', $aprovalViewModel);
+		$view->set('approvalViewModel', $approvalViewModel);
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('storyViewModel', $storyViewModel);
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('userViewModel', $userViewModel);
+
+		//Renders the view. true indicates to load the layout
+		$view->render(true);
+	}
+
+	function storyeditreject($storyId)
+	{
+		//$this->AdminRequest();
+
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('storyeditpending');
+
+		//Loads a model from corresponding model folder
+		$model = $this->loadModel('AdminModel');
+		//Load the loginViewModel
+		$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
+
+		//Loads a model from corresponding model folder
+		if(!isset($storyViewModel) && isset($storyId))
+		{
+			$storyViewModel = $model->getStory($storyId);
+		}
+		//Loads a model from corresponding model folder
+		$accountModel = $this->loadModel('Account/AccountModel');
+		$userViewModel = $this->loadViewModel('shared/UserViewModel');	
+
+		if(isset($storyViewModel[0]))
+		{
+			//eliminate array
+			$storyViewModel = $storyViewModel[0];
+			$userViewModel = $accountModel->getUserProfileByID($storyViewModel->UserId);
+		}
+
+		//Load the approval view model
+		$approvalViewModel = $this->loadViewModel('ApprovalViewModel');
+
+		$approvalViewModel->Id = $storyId;
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			//Map post values to the loginViewModel
+			$aprovalViewModel  = AutoMapper::mapPost($approvalViewModel );
+
+			if($aprovalViewModel->validate())
+			{
+				// Save data
+				$model->approveStory($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->$reason);
+
+				$this->redirect("admin/index");
+			}
+			else
+			{
+				$this->redirect("");
+			}
+		}
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('storyeditpending');
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('aprovalViewModel', $approvalViewModel);
 
 		//Add a variable with old login data so that it can be accessed in the view
 		$view->set('storyViewModel', $storyViewModel);
