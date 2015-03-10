@@ -9,13 +9,13 @@ $(function(){
 			    return size * $('#wordCloudCanvas').width() / 25;
 			  },
 			  rotateRatio: 0,
-			  fontFamily: 'Times, serif',
-			  color: '#f0f0c0',
+			  fontFamily: '"Helvetica Neue",Helvetica,Arial,sans-serif',
+			  color: '#fff',
 			  hover: window.drawBox,
 			  click: function(item) {
 			    alert(item[0] + ': ' + item[1]);
 			  },
-			  backgroundColor: '#485969'		
+			  backgroundColor: 'transparent'		
 		 });
 
 	
