@@ -8,7 +8,7 @@
 
 ?>
 
-<div class="container" style="margin-top:100px;">
+<div class="container" style="padding-top: 50px; padding-bottom: 50px;">
     <div class="row">
 
         <div class="panel panel-default">
