@@ -1,5 +1,183 @@
 /* CSS Styles */
 
+/* -------------------- General -------------------- */
+
+* {
+	border-radius: 0 !important;
+}
+body {
+	/* overflow: hidden; */
+	background-color: #eee;
+}
+
+/* -------------------- Fonts -------------------- */
+
+.padding-xl {
+  padding: 48px 0;
+}
+.text-xl h1, .text-xl .h1 {
+  font-size: 72px;
+  font-weight: 200;
+}
+.text-xl h2, .text-xl .h2 {
+  font-size: 60px;
+  font-weight: 200;
+}
+.text-xl h3, .text-xl .h3 {
+  font-size: 48px;
+  font-weight: 200;
+}
+.text-xl h4, .text-xl .h4 {
+  font-size: 36px;
+  font-weight: 200;
+}
+.text-xl h5, .text-xl .h5 {
+  font-size: 28px;
+  font-weight: 200;
+}
+.text-xl h6, .text-xl .h6 {
+  font-size: 24px;
+  font-weight: 200;
+}
+.text-xl p {
+  font-size: 28px;
+  font-weight: 200;
+}
+
+/* -------------------- Bootstrap Overrides -------------------- */
+
+.navbar {
+	margin: 0;
+	margin-top: -54px;
+	font-size: 18px;
+}
+.navbar-default {
+	background-color: transparent;
+	border: none;
+}
+.navbar-toggle {
+	margin: 10px 0 10px;
+	border: 1px solid #333 !important;
+}
+.icon-bar {
+	background-color: #333 !important;
+}
+
+@media (max-width: 991px) {
+	body {
+		margin-top: 41px;
+	}
+	.nav-secondary {
+		position: fixed;
+		top: 0;
+		left: 0;
+		background-color: #337ab7;
+		width: 100%;
+		z-index: 9999;
+		border-bottom: 1px solid #333;
+	}
+	.nav-secondary>.container>ul>li {
+		display: table-cell;
+		width: 1%;
+	}
+	.nav-secondary>.container>ul>li>a {
+		color: #fff !important;
+		margin: 0;
+	}
+	.nav-secondary>.container>ul>li>a:hover{
+		background-color: #f0ad4e;
+	}
+	.nav-secondary .open>a {
+		background-color: #f0ad4e !important;
+	}
+}
+
+@media (min-width: 768px) {
+	nav>.container {
+		width: 100%;
+		padding: 0;
+	}
+	.navbar {
+		margin: 0;
+	}
+	.navbar-default .active a {
+		background: transparent url('../c150/c150-menu-active.png') no-repeat bottom center !important;
+	}
+	.navbar-collapse {
+		padding: 0;
+		width: 100%;
+	}
+	.navbar-collapse>ul>li {
+		display: table-cell;
+		width: 1%;
+		float: none;
+		text-align: center;
+	}
+}
+
+@media (min-width: 992px) {
+	.nav-container {
+		min-height: 145px;
+	}
+	.navbar {
+		position: absolute;
+		bottom: 0;
+		min-height: 0;
+	}
+	.navbar-nav a {
+		padding: 10px !important;
+	}
+}
+
+.thumbnail {
+  border: none;
+  padding: 0;
+}
+
+.dropdown-menu {
+	box-shadow: none;
+}
+
+/* -------------------- Theme Additions -------------------- */
+
+.bg-grey {
+	background-color: #eee;
+}
+.bg-blue {
+	background-color: #337ab7;
+	color: #fff;
+}
+
+/* -------------------- Theme Containers -------------------- */
+
+#c150-head {
+	border-bottom: 5px solid #f0ad4e;
+}
+#c150-body {
+	background-color: #fff;
+}
+#c150-foot {
+	border-top: 5px solid #f0ad4e;
+	padding-top: 10px;
+}
+
+/* -------------------- Theme Misc -------------------- */
+
+#c150-logo {
+	padding: 10px 0;
+}
+
+.motto {
+	margin-top: 29px;
+}
+
+#wordCloudCanvas {
+	width: 100%;
+	height: 100%;
+	display: block;
+	margin: 20px 0 10px;
+}
+
 /* This overides the validation css to make it work on dropdown inputs */
 .form-control-feedback
 {
