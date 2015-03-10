@@ -224,7 +224,7 @@ class Story extends Controller {
 
 				if(isset($imageId) && $imageId > 0)
 				{
-					image_save($storyViewModel->Images, $this->currentUser->UserId, $imageId, 'story', 
+					image_save($storyViewModel->Images, $this->currentUser->UserId, $imageId, IMG_STORY, 
 									 $_POST["image_height"], $_POST["image_width"], $_POST["image_x"], $_POST["image_y"]); 
 				}
 
