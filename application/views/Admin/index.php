@@ -32,7 +32,9 @@
                                 <tr>
                                     <th>Title</th>
                                     <th>Owner</th>
-                                    <th>Posted Date</th>                               
+                                    <th>Posted Date</th> 
+                                    <th>Id</th>
+                                    <th>Action</th>                              
                                 </tr>
                             </thead>
                             <tbody>

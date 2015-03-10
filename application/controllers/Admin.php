@@ -5,47 +5,11 @@ class Admin extends Controller {
 	function __construct()
 	{
 		parent::__construct();
-
-		//Will limit all these function to admin level of privlidge
-		// if(!$this->isAdmin())
-		// {
-		// 	$this->redirect("");
-		// }
 	}
 	
 	function testAdmin()
 	{
-		//Loads a model from corresponding model folder
-	//	$model = $this->loadModel('Admin/AdminModel');
-
-	//	$returndata = $model->getListDropdowns("securityquestion");
-
-	//	debugit($returndata);
-		$tableName ="picturetype";
-		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
-		$resultData = array();
-
-		$adminModel = $this->loadModel('AdminModel');
-
-		if(!empty($_POST["search"]["value"]))
-		{			
-			//Perform a search
-			$list = $adminModel->searchForUser($userSearch, $howMany, $page);
-		}
-		else
-		{
-			$list = $adminModel->getListDropdowns($tableName);
-		}
-
-		$recordsNum = isset($list[0]) ?  $list[0]->TotalNumber : 0;
-
-		//Process story list into array like below:	
-		foreach ($list as $item){
-			$resultData[] = array($item->NameE, $item->NameF, $item->DateUpdated);
-			
-		}
-
-		debugit($list);
+		echo "string";
 	}
 	
 	//Main action for controller, equivelent to: www.site.com/controller/
@@ -220,7 +184,13 @@ class Admin extends Controller {
 
 		//Process story list into array like below:	
 		foreach ($storyList as $story)
-			$resultData[] = array($story->StoryTitle, $story->LastName.' '.$story->FirstName, $story->DatePosted);
+		{
+			$url = "storyeditpending/".$story->StoryId;
+			
+			//$url = BASE_URL."Admin/AjaxStoryListPending/".$story->StoryId;
+			$resultData[] = array($story->StoryTitle, $story->LastName.' '.$story->FirstName, $story->DatePosted, $story->StoryId, 
+				'<a href='.$url.'>action</a>');
+		}
 
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
@@ -694,11 +664,10 @@ class Admin extends Controller {
 		//Loads a model from corresponding model folder
 		if(!isset($storyViewModel) && isset($storyId))
 		{
-			$storyModel = $this->loadModel('Story/StoryModel');
+			$model = $this->loadModel('AdminModel');
 		//Load the loginViewModel
 			$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
-	//		$storyViewModel = $storyModel->getStoryAsAdmin($this->currentUser->UserId, $storyId);
-			$storyViewModel = $storyModel->getStory($this->currentUser->UserId, $storyId);
+			$storyViewModel = $model->getStory($storyId);
 		}
 		
 
@@ -713,27 +682,21 @@ class Admin extends Controller {
 			$userViewModel = $accountModel->getUserProfileByID($storyViewModel->UserId);
 		}
 		
-		//Loads a model from corresponding model folder
-		$model = $this->loadModel('AdminModel');
-
 		//Load the approval view model
-		$aprovalViewModel = $this->loadViewModel('ApprovalViewModel');
+		$approvalViewModel = $this->loadViewModel('ApprovalViewModel');
 
-		$aprovalViewModel->Id = $storyId;
-
-		//addSuccessMessage("dbError", "Errror!");
-		//addErrorMessage("dbError", "Errror!");
+		$approvalViewModel->Id = $storyId;
 
 		//Execute code if a post back
 		if($this->isPost())
 		{
 			//Map post values to the loginViewModel
-			$aprovalViewModel  = AutoMapper::mapPost($aprovalViewModel );
+			$approvalViewModel  = AutoMapper::mapPost($approvalViewModel );
 
-			if($aprovalViewModel->validate())
+			if($approvalViewModel->validate())
 			{
 				// Save data
-				$model->approveStory($this->currentUser->UserId, $aprovalViewModel->Id, $aprovalViewModel->$reason);
+				$model->approveStory($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->$reason);
 
 				$this->redirect("admin/index");
 			}
@@ -746,7 +709,74 @@ class Admin extends Controller {
 		$view = $this->loadView('storyeditpending');
 
 		//Add a variable with old login data so that it can be accessed in the view
-		$view->set('aprovalViewModel', $aprovalViewModel);
+		$view->set('approvalViewModel', $approvalViewModel);
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('storyViewModel', $storyViewModel);
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('userViewModel', $userViewModel);
+
+		//Renders the view. true indicates to load the layout
+		$view->render(true);
+	}
+
+	function storyeditreject($storyId)
+	{
+		//$this->AdminRequest();
+
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('storyeditpending');
+
+		//Loads a model from corresponding model folder
+		$model = $this->loadModel('AdminModel');
+		//Load the loginViewModel
+		$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
+
+		//Loads a model from corresponding model folder
+		if(!isset($storyViewModel) && isset($storyId))
+		{
+			$storyViewModel = $model->getStory($storyId);
+		}
+		//Loads a model from corresponding model folder
+		$accountModel = $this->loadModel('Account/AccountModel');
+		$userViewModel = $this->loadViewModel('shared/UserViewModel');	
+
+		if(isset($storyViewModel[0]))
+		{
+			//eliminate array
+			$storyViewModel = $storyViewModel[0];
+			$userViewModel = $accountModel->getUserProfileByID($storyViewModel->UserId);
+		}
+
+		//Load the approval view model
+		$approvalViewModel = $this->loadViewModel('ApprovalViewModel');
+
+		$approvalViewModel->Id = $storyId;
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			//Map post values to the loginViewModel
+			$aprovalViewModel  = AutoMapper::mapPost($approvalViewModel );
+
+			if($aprovalViewModel->validate())
+			{
+				// Save data
+				$model->approveStory($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->$reason);
+
+				$this->redirect("admin/index");
+			}
+			else
+			{
+				$this->redirect("");
+			}
+		}
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('storyeditpending');
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('aprovalViewModel', $approvalViewModel);
 
 		//Add a variable with old login data so that it can be accessed in the view
 		$view->set('storyViewModel', $storyViewModel);
@@ -762,12 +792,12 @@ class Admin extends Controller {
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
-
-		//Loads a view model from corresponding viewmodel folder
-		//$viewModel = $this->loadModel('SomeViewModel');
-
 		//Loads a view from corresponding view folder
 		$template = $this->loadView('commenteditinappropriate');
+
+		$accountModel = $this->loadModel('Account/AccountModel');
+		$userViewModel = $this->loadViewModel('shared/UserViewModel');
+		$commentViewModel = $this->loadViewModel('shared/CommentViewModel');
 
 		//  $template->setCSS(array(
 		// 	array("static/css/style.css", "intern")
@@ -1040,100 +1070,6 @@ class Admin extends Controller {
 		}
 	} 
 
-	// function storyeditpending()
-	// {
-	// 	//Loads a model from corresponding model folder
-	// 	$model = $this->loadModel('AdminModel');
-
-	// 	//Loads a view model from corresponding viewmodel folder
-	// 	//$viewModel = $this->loadModel('SomeViewModel');
-
-	// 	//Loads a view from corresponding view folder
-	// 	$template = $this->loadView('storyeditpending');
-
-	// 	//  $template->setCSS(array(
-	// 	// 	array("static/css/style.css", "intern")
-	// 	// 	array("http://www.example.com/default.css", "extern")
-	// 	// ));
-	// 	$template->setJS(array(
-	// 		//array("static/plugins/tinymce/tinymce.min.js", "intern"),
-	// 		array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
-	// 		array("static/js/adminDataTables.js", "intern")//,
-	// 		//array("static/js/tinymce.js", "intern")
-	// 		//array("http://www.example.com/static.js", "extern")
-	// 	));
-	// 	 $template->setCSS(array(
-	// 		array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
-	// 	));
-	// 	//Adds a variable or object to that can be accessed in the view
-	// 	//$template->set('viewModel', $viewModel);
-
-	// 	//Renders the view. true indicates to load the layout
-	// 	$template->render(true);
-
-	// 	//Execute code if a post back
-	// 	if($this->isPost())
-	// 	{
-	// 		//Can be used to redirect to another controller
-	// 		//Can add query values ?id=1
-	// 		//$this->redirect("controller/action");
-
-	// 		//Check if request is ajax
-	// 		//$this->isAjax()
-	// 	}
-	// 	else
-	// 	{
-	// 		//Execute this code if NOT a post back
-	// 	}
-	// } 
-
-	function storyeditreject($storyId)
-	{
-		//Loads a model from corresponding model folder
-		$model = $this->loadModel('AdminModel');
-
-		//Loads a view model from corresponding viewmodel folder
-		//$viewModel = $this->loadModel('SomeViewModel');
-
-		//Loads a view from corresponding view folder
-		$template = $this->loadView('storyeditreject');
-
-		//  $template->setCSS(array(
-		// 	array("static/css/style.css", "intern")
-		// 	array("http://www.example.com/default.css", "extern")
-		// ));
-		$template->setJS(array(
-			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
-			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
-			array("static/js/adminDataTables.js", "intern")//,
-			//array("static/js/tinymce.js", "intern")
-			//array("http://www.example.com/static.js", "extern")
-		));
-		 $template->setCSS(array(
-			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
-		));
-		//Adds a variable or object to that can be accessed in the view
-		//$template->set('viewModel', $viewModel);
-
-		//Renders the view. true indicates to load the layout
-		$template->render(true);
-
-		//Execute code if a post back
-		if($this->isPost())
-		{
-			//Can be used to redirect to another controller
-			//Can add query values ?id=1
-			//$this->redirect("controller/action");
-
-			//Check if request is ajax
-			//$this->isAjax()
-		}
-		else
-		{
-			//Execute this code if NOT a post back
-		}
-	} 
-
 	function storyquestionedit()
 	{
 		//Loads a model from corresponding model folder
@@ -1181,52 +1117,6 @@ class Admin extends Controller {
 		}
 	}
 
-	function yougen()
-	{
-		$model = $this->loadModel('AdminModel');
-
-		//Loads a view model from corresponding viewmodel folder
-		//$viewModel = $this->loadModel('SomeViewModel');
-
-		//Loads a view from corresponding view folder
-		$template = $this->loadView('yougen');
-
-		//  $template->setCSS(array(
-		// 	array("static/css/style.css", "intern")
-		// 	array("http://www.example.com/default.css", "extern")
-		// ));
-		$template->setJS(array(
-			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
-			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
-			array("static/js/adminDataTables.js", "intern")//,
-			//array("static/js/tinymce.js", "intern")
-			//array("http://www.example.com/static.js", "extern")
-		));
-		 $template->setCSS(array(
-			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
-		));
-		//Adds a variable or object to that can be accessed in the view
-		//$template->set('viewModel', $viewModel);
-
-		//Renders the view. true indicates to load the layout
-		$template->render(true);
-
-		//Execute code if a post back
-		if($this->isPost())
-		{
-			//Can be used to redirect to another controller
-			//Can add query values ?id=1
-			//$this->redirect("controller/action");
-
-			//Check if request is ajax
-			//$this->isAjax()
-		}
-		else
-		{
-			//Execute this code if NOT a post back
-		}
-
-	} 
 	/**********************
 	* Test Form 
 	***********************/
