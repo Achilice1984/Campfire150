@@ -11,7 +11,7 @@
 
 ?>
 
-<div class="container">  
+<div class="container" style="padding-top: 50px; padding-bottom: 50px;">  
     
     <div class="col-md-12"> 
         

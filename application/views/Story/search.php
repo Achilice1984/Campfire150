@@ -1,5 +1,5 @@
 
-<div class="container">
+<div class="container" style="padding-top: 50px; padding-bottom: 50px; min-height: 600px;">
 	<ul class="nav nav-pills storySearchBar">
 	    <li role="presentation" class="active"><a href="#Story_Search" aria-controls="Story_Search" role="tab" data-toggle="tab">Search</a></li>
 	    <li role="presentation"><a href="#Story_Recommended" aria-controls="Story_Recommended" role="tab" data-toggle="tab">Most Recommended</a></li>
