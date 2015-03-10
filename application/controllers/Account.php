@@ -488,8 +488,31 @@ class Account extends Controller {
 
 	function search()
 	{
+		$accountModel = $this->loadModel("AccountModel");
+		$searchResults = array();
+
+		if($this->isPost())
+		{
+			if(isset($_POST["UserSearch"]))
+			{
+				$searchResults = $accountModel->searchForUser($_POST["UserSearch"], $this->currentUser->UserId);
+			}
+		}
+
+		//debugit($searchResults);
+
 		//Load the profile view
 		$view = $this->loadView('search');
+
+		$view->set('searchResults', $searchResults);
+
+		//Load up some js files
+		$view->setJS(array(
+			array("static/js/usersearch.js", "intern")
+		));
+		$view->setCSS(array(
+			array("static/css/usersearch.css", "intern")
+		));
 
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);
