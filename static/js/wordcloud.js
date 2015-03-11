@@ -3,7 +3,7 @@ $(function(){
 			document.getElementById('wordCloudCanvas'), 
 			{ list: WordCloudWords,
 			
-			  gridSize: Math.round(16 * $('#wordCloudCanvas').width() / 4000),
+			  gridSize: 20,//Math.round(16 * $('#wordCloudCanvas').width() / 4000),
 			  weightFactor: function (size) {
 
 			    return size * $('#wordCloudCanvas').width() / 25;
