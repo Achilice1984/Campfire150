@@ -36,13 +36,7 @@
 
 				<input type="hidden" name="Id" value="<?php echo $approvalViewModel->Id; ?>">
 
-	            <?php 
-	                //Add error message block to the page
-	                include(APP_DIR . 'views/shared/displayErrors.php'); 
-
-	                //Add success message block to the page
-	                include(APP_DIR . 'views/shared/displaySuccess.php'); 
-	            ?>
+	            <?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
 	            <div class="checkbox">
 	                <label>

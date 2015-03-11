@@ -2,12 +2,8 @@
 <div class="container">
     <h1>Title</h1>
 
-    <?php
-        $validationResult = $viewModel->getValidationResult();
-        
-        include(APP_DIR . 'views/shared/displayErrors.php');
-    ?>
-
+    <?php include(APP_DIR . 'views/shared/messages.php'); ?>
+    
     <form action="<?php echo BASE_URL; ?>ControllerExample/ActionExample" method="post">
 
         <div class="form-group">

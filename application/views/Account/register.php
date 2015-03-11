@@ -20,13 +20,8 @@
                     <div class="col-md-6"> 
 
                         <form action="<?php echo BASE_URL; ?>account/register" method="post">
-                            <?php 
-                                //Add error message block to the page
-                                include(APP_DIR . 'views/shared/displayErrors.php'); 
-
-                                //Add success message block to the page
-                                include(APP_DIR . 'views/shared/displaySuccess.php'); 
-                            ?>
+                            
+                            <?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
                             <h3><?php echo gettext("Profile Details"); ?></h3>
                             <hr />

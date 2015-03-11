@@ -194,81 +194,87 @@ class Story extends Controller {
 
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
-		$this->AuthRequest();
-
-		//Loads a view model from corresponding viewmodel folder
-		$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
-
-		//Execute code if a post back
-		if($this->isPost())
+		if($this->isAuth())
 		{
-			//Map post values to the loginViewModel
-			$storyViewModel = AutoMapper::mapPost($storyViewModel);			
+			//Loads a view model from corresponding viewmodel folder
+			$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
 
-			// //Load the AccountModel to access account functions
-		 	$storyModel = $this->loadModel('StoryModel');
-
-			$storyId;
-
-			if($storyViewModel->validate())
+			//Execute code if a post back
+			if($this->isPost())
 			{
-				$storyViewModel->Published = FALSE;
+				//Map post values to the loginViewModel
+				$storyViewModel = AutoMapper::mapPost($storyViewModel);			
 
-				$storyModel->publishNewStory($storyViewModel, $this->currentUser->UserId);
-				$storyId = $storyModel->lastInsertId();
+				// //Load the AccountModel to access account functions
+			 	$storyModel = $this->loadModel('StoryModel');
 
-				//$this->saveQuestionAnswers($storyModel, $storyId);
-				$this->saveTags($storyModel, $storyId);
+				$storyId;
 
-				$imageId = $storyModel->saveStoryImageMetadata($this->currentUser->UserId, $storyViewModel->Images, $storyId);
-
-				if(isset($imageId) && $imageId > 0)
+				if($storyViewModel->validate())
 				{
-					image_save($storyViewModel->Images, $this->currentUser->UserId, $imageId, IMG_STORY, 
-									 $_POST["image_height"], $_POST["image_width"], $_POST["image_x"], $_POST["image_y"]); 
+					$storyViewModel->Published = FALSE;
+
+					$storyModel->publishNewStory($storyViewModel, $this->currentUser->UserId);
+					$storyId = $storyModel->lastInsertId();
+
+					//$this->saveQuestionAnswers($storyModel, $storyId);
+					$this->saveTags($storyModel, $storyId);
+
+					$imageId = $storyModel->saveStoryImageMetadata($this->currentUser->UserId, $storyViewModel->Images, $storyId);
+
+					if(isset($imageId) && $imageId > 0)
+					{
+						image_save($storyViewModel->Images, $this->currentUser->UserId, $imageId, IMG_STORY, 
+										 $_POST["image_height"], $_POST["image_width"], $_POST["image_x"], $_POST["image_y"]); 
+					}
+
+					if(isset($_POST["publish"]))
+					{
+						$this->redirect("story/publish", array($storyId));
+					}
+					else
+					{
+						$this->redirect("account/home");
+					}
 				}
 
-				if(isset($_POST["publish"]))
-				{
-					$this->redirect("story/publish", array($storyId));
-				}
-				else
-				{
-					$this->redirect("account/home");
-				}
-			}
+				$storyViewModel->Tags = $this->getTags($storyModel);			
+			}		
 
-			$storyViewModel->Tags = $this->getTags($storyModel);			
-		}		
+			//Load the profile view
+			$view = $this->loadView('add');
 
-		//Load the profile view
-		$view = $this->loadView('add');
+			$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+			$view->set('privacyDropdownValues', $siteModel->getDropdownValues_StoryPrivacyType());
 
-		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
-		$view->set('privacyDropdownValues', $siteModel->getDropdownValues_StoryPrivacyType());
+			//Add a variable with old login data so that it can be accessed in the view
+			$view->set('storyViewModel', $storyViewModel);
 
-		//Add a variable with old login data so that it can be accessed in the view
-		$view->set('storyViewModel', $storyViewModel);
+			//Load up some js files
+			$view->setJS(array(
+				array("static/plugins/tinymce/tinymce.min.js", "intern"),
+				array("static/js/tinymce.js", "intern"),
+				array("static/js/select2.js", "intern"),
+				array("static/js/addstory.js", "intern"),
+				array("static/plugins/cropper/cropper.min.js", "intern")
+				// array("static/plugins/jcrop/js/jquery.Jcrop.min.js", "intern"),
+				// array("static/plugins/jcrop/js/jquery.color.js", "intern")
+			));
 
-		//Load up some js files
-		$view->setJS(array(
-			array("static/plugins/tinymce/tinymce.min.js", "intern"),
-			array("static/js/tinymce.js", "intern"),
-			array("static/js/select2.js", "intern"),
-			array("static/js/addstory.js", "intern"),
-			array("static/plugins/cropper/cropper.min.js", "intern")
-			// array("static/plugins/jcrop/js/jquery.Jcrop.min.js", "intern"),
-			// array("static/plugins/jcrop/js/jquery.color.js", "intern")
-		));
+			$view->setCSS(array(
+				array("static/css/addstory.css", "intern"),
+				//array("static/plugins/jcrop/css/jquery.Jcrop.min.css", "intern")
+				array("static/plugins/cropper/cropper.min.css", "intern")
+			));
 
-		$view->setCSS(array(
-			array("static/css/addstory.css", "intern"),
-			//array("static/plugins/jcrop/css/jquery.Jcrop.min.css", "intern")
-			array("static/plugins/cropper/cropper.min.css", "intern")
-		));
-
-		//Render the profile view. true indicates to load the layout pages as well
-		$view->render(true);
+			//Render the profile view. true indicates to load the layout pages as well
+			$view->render(true);
+		}
+		else
+		{
+			addInfoMessage("notReg", gettext("Want to share your story? Register now!"), 1);
+			$this->redirect("account/register");
+		}
 	}
 
 	private function saveQuestionAnswers($storyModel, $storyID)
@@ -402,11 +408,7 @@ class Story extends Controller {
 
 	function display($storyID)
 	{
-		require_once(APP_DIR.'helpers/image_get_path.php');
-			
-		//Check if users is authenticated for this request
-		//Will kick out if not authenticated
-		$this->AuthRequest();
+		require_once(APP_DIR.'helpers/image_get_path.php');		
 
 		//Load the profile view
 		$view = $this->loadView('display');
@@ -519,28 +521,30 @@ class Story extends Controller {
 	{
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
-		$this->AuthRequest();
-
-		$result;
-
-		//Load the AccountModel to access account functions
-		$storyModel = $this->loadModel('StoryModel');
-
-		if($recommend)
+		
+		if($this->isAuth())
 		{
-			$result = $storyModel->recommendStory($storyID, $this->currentUser->UserId);
-		}
-		else
-		{
-			$result = $storyModel->unRecommendStory($storyID, $this->currentUser->UserId);
-		}
+			$result;
 
-		if ($this->isAjax()) {
-			return $result;			
-		}
-		else
-		{
-			$this->redirect("account/home");
+			//Load the AccountModel to access account functions
+			$storyModel = $this->loadModel('StoryModel');
+
+			if($recommend)
+			{
+				$result = $storyModel->recommendStory($storyID, $this->currentUser->UserId);
+			}
+			else
+			{
+				$result = $storyModel->unRecommendStory($storyID, $this->currentUser->UserId);
+			}
+
+			if ($this->isAjax()) {
+				return $result;			
+			}
+			else
+			{
+				$this->redirect("account/home");
+			}
 		}
 	}
 
@@ -548,28 +552,29 @@ class Story extends Controller {
 	{
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
-		$this->AuthRequest();
+		if($this->isAuth())
+		{			
+			$result;
 
-		$result;
+			//Load the AccountModel to access account functions
+			$storyModel = $this->loadModel('StoryModel');
 
-		//Load the AccountModel to access account functions
-		$storyModel = $this->loadModel('StoryModel');
+			if($flag)
+			{
+				$result = $storyModel->flagStoryAsInapropriate($storyID, $this->currentUser->UserId);
+			}
+			else
+			{
+				$result = $storyModel->unFlagStoryAsInapropriate($storyID, $this->currentUser->UserId);
+			}
 
-		if($flag)
-		{
-			$result = $storyModel->flagStoryAsInapropriate($storyID, $this->currentUser->UserId);
-		}
-		else
-		{
-			$result = $storyModel->unFlagStoryAsInapropriate($storyID, $this->currentUser->UserId);
-		}
-
-		if ($this->isAjax()) {
-			return $result;			
-		}
-		else
-		{
-			$this->redirect("account/home");
+			if ($this->isAjax()) {
+				return $result;			
+			}
+			else
+			{
+				$this->redirect("account/home");
+			}
 		}
 	}
 
@@ -577,57 +582,61 @@ class Story extends Controller {
 	{
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
-		$this->AuthRequest();
 
-		$tags;
+		if($this->isAuth())
+		{
+			
+			$tags;
 
-		//Loads a view model from corresponding viewmodel folder
-		$storyViewModel = $this->loadViewModel('shared/TagViewModel');
+			//Loads a view model from corresponding viewmodel folder
+			$storyViewModel = $this->loadViewModel('shared/TagViewModel');
 
-		//Load the AccountModel to access account functions
-		$storyModel = $this->loadModel('StoryModel');
+			//Load the AccountModel to access account functions
+			$storyModel = $this->loadModel('StoryModel');
 
-		$tags = $storyModel->searchTags(isset($_GET["q"]) ? $_GET["q"] : "");
+			$tags = $storyModel->searchTags(isset($_GET["q"]) ? $_GET["q"] : "");
 
-		return json_encode($tags);
+			return json_encode($tags);
+		}
 	}
 
 	function addComment()
 	{
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
-		$this->AuthRequest();
-
-		//Loads a view model from corresponding viewmodel folder
-		$commentViewModel = $this->loadViewModel('shared/CommentViewModel');
-
-		//Execute code if a post back
-		if($this->isPost())
+		if($this->isAuth())
 		{
-			//Map post values to the loginViewModel
-			$commentViewModel = AutoMapper::mapPost($commentViewModel);
+			
+			//Loads a view model from corresponding viewmodel folder
+			$commentViewModel = $this->loadViewModel('shared/CommentViewModel');
 
-			//Load the AccountModel to access account functions
-			$storyModel = $this->loadModel('StoryModel');
-
-			if($commentViewModel->validate())
+			//Execute code if a post back
+			if($this->isPost())
 			{
-				echo json_encode($storyModel->addCommentToStory($commentViewModel->Content, $commentViewModel->Story_StoryId, $this->currentUser->UserId));
-				
-				if($this->isAjax() == FALSE)
-				{
-					if(isset($commentViewModel->Story_StoryId))
-					{
-						$this->redirect("story/display", array($commentViewModel->Story_StoryId . "#comments"));
-					}
-					else
-					{
-						$this->redirect("");
-					}
-				}
-			}			
-		}	
+				//Map post values to the loginViewModel
+				$commentViewModel = AutoMapper::mapPost($commentViewModel);
 
+				//Load the AccountModel to access account functions
+				$storyModel = $this->loadModel('StoryModel');
+
+				if($commentViewModel->validate())
+				{
+					echo json_encode($storyModel->addCommentToStory($commentViewModel->Content, $commentViewModel->Story_StoryId, $this->currentUser->UserId));
+					
+					if($this->isAjax() == FALSE)
+					{
+						if(isset($commentViewModel->Story_StoryId))
+						{
+							$this->redirect("story/display", array($commentViewModel->Story_StoryId . "#comments"));
+						}
+						else
+						{
+							$this->redirect("");
+						}
+					}
+				}			
+			}	
+		}
 		//$this->redirect("account/display", array($commentViewModel->Story_StoryId));
 	}
 

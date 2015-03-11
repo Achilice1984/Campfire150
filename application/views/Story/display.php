@@ -109,35 +109,31 @@
             <div class="row text-center" id="CommentStoryMoreButton" style="margin-bottom: 50px; <?php echo count($storyViewModel->Comments) <= 0 ? "display:none;" : "";  ?>">
                 <button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Comments!"); ?></button>
             </div>
+            
+            <?php if($currentUser->IsAuth) { ?>
+                <form id="AddCommentForm" action="<?php echo BASE_URL; ?>story/addcomment" method="post">
 
-            <form id="AddCommentForm" action="<?php echo BASE_URL; ?>story/addcomment" method="post">
+                    <input type="hidden" name="Story_StoryId" id="Story_StoryId" value="<?php echo $storyViewModel->StoryId; ?>">
 
-                <input type="hidden" name="Story_StoryId" id="Story_StoryId" value="<?php echo $storyViewModel->StoryId; ?>">
-
-                <?php 
-                    //Add error message block to the page
-                    include(APP_DIR . 'views/shared/displayErrors.php'); 
-
-                    //Add success message block to the page
-                    include(APP_DIR . 'views/shared/displaySuccess.php'); 
-                ?>
+                    <?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
 
-                <div class="alert alert-success" id="CommentSubmitInfoBar" role="alert" style="display:none;">
-                    <strong><?php echo gettext("Success!"); ?></strong> <?php echo gettext("Your comment was successfully submitted, and is now awaiting approval."); ?>
-                </div>
+                    <div class="alert alert-success" id="CommentSubmitInfoBar" role="alert" style="display:none;">
+                        <strong><?php echo gettext("Success!"); ?></strong> <?php echo gettext("Your comment was successfully submitted, and is now awaiting approval."); ?>
+                    </div>
 
-                <div class="alert alert-danger" id="CommentSubmitInfoBarError" role="alert" style="display:none;">
-                    <strong><?php echo gettext("Error!"); ?></strong> <?php echo gettext("An error occurred while attempting to save your comment."); ?>
-                </div>
+                    <div class="alert alert-danger" id="CommentSubmitInfoBarError" role="alert" style="display:none;">
+                        <strong><?php echo gettext("Error!"); ?></strong> <?php echo gettext("An error occurred while attempting to save your comment."); ?>
+                    </div>
 
-                <div class="form-group">
-                    <!-- <label for="Content"><?php echo gettext("Comment"); ?></label> -->
-                    <textarea class="form-control" id="Content" name="Content" placeholder="<?php echo gettext("Enter A Comment"); ?>"> </textarea>
-                </div>
+                    <div class="form-group">
+                        <!-- <label for="Content"><?php echo gettext("Comment"); ?></label> -->
+                        <textarea class="form-control" id="Content" name="Content" placeholder="<?php echo gettext("Enter A Comment"); ?>"> </textarea>
+                    </div>
 
-                <button id="postCommentButton" class="btn btn-default"><?php echo gettext("Post A Comment"); ?></button>
-            </form>
+                    <button id="postCommentButton" class="btn btn-default"><?php echo gettext("Post A Comment"); ?></button>
+                </form>
+            <?php } ?>
         </div>
 
         <div class="row text-center" id="ShowCommentsButton" style="margin-top: 50px;">

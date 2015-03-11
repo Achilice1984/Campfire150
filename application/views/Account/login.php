@@ -20,13 +20,7 @@
 
                         <form action="<?php echo BASE_URL; ?>account/login" method="post" id="loginForm">
 
-                            <?php 
-                                //Add error message block to the page
-                                include(APP_DIR . 'views/shared/displayErrors.php'); 
-
-                                //Add success message block to the page
-                                include(APP_DIR . 'views/shared/displaySuccess.php'); 
-                            ?>
+                            <?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
                             <div class="form-group">
                                 <label for="Email"><?php echo gettext("Email address"); ?></label>

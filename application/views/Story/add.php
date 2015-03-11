@@ -20,13 +20,7 @@
         
             <form action="<?php echo BASE_URL; ?>story/add" method="post" enctype="multipart/form-data">
 
-                <?php 
-                    //Add error message block to the page
-                    include(APP_DIR . 'views/shared/displayErrors.php'); 
-
-                    //Add success message block to the page
-                    include(APP_DIR . 'views/shared/displaySuccess.php'); 
-                ?>           
+                <?php include(APP_DIR . 'views/shared/messages.php'); ?>         
                 
                 
                 <input type="hidden" name="image_x" id="image_x" value="">
