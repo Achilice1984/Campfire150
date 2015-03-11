@@ -64,6 +64,29 @@ class AdminModel extends Model {
 		}	
 	}
 
+	public function getStory($storyID)
+	{
+		try
+		{
+			$statement = "SELECT *
+							FROM story s
+							LEFT JOIN user u
+							ON s.User_UserId = u.UserId
+							WHERE storyID = :StoryID";
+
+			$parameters = array(":StoryID" => $storyID);
+
+			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+
+			return $storyList;
+
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
 	public function getStoryListPendingApproval($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many results to return, what page of results your on
@@ -990,7 +1013,7 @@ class AdminModel extends Model {
 					$statement = "SELECT *, (SELECT COUNT(*) FROM gendertype) AS TotalNumber FROM gendertype";
 					break;
 				case strtolower($tableName) == "achievementleveltype":
-					$statement = "SELECT *, (SELECT COUNT(*) FROM languagetype) AS TotalNumber FROM languagetype";
+					$statement = "SELECT *, (SELECT COUNT(*) FROM achievementleveltype) AS TotalNumber FROM achievementleveltype";
 					break;
 				case strtolower($tableName) == "securityquestion":
 					$statement = "SELECT *, (SELECT COUNT(*) FROM securityquestion) AS TotalNumber FROM securityquestion";

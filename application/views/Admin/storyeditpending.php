@@ -6,12 +6,12 @@
 ?>
 <div class="container">
 	
-	<h1>Edit pending approval story</h1>
+	<h1><?php echo gettext("Edit pending approval story"); ?></h1>
 	<div class="row">
   		<div class="col-md-3">
   			<div class="thumbnail">
       			<img src="../../static/images/default-user-image.png" alt="">
-  				<h2>Owner Information</h2>
+  				<h2><?php echo gettext("Owner Information"); ?></h2>
   				<ul>
   					<li><?php echo $userViewModel->FirstName ?></li>
   					<li><?php echo $userViewModel->LastName ?></li>
@@ -32,9 +32,9 @@
     <div class="row">
 		
 		<div class="col-md-9">
-			<form action="<?php echo BASE_URL; ?>admin/storyeditpending" method="post" id="loginForm">
+			<form action="<?php echo BASE_URL; ?>admin/storyeditpending" method="post" id="editForm">
 
-				<input type="hidden" name="Id" value="<?php echo $aprovalViewModel->Id; ?>">
+				<input type="hidden" name="Id" value="<?php echo $approvalViewModel->Id; ?>">
 
 	            <?php 
 	                //Add error message block to the page
@@ -46,12 +46,12 @@
 
 	            <div class="checkbox">
 	                <label>
-	                    <input type="checkbox" name="Approved" value="<?php echo $aprovalViewModel->Approved; ?>"> <?php echo gettext("Approve Story"); ?>
+	                    <input type="checkbox" name="Approved" value="<?php echo $approvalViewModel->Approved; ?>"> <?php echo gettext("Approve Story"); ?>
 	                </label>
 	            </div>
 	            <div class="form-group">
 	                <label for="Content"><?php echo gettext("Reason"); ?></label>
-	                <textarea class="form-control" id="Content" name="Content" value="<?php echo $aprovalViewModel->Content; ?>"></textarea>
+	                <textarea class="form-control" id="Content" name="Content" value="<?php echo $approvalViewModel->Content; ?>"></textarea>
 	            </div>
 	            
 
