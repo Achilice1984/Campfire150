@@ -33,7 +33,6 @@
                                     <th>Title</th>
                                     <th>Owner</th>
                                     <th>Posted Date</th> 
-                                    <th>Id</th>
                                     <th>Action</th>                              
                                 </tr>
                             </thead>
@@ -47,7 +46,8 @@
                                 <tr>
                                     <th>Title</th>
                                     <th>Owner</th>
-                                    <th>Posted Date</th>                                    
+                                    <th>Posted Date</th> 
+                                    <th>Action</th>                                    
                                    
                                 </tr>
                             </thead>
@@ -61,7 +61,8 @@
                                 <tr>
                                     <th>Title</th>
                                     <th>Owner</th>
-                                    <th>Posted Date</th>                                    
+                                    <th>Posted Date</th>  
+                                    <th>Action</th>                                   
                                    
                                 </tr>
                             </thead>
@@ -85,8 +86,9 @@
                             <thead>
                                 <tr>
                                     <th>Story Title</th>
-                                    <th>Comment Owner</th>
-                                    <th>Comment Date</th>                                    
+                                    <th>Comment Content</th>
+                                    <th>Comment Date</th> 
+                                    <th>Action</th>                                    
                                    
                                 </tr>
                             </thead>
@@ -99,8 +101,9 @@
                             <thead>
                                 <tr>
                                     <th>Story Title</th>
-                                    <th>Comment Owner</th>
-                                    <th>Comment Date</th>                                    
+                                    <th>Comment Content</th>
+                                    <th>Comment Date</th>
+                                    <th>Action</th>                                     
                                    
                                 </tr>
                             </thead>

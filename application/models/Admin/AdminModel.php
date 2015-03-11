@@ -260,24 +260,25 @@ class AdminModel extends Model {
 							WHERE User_UserId = :UserID AND Story_StoryId = :StoryID";
 
 			$rowCount = $this->fetchRowCount($statement, array(":UserID"=>$adminID, ":StoryID"=>$storyID));
-			
+			echo $rowCount;
 			if($rowCount <= 0)
 			{
-				$statement2 = "INSERT INTO admin_approve_story 
-								VALUES(:AdminID, :StoryID, :Reason, NULL, NULL, 1)";
+				$statement2 = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved, Pending, Active)
+								VALUES(:AdminID, :StoryID, :Reason, 1, 0, 1)";
 
 				$parameters = array(
 					":AdminID" => $adminID, 
 					":StoryID" => $storyID, 
-					":Reason" => $reason);
+					":Reason" => $reason
+					);
 
 				return $this->fetch($statement2, $parameters);
 			}
 			else
 			{
 				$statement2 = "UPDATE admin_approve_story 
-								SET Reason = :Reason, Active = 1, Approved = 1  ";
-				$statement2 .= "WHERE User_UserId = :AdminID AND Story_StoryId = :StoryID";
+								SET Reason = :Reason, Active = 1, Approved = 1
+								WHERE User_UserId = :AdminID AND Story_StoryId = :StoryID";
 
 				$parameters = array(
 					":Reason" => $reason, 
@@ -378,6 +379,7 @@ class AdminModel extends Model {
 									FROM (
 									SELECT COUNT( * )
 									FROM user_inappropriateflag_comment
+									WHERE user_inappropriateflag_comment.Active = 1
 									GROUP BY Comment_CommentId
 									)tmpTable
 								) AS TotalComments
@@ -388,6 +390,7 @@ class AdminModel extends Model {
 							ON c.Story_StoryId = s.StoryId 
 							INNER JOIN user u 
 							ON c.User_UserId=u.UserId
+							WHERE uic.Active = 1
 							GROUP BY CommentId 
 							ORDER BY COUNT(uic.User_UserId) DESC 
 							LIMIT :Start, :HowMany";
@@ -417,26 +420,21 @@ class AdminModel extends Model {
 		//returns an array of Comment class
 		
 		try
-		{
-			
-			
-			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged, (
+		{			
+			$statement = "SELECT *, (
 								SELECT COUNT( * )
-									FROM (
-									SELECT COUNT( * )
-									FROM user_inappropriateflag_comment
-									GROUP BY Comment_CommentId
-									)tmpTable
+								FROM admin_reject_comment
+								WHERE Active = 1
 								) AS TotalComments
-							FROM comment c 
-							INNER JOIN user_inappropriateflag_comment uic 
-							ON c.CommentId = uic.Comment_CommentId 
+							FROM admin_reject_comment arc 
+							INNER JOIN comment c
+							ON c.CommentId = arc.Comment_CommentId 
 							INNER JOIN story s 
 							ON c.Story_StoryId = s.StoryId 
 							INNER JOIN user u 
 							ON c.User_UserId=u.UserId
-							GROUP BY CommentId 
-							ORDER BY COUNT(uic.User_UserId) DESC 
+							WHERE arc.Active = 1
+							ORDER BY c.CommentId 
 							LIMIT :Start, :HowMany";
 			
 			$start = $this->getStartValue($howMany, $page);

@@ -10,6 +10,13 @@ class Admin extends Controller {
 	function testAdmin()
 	{
 		echo "string";
+		$model = $this->loadModel('Admin/AdminModel');
+	
+		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
+		$returnData = $model->approveStory(5, 6, "Interesting");
+
+		debugit($returnData);
+
 	}
 	
 	//Main action for controller, equivelent to: www.site.com/controller/
@@ -185,11 +192,10 @@ class Admin extends Controller {
 		//Process story list into array like below:	
 		foreach ($storyList as $story)
 		{
-			$url = "storyeditpending/".$story->StoryId;
+			$url = '<a href='.'storyeditpending/'.$story->StoryId.'>action</a>';
 			
 			//$url = BASE_URL."Admin/AjaxStoryListPending/".$story->StoryId;
-			$resultData[] = array($story->StoryTitle, $story->LastName.' '.$story->FirstName, $story->DatePosted, $story->StoryId, 
-				'<a href='.$url.'>action</a>');
+			$resultData[] = array($story->StoryTitle, $story->LastName.' '.$story->FirstName, $story->DatePosted, $url);
 		}
 
 		$output = array(
@@ -226,7 +232,10 @@ class Admin extends Controller {
 
 		//Process story list into array like below:	
 		foreach ($storyList as $story)
-			$resultData[] = array($story->StoryTitle, $story->LastName, $story->DatePosted);
+		{
+			$url = '<a href='.'storyeditreject/'.$story->StoryId.'>action</a>';
+			$resultData[] = array($story->StoryTitle, $story->LastName.' '.$story->FirstName, $story->DatePosted, $url);
+		}
 
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
@@ -262,7 +271,11 @@ class Admin extends Controller {
 
 		//Process story list into array like below:	
 		foreach ($storyList as $story)
-			$resultData[] = array($story->StoryTitle, $story->LastName, $story->DatePosted);
+		{
+			$url = '<a href='.'storyeditinappropriate/'.$story->StoryId.'>action</a>';
+
+			$resultData[] = array($story->StoryTitle, $story->LastName.' '.$story->FirstName, $story->DatePosted, $url);
+		}
 
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
@@ -297,12 +310,10 @@ class Admin extends Controller {
 		$recordsNum = isset($commentList[0]) ?  $commentList[0]->TotalComments : 0;
 
 		//Process story list into array like below:	
-		foreach ($commentList as $comment){
-			$Name = $comment->FirstName;
-			$Name .=  ", ";
-			$Name .= $comment->LastName;
-
-			$resultData[] = array($comment->StoryTitle, $Name, $comment->DateUpdated);
+		foreach ($commentList as $comment)
+		{
+			$url = '<a href='.'commenteditinappropriate/'.$comment->CommentId.'>action</a>';
+			$resultData[] = array($comment->StoryTitle, $comment->Content, $comment->DateUpdated, $url);
 		}
 			
 		$output = array(
@@ -338,12 +349,10 @@ class Admin extends Controller {
 		$recordsNum = isset($commentList[0]) ?  $commentList[0]->TotalComments : 0;
 
 		//Process story list into array like below:	
-		foreach ($commentList as $comment){
-			$Name = $comment->FirstName;
-			$Name .=  ", ";
-			$Name .= $comment->LastName;
-			
-			$resultData[] = array($comment->StoryTitle, $Name, $comment->DateUpdated);
+		foreach ($commentList as $comment)
+		{
+			$url = '<a href='.'commenteditinappropriate/'.$comment->CommentId.'>action</a>';
+			$resultData[] = array($comment->StoryTitle, $comment->Content, $comment->DateUpdated, $url);
 		}
 			
 		$output = array(
@@ -566,7 +575,8 @@ class Admin extends Controller {
 		//Process story list into array like below:	
 		foreach ($questionList as $question)
 		{
-			$resultData[] = array($question->SecurityQuestionId, gettext($question->NameE), gettext($question->NameF), $question->DateUpdated);
+			$resultData[] = array($question->SecurityQuestionId, gettext($question->NameE), 
+				gettext($question->NameF), $question->DateUpdated);
 		}
 			
 		$output = array(
@@ -656,15 +666,16 @@ class Admin extends Controller {
 	***************************************************************************************************/
 	function storyeditpending($storyId)
 	{
+		debugit($_POST);
 		//$this->AdminRequest();
 
 		//Loads a view from corresponding view folder
 		$view = $this->loadView('storyeditpending');
+		$model = $this->loadModel('AdminModel');
 
 		//Loads a model from corresponding model folder
 		if(!isset($storyViewModel) && isset($storyId))
 		{
-			$model = $this->loadModel('AdminModel');
 		//Load the loginViewModel
 			$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
 			$storyViewModel = $model->getStory($storyId);
@@ -690,21 +701,24 @@ class Admin extends Controller {
 		//Execute code if a post back
 		if($this->isPost())
 		{
+			$approvalViewModel->Approved = isset($_POST["Approved"]) ? 1 : 0;
+
 			//Map post values to the loginViewModel
 			$approvalViewModel  = AutoMapper::mapPost($approvalViewModel );
 
 			if($approvalViewModel->validate())
 			{
+				debugit("approvalViewModel->Approved");
 				// Save data
-				$model->approveStory($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->$reason);
-
+				$model->approveStory($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
 				$this->redirect("admin/index");
 			}
 			else
 			{
-				$this->redirect("");
+				//$this->redirect("");
 			}
 		}
+		debugit($approvalViewModel);
 		//Loads a view from corresponding view folder
 		$view = $this->loadView('storyeditpending');
 
