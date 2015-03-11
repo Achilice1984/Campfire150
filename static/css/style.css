@@ -120,7 +120,7 @@ body {
 		padding: 0;
 	}
 	.nav-container {
-		min-height: 145px;
+		min-height: 110px;
 	}
 	.navbar {
 		position: absolute;
@@ -129,7 +129,23 @@ body {
 		width: 100%;
 	}
 	.navbar-nav a {
-		padding: 10px !important;
+		padding: 10px !important;		
+	}
+	.WriteStoryButton {
+		margin-top: 5px !important;
+		background-color: white;
+		color: #337ab7;
+		border: 1px solid #5bc0de;
+		border-radius: 20px !important;
+		margin-right: 5px !important;
+		margin-left: 5px !important;
+		
+		margin: 0px;
+	}
+	.WriteStoryButton:hover {
+		background-color: #eea236 !important;
+		border: 1px solid #eea236 !important;
+		color: white;
 	}
 }
 
@@ -155,13 +171,13 @@ body {
 /* -------------------- Theme Containers -------------------- */
 
 #c150-head {
-	border-bottom: 5px solid #f0ad4e;
+	border-bottom: 5px solid #eea236;
 }
 #c150-body {
 	background-color: #fff;
 }
 #c150-foot {
-	border-top: 5px solid #f0ad4e;
+	border-top: 5px solid #eea236;
 	padding-top: 10px;
 }
 
@@ -191,3 +207,5 @@ body {
 	color: #303030;
 	text-decoration: none;
 }
+
+
