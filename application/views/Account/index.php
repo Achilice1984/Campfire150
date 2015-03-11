@@ -2,13 +2,7 @@
 <div class="container">
     <h1>Title</h1>
 
-    <?php 
-        //Add error message block to the page
-        include(APP_DIR . 'views/shared/displayErrors.php'); 
-
-        //Add success message block to the page
-        include(APP_DIR . 'views/shared/displaySuccess.php'); 
-    ?>
+    <?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
     <form action="<?php echo BASE_URL; ?>Account/index" method="post">
 

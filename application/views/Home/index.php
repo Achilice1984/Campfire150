@@ -2,14 +2,8 @@
     var WordCloudWords = <?php echo $homeViewModel->WordCloud; ?>
 </script>
     
-<?php 
-    //Add error message block to the page
-    include(APP_DIR . 'views/shared/displayErrors.php'); 
+<?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
-    //Add success message block to the page
-    include(APP_DIR . 'views/shared/displaySuccess.php'); 
-?>
-    
         <section style="padding-top: 20px; margin-bottom: 50px;">
             <div class="container">
                 <h1><?php echo gettext("Campfire Stories"); ?></h1>

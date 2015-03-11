@@ -82,7 +82,7 @@ textdomain($domain);
 //Remove old success and error messages from sessions
 unsetErrors();
 unsetSuccess();
-
+unsetInfo();
 
 
 //If we are in debugMode, show errors and use custom error handler for easier to read errors
