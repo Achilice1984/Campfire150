@@ -112,8 +112,8 @@
                         <canvas id="wordCloudCanvas" height="400" width="500" style="width:75%;"></canvas> 
                     </div>
                     <div class="col-md-6">
-                        <h1>How the Campfire Works</h1>
-                        <ol>
+                        <h1 >How the Campfire Works</h1>
+                        <ol style="font-size: 1.6em;">
                             <li>Submit a story</li>
                             <li>Answer some simple questions</li>
                             <li>We all create a national story</li>

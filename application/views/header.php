@@ -54,7 +54,7 @@
                 <li><a href="<?php echo BASE_URL; ?>account/changelanguage"><span class="glyphicon glyphicon-globe"></span><span class="hidden-xs"> <?php echo $language; ?></span></a></li>
 
                 <li><a href="<?php echo BASE_URL; ?>story/add"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> <?php echo gettext("Share a Story"); ?></span></a></li>
-                <?php  if($currentUser->IsAuth) { ?>
+                <?php  if(!$currentUser->IsAuth) { ?>
                           <li class="dropdown active">
                             <a href="#" class="dropdown-toggle" type="button" id="loginMenu" data-toggle="dropdown" aria-expanded="true">
                               <span class="glyphicon glyphicon-user"></span><span class="hidden-xs"> <?php echo gettext("Login | Signup"); ?></span> <span class="caret"></span>
@@ -70,8 +70,8 @@
                               <span class="glyphicon glyphicon-user"></span><span class="hidden-xs"> <?php echo $currentUser->FirstName . " " . $currentUser->LastName; ?></span> <span class="caret"></span>
                             </a>
                             <ul class="dropdown-menu" role="menu" aria-labelledby="loginMenu">
-                              <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/logout"><?php echo gettext("Logout") ?></a></li>
                               <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/home"><?php echo gettext("Profile"); ?></a></li>
+                              <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/logout"><?php echo gettext("Logout") ?></a></li>                              
                             </ul>
                           </li>
                           
@@ -91,23 +91,18 @@
               </div>
               <div class="collapse navbar-collapse" id="c150-navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-                    <li><a href="#">Link</a></li>
+                    <li class="active"><a href="<?php echo BASE_URL; ?>"><?php echo gettext("Home"); ?> <span class="sr-only">(current)</span></a></li>
+                    <li><a href="<?php echo BASE_URL; ?>story/search"><?php echo gettext("Stories"); ?></a></li>                    
+                    <li><a href="<?php echo BASE_URL; ?>account/search"><?php echo gettext("Users"); ?></a></li>
                     <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?php echo gettext("Campfire"); ?> <span class="caret"></span></a>
                       <ul class="dropdown-menu" role="menu">
-                          <li><a href="#">Action</a></li>
-                          <li><a href="#">Another action</a></li>
-                          <li><a href="#">Something else here</a></li>
+                          <li><a href="<?php echo BASE_URL; ?>home/about"><?php echo gettext("About"); ?></a></li>
+                          <li><a href="<?php echo BASE_URL; ?>home/domore"><?php echo gettext("Do More"); ?></a></li>
                           <li class="divider"></li>
-                          <li><a href="#">Separated link</a></li>
-                          <li class="divider"></li>
-                        <li><a href="#">One more separated link</a></li>
+                          <li><a href="<?php echo BASE_URL; ?>home/terms"><?php echo gettext("Terms"); ?></a></li>
                       </ul>
                     </li>
-                    <li><a href="#">Link</a></li>
-                    <li><a href="#">Link</a></li>
-                    <li><a href="#">Link</a></li>
                 </ul>
               </div>
             </nav>
