@@ -62,6 +62,9 @@ else
 	define('BASE_URL', $config['base_url'][0]);
 }
 
+//define('FULL_URL', (BASE_URL . (isset($_SERVER['REQUEST_URI'])) ? parse_url(strtolower($_SERVER['REQUEST_URI']))['path'] : ''));
+
+define('FULL_URL', 'http'.(empty($_SERVER['HTTPS'])?'':'s').'://'.$_SERVER['SERVER_NAME'] . ($config["debugMode"] == true ? ":8084" : "") . $_SERVER['REQUEST_URI']);
 
 // Language Setup
 $sessionManager = new SessionManager();

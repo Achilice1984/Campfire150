@@ -2,7 +2,7 @@
 
 /* -------------------- General -------------------- */
 
-* {
+*:not(img) {
 	border-radius: 0 !important;
 }
 body {
@@ -97,7 +97,8 @@ body {
 		margin: 0;
 	}
 	.navbar-default .active a {
-		background: transparent url('../c150/c150-menu-active.png') no-repeat bottom center !important;
+		background: #337ab7 url('../c150/c150-menu-active.png') no-repeat bottom center !important;
+		color: white !important;
 	}
 	.navbar-collapse {
 		padding: 0;
@@ -209,3 +210,23 @@ body {
 }
 
 
+
+
+
+ .thumbnail {
+    position:relative;
+    overflow:hidden;
+}
+ 
+.caption {
+    position:absolute;
+    top:0;
+    right:0;
+    background:rgba(0, 0, 0, 0.75);
+    width:100%;
+    height:100%;
+    padding:2%;
+    display: none;
+    color:#fff !important;
+    z-index:2;
+}
