@@ -2,7 +2,7 @@
 
     <div class="row">
         <div class="col-md-12"> 
-			<h1>Do More</h1>
+			<h1>Research Objectives</h1>
 		</div>
 	</div>
 </div>
