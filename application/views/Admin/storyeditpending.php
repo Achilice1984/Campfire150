@@ -44,11 +44,15 @@
 	                include(APP_DIR . 'views/shared/displaySuccess.php'); 
 	            ?>
 
-	            <div class="checkbox">
+	            <div class="radio">
 	                <label>
-	                    <input type="checkbox" name="Approved" value="<?php echo $approvalViewModel->Approved; ?>"> <?php echo gettext("Approve Story"); ?>
+	                    <input type="radio" name="Approved" value="<?php echo $approvalViewModel->Approved; ?>"> <?php echo gettext("Approve Story"); ?>
+	                </label>
+	                <label>
+	                    <input type="radio" name="Rejected" value="<?php echo $approvalViewModel->Rejected; ?>"> <?php echo gettext("Reject Story"); ?>
 	                </label>
 	            </div>
+
 	            <div class="form-group">
 	                <label for="Content"><?php echo gettext("Reason"); ?></label>
 	                <textarea class="form-control" id="Content" name="Content" value="<?php echo $approvalViewModel->Content; ?>"></textarea>
