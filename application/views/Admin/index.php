@@ -264,6 +264,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -279,6 +280,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -294,6 +296,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -309,6 +312,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -324,6 +328,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -339,6 +344,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>

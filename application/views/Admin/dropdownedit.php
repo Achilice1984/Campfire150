@@ -1,8 +1,6 @@
 
 <?php
-	// debugit($storyViewModel);
-	// debugit($userViewModel);
-	// debugit($aprovalViewModel);
+	debugit($dropdownListItemViewModel);
 ?>
 <div class="container" style="margin-top:100px;">
 

@@ -1,8 +1,8 @@
 
 <?php
-	// debugit($storyViewModel);
-	// debugit($userViewModel);
-	// debugit($aprovalViewModel);
+	debugit($storyViewModel);
+	debugit($userViewModel);
+	debugit($approvalViewModel);
 ?>
 <div class="container" style="margin-top:100px;">
 
@@ -13,7 +13,7 @@
 		<div class="col-md-6">
 			<form action="<?php echo BASE_URL; ?>account/login" method="post" id="loginForm">
 
-				<input type="hidden" name="Id" value="<?php echo $aprovalViewModel->Id; ?>">
+				<input type="hidden" name="Id" value="<?php echo $approvalViewModel->Id; ?>">
 
 	            <?php 
 	                //Add error message block to the page
@@ -25,12 +25,12 @@
 
 	            <div class="checkbox">
 	                <label>
-	                    <input type="checkbox" name="Approved" value="<?php echo $aprovalViewModel->Approved; ?>"> <?php echo gettext("Approve Story"); ?>
+	                    <input type="checkbox" name="Approved" value="<?php echo $approvalViewModel->Approved; ?>"> <?php echo gettext("Approve Story"); ?>
 	                </label>
 	            </div>
 	            <div class="form-group">
 	                <label for="Content"><?php echo gettext("Response"); ?></label>
-	                <textarea class="form-control" id="Password" name="Password"><?php echo $aprovalViewModel->Content; ?></textarea>
+	                <textarea class="form-control" id="Password" name="Password"><?php echo $approvalViewModel->Content; ?></textarea>
 	            </div>
 	            
 
