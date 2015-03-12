@@ -926,6 +926,7 @@ class Admin extends Controller {
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
+		
 		//Loads a view from corresponding view folder
 		$view = $this->loadView('dropdownansweredit');
 
