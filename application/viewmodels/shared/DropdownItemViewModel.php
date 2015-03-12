@@ -4,6 +4,7 @@
 */
 class DropdownItemViewModel extends ViewModel
 {
+	public $TableName; //Name of the table
 	public $Id; //Id of item
 	public $NameE; // English Name
 	public $NameF; // French Name
@@ -12,13 +13,13 @@ class DropdownItemViewModel extends ViewModel
 
 	function __construct()
 	{		
-		/*$errors["Id"] = array(
-			'required' =>
-				array(
-					'Message' => gettext('The Id field is required!'),
-					'Properties' => array()
-				)
-		);*/
+		// $errors["TableName"] = array(
+		// 	'required' =>
+		// 		array(
+		// 			'Message' => gettext('The table field is required!'),
+		// 			'Properties' => array()
+		// 		)
+		// );
 		$errors["NameE"] = array(
 			'required' =>
 				array(
