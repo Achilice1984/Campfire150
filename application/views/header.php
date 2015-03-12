@@ -42,44 +42,47 @@
           <div class="col-md-4">
             <header role="banner">
               <a href="<?php echo BASE_URL; ?>">
-                <img src="<?php echo BASE_URL; ?>/static/c150/c150.png" id="c150-logo" alt="Campfire 150" />
+                <img style="height: 80px;" src="<?php echo BASE_URL; ?>/static/c150/c150.png" id="c150-logo" alt="Campfire 150" />
               </a>
+              <br />
+              <span class="h4 hidden-sm hidden-xs text-primary text-right motto"><?php echo gettext("Gathering Canadians through story."); ?></span>
             </header>
           </div>
           <div class="col-md-8 nav-container">
             <nav role="navigation" class="nav-secondary clearfix">
               <div class="container">
-                <ul class="nav nav-pills nav-justified pull-right">
-                  <li><a href="<?php echo BASE_URL; ?>story/search"><span class="glyphicon glyphicon-search"></span><span class="hidden-xs"> <?php echo gettext("Search"); ?></span></a></li>
-                  <li><a href="<?php echo BASE_URL; ?>account/changelanguage"><span class="glyphicon glyphicon-globe"></span><span class="hidden-xs"> <?php echo $language; ?></span></a></li>
+                    <ul class="nav nav-pills nav-justified pull-right">
+                <li><a href="<?php echo BASE_URL; ?>story/search"><span class="glyphicon glyphicon-search"></span><span class="hidden-xs"> <?php echo gettext("Search"); ?></span></a></li>
+                <li><a href="<?php echo BASE_URL; ?>account/changelanguage"><span class="glyphicon glyphicon-globe"></span><span class="hidden-xs"> <?php echo $language; ?></span></a></li>
 
-                  <li><a href="<?php echo BASE_URL; ?>story/add"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> <?php echo gettext("Share a Story"); ?></span></a></li>
-                  <?php  if(!$currentUser->IsAuth) { ?>
-                            <li class="dropdown active">
-                              <a href="#" class="dropdown-toggle" type="button" id="loginMenu" data-toggle="dropdown" aria-expanded="true">
-                                <span class="glyphicon glyphicon-user"></span><span class="hidden-xs"> <?php echo gettext("Login | Signup"); ?></span> <span class="caret"></span>
-                              </a>
-                              <ul class="dropdown-menu" role="menu" aria-labelledby="loginMenu">
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/login"><?php echo gettext("Login"); ?></a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/register"><?php echo gettext("Register"); ?></a></li>
-                              </ul>
-                            </li>
-                  <?php } else { ?>
-                            <li class="dropdown active">
-                              <a href="#" class="dropdown-toggle" type="button" id="loginMenu" data-toggle="dropdown" aria-expanded="true">
-                                <span class="glyphicon glyphicon-user"></span><span class="hidden-xs"> <?php echo $currentUser->FirstName . " " . $currentUser->LastName; ?></span> <span class="caret"></span>
-                              </a>
-                              <ul class="dropdown-menu" role="menu" aria-labelledby="loginMenu">
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/logout"><?php echo gettext("Logout") ?></a></li>
-                                <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/home"><?php echo gettext("Profile"); ?></a></li>
-                              </ul>
-                            </li>
-                            
-                  <?php } ?>
-                </ul>
+                <li><a class="WriteStoryButton" href="<?php echo BASE_URL; ?>story/add"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> <?php echo gettext("Share a Story"); ?></span></a></li>
+                
+                <?php  if(!$currentUser->IsAuth) { ?>
+                          <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" type="button" id="loginMenu" data-toggle="dropdown" aria-expanded="true">
+                              <span class="glyphicon glyphicon-user"></span><span class="hidden-xs"> <?php echo gettext("Login | Signup"); ?></span> <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="loginMenu">
+                              <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/login"><?php echo gettext("Login"); ?></a></li>
+                              <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/register"><?php echo gettext("Register"); ?></a></li>
+                            </ul>
+                          </li>
+                <?php } else { ?>
+                          <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" type="button" id="loginMenu" data-toggle="dropdown" aria-expanded="true">
+                              <span class="glyphicon glyphicon-user"></span><span class="hidden-xs"> <?php echo $currentUser->FirstName . " " . $currentUser->LastName; ?></span> <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="loginMenu">
+                              <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/home"><?php echo gettext("Profile"); ?></a></li>
+                              <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/logout"><?php echo gettext("Logout") ?></a></li>                              
+                            </ul>
+                          </li>
+                          
+                <?php } ?>
+                  </ul>
               </div>
-            </nav>
-            <p class="h4 hidden-sm hidden-xs text-primary text-right motto"><?php echo gettext("Gathering Canadians through story."); ?></p>
+                </nav>
+            
             <nav class="navbar navbar-default nav-primary">
               <div class="navbar-header">
                   <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#c150-navbar-collapse">
@@ -91,23 +94,23 @@
               </div>
               <div class="collapse navbar-collapse" id="c150-navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="#">Link <span class="sr-only">(current)</span></a></li>
-                    <li><a href="#">Link</a></li>
+                    <li class="<?php echo (FULL_URL == BASE_URL ? "active" : ""); ?>"><a href="<?php echo BASE_URL; ?>"><?php echo gettext("Home"); ?> <span class="sr-only">(current)</span></a></li>
+                    <li class="<?php echo (strpos(FULL_URL, BASE_URL . 'story/search') !== false ? "active" : ""); ?>"><a href="<?php echo BASE_URL; ?>story/search"><?php echo gettext("Stories"); ?></a></li>                    
+                    <li class="<?php echo (strpos(FULL_URL, BASE_URL . 'account/search') !== false ? "active" : ""); ?>"><a href="<?php echo BASE_URL; ?>account/search"><?php echo gettext("Users"); ?></a></li>
                     <li class="dropdown">
-                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Dropdown <span class="caret"></span></a>
-                      <ul class="dropdown-menu" role="menu">
-                          <li><a href="#">Action</a></li>
-                          <li><a href="#">Another action</a></li>
-                          <li><a href="#">Something else here</a></li>
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?php echo gettext("About"); ?> <span class="caret"></span></a>
+                      <ul class="dropdown-menu" role="menu">                                                    
+
+                          <li><a href="<?php echo BASE_URL; ?>home/mission"><?php echo gettext("Mission / Vision"); ?></a></li>                          
+                          <li><a href="<?php echo BASE_URL; ?>home/team"><?php echo gettext("Our Team"); ?></a></li>
+                          <li><a href="<?php echo BASE_URL; ?>home/partners"><?php echo gettext("Our Partners"); ?></a></li>
+                          <li><a href="<?php echo BASE_URL; ?>home/research"><?php echo gettext("Research Objectives"); ?></a></li>
+
                           <li class="divider"></li>
-                          <li><a href="#">Separated link</a></li>
-                          <li class="divider"></li>
-                        <li><a href="#">One more separated link</a></li>
+
+                          <li><a href="<?php echo BASE_URL; ?>home/domore"><?php echo gettext("Do More"); ?></a></li>
                       </ul>
                     </li>
-                    <li><a href="#">Link</a></li>
-                    <li><a href="#">Link</a></li>
-                    <li><a href="#">Link</a></li>
                 </ul>
               </div>
             </nav>

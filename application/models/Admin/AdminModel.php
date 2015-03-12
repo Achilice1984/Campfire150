@@ -64,7 +64,7 @@ class AdminModel extends Model {
 		}	
 	}
 
-	public function getStory($storyID)
+	public function getStoryById($storyId)
 	{
 		try
 		{
@@ -72,9 +72,9 @@ class AdminModel extends Model {
 							FROM story s
 							LEFT JOIN user u
 							ON s.User_UserId = u.UserId
-							WHERE storyID = :StoryID";
+							WHERE StoryId = :StoryId";
 
-			$parameters = array(":StoryID" => $storyID);
+			$parameters = array(":StoryId" => $storyId);
 
 			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
@@ -260,24 +260,25 @@ class AdminModel extends Model {
 							WHERE User_UserId = :UserID AND Story_StoryId = :StoryID";
 
 			$rowCount = $this->fetchRowCount($statement, array(":UserID"=>$adminID, ":StoryID"=>$storyID));
-			
+			echo $rowCount;
 			if($rowCount <= 0)
 			{
-				$statement2 = "INSERT INTO admin_approve_story 
-								VALUES(:AdminID, :StoryID, :Reason, NULL, NULL, 1)";
+				$statement2 = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved, Pending, Active)
+								VALUES(:AdminID, :StoryID, :Reason, 1, 0, 1)";
 
 				$parameters = array(
 					":AdminID" => $adminID, 
 					":StoryID" => $storyID, 
-					":Reason" => $reason);
+					":Reason" => $reason
+					);
 
 				return $this->fetch($statement2, $parameters);
 			}
 			else
 			{
 				$statement2 = "UPDATE admin_approve_story 
-								SET Reason = :Reason, Active = 1, Approved = 1  ";
-				$statement2 .= "WHERE User_UserId = :AdminID AND Story_StoryId = :StoryID";
+								SET Reason = :Reason, Active = 1, Approved = 1
+								WHERE User_UserId = :AdminID AND Story_StoryId = :StoryID";
 
 				$parameters = array(
 					":Reason" => $reason, 
@@ -296,73 +297,6 @@ class AdminModel extends Model {
 		}
 	}
 
-// Is this function necessary?
-	public function changeRejectedToApproved($adminID, $storyID, $reason)
-	{
-		//Accepts the adminID and the story id
-		//Change a rejected story to an approved story
-		//returns bool whether it was saved succesfully or not
-
-		try
-		{
-			$this->fetch(
-				"UPDATE admin_approve_story SET Active = 0 WHERE storyID = :StoryID AND Active = 1", 
-				array(":StoryID" => $storyID)
-				);
-
-			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved)
-				VALUES(:AdminID, :StoryID, :Reason, 1) 
-				ON DUPLICATE KEY 
-					UPDATE Reason = :NewReason, Approved = 1, Active = 1";
-
-			$parameters = array(
-					":Reason" => $reason, 
-					":StoryID" => $storyID, 
-					":AdminID" => $adminID,
-					":NewReason" => $reason
-					);
-
-			return $this->fetch($statement, $parameters);
-		}
-		catch(PDOException $e)
-		{
-			return $e->getMessage();
-		}
-	}
-
-// Is this function necessary?
-	public function changeApprovedToRejected($adminID, $storyID, $reason)
-	{
-		//Accepts the adminID, the story id and the reason why it was rejected
-		//Change an approved story to a rejected story
-		//returns bool whether it was saved succesfully or not
-
-		try
-		{
-			$this->fetch(
-				"UPDATE admin_approve_story SET Active = 0 WHERE storyID = :StoryID AND Active = 1", 
-				array(":StoryID" => $storyID)
-				);
-
-			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved) 
-							VALUES(:AdminID, :StoryID, :Reason, 0)
-							ON DUPLICATE KEY 
-							UPDATE Reason = :Reason, Approved = 0, Active = 1";
-
-			$parameters = array(
-					":Reason" => $reason, 
-					":StoryID" => $storyID, 
-					":AdminID" => $adminID
-					);
-
-			return $this->fetch($statement, $parameters);
-		}
-		catch(PDOException $e)
-		{
-			return $e->getMessage();			
-		}
-	}
-
 	public function getCommentListFlaggedInappropriate($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
@@ -378,6 +312,7 @@ class AdminModel extends Model {
 									FROM (
 									SELECT COUNT( * )
 									FROM user_inappropriateflag_comment
+									WHERE user_inappropriateflag_comment.Active = 1
 									GROUP BY Comment_CommentId
 									)tmpTable
 								) AS TotalComments
@@ -388,6 +323,7 @@ class AdminModel extends Model {
 							ON c.Story_StoryId = s.StoryId 
 							INNER JOIN user u 
 							ON c.User_UserId=u.UserId
+							WHERE uic.Active = 1
 							GROUP BY CommentId 
 							ORDER BY COUNT(uic.User_UserId) DESC 
 							LIMIT :Start, :HowMany";
@@ -408,6 +344,29 @@ class AdminModel extends Model {
 		}
 	}
 
+	public function getCommentById($commentId)
+	{
+		try
+		{
+			$statement = "SELECT *
+							FROM comment c
+							INNER JOIN user u
+							ON c.User_UserId = u.UserId
+							WHERE c.CommentId = :CommentId";
+
+			$parameters = array(":CommentId" => $commentId);
+
+			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/CommentViewModel");
+
+			return $storyList;
+
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
 	public function getCommentListRejected($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
@@ -417,26 +376,21 @@ class AdminModel extends Model {
 		//returns an array of Comment class
 		
 		try
-		{
-			
-			
-			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged, (
+		{			
+			$statement = "SELECT *, (
 								SELECT COUNT( * )
-									FROM (
-									SELECT COUNT( * )
-									FROM user_inappropriateflag_comment
-									GROUP BY Comment_CommentId
-									)tmpTable
+								FROM admin_reject_comment
+								WHERE Active = 1
 								) AS TotalComments
-							FROM comment c 
-							INNER JOIN user_inappropriateflag_comment uic 
-							ON c.CommentId = uic.Comment_CommentId 
+							FROM admin_reject_comment arc 
+							INNER JOIN comment c
+							ON c.CommentId = arc.Comment_CommentId 
 							INNER JOIN story s 
 							ON c.Story_StoryId = s.StoryId 
 							INNER JOIN user u 
 							ON c.User_UserId=u.UserId
-							GROUP BY CommentId 
-							ORDER BY COUNT(uic.User_UserId) DESC 
+							WHERE arc.Active = 1
+							ORDER BY c.CommentId 
 							LIMIT :Start, :HowMany";
 			
 			$start = $this->getStartValue($howMany, $page);
@@ -995,6 +949,47 @@ class AdminModel extends Model {
 		}
 	}
 
+	public function getDropdownListItem($tableName, $itemId)
+	{
+		try
+		{
+			$statement = "";
+
+			switch(true)
+			{
+				case strtolower($tableName) == "languagetype":
+					$statement = "SELECT *, LanguageId AS Id FROM languagetype WHERE LanguageId = :Id";
+					break;
+				case strtolower($tableName) == "gendertype":
+					$statement = "SELECT *, GenderTypeId AS Id FROM gendertype WHERE GenderTypeId = :Id";
+					break;
+				case strtolower($tableName) == "achievementleveltype":
+					$statement = "SELECT *, LevelId AS Id FROM achievementleveltype WHERE LevelId = :Id";
+					break;
+				case strtolower($tableName) == "securityquestion":
+					$statement = "SELECT *, SecurityQuestionId AS Id FROM securityquestion WHERE SecurityQuestionId = :Id";
+					break;
+				case strtolower($tableName) == "picturetype":
+					$statement = "SELECT *, PictureTypeId AS Id FROM picturetype WHERE PictureTypeId = :Id";
+					break;
+				case strtolower($tableName) == "profileprivacytype":
+					$statement = "SELECT *, PrivacyTypeId AS Id FROM profileprivacytype WHERE PrivacyTypeId = :Id";
+					break;
+				case strtolower($tableName) == "storyprivacytype":
+					$statement = "SELECT *, StoryPrivacyTypeId AS Id FROM storyprivacytype WHERE StoryPrivacyTypeId = :Id";
+					break;
+				default:
+					return $tableName." is not a proper table name";
+			}			
+
+			return $this->fetchIntoClass($statement, array(":Id" => $itemId), "shared/DropdownItemViewModel");
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
 	public function getListDropdowns($tableName)
 	{
 		//Accepts admin id
@@ -1007,38 +1002,38 @@ class AdminModel extends Model {
 			switch(true)
 			{
 				case strtolower($tableName) == "languagetype":
-					$statement = "SELECT *, (SELECT COUNT(*) FROM languagetype) AS TotalNumber FROM languagetype";
+					$statement = "SELECT *, LanguageId AS Id, (SELECT COUNT(*) FROM languagetype) AS TotalNumber FROM languagetype";
 					break;
 				case strtolower($tableName) == "gendertype":
-					$statement = "SELECT *, (SELECT COUNT(*) FROM gendertype) AS TotalNumber FROM gendertype";
+					$statement = "SELECT *, GenderTypeId AS Id, (SELECT COUNT(*) FROM gendertype) AS TotalNumber FROM gendertype";
 					break;
 				case strtolower($tableName) == "achievementleveltype":
-					$statement = "SELECT *, (SELECT COUNT(*) FROM achievementleveltype) AS TotalNumber FROM achievementleveltype";
+					$statement = "SELECT *, LevelId AS Id, (SELECT COUNT(*) FROM achievementleveltype) AS TotalNumber FROM achievementleveltype";
 					break;
 				case strtolower($tableName) == "securityquestion":
-					$statement = "SELECT *, (SELECT COUNT(*) FROM securityquestion) AS TotalNumber FROM securityquestion";
+					$statement = "SELECT *, SecurityQuestionId AS Id, (SELECT COUNT(*) FROM securityquestion) AS TotalNumber FROM securityquestion";
 					break;
 				case strtolower($tableName) == "picturetype":
-					$statement = "SELECT *, (SELECT COUNT(*) FROM picturetype) AS TotalNumber FROM picturetype";
+					$statement = "SELECT *, PictureTypeId AS Id, (SELECT COUNT(*) FROM picturetype) AS TotalNumber FROM picturetype";
 					break;
 				case strtolower($tableName) == "profileprivacytype":
-					$statement = "SELECT *, (SELECT COUNT(*) FROM profileprivacytype) AS TotalNumber FROM profileprivacytype";
+					$statement = "SELECT *, PrivacyTypeId AS Id, (SELECT COUNT(*) FROM profileprivacytype) AS TotalNumber FROM profileprivacytype";
 					break;
 				case strtolower($tableName) == "storyprivacytype":
-					$statement = "SELECT *, (SELECT COUNT(*) FROM storyprivacytype) AS TotalNumber FROM storyprivacytype";
+					$statement = "SELECT *, StoryPrivacyTypeId AS Id, (SELECT COUNT(*) FROM storyprivacytype) AS TotalNumber FROM storyprivacytype";
 					break;
 				default:
 					return $tableName." is not a proper table name";
 			}			
 
-			return $this->fetchIntoObject($statement, array());
+			return $this->fetchIntoClass($statement, array(), "shared/DropdownItemViewModel");
 		}
 		catch(PDOException $e)
 		{
 			return $e->getMessage();
 		}
 	}
-	public function addDropdownValue($tableName, $dropdownValueE, $dropdownValueF)
+	public function addDropdownItem($tableName, $dropdownValueE, $dropdownValueF)
 	{
 		//Accepts a english dropdownValueE, a french dropdownValueF
 		//returns bool if saved succesfully

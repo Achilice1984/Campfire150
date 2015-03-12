@@ -22,13 +22,7 @@
 
                         <form action="<?php echo BASE_URL; ?>story/edit" method="post" id="loginForm">
 
-                            <?php 
-                                //Add error message block to the page
-                                include(APP_DIR . 'views/shared/displayErrors.php'); 
-
-                                //Add success message block to the page
-                                include(APP_DIR . 'views/shared/displaySuccess.php'); 
-                            ?>
+                            <?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
                             <div class="form-group">
                                 <label for="StoryTitle"><?php echo gettext("Title"); ?></label>

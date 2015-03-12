@@ -9,13 +9,7 @@
         
             <form action="<?php echo BASE_URL . "story/publish/" . $storyViewModel->StoryId; ?>" method="post" enctype="multipart/form-data">
 
-                <?php 
-                    //Add error message block to the page
-                    include(APP_DIR . 'views/shared/displayErrors.php'); 
-
-                    //Add success message block to the page
-                    include(APP_DIR . 'views/shared/displaySuccess.php'); 
-                ?>   
+                <?php include(APP_DIR . 'views/shared/messages.php'); ?>  
 
 
                 <?php foreach ($storyQuestions as $question): 

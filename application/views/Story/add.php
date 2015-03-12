@@ -20,20 +20,14 @@
         
             <form action="<?php echo BASE_URL; ?>story/add" method="post" enctype="multipart/form-data">
 
-                <?php 
-                    //Add error message block to the page
-                    include(APP_DIR . 'views/shared/displayErrors.php'); 
-
-                    //Add success message block to the page
-                    include(APP_DIR . 'views/shared/displaySuccess.php'); 
-                ?>           
+                <?php include(APP_DIR . 'views/shared/messages.php'); ?>         
                 
                 
                 <input type="hidden" name="image_x" id="image_x" value="">
                 <input type="hidden" name="image_y" id="image_y" value="">
                 <input type="hidden" name="image_height" id="image_height" value="">
                 <input type="hidden" name="image_width" id="image_width" value="">
-                <div id="addImageDiv" class="img-rounded center-block" style="position: relative; min-height:400px; border: 1px solid gray; overflow: hidden; padding: 0; margin: 0;">
+                <div id="addImageDiv" class="img-rounded center-block" style="border-radius: 15px; position: relative; min-height:200px; border: 1px solid #E8E8E8; overflow: hidden; padding: 0; margin: 0;">
                     
                     <img id="imgPreviewer" src="" class="img-rounded img-responsive center-block" alt="" style="width:1200px; z-index: 10;" />
 
@@ -50,7 +44,7 @@
                       <div id="cropImage" class="btn btn-default" style="position: absolute; z-index: 50; bottom:0; float: left; margin: 25px; margin-left: 150px; display: none;"><?php echo gettext("Crop"); ?></div>
                 </div>
 
-                <div class="form-group" style="margin-top: 15px; margin-bottom: -10px;">
+                <div class="form-group" style="margin-top: 15px; margin-bottom: -5px;">
                     <!-- <label for="StoryTitle"><?php echo gettext("Title"); ?></label> -->
                     <input type="text" class="form-control" id="StoryTitle" name="StoryTitle" placeholder="<?php echo gettext("Title"); ?>" value="<?php echo $storyViewModel->StoryTitle; ?>">
                 </div>            

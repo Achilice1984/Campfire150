@@ -33,7 +33,6 @@
                                     <th>Title</th>
                                     <th>Owner</th>
                                     <th>Posted Date</th> 
-                                    <th>Id</th>
                                     <th>Action</th>                              
                                 </tr>
                             </thead>
@@ -47,7 +46,8 @@
                                 <tr>
                                     <th>Title</th>
                                     <th>Owner</th>
-                                    <th>Posted Date</th>                                    
+                                    <th>Posted Date</th> 
+                                    <th>Action</th>                                    
                                    
                                 </tr>
                             </thead>
@@ -61,7 +61,8 @@
                                 <tr>
                                     <th>Title</th>
                                     <th>Owner</th>
-                                    <th>Posted Date</th>                                    
+                                    <th>Posted Date</th>  
+                                    <th>Action</th>                                   
                                    
                                 </tr>
                             </thead>
@@ -85,8 +86,9 @@
                             <thead>
                                 <tr>
                                     <th>Story Title</th>
-                                    <th>Comment Owner</th>
-                                    <th>Comment Date</th>                                    
+                                    <th>Comment Content</th>
+                                    <th>Comment Date</th> 
+                                    <th>Action</th>                                    
                                    
                                 </tr>
                             </thead>
@@ -99,8 +101,9 @@
                             <thead>
                                 <tr>
                                     <th>Story Title</th>
-                                    <th>Comment Owner</th>
-                                    <th>Comment Date</th>                                    
+                                    <th>Comment Content</th>
+                                    <th>Comment Date</th>
+                                    <th>Action</th>                                     
                                    
                                 </tr>
                             </thead>
@@ -261,6 +264,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -276,6 +280,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -291,6 +296,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -306,6 +312,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -321,6 +328,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -336,6 +344,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>

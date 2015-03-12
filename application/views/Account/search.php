@@ -45,12 +45,12 @@
 
 	    <div role="tabpanel" class="tab-pane" id="User_MostFollowers">
 
-			<!-- <div id="RecommendedStoryContainer">
+			<div id="RecommendedStoryContainer">
 				<?php 
-					// foreach ($mostRecommendedResults as $story)
-					// {
-					// 	include(APP_DIR . "views/Story/_searchPanel.php");
-					// }			
+					foreach ($mostFollowUsersList as $user)
+					{
+						include(APP_DIR . "views/Account/_searchPanel.php");
+					}			
 				?>  
 			</div> 
 			
@@ -64,18 +64,18 @@
 
 			<div class="row text-center" id="RecommendedStoryMoreButton" style="margin-bottom: 100px;">
 				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
-			</div> -->
+			</div>
 	    </div>   <!-- <div role="tabpanel" class="tab-pane active" id="Story_Recommended"> -->
 
 
 	    <div role="tabpanel" class="tab-pane" id="User_Latest">
 			
-			<!-- <div id="LatestStoryContainer">
+			<div id="LatestStoryContainer">
 				<?php 
-					// foreach ($latestResults as $story)
-					// {
-					// 	include(APP_DIR . "views/Story/_searchPanel.php");
-					// }			
+					foreach ($latestUsersList as $user)
+					{
+						include(APP_DIR . "views/Account/_searchPanel.php");
+					}			
 				?>  
 			</div> 
 			
@@ -89,7 +89,7 @@
 
 			<div class="row text-center" id="LatestStoryMoreButton" style="margin-bottom: 100px;">
 				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
-			</div> -->
+			</div>
 	    </div> 
 	</div>  
 </div>
