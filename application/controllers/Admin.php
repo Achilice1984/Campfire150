@@ -928,7 +928,7 @@ class Admin extends Controller {
 		$model = $this->loadModel('AdminModel');
 
 		//Loads a view from corresponding view folder
-		$view = $this->loadView('dropdownansweredit');
+		$view = $this->loadView('dropdownedit');
 
 		$dropdownListItemViewModel = $this->loadViewModel('shared/DropdownItemViewModel');
 
@@ -951,12 +951,57 @@ class Admin extends Controller {
 		//Execute code if a post back
 		if($this->isPost())
 		{
-
 			//Map post values to the loginViewModel
+			$dropdownListItemViewModel  = AutoMapper::mapPost($dropdownListItemViewModel );
 
-			if($approvalViewModel->validate())
+			if($dropdownListItemViewModel->validate())
 			{
 				// Save data
+			}
+			else
+			{
+				echo "Failed to save the change";
+			}
+		}
+		else
+		{
+			//Execute this code if NOT a post back
+		}
+	}
+
+	function dropdownitemadd($tableName)
+	{
+		//Loads a model from corresponding model folder
+		$model = $this->loadModel('AdminModel');
+
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('dropdownitemadd');
+
+		$dropdownListItemViewModel = $this->loadViewModel('shared/DropdownItemViewModel');
+		$dropdownListItemViewModel->TableName = $tableName;
+
+		$view->set('dropdownListItemViewModel', $dropdownListItemViewModel);
+
+		//Renders the view. true indicates to load the layout
+		$view->render(true);
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+
+			//Map post values to the loginViewModel
+			$dropdownListItemViewModel  = AutoMapper::mapPost($dropdownListItemViewModel );
+			
+debugit($dropdownListItemViewModel);
+			if($dropdownListItemViewModel->validate())
+			{
+				// Save data
+				echo "posted";
+				debugit($dropdownListItemViewModel);
+
+				$model->addDropdownItem($dropdownListItemViewModel->TableName, $dropdownListItemViewModel->NameE, $dropdownListItemViewModel->NameF);
+
+				$this->redirect("admin/index");
 			}
 			else
 			{

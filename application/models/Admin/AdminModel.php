@@ -1033,7 +1033,7 @@ class AdminModel extends Model {
 			return $e->getMessage();
 		}
 	}
-	public function addDropdownValue($tableName, $dropdownValueE, $dropdownValueF)
+	public function addDropdownItem($tableName, $dropdownValueE, $dropdownValueF)
 	{
 		//Accepts a english dropdownValueE, a french dropdownValueF
 		//returns bool if saved succesfully

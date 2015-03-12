@@ -1,4 +1,3 @@
-
 <?php
 	// debugit($storyViewModel);
 	// debugit($userViewModel);
