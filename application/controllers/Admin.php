@@ -647,7 +647,7 @@ class Admin extends Controller {
 
 		//Process story list into array like below:	
 		foreach ($list as $item){
-			$url = '<a href='.'dropdownitemedit?tableName='.$tableName.'&Id='.$item->Id.'>action</a>';
+			$url = '<a href='.'dropdownitemedit/'.$tableName.'/'.$item->Id.'>action</a>';
 			$resultData[] = array(gettext($item->NameE), gettext($item->NameF), $item->DateUpdated, $url);			
 		}
 			
@@ -926,7 +926,7 @@ class Admin extends Controller {
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
-		
+
 		//Loads a view from corresponding view folder
 		$view = $this->loadView('dropdownansweredit');
 
