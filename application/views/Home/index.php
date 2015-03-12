@@ -57,17 +57,17 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">
-                        <canvas id="wordCloudCanvas" height="400" width="500" style="width:75%;"></canvas> 
+                        <canvas id="wordCloudCanvas" height="400" width="500" style="width:75%; max-width: 500px; margin-bottom: 25px;"></canvas> 
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-6" style="position: relative; min-height: 350px;">
                         <h1 ><?php echo gettext("How the Campfire Works"); ?></h1>
-                        <ol style="font-size: 1.6em;">
+                        <ol style="font-size: 1.6em; padding-top: 10px;">
                             <li><?php echo gettext("Submit a story"); ?></li>
                             <li><?php echo gettext("Answer some simple questions"); ?></li>
                             <li><?php echo gettext("We all create a national story"); ?></li>
                             <li><?php echo gettext("Repeat"); ?></li>
                         </ol>
-                        <p><a href="<?php echo BASE_URL; ?>story/add" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Share a Story"); ?></a></p>
+                        <p style="position: absolute; bottom: 0; width: 100%;"><a href="<?php echo BASE_URL; ?>story/add" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Share a Story"); ?></a></p>
                     </div>
                 </div>
             </div>

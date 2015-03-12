@@ -17,7 +17,7 @@
 
 
  <div style="min-width: 350px;" class="col-lg-4 col-md-6 col-sm-6">
- 	<h2 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo $story->StoryTitle; ?></h2>
+ 	<h2 style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 1.8em;"><?php echo $story->StoryTitle; ?></h2>
     <div  class="thumbnail">
         
         <div class="caption">

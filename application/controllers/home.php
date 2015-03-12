@@ -49,7 +49,7 @@ class Home extends Controller {
 		
 		$homeViewModel->WordCloud = json_encode($storyModel->getTagsForWordCloud());
 
-		$homeViewModel->LatestStories = $storyModel->getStoryListNewest($this->currentUser->UserId, 6, 1);	
+		$homeViewModel->LatestStories = $storyModel->getStoryListNewest($this->currentUser->UserId, 9, 1);	
 
 		$homeViewModel->ChallengesList = $storyModel->getTopChallenges();
 
@@ -134,7 +134,7 @@ class Home extends Controller {
 	{
 		$storyModel = $this->loadModel('Story/StoryModel');
 
-		$stories = $storyModel->getStoryListNewest($this->currentUser->UserId, 6, 1);
+		$stories = $storyModel->getStoryListNewest($this->currentUser->UserId, 9, 1);
 
 		if(isset($stories))
 		{
@@ -147,7 +147,7 @@ class Home extends Controller {
 	{
 		$storyModel = $this->loadModel('Story/StoryModel');
 
-		$stories = $storyModel->getStoryListMostRecommended($this->currentUser->UserId, 6, 1);
+		$stories = $storyModel->getStoryListMostRecommended($this->currentUser->UserId, 9, 1);
 
 		if(isset($stories))
 		{
@@ -160,7 +160,7 @@ class Home extends Controller {
 	{
 		$storyModel = $this->loadModel('Story/StoryModel');
 
-		$stories = $storyModel->getStoryListByChallengesID($this->currentUser->UserId, isset($_POST["ChallengeId"]) ? $_POST["ChallengeId"] : 1, 6, 1);
+		$stories = $storyModel->getStoryListByChallengesID($this->currentUser->UserId, isset($_POST["ChallengeId"]) ? $_POST["ChallengeId"] : 1, 9, 1);
 
 		if(isset($stories))
 		{

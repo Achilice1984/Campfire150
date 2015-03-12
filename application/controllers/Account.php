@@ -469,12 +469,17 @@ class Account extends Controller {
 			}
 		}
 
+		$latestUsersList = $accountModel->getLatestUserList($this->currentUser->UserId);
+		$mostFollowUsersList = $accountModel->getMostFollowersUserList($this->currentUser->UserId);
+
 		//debugit($searchResults);
 
 		//Load the profile view
 		$view = $this->loadView('search');
 
 		$view->set('searchResults', $searchResults);
+		$view->set('latestUsersList', $latestUsersList);
+		$view->set('mostFollowUsersList', $mostFollowUsersList);
 
 		//Load up some js files
 		$view->setJS(array(
