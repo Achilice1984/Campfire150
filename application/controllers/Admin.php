@@ -992,13 +992,8 @@ class Admin extends Controller {
 			//Map post values to the loginViewModel
 			$dropdownListItemViewModel  = AutoMapper::mapPost($dropdownListItemViewModel );
 			
-debugit($dropdownListItemViewModel);
 			if($dropdownListItemViewModel->validate())
 			{
-				// Save data
-				echo "posted";
-				debugit($dropdownListItemViewModel);
-
 				$model->addDropdownItem($dropdownListItemViewModel->TableName, $dropdownListItemViewModel->NameE, $dropdownListItemViewModel->NameF);
 
 				$this->redirect("admin/index");
