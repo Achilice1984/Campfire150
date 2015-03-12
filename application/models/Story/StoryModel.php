@@ -653,7 +653,7 @@ class StoryModel extends Model {
 		try 
 		{
 			
-			$statement = "SELECT 
+			$statement = "SELECT DISTINCT
 
 							s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, s.Published,
 
@@ -1095,7 +1095,7 @@ class StoryModel extends Model {
 		// 				LIMIT :start, :howmany";
 
 
-		$statement = "SELECT 
+		$statement = "SELECT DISTINCT
 					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
 
 					urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
@@ -1191,7 +1191,7 @@ class StoryModel extends Model {
 			// 		  GROUP BY s.StoryId DESC
 			// 		  LIMIT :start , :howmany";
 
-			$statement = "SELECT 
+			$statement = "SELECT DISTINCT
 					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
 
 					urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
