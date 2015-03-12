@@ -12,7 +12,7 @@
     <div class="row">
 
         <div class="panel panel-default">
-            <div class="panel-heading" style="font-size:1.4em; background-color:#3498db; color:white;">
+            <div class="panel-heading" style="font-size:1.4em; background-color:#337ab7; color:white;">
                 <?php echo gettext("Login to Campfire 150"); ?>
             </div>
                 <div class="panel-body">
@@ -20,13 +20,7 @@
 
                         <form action="<?php echo BASE_URL; ?>account/login" method="post" id="loginForm">
 
-                            <?php 
-                                //Add error message block to the page
-                                include(APP_DIR . 'views/shared/displayErrors.php'); 
-
-                                //Add success message block to the page
-                                include(APP_DIR . 'views/shared/displaySuccess.php'); 
-                            ?>
+                            <?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
                             <div class="form-group">
                                 <label for="Email"><?php echo gettext("Email address"); ?></label>

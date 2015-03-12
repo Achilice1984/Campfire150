@@ -11,13 +11,7 @@
 <div class="container" style="padding-top: 50px; padding-bottom: 50px;">
 
     <div class="row">
-        <?php 
-            //Add error message block to the page
-            include(APP_DIR . 'views/shared/displayErrors.php'); 
-
-            //Add success message block to the page
-            include(APP_DIR . 'views/shared/displaySuccess.php'); 
-        ?>
+       <?php include(APP_DIR . 'views/shared/messages.php'); ?>
     </div>
 
     <div role="tabpanel">

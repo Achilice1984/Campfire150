@@ -134,7 +134,7 @@ class SessionManager
 		$_SESSION["errorMessages"] = $validationMessages;
 	}
 
-	public function addErrorMessages($key, $errorMessage)
+	public function addErrorMessages($key, $errorMessage, $persistCount)
 	{
 		if(!isset($_SESSION["errorMessages"]))
 		{
@@ -142,16 +142,32 @@ class SessionManager
 		}
 		
 		$_SESSION["errorMessages"]["other"][$key] = $errorMessage;	
+
+		$_SESSION["errorMessages_persistCount"] = $persistCount;
 	}
 
-	public function addSuccessMessages($key, $successMessage)
+	public function addSuccessMessages($key, $successMessage, $persistCount)
 	{
-		if(!isset($_SESSION["errorMessages"]))
+		if(!isset($_SESSION["successMessages"]))
 		{
-			$_SESSION["errorMessages"] = array();			
+			$_SESSION["successMessages"] = array();			
 		}
 		
 		$_SESSION["successMessages"]["other"][$key] = $successMessage;	
+
+		$_SESSION["successMessages_persistCount"] = $persistCount;
+	}
+
+	public function addInfoMessages($key, $successMessage, $persistCount)
+	{
+		if(!isset($_SESSION["infoMessages"]))
+		{
+			$_SESSION["infoMessages"] = array();			
+		}
+		
+		$_SESSION["infoMessages"]["other"][$key] = $successMessage;	
+
+		$_SESSION["infoMessages_persistCount"] = $persistCount;
 	}
 }
 ?>

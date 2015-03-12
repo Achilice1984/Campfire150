@@ -3,7 +3,7 @@ $(function(){
 			document.getElementById('wordCloudCanvas'), 
 			{ list: WordCloudWords,
 			
-			  gridSize: Math.round(16 * $('#wordCloudCanvas').width() / 4000),
+			  gridSize: 20,//Math.round(16 * $('#wordCloudCanvas').width() / 4000),
 			  weightFactor: function (size) {
 
 			    return size * $('#wordCloudCanvas').width() / 25;
@@ -13,7 +13,8 @@ $(function(){
 			  color: '#fff',
 			  hover: window.drawBox,
 			  click: function(item) {
-			    alert(item[0] + ': ' + item[1]);
+			  	window.location.replace($("#base_url").val() + "story/search?q=" + item[0]);
+			    //alert(item[0] + ': ' + item[1]);
 			  },
 			  backgroundColor: 'transparent'		
 		 });

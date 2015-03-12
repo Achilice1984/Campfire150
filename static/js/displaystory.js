@@ -75,27 +75,30 @@ $(".StoryRecommendButton").on("click", function(event){
 		url: url,
 		success: function(data){
 
-			$(".StoryRecommendButton").attr("data-request-type", (reqType == 1 ? "0" : "1"));
-
-			if($(".StoryRecommendButton").hasClass("text-default"))
+			if(data)
 			{
-				$(".StoryRecommendButton").removeClass("text-default").addClass("StoryActionButtons");
+				$(".StoryRecommendButton").attr("data-request-type", (reqType == 1 ? "0" : "1"));
 
-				$(".totalRecommendsSpan").html(parseInt($(".totalRecommendsSpan").first().text()) - 1);
-			}
-			else
-			{
-				$(".StoryRecommendButton").removeClass("StoryActionButtons").addClass("text-default");
-
-				$(".totalRecommendsSpan").html(parseInt($(".totalRecommendsSpan").first().text()) + 1);
-
-				if($(".StoryFlagButton").hasClass("text-danger"))
+				if($(".StoryRecommendButton").hasClass("text-default"))
 				{
-					$(".StoryFlagButton").removeClass("text-danger").addClass("StoryActionButtons");
+					$(".StoryRecommendButton").removeClass("text-default").addClass("StoryActionButtons");
 
-					$(".totalFlagsSpan").html(parseInt($(".totalFlagsSpan").first().text()) - 1);
+					$(".totalRecommendsSpan").html(parseInt($(".totalRecommendsSpan").first().text()) - 1);
+				}
+				else
+				{
+					$(".StoryRecommendButton").removeClass("StoryActionButtons").addClass("text-default");
 
-					$(".StoryFlagButton").attr("data-request-type", "1");
+					$(".totalRecommendsSpan").html(parseInt($(".totalRecommendsSpan").first().text()) + 1);
+
+					if($(".StoryFlagButton").hasClass("text-danger"))
+					{
+						$(".StoryFlagButton").removeClass("text-danger").addClass("StoryActionButtons");
+
+						$(".totalFlagsSpan").html(parseInt($(".totalFlagsSpan").first().text()) - 1);
+
+						$(".StoryFlagButton").attr("data-request-type", "1");
+					}
 				}
 			}
 		}
@@ -122,27 +125,30 @@ $(".StoryFlagButton").on("click", function(event){
 		url: url,
 		success: function(data){
 
-			$(".StoryFlagButton").attr("data-request-type", (reqType == 1 ? "0" : "1"));
-
-			if($(".StoryFlagButton").hasClass("text-danger"))
+			if(data)
 			{
-				$(".StoryFlagButton").removeClass("text-danger").addClass("StoryActionButtons");
+				$(".StoryFlagButton").attr("data-request-type", (reqType == 1 ? "0" : "1"));
 
-				$(".totalFlagsSpan").html(parseInt($(".totalFlagsSpan").first().text()) - 1);
-			}
-			else
-			{
-				$(".StoryFlagButton").removeClass("StoryActionButtons").addClass("text-danger");
-
-				$(".totalFlagsSpan").html(parseInt($(".totalFlagsSpan").first().text()) + 1);
-
-				if($(".StoryRecommendButton").hasClass("text-default"))
+				if($(".StoryFlagButton").hasClass("text-danger"))
 				{
-					$(".StoryRecommendButton").removeClass("text-default").addClass("StoryActionButtons");
+					$(".StoryFlagButton").removeClass("text-danger").addClass("StoryActionButtons");
 
-					$(".totalRecommendsSpan").html(parseInt($(".totalRecommendsSpan").first().text()) - 1);
+					$(".totalFlagsSpan").html(parseInt($(".totalFlagsSpan").first().text()) - 1);
+				}
+				else
+				{
+					$(".StoryFlagButton").removeClass("StoryActionButtons").addClass("text-danger");
 
-					$(".StoryRecommendButton").attr("data-request-type", "1");
+					$(".totalFlagsSpan").html(parseInt($(".totalFlagsSpan").first().text()) + 1);
+
+					if($(".StoryRecommendButton").hasClass("text-default"))
+					{
+						$(".StoryRecommendButton").removeClass("text-default").addClass("StoryActionButtons");
+
+						$(".totalRecommendsSpan").html(parseInt($(".totalRecommendsSpan").first().text()) - 1);
+
+						$(".StoryRecommendButton").attr("data-request-type", "1");
+					}
 				}
 			}
 		}
@@ -161,7 +167,7 @@ $(".FollowButton").click(function (event) {
 
 	var followUser = 1;
 
-	if($(this).hasClass("btn-info"))
+	if($(this).hasClass("btn-primary"))
 	{
 		followUser = 0;
 	}	
@@ -172,18 +178,21 @@ $(".FollowButton").click(function (event) {
 		data: { FollowUser: followUser, UserID: userId },
 		success: function(data){
 
-			thisButton.html('<span class="glyphicon glyphicon-user"></span> ' + newText);
-			thisButton.attr("data-additional-text", oldText);
+			if(data)
+			{
+				thisButton.html('<span class="glyphicon glyphicon-user"></span> ' + newText);
+				thisButton.attr("data-additional-text", oldText);
 
-			if(followUser === 1)
-			{
-				thisButton.removeClass("btn-default");
-				thisButton.addClass("btn-info");
-			}
-			else
-			{
-				thisButton.removeClass("btn-info");
-				thisButton.addClass("btn-default");
+				if(followUser === 1)
+				{
+					thisButton.removeClass("btn-default");
+					thisButton.addClass("btn-primary");
+				}
+				else
+				{
+					thisButton.removeClass("btn-primary");
+					thisButton.addClass("btn-default");
+				}
 			}
 		}
 	});
