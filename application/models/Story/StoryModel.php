@@ -410,6 +410,8 @@ class StoryModel extends Model {
 							
 							f.Active AS FollowingUser,
 
+							uas.ActionStatement,
+
 							(
 								SELECT COUNT(1)
 								FROM user_recommend_story 
@@ -446,6 +448,9 @@ class StoryModel extends Model {
 							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
 							LEFT JOIN picture p
 							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+							LEFT JOIN useractionstatement uas
+							ON (uas.User_UserId = s.User_UserId) AND (uas.Active = TRUE)
 
 							LEFT JOIN following f
 							ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)

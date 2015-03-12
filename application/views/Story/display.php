@@ -1,3 +1,12 @@
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&appId=374000372741531&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
 <?php
 
     //You have access to the shared/StoryViewModel.php
@@ -17,6 +26,9 @@
         
 
         <img style="width: 1200px;" class="img-responsive img-rounded" src="<?php echo $storyViewModel->Images["PictureUrl"]; ?>" alt="<?php echo gettext("Story Picture"); ?>" />
+
+        <div style="padding-top: 5px;"></div>
+        <div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
 
         <h1 style="font-size: 4em; font-weight: bold;"><?php echo $storyViewModel->StoryTitle; ?></h1>
 
@@ -60,19 +72,22 @@
                     <div style="font-size: 1.5em; font-weight: bold;" class="row">
                         <?php echo $storyViewModel->UserProfile->FirstName . " " . $storyViewModel->UserProfile->LastName; ?>
                     </div>
-                    <div class="row" style="padding-top: 20px;">
-                        <?php echo isset($storyViewModel->UserActionStatement) ? $storyViewModel->UserActionStatement : ""; ?>                               
+                    <div class="row" style="padding-top: 20px; font-style: italic;">
+                        <?php echo isset($storyViewModel->ActionStatement) ? $storyViewModel->ActionStatement : ""; ?>                               
                     </div>
                 </div>
                 <div style="padding-top: 60px; font-size: 1.2em;" class="col-md-2 col-sm-2">
                     <?php
-                        if(isset($storyViewModel->FollowingUser) && $storyViewModel->FollowingUser == TRUE)
+                        if(isset($storyViewModel->UserId) && $storyViewModel->UserId != $currentUser->UserId && $currentUser->IsAuth)
                         {
-                            echo '<button data-userId="' . $storyViewModel->UserId . '" data-additional-text="' . gettext("Follow") . '" data-ajaxurl="' . BASE_URL . 'account/follow" class="FollowButton btn btn-info btn-lg"><span class="glyphicon glyphicon-user"></span> ' . gettext("Following") . '</button>';
-                        }
-                        else
-                        {
-                            echo '<button data-userId="' . $storyViewModel->UserId . '" data-additional-text="' . gettext("Following") . '" data-ajaxurl="' . BASE_URL . 'account/follow" class="FollowButton btn btn-default btn-lg"><span class="glyphicon glyphicon-user"></span> ' . gettext("Follow") . '</button>';
+                            if(isset($storyViewModel->FollowingUser) && $storyViewModel->FollowingUser == TRUE)
+                            {
+                                echo '<button data-userId="' . $storyViewModel->UserId . '" data-additional-text="' . gettext("Follow") . '" data-ajaxurl="' . BASE_URL . 'account/follow" class="FollowButton btn btn-primary btn-lg"><span class="glyphicon glyphicon-user"></span> ' . gettext("Following") . '</button>';
+                            }
+                            else
+                            {
+                                echo '<button data-userId="' . $storyViewModel->UserId . '" data-additional-text="' . gettext("Following") . '" data-ajaxurl="' . BASE_URL . 'account/follow" class="FollowButton btn btn-default btn-lg"><span class="glyphicon glyphicon-user"></span> ' . gettext("Follow") . '</button>';
+                            }
                         }
                     ?>
                     
@@ -147,4 +162,4 @@
 
 
 
-<?php debugit($storyViewModel); ?>
+<?php //debugit($storyViewModel); ?>

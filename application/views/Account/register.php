@@ -13,7 +13,7 @@
     <div class="row">
 
         <div class="panel panel-default">
-            <div class="panel-heading" style="font-size:1.4em; background-color:#3498db; color:white;">
+            <div class="panel-heading" style="font-size:1.4em; background-color:#337ab7; color:white;">
                 <?php echo gettext("Your about to register for Campfire 150"); ?>
             </div>
                 <div class="panel-body">

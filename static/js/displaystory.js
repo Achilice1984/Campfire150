@@ -167,7 +167,7 @@ $(".FollowButton").click(function (event) {
 
 	var followUser = 1;
 
-	if($(this).hasClass("btn-info"))
+	if($(this).hasClass("btn-primary"))
 	{
 		followUser = 0;
 	}	
@@ -186,11 +186,11 @@ $(".FollowButton").click(function (event) {
 				if(followUser === 1)
 				{
 					thisButton.removeClass("btn-default");
-					thisButton.addClass("btn-info");
+					thisButton.addClass("btn-primary");
 				}
 				else
 				{
-					thisButton.removeClass("btn-info");
+					thisButton.removeClass("btn-primary");
 					thisButton.addClass("btn-default");
 				}
 			}

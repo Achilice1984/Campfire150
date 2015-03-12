@@ -704,9 +704,11 @@ class AccountModel extends Model {
 			$lName = "%" . $userSearch[0] . "%";
 		}
 
-		$statement = "SELECT *,
+		$statement = "SELECT u.*,
 
 						f.Active AS FollowingUser,
+
+						uas.ActionStatement,
 
 						(
 							SELECT COUNT(1)
@@ -744,7 +746,10 @@ class AccountModel extends Model {
 						FROM   user u
 
 						LEFT JOIN following f
-						ON (f.User_FollowerId = :UserId) AND (f.Active = TRUE)
+						ON (f.User_FollowerId = u.UserId) AND (f.User_UserId = :UserId) AND (f.Active = TRUE)
+
+						LEFT JOIN useractionstatement uas
+						ON (uas.User_UserId = u.UserId) AND (uas.Active = TRUE)
 
 						WHERE u.Active = TRUE
 						
@@ -793,7 +798,7 @@ class AccountModel extends Model {
 		return $users;
 	}
 
-	public function getLatestUserList($howMany = self::HOWMANY, $page = self::PAGE)
+	public function getLatestUserList($userId, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -802,15 +807,134 @@ class AccountModel extends Model {
 		//Users must have verified flag set to true
 		//Returns an array of User class
 
-		$statement = "SELECT * 
-						FROM user 
-						WHERE user.Active = TRUE
-						ORDER BY DateCreated DESC 
+		$statement = "SELECT u.*,
+
+						f.Active AS FollowingUser,
+
+						uas.ActionStatement,
+
+						(
+							SELECT COUNT(1)
+							FROM user_recommend_story 
+							WHERE user_recommend_story.User_UserId = u.UserId
+						    AND user_recommend_story.Active = TRUE
+						    AND user_recommend_story.Opinion = TRUE
+						) AS totalRecommends,
+						
+						(
+							SELECT COUNT(1)
+							FROM story 
+							WHERE story.User_UserId = u.UserId
+						    AND story.Active = TRUE
+						    AND story.Published = TRUE
+						) AS totalPublishedStories,
+						
+						(
+							SELECT COUNT(1)
+							FROM comment 
+							WHERE comment.User_UserId = u.UserId
+						    AND comment.Active = TRUE
+						    AND comment.PublishFlag = TRUE
+						) AS totalPublishedComments,
+
+						(
+							SELECT COUNT(1)
+							FROM following 
+							WHERE following.User_FollowerId = u.UserId
+						    AND following.Active = TRUE
+						) AS totalFollowers
+
+						FROM   user u
+
+						LEFT JOIN following f
+						ON (f.User_FollowerId = u.UserId) AND (f.User_UserId = :UserId) AND (f.Active = TRUE)
+
+						LEFT JOIN useractionstatement uas
+						ON (uas.User_UserId = u.UserId) AND (uas.Active = TRUE)
+
+						WHERE u.Active = TRUE
+						ORDER BY u.DateCreated
 						LIMIT :start, :howmany";
 
 		$start = $this-> getStartValue($howMany, $page);
 
 		$parameters = array(
+			":UserId" => $userId,
+			//":UserId2" => $userId,
+			//":UserId3" => $userId,
+			":start" => $start,
+			":howmany" => $howMany
+			);
+
+		$users = $this->fetchIntoClass($statement, $parameters, "shared/UserViewModel");
+
+		return $users;
+	}
+
+	public function getMostFollowersUserList($userId, $howMany = self::HOWMANY, $page = self::PAGE)
+	{
+		//Accepts how many results to return, what page of results your on
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Checks if user is following each user (add this to user viewmodel class)
+		//Gets a list of the most recently registered users
+		//Users must have verified flag set to true
+		//Returns an array of User class
+
+		$statement = "SELECT u.*,
+
+						f.Active AS FollowingUser,
+
+						uas.ActionStatement,
+
+						(
+							SELECT COUNT(1)
+							FROM user_recommend_story 
+							WHERE user_recommend_story.User_UserId = u.UserId
+						    AND user_recommend_story.Active = TRUE
+						    AND user_recommend_story.Opinion = TRUE
+						) AS totalRecommends,
+						
+						(
+							SELECT COUNT(1)
+							FROM story 
+							WHERE story.User_UserId = u.UserId
+						    AND story.Active = TRUE
+						    AND story.Published = TRUE
+						) AS totalPublishedStories,
+						
+						(
+							SELECT COUNT(1)
+							FROM comment 
+							WHERE comment.User_UserId = u.UserId
+						    AND comment.Active = TRUE
+						    AND comment.PublishFlag = TRUE
+						) AS totalPublishedComments,
+
+						(
+							SELECT COUNT(1)
+							FROM following 
+							WHERE following.User_FollowerId = u.UserId
+						    AND following.Active = TRUE
+						) AS totalFollowers
+
+						FROM   user u
+
+						LEFT JOIN following f
+						ON (f.User_FollowerId = u.UserId) AND (f.User_UserId = :UserId) AND (f.Active = TRUE)
+
+						LEFT JOIN useractionstatement uas
+						ON (uas.User_UserId = u.UserId) AND (uas.Active = TRUE)
+
+						WHERE u.Active = TRUE
+						ORDER BY totalFollowers DESC
+						LIMIT :start, :howmany";
+
+		$start = $this-> getStartValue($howMany, $page);
+
+		$parameters = array(
+			":UserId" => $userId,
+			//":UserId2" => $userId,
+			//":UserId3" => $userId,
 			":start" => $start,
 			":howmany" => $howMany
 			);

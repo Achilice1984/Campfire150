@@ -61,6 +61,15 @@ class Story extends Controller {
 			if(isset($_POST["StorySearch"]))
 			{
 				$searchResults = $storyModel->searchStories($_POST["StorySearch"], $this->currentUser->UserId);
+			}			
+		}
+		else
+		{
+			if(isset($_GET["q"]))
+			{
+				$searchResults = $storyModel->searchStories($_GET["q"], $this->currentUser->UserId);
+
+				$_POST["StorySearch"] = $_GET["q"];
 			}
 		}
 
