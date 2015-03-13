@@ -244,15 +244,15 @@
                 </div>
 
             </div>
-            <div role="tabpanel" class="tab-pane" id="Website_Dropdowns">
+            <div role="tabpanel" class="tab-pane" id="Website_Dropdowns"> 
 
                 <ul class="nav nav-pills">
-                    <li role="presentation" class="active"><a href="#LanguageType_Find" aria-controls="LanguageType_Find" role="tab" data-toggle="tab">Language Type</a></li>
-                    <li role="presentation"><a href="#GenderType_Find" aria-controls="GenderType_Find" role="tab" data-toggle="tab">Gender Type</a></li>
-                    <li role="presentation"><a href="#AchievementLevelType_Find" aria-controls="AchievementLevelType_Find" role="tab" data-toggle="tab">Achievement Level Type</a></li>
-                    <li role="presentation"><a href="#PictureType_Find" aria-controls="PictureType_Find" role="tab" data-toggle="tab">Picture Type</a></li>
-                    <li role="presentation"><a href="#ProfilePrivacyType_Find" aria-controls="ProfilePrivacyType_Find" role="tab" data-toggle="tab">Profile Privacy Type</a></li>
-                    <li role="presentation"><a href="#StoryPrivacyType_Find" aria-controls="StoryPrivacyType_Find" role="tab" data-toggle="tab">Story Privacy Type</a></li>
+                    <li role="presentation" class="active"><a href="#LanguageType_Find" aria-controls="LanguageType_Find" role="tab" data-toggle="tab">Language</a></li>
+                    <li role="presentation"><a href="#GenderType_Find" aria-controls="GenderType_Find" role="tab" data-toggle="tab">Gender</a></li>
+                    <li role="presentation"><a href="#AchievementLevelType_Find" aria-controls="AchievementLevelType_Find" role="tab" data-toggle="tab">Achievement</a></li>
+                    <li role="presentation"><a href="#PictureType_Find" aria-controls="PictureType_Find" role="tab" data-toggle="tab">Picture</a></li>
+                    <li role="presentation"><a href="#ProfilePrivacyType_Find" aria-controls="ProfilePrivacyType_Find" role="tab" data-toggle="tab">Profile Privacy</a></li>
+                    <li role="presentation"><a href="#StoryPrivacyType_Find" aria-controls="StoryPrivacyType_Find" role="tab" data-toggle="tab">Story Privacy</a></li>
                 </ul>   
 
                 <div class="tab-content" style="padding:20px;">
@@ -288,7 +288,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div role="tabpanel" class="tab-pane active" id="AchievementLevelType_Find">
+                    <div role="tabpanel" class="tab-pane" id="AchievementLevelType_Find">
                         <!--This table will contain all users -->
                         <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxAchievementLevelList" style="display:none;">
                             <thead>
@@ -320,7 +320,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div role="tabpanel" class="tab-pane active" id="ProfilePrivacyType_Find">
+                    <div role="tabpanel" class="tab-pane" id="ProfilePrivacyType_Find">
                         <!--This table will contain all users -->
                         <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxProfilePrivacyTypeList" style="display:none;">
                             <thead>

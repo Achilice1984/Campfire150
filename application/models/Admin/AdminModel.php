@@ -1088,9 +1088,34 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "UPDATE :TableName 
-							SET NameE = :NameE, NameF = :NameF 
-							WHERE typeId = :Id";
+			$statement = "";
+
+			switch(true)
+			{
+				case strtolower($tableName) == "languagetype":
+					$statement = "UPDATE languagetype SET NameE = :NameE, NameF = :NameF  WHERE LanguageId = :Id";
+					break;
+				case strtolower($tableName) == "gendertype":
+					$statement = "UPDATE gendertype SET NameE = :NameE, NameF = :NameF  WHERE GenderTypeId = :Id";
+					break;
+				case strtolower($tableName) == "achievementleveltype":
+					$statement = "UPDATE achievementleveltype SET NameE = :NameE, NameF = :NameF  WHERE LevelId = :Id";
+					break;
+				case strtolower($tableName) == "securityquestion":
+					$statement = "UPDATE securityquestion SET NameE = :NameE, NameF = :NameF  WHERE SecurityQuestionId = :Id";
+					break;
+				case strtolower($tableName) == "picturetype":
+					$statement = "UPDATE picturetype SET NameE = :NameE, NameF = :NameF  WHERE PictureTypeId = :Id";
+					break;
+				case strtolower($tableName) == "profileprivacytype":
+					$statement = "UPDATE profileprivacytype SET NameE = :NameE, NameF = :NameF  WHERE PrivacyTypeId = :Id";
+					break;
+				case strtolower($tableName) == "storyprivacytype":
+					$statement = "UPDATE storyprivacytype SET NameE = :NameE, NameF = :NameF  WHERE StoryPrivacyTypeId = :Id";
+					break;
+				default:
+					return $tableName." is not a proper table name";
+			}
 
 			$parameters = array(
 				":NameE" => $dropdownValueE,
