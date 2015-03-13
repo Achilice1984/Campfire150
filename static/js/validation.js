@@ -91,7 +91,7 @@ $(document).ready(function() {
                     }
                 }
             },
-            UserActionStatement: {
+            ActionStatement: {
                 validators: {
                     notEmpty: {
                     }

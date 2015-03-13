@@ -340,7 +340,7 @@ class AccountModel extends Model {
 
 			//Add security questions, add action statement
 			if($this->insertSecurityQuestionAnswer($userID, $user->SecurityQuestionId, $user->SecurityAnswer) &&
-				$this->insertUserActionStatement($userID, $user->UserActionStatement))
+				$this->insertUserActionStatement($userID, $user->ActionStatement))
 			{
 				$success = true;
 			}
