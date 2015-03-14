@@ -493,6 +493,61 @@ class Account extends Controller {
 		$view->render(true);
 	}
 
+	function ajaxSearch()
+	{
+		$accountModel = $this->loadModel("AccountModel");
+		$searchResults = array();
+
+		if(isset($_POST["UserSearch"]))
+		{
+			$searchResults = $accountModel->searchForUser($_POST["UserSearch"], $this->currentUser->UserId, 10, isset($_POST["UserSearchPage"]) ? $_POST["UserSearchPage"] : 1);
+		}
+
+		if (isset($searchResults)) {
+
+			$currentUser = $this->currentUser;
+			
+			foreach ($searchResults as $user)
+			{
+				include(APP_DIR . "views/Account/_searchPanel.php");
+			}
+		}
+	}
+
+	function mostFollowersUserList()
+	{
+		$accountModel = $this->loadModel("AccountModel");
+		$searchResults = array();
+
+		$searchResults = $accountModel->getMostFollowersUserList($this->currentUser->UserId, 10, isset($_POST["UserMostFollowersPage"]) ? $_POST["UserMostFollowersPage"] : 1);
+
+		$currentUser = $this->currentUser;
+
+		if (isset($searchResults)) {
+			foreach ($searchResults as $user)
+			{
+				include(APP_DIR . "views/Account/_searchPanel.php");
+			}
+		}
+	}	
+
+	function latestUserList()
+	{
+		$accountModel = $this->loadModel("AccountModel");
+		$searchResults = array();
+
+		$searchResults = $accountModel->getLatestUserList($this->currentUser->UserId, 10, isset($_POST["UsersLatestPage"]) ? $_POST["UsersLatestPage"] : 1);
+
+		$currentUser = $this->currentUser;
+
+		if (isset($searchResults)) {
+			foreach ($searchResults as $user)
+			{
+				include(APP_DIR . "views/Account/_searchPanel.php");
+			}
+		}
+	}
+
 	function follow()
 	{
 		//Check if users is authenticated for this request

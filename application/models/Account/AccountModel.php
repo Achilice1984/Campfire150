@@ -721,9 +721,12 @@ class AccountModel extends Model {
 						(
 							SELECT COUNT(1)
 							FROM story 
+							LEFT JOIN admin_approve_story
+							ON (admin_approve_story.Story_StoryId = story.StoryId) AND (admin_approve_story.Active = TRUE)
 							WHERE story.User_UserId = u.UserId
 						    AND story.Active = TRUE
 						    AND story.Published = TRUE
+						    AND admin_approve_story.Approved = TRUE
 						) AS totalPublishedStories,
 						
 						(
@@ -824,9 +827,12 @@ class AccountModel extends Model {
 						(
 							SELECT COUNT(1)
 							FROM story 
+							LEFT JOIN admin_approve_story
+							ON (admin_approve_story.Story_StoryId = story.StoryId) AND (admin_approve_story.Active = TRUE)
 							WHERE story.User_UserId = u.UserId
 						    AND story.Active = TRUE
 						    AND story.Published = TRUE
+						    AND admin_approve_story.Approved = TRUE
 						) AS totalPublishedStories,
 						
 						(
@@ -897,9 +903,12 @@ class AccountModel extends Model {
 						(
 							SELECT COUNT(1)
 							FROM story 
+							LEFT JOIN admin_approve_story
+							ON (admin_approve_story.Story_StoryId = story.StoryId) AND (admin_approve_story.Active = TRUE)
 							WHERE story.User_UserId = u.UserId
 						    AND story.Active = TRUE
 						    AND story.Published = TRUE
+						    AND admin_approve_story.Approved = TRUE
 						) AS totalPublishedStories,
 						
 						(
