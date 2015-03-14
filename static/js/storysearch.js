@@ -130,9 +130,9 @@ $(".StoryRecommendButton").on("click", function(event){
 	event.preventDefault();
 
 	var thisRecom = $(this);
-	var recomSpan = thisRecom.closest("h4").find(".totalRecommendsSpan");
-	var flagButton = thisRecom.closest(".StoryRowSection").find(".StoryFlagButton");
-	var flagSpan = thisRecom.closest(".StoryRowSection").find(".totalFlagsSpan");
+	var recomSpan = thisRecom.closest(".storyStatsDiv").find(".totalRecommendsSpan");
+	var flagButton = thisRecom.closest(".storyStatsDiv").find(".StoryFlagButton");
+	var flagSpan = thisRecom.closest(".storyStatsDiv").find(".totalFlagsSpan");
 
 	var reqType = thisRecom.attr("data-request-type");
 
@@ -163,6 +163,8 @@ $(".StoryRecommendButton").on("click", function(event){
 					flagButton.removeClass("text-danger").addClass("StoryActionButtons");
 
 					flagSpan.html(parseInt(flagSpan.text()) - 1);
+
+					flagButton.attr("data-request-type", "1");
 				}
 			}
 		}
@@ -175,9 +177,9 @@ $(".StoryFlagButton").on("click", function(event){
 	event.preventDefault();
 
 	var thisFlag = $(this);
-	var flagSpan = thisFlag.closest("h4").find(".totalFlagsSpan");
-	var recommendButton = thisFlag.closest(".StoryRowSection").find(".StoryRecommendButton");
-	var recommendSpan = thisFlag.closest(".StoryRowSection").find(".totalRecommendsSpan");
+	var flagSpan = thisFlag.closest(".storyStatsDiv").find(".totalFlagsSpan");
+	var recommendButton = thisFlag.closest(".storyStatsDiv").find(".StoryRecommendButton");
+	var recommendSpan = thisFlag.closest(".storyStatsDiv").find(".totalRecommendsSpan");
 
 	var reqType = thisFlag.attr("data-request-type");
 
@@ -208,6 +210,8 @@ $(".StoryFlagButton").on("click", function(event){
 					recommendButton.removeClass("text-default").addClass("StoryActionButtons");
 
 					recommendSpan.html(parseInt(recommendSpan.text()) - 1);
+
+					recommendButton.attr("data-request-type", "1");
 				}
 			}
 		}

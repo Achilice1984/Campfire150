@@ -10,7 +10,7 @@
 	    <div role="tabpanel" class="tab-pane active" id="User_Search">
 			<div class="row text-center">
 				<div class="col-md-12">
-					<form action="<?php echo BASE_URL; ?>account/search" data-ajax-action="<?php echo BASE_URL; ?>story/ajaxSearch" id="UserSearchForm" method="post">
+					<form action="<?php echo BASE_URL; ?>account/search" data-ajax-action="<?php echo BASE_URL; ?>account/ajaxSearch" id="UserSearchForm" method="post">
 						<input type="hidden" name="UserSearchPage" id="UserSearchPage" value="1">
 
 						<div class="input-group">
@@ -45,7 +45,7 @@
 
 	    <div role="tabpanel" class="tab-pane" id="User_MostFollowers">
 
-			<div id="RecommendedStoryContainer">
+			<div id="UserMostFollowersContainer">
 				<?php 
 					foreach ($mostFollowUsersList as $user)
 					{
@@ -54,23 +54,23 @@
 				?>  
 			</div> 
 			
-			<div class="alert alert-info alert-dismissible" id="RecommendedStoryInfoBar" role="alert" style="display:none;">
+			<div class="alert alert-info alert-dismissible" id="UserMostFollowersInfoBar" role="alert" style="display:none;">
 		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 			</div>
 			
-			<input type="hidden" name="RecommendedStoryPage" id="RecommendedStoryPage" value="1">
-			<input type="hidden" name="RecommendedStoryUrl" id="RecommendedStoryUrl" value="<?php echo BASE_URL; ?>story/recommendedstories">
+			<input type="hidden" name="UserMostFollowersPage" id="UserMostFollowersPage" value="1">
+			<input type="hidden" name="UserMostFollowersUrl" id="UserMostFollowersUrl" value="<?php echo BASE_URL; ?>account/mostFollowersUserList">
 
-			<div class="row text-center" id="RecommendedStoryMoreButton" style="margin-bottom: 100px;">
-				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
+			<div class="row text-center" id="UserMostFollowersMoreButton" style="margin-bottom: 100px;">
+				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Users!"); ?></button>
 			</div>
 	    </div>   <!-- <div role="tabpanel" class="tab-pane active" id="Story_Recommended"> -->
 
 
 	    <div role="tabpanel" class="tab-pane" id="User_Latest">
 			
-			<div id="LatestStoryContainer">
+			<div id="UsersLatestContainer">
 				<?php 
 					foreach ($latestUsersList as $user)
 					{
@@ -79,16 +79,16 @@
 				?>  
 			</div> 
 			
-			<div class="alert alert-info alert-dismissible" id="LatestStoryhInfoBar" role="alert" style="display:none;">
+			<div class="alert alert-info alert-dismissible" id="UsersLatestInfoBar" role="alert" style="display:none;">
 		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 			</div>
 
-			<input type="hidden" name="LatestStoryPage" id="LatestStoryPage" value="1">
-			<input type="hidden" name="LatestStoryUrl" id="LatestStoryUrl" value="<?php echo BASE_URL; ?>story/lateststories">
+			<input type="hidden" name="UsersLatestPage" id="UsersLatestPage" value="1">
+			<input type="hidden" name="UsersLatestUrl" id="UsersLatestUrl" value="<?php echo BASE_URL; ?>account/latestUserList">
 
-			<div class="row text-center" id="LatestStoryMoreButton" style="margin-bottom: 100px;">
-				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
+			<div class="row text-center" id="UsersLatestMoreButton" style="margin-bottom: 100px;">
+				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Users!"); ?></button>
 			</div>
 	    </div> 
 	</div>  

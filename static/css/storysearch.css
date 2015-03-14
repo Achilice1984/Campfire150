@@ -42,6 +42,17 @@
 }
 
 .storyProfilePic {
-	width:100px;
-   height:100px;
+	width:50px;
+   height:50px;
+}
+
+@media (max-width: 991px) {
+	
+}
+
+@media (min-width: 991px) {
+	.storyProfilePic {
+		width:100px;
+	   	height:100px;
+	}
 }

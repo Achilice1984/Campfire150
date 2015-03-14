@@ -13,7 +13,7 @@
 					<form action="<?php echo BASE_URL; ?>story/search" data-ajax-action="<?php echo BASE_URL; ?>story/ajaxSearch" id="StorySearchForm" method="post">
 						<input type="hidden" name="StorySearchPage" id="StorySearchPage" value="1">
 
-						<div class="input-group">
+						<div style="padding-bottom: 20px;" class="input-group">
 				            <input type="text" name="StorySearch" id="StorySearch" value="<?php echo (isset($_POST["StorySearch"]) ? $_POST["StorySearch"] : ""); ?>" class="form-control" placeholder="<?php echo gettext("Search Stories!"); ?>">
 				            <div class="input-group-btn">
 				                <button id="StorySearchButton" class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
