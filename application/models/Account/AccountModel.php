@@ -340,7 +340,7 @@ class AccountModel extends Model {
 
 			//Add security questions, add action statement
 			if($this->insertSecurityQuestionAnswer($userID, $user->SecurityQuestionId, $user->SecurityAnswer) &&
-				$this->insertUserActionStatement($userID, $user->UserActionStatement))
+				$this->insertUserActionStatement($userID, $user->ActionStatement))
 			{
 				$success = true;
 			}
@@ -704,9 +704,11 @@ class AccountModel extends Model {
 			$lName = "%" . $userSearch[0] . "%";
 		}
 
-		$statement = "SELECT *,
+		$statement = "SELECT u.*,
 
 						f.Active AS FollowingUser,
+
+						uas.ActionStatement,
 
 						(
 							SELECT COUNT(1)
@@ -724,6 +726,7 @@ class AccountModel extends Model {
 							WHERE story.User_UserId = u.UserId
 						    AND story.Active = TRUE
 						    AND story.Published = TRUE
+						    AND story.StoryPrivacyType_StoryPrivacyTypeId = 1
 						    AND admin_approve_story.Approved = TRUE
 						) AS totalPublishedStories,
 						
@@ -747,10 +750,13 @@ class AccountModel extends Model {
 						FROM   user u
 
 						LEFT JOIN following f
-						ON (f.User_FollowerId = :UserId) AND (f.Active = TRUE)
+						ON (f.User_FollowerId = u.UserId) AND (f.User_UserId = :UserId) AND (f.Active = TRUE)
+
+						LEFT JOIN useractionstatement uas
+						ON (uas.User_UserId = u.UserId) AND (uas.Active = TRUE)
 
 						WHERE u.Active = TRUE
-						
+						AND u.ProfilePrivacyType_PrivacyTypeId = 1
 						ORDER BY hits DESC
 						LIMIT :start, :howmany";
 
@@ -796,7 +802,6 @@ class AccountModel extends Model {
 		return $users;
 	}
 
-<<<<<<< HEAD
 	public function getLatestUserList($userId, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many results to return, what page of results your on
@@ -828,7 +833,8 @@ class AccountModel extends Model {
 							WHERE story.User_UserId = u.UserId
 						    AND story.Active = TRUE
 						    AND story.Published = TRUE
-						    AND admin_approve_story.Approved = TRUE
+						    AND story.StoryPrivacyType_StoryPrivacyTypeId = 1
+						    AND admin_approve_story.Approved = TRUE						    
 						) AS totalPublishedStories,
 						
 						(
@@ -855,6 +861,7 @@ class AccountModel extends Model {
 						ON (uas.User_UserId = u.UserId) AND (uas.Active = TRUE)
 
 						WHERE u.Active = TRUE
+						AND u.ProfilePrivacyType_PrivacyTypeId = 1
 						ORDER BY u.DateCreated
 						LIMIT :start, :howmany";
 
@@ -874,9 +881,6 @@ class AccountModel extends Model {
 	}
 
 	public function getMostFollowersUserList($userId, $howMany = self::HOWMANY, $page = self::PAGE)
-=======
-	public function getLatestUserList($howMany = self::HOWMANY, $page = self::PAGE)
->>>>>>> origin/NewStory
 	{
 		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -885,7 +889,6 @@ class AccountModel extends Model {
 		//Users must have verified flag set to true
 		//Returns an array of User class
 
-<<<<<<< HEAD
 		$statement = "SELECT u.*,
 
 						f.Active AS FollowingUser,
@@ -908,6 +911,7 @@ class AccountModel extends Model {
 							WHERE story.User_UserId = u.UserId
 						    AND story.Active = TRUE
 						    AND story.Published = TRUE
+						    AND story.StoryPrivacyType_StoryPrivacyTypeId = 1
 						    AND admin_approve_story.Approved = TRUE
 						) AS totalPublishedStories,
 						
@@ -935,18 +939,16 @@ class AccountModel extends Model {
 						ON (uas.User_UserId = u.UserId) AND (uas.Active = TRUE)
 
 						WHERE u.Active = TRUE
+						AND u.ProfilePrivacyType_PrivacyTypeId = 1
 						ORDER BY totalFollowers DESC
-=======
-		$statement = "SELECT * 
-						FROM user 
-						WHERE user.Active = TRUE
-						ORDER BY DateCreated DESC 
->>>>>>> origin/NewStory
 						LIMIT :start, :howmany";
 
 		$start = $this-> getStartValue($howMany, $page);
 
 		$parameters = array(
+			":UserId" => $userId,
+			//":UserId2" => $userId,
+			//":UserId3" => $userId,
 			":start" => $start,
 			":howmany" => $howMany
 			);
