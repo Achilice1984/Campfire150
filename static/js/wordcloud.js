@@ -13,7 +13,8 @@ $(function(){
 			  color: '#fff',
 			  hover: window.drawBox,
 			  click: function(item) {
-			    alert(item[0] + ': ' + item[1]);
+			  	window.location.replace($("#base_url").val() + "story/search?q=" + item[0]);
+			    //alert(item[0] + ': ' + item[1]);
 			  },
 			  backgroundColor: 'transparent'		
 		 });

@@ -42,7 +42,6 @@ class UserViewModel extends ViewModel
 	public $SecurityQuestionId;
 	public $SecurityAnswer;
 
-	public $UserActionStatement;
 	public $ActionStatement;
 
 	public $PicUrl;
@@ -143,7 +142,7 @@ class UserViewModel extends ViewModel
 					'Properties' => array()
 				)
 		);
-		$errors["UserActionStatement"] = array(
+		$errors["ActionStatement"] = array(
 			'required' =>
 				array(
 					'Message' => gettext('The user action statement field is required!'),

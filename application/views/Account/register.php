@@ -13,20 +13,15 @@
     <div class="row">
 
         <div class="panel panel-default">
-            <div class="panel-heading" style="font-size:1.4em; background-color:#3498db; color:white;">
+            <div class="panel-heading" style="font-size:1.4em; background-color:#337ab7; color:white;">
                 <?php echo gettext("Your about to register for Campfire 150"); ?>
             </div>
                 <div class="panel-body">
                     <div class="col-md-6"> 
 
                         <form action="<?php echo BASE_URL; ?>account/register" method="post">
-                            <?php 
-                                //Add error message block to the page
-                                include(APP_DIR . 'views/shared/displayErrors.php'); 
-
-                                //Add success message block to the page
-                                include(APP_DIR . 'views/shared/displaySuccess.php'); 
-                            ?>
+                            
+                            <?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
                             <h3><?php echo gettext("Profile Details"); ?></h3>
                             <hr />
@@ -62,8 +57,8 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="UserActionStatement"><?php echo gettext("User Action Statement"); ?></label>
-                                <input type="text" class="form-control" id="UserActionStatement" name="UserActionStatement" placeholder="<?php echo gettext("Enter Your User Action Statement"); ?>" value="<?php echo $userViewModel->UserActionStatement; ?>">
+                                <label for="ActionStatement"><?php echo gettext("User Action Statement"); ?></label>
+                                <input type="text" class="form-control" id="ActionStatement" name="ActionStatement" placeholder="<?php echo gettext("Enter Your User Action Statement"); ?>" value="<?php echo $userViewModel->ActionStatement; ?>">
                             </div>
                             
                             <h3><?php echo gettext("User Details"); ?></h3>

@@ -33,7 +33,6 @@
                                     <th>Title</th>
                                     <th>Owner</th>
                                     <th>Posted Date</th> 
-                                    <th>Id</th>
                                     <th>Action</th>                              
                                 </tr>
                             </thead>
@@ -47,7 +46,8 @@
                                 <tr>
                                     <th>Title</th>
                                     <th>Owner</th>
-                                    <th>Posted Date</th>                                    
+                                    <th>Posted Date</th> 
+                                    <th>Action</th>                                    
                                    
                                 </tr>
                             </thead>
@@ -61,7 +61,8 @@
                                 <tr>
                                     <th>Title</th>
                                     <th>Owner</th>
-                                    <th>Posted Date</th>                                    
+                                    <th>Posted Date</th>  
+                                    <th>Action</th>                                   
                                    
                                 </tr>
                             </thead>
@@ -85,8 +86,9 @@
                             <thead>
                                 <tr>
                                     <th>Story Title</th>
-                                    <th>Comment Owner</th>
-                                    <th>Comment Date</th>                                    
+                                    <th>Comment Content</th>
+                                    <th>Comment Date</th> 
+                                    <th>Action</th>                                    
                                    
                                 </tr>
                             </thead>
@@ -99,8 +101,9 @@
                             <thead>
                                 <tr>
                                     <th>Story Title</th>
-                                    <th>Comment Owner</th>
-                                    <th>Comment Date</th>                                    
+                                    <th>Comment Content</th>
+                                    <th>Comment Date</th>
+                                    <th>Action</th>                                     
                                    
                                 </tr>
                             </thead>
@@ -241,15 +244,15 @@
                 </div>
 
             </div>
-            <div role="tabpanel" class="tab-pane" id="Website_Dropdowns">
+            <div role="tabpanel" class="tab-pane" id="Website_Dropdowns"> 
 
                 <ul class="nav nav-pills">
-                    <li role="presentation" class="active"><a href="#LanguageType_Find" aria-controls="LanguageType_Find" role="tab" data-toggle="tab">Language Type</a></li>
-                    <li role="presentation"><a href="#GenderType_Find" aria-controls="GenderType_Find" role="tab" data-toggle="tab">Gender Type</a></li>
-                    <li role="presentation"><a href="#AchievementLevelType_Find" aria-controls="AchievementLevelType_Find" role="tab" data-toggle="tab">Achievement Level Type</a></li>
-                    <li role="presentation"><a href="#PictureType_Find" aria-controls="PictureType_Find" role="tab" data-toggle="tab">Picture Type</a></li>
-                    <li role="presentation"><a href="#ProfilePrivacyType_Find" aria-controls="ProfilePrivacyType_Find" role="tab" data-toggle="tab">Profile Privacy Type</a></li>
-                    <li role="presentation"><a href="#StoryPrivacyType_Find" aria-controls="StoryPrivacyType_Find" role="tab" data-toggle="tab">Story Privacy Type</a></li>
+                    <li role="presentation" class="active"><a href="#LanguageType_Find" aria-controls="LanguageType_Find" role="tab" data-toggle="tab">Language</a></li>
+                    <li role="presentation"><a href="#GenderType_Find" aria-controls="GenderType_Find" role="tab" data-toggle="tab">Gender</a></li>
+                    <li role="presentation"><a href="#AchievementLevelType_Find" aria-controls="AchievementLevelType_Find" role="tab" data-toggle="tab">Achievement</a></li>
+                    <li role="presentation"><a href="#PictureType_Find" aria-controls="PictureType_Find" role="tab" data-toggle="tab">Picture</a></li>
+                    <li role="presentation"><a href="#ProfilePrivacyType_Find" aria-controls="ProfilePrivacyType_Find" role="tab" data-toggle="tab">Profile Privacy</a></li>
+                    <li role="presentation"><a href="#StoryPrivacyType_Find" aria-controls="StoryPrivacyType_Find" role="tab" data-toggle="tab">Story Privacy</a></li>
                 </ul>   
 
                 <div class="tab-content" style="padding:20px;">
@@ -261,6 +264,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -276,6 +280,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -283,7 +288,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div role="tabpanel" class="tab-pane active" id="AchievementLevelType_Find">
+                    <div role="tabpanel" class="tab-pane" id="AchievementLevelType_Find">
                         <!--This table will contain all users -->
                         <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxAchievementLevelList" style="display:none;">
                             <thead>
@@ -291,6 +296,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -306,6 +312,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -313,7 +320,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div role="tabpanel" class="tab-pane active" id="ProfilePrivacyType_Find">
+                    <div role="tabpanel" class="tab-pane" id="ProfilePrivacyType_Find">
                         <!--This table will contain all users -->
                         <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxProfilePrivacyTypeList" style="display:none;">
                             <thead>
@@ -321,6 +328,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -336,6 +344,7 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Updated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>

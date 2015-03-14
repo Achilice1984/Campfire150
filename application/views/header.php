@@ -94,9 +94,9 @@
               </div>
               <div class="collapse navbar-collapse" id="c150-navbar-collapse">
                 <ul class="nav navbar-nav">
-                    <li class="active"><a href="<?php echo BASE_URL; ?>"><?php echo gettext("Home"); ?> <span class="sr-only">(current)</span></a></li>
-                    <li><a href="<?php echo BASE_URL; ?>story/search"><?php echo gettext("Stories"); ?></a></li>                    
-                    <li><a href="<?php echo BASE_URL; ?>account/search"><?php echo gettext("Users"); ?></a></li>
+                    <li class="<?php echo (FULL_URL == BASE_URL ? "active" : ""); ?>"><a href="<?php echo BASE_URL; ?>"><?php echo gettext("Home"); ?> <span class="sr-only">(current)</span></a></li>
+                    <li class="<?php echo (strpos(FULL_URL, BASE_URL . 'story/search') !== false ? "active" : ""); ?>"><a href="<?php echo BASE_URL; ?>story/search"><?php echo gettext("Stories"); ?></a></li>                    
+                    <li class="<?php echo (strpos(FULL_URL, BASE_URL . 'account/search') !== false ? "active" : ""); ?>"><a href="<?php echo BASE_URL; ?>account/search"><?php echo gettext("Users"); ?></a></li>
                     <li class="dropdown">
                       <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?php echo gettext("About"); ?> <span class="caret"></span></a>
                       <ul class="dropdown-menu" role="menu">                                                    

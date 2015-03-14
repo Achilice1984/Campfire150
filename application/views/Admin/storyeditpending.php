@@ -1,6 +1,6 @@
 
 <?php
-	// debugit($storyViewModel);
+	debugit($storyViewModel);
 	// debugit($userViewModel);
 	//debugit($aprovalViewModel);
 ?>
@@ -32,17 +32,20 @@
     <div class="row">
 		
 		<div class="col-md-9">
-			<form action="<?php echo BASE_URL; ?>admin/storyeditpending" method="post" id="editForm">
+			<form action="<?php echo BASE_URL . "admin/storyeditpending/" . $storyViewModel->StoryId; ?>" method="post" id="editForm">
 
 				<input type="hidden" name="Id" value="<?php echo $approvalViewModel->Id; ?>">
 
-	            <?php 
-	                //Add error message block to the page
-	                include(APP_DIR . 'views/shared/displayErrors.php'); 
+	            <?php include(APP_DIR . 'views/shared/messages.php'); ?>
+
 
 	                //Add success message block to the page
 	                include(APP_DIR . 'views/shared/displaySuccess.php'); 
 	            ?>
+
+	            <div class="checkbox">
+	                <label>	                	
+	                    <input type="checkbox" id="Approved" name="Approved"> <?php echo gettext("Approve Story"); ?>
 
 	            <div class="radio">
 	                <label>
@@ -51,6 +54,7 @@
 	                <label>
 	                    <input type="radio" name="Rejected" value="<?php echo $approvalViewModel->Rejected; ?>"> <?php echo gettext("Reject Story"); ?>
 	                </label>
+	              
 	            </div>
 
 	            <div class="form-group">
