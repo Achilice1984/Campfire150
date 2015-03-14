@@ -410,8 +410,6 @@ class StoryModel extends Model {
 							
 							f.Active AS FollowingUser,
 
-							uas.ActionStatement,
-
 							(
 								SELECT COUNT(1)
 								FROM user_recommend_story 
@@ -448,9 +446,6 @@ class StoryModel extends Model {
 							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
 							LEFT JOIN picture p
 							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
-
-							LEFT JOIN useractionstatement uas
-							ON (uas.User_UserId = s.User_UserId) AND (uas.Active = TRUE)
 
 							LEFT JOIN following f
 							ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
@@ -643,7 +638,7 @@ class StoryModel extends Model {
 		
 	}
 	// it works but we need to know the exact challengesID
-	public function getStoryListByChallengesID($userId, $challengesID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoryListByChallengesID($challengesID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts a categoryID, how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -653,80 +648,22 @@ class StoryModel extends Model {
 		try 
 		{
 			
-			$statement = "SELECT DISTINCT
-
-							s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, s.Published,
-
-							urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
-
-							aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
-
-							shp.Story_StoryId, shp.PictureId, shp.Active,
-
-							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
-
-							u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
-
-							saq.answer_for_question_answer_answerId,
-
-							f.Active AS FollowingUser,
-
-							(
-								SELECT COUNT(1)
-								FROM user_recommend_story 
-								WHERE user_recommend_story.Story_StoryId = s.StoryId
-							    AND user_recommend_story.Active = TRUE
-							    AND user_recommend_story.Opinion = FALSE
-							) AS totalFlags,
-							(
-								SELECT COUNT(1)
-								FROM user_recommend_story 
-								WHERE user_recommend_story.Story_StoryId = s.StoryId
-							    AND user_recommend_story.Active = TRUE
-							    AND user_recommend_story.Opinion = TRUE
-							) AS totalRecommends,
-							(
-								SELECT COUNT(1)
-								FROM comment c
-								WHERE c.Story_StoryId = s.StoryId
-							    AND c.Active = TRUE
-							    AND c.PublishFlag = TRUE
-							) AS totalComments
-
+			$statement = "SELECT s.*, saq.answer_for_question_answer_answerId
 						  FROM Story s 
-						  INNER JOIN user u
-						  ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
-
 						  INNER JOIN story_has_answer_for_question saq
 						  ON s.StoryId = saq.Story_StoryId
-
-						  LEFT JOIN user_recommend_story urs
-							ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :userid) AND (urs.Active = TRUE)
-
-							LEFT JOIN story_has_picture shp
-							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
-							LEFT JOIN picture p
-							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
-
-							LEFT JOIN following f
-							ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
-
-						LEFT JOIN admin_approve_story aps
-						ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
-
+						  INNER JOIN admin_approve_story aas
+						  ON s.StoryId = aas.Story_StoryId
 						  WHERE saq.answer_for_question_answer_answerId = :challengesID
 						  AND StoryPrivacyType_StoryPrivacyTypeId = 1
-						  AND aps.Approved = TRUE
-						  AND aps.Active = TRUE
+						  AND aas.Approved = TRUE
 						  AND s.Active = TRUE
-						  AND s.Published = TRUE
-						  AND u.Active = TRUE
 						  LIMIT :start , :howmany";
 
 		
 			$start = $this-> getStartValue($howMany, $page);
 
-			$parameters = array(":challengesID" => $challengesID, ":start" => $start, ":howmany" => $howMany, ":userid" => $userId);
+			$parameters = array(":challengesID" => $challengesID, ":start" => $start, ":howmany" => $howMany);
 			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $story;
@@ -1095,7 +1032,7 @@ class StoryModel extends Model {
 		// 				LIMIT :start, :howmany";
 
 
-		$statement = "SELECT DISTINCT
+		$statement = "SELECT 
 					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
 
 					urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
@@ -1191,7 +1128,7 @@ class StoryModel extends Model {
 			// 		  GROUP BY s.StoryId DESC
 			// 		  LIMIT :start , :howmany";
 
-			$statement = "SELECT DISTINCT
+			$statement = "SELECT 
 					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
 
 					urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
@@ -1614,46 +1551,6 @@ class StoryModel extends Model {
 							AND p.Active = TRUE";
 
 			$result = $this->fetchIntoObject($statement, array(":storyID" => $storyID));
-
-			return $result;
-		}
-		catch(PDOException $e) 
-		{
-			return $e->getMessage();
-		}
-	}
-
-	public function getTopChallenges()
-	{
-		try
-		{
-			$statement = "SELECT a.*,
-							(
-							    SELECT COUNT(1)
-							    FROM story_has_answer_for_question saq
-
-							    LEFT JOIN story s
-								ON (saq.Story_StoryId = s.StoryId)
-								LEFT JOIN user u
-								ON (u.UserId = s.User_UserId)
-								LEFT JOIN admin_approve_story aps
-								ON (aps.Story_StoryId = s.StoryId)
-
-							    WHERE saq.Active = TRUE
-							    AND saq.Answer_for_Question_Answer_AnswerId = a.AnswerId
-							    AND saq.Answer_for_Question_Question_QuestionId = 2
-							    AND s.Active = TRUE
-							    AND s.Published = TRUE
-							    AND u.Active = TRUE
-							    AND aps.Active = TRUE
-							    AND aps.Approved = TRUE
-
-							)as count
-							FROM answer a
-							HAVING count > 0 
-							LIMIT 0,5";
-
-			$result = $this->fetchIntoObject($statement, array());
 
 			return $result;
 		}

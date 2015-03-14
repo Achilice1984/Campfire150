@@ -104,6 +104,36 @@ class Account extends Controller {
 		}
 	}
 
+	function testAdmin()
+	{
+		$model = $this->loadModel('Admin/AdminModel');
+	
+		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
+		$returnData = $model->getListUsers(5, 1);
+
+		debugit($returnData);
+	}
+
+	function testStory()
+	{
+		$model = $this->loadModel('Story/StoryModel');
+		
+		$returnData = $model->searchStories("this is", 2);
+		debugit($returnData);
+	}
+
+	function testAccount()
+	{
+		echo htmlentities("1234");
+
+		// $this->redirect("account/home", array("userID" => 1));
+		// $model = $this->loadModel('Account/AccountModel');
+		// $testData = $model->getLatestUserList();
+		// // $returnData = $model->getCurrentProfilePictureMetadata(1);
+		
+		// debugit($testData);
+	}
+
 	function login()
 	{			
 		//Load the userViewModel
@@ -469,17 +499,12 @@ class Account extends Controller {
 			}
 		}
 
-		$latestUsersList = $accountModel->getLatestUserList($this->currentUser->UserId);
-		$mostFollowUsersList = $accountModel->getMostFollowersUserList($this->currentUser->UserId);
-
 		//debugit($searchResults);
 
 		//Load the profile view
 		$view = $this->loadView('search');
 
 		$view->set('searchResults', $searchResults);
-		$view->set('latestUsersList', $latestUsersList);
-		$view->set('mostFollowUsersList', $mostFollowUsersList);
 
 		//Load up some js files
 		$view->setJS(array(
@@ -552,52 +577,23 @@ class Account extends Controller {
 	{
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
-		if($this->isAuth())
+		$this->AuthRequest();
+
+		$result;
+
+		//Load the AccountModel to access account functions
+		$accountModel = $this->loadModel('AccountModel');
+
+		if(isset($_POST["UserID"]) && isset($_POST["FollowUser"]) && $_POST["UserID"] != $this->currentUser->UserId)
 		{
-			$result;
-
-			//Load the AccountModel to access account functions
-			$accountModel = $this->loadModel('AccountModel');
-
-			if(isset($_POST["UserID"]) && isset($_POST["FollowUser"]) && $_POST["UserID"] != $this->currentUser->UserId)
+			if($_POST["FollowUser"] == TRUE)
 			{
-				if($_POST["FollowUser"] == TRUE)
-				{
-					$result = $accountModel->followUser($this->currentUser->UserId, $_POST["UserID"]);
-				}
-				else
-				{
-					$result = $accountModel->unfollowUser($this->currentUser->UserId, $_POST["UserID"]);
-				}		
-
-				if ($this->isAjax()) {
-					return $result;			
-				}
-				else
-				{
-					$this->redirect("account/home");
-				}
+				$result = $accountModel->followUser($this->currentUser->UserId, $_POST["UserID"]);
 			}
-
-			echo json_encode($result);
-		}
-	}
-
-	function unfollow($userID)
-	{
-		//Check if users is authenticated for this request
-		//Will kick out if not authenticated
-		if($this->isAuth())
-		{
-			$result;
-
-			//Load the AccountModel to access account functions
-			$accountModel = $this->loadModel('AccountModel');
-
-			if($userID != $this->currentUser->UserId)
+			else
 			{
-				$result = $accountModel->unfollowUser($this->currentUser->UserId, $userID);
-			}
+				$result = $accountModel->unfollowUser($this->currentUser->UserId, $_POST["UserID"]);
+			}		
 
 			if ($this->isAjax()) {
 				return $result;			
@@ -606,6 +602,33 @@ class Account extends Controller {
 			{
 				$this->redirect("account/home");
 			}
+		}
+
+		echo json_encode($result);
+	}
+
+	function unfollow($userID)
+	{
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+
+		$result;
+
+		//Load the AccountModel to access account functions
+		$accountModel = $this->loadModel('AccountModel');
+
+		if($userID != $this->currentUser->UserId)
+		{
+			$result = $accountModel->unfollowUser($this->currentUser->UserId, $userID);
+		}
+
+		if ($this->isAjax()) {
+			return $result;			
+		}
+		else
+		{
+			$this->redirect("account/home");
 		}
 	}
 }
