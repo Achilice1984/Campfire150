@@ -13,7 +13,8 @@ class Admin extends Controller {
 		$model = $this->loadModel('Admin/AdminModel');
 	
 		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
-		$returnData = $model->getDropdownListItem('gendertype', 1);
+		//$returnData = $model->getDropdownListItem('gendertype', 1);
+		$returnData = $model->getListQuestionaireQuestions(5, 1);
 
 		debugit($returnData);
 
@@ -994,7 +995,8 @@ class Admin extends Controller {
 			
 			if($dropdownListItemViewModel->validate())
 			{
-				$model->addDropdownItem($dropdownListItemViewModel->TableName, $dropdownListItemViewModel->NameE, $dropdownListItemViewModel->NameF);
+				$model->addDropdownItem($dropdownListItemViewModel->TableName,
+				 $dropdownListItemViewModel->NameE, $dropdownListItemViewModel->NameF);
 
 				$this->redirect("admin/index");
 			}

@@ -522,76 +522,6 @@ class AdminModel extends Model {
 		}
 	}
 
-	// public function changeRejectedToApprovedAsAdmin($adminID, $commentID, $reason)
-	// {
-	// 	//Accepts the adminID and the comment id
-	// 	//Change a rejected comment to an approved comment
-	// 	//returns bool whether it was saved succesfully or not
-
-	// 	try
-	// 	{
-	// 		$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Comment_CommentId = :CommentID AND Active = 1", array(":CommentID" => $commentID));
-
-	// 		$statement = "SELECT * FROM admin_reject_comment WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
-
-	// 		$parameters = array(":UserID" => $adminID, ":CommentID" => $commentID);
-
-	// 		$rowCount = $this->fetchRowCount($statement, $parameters);
-
-	// 		if($rowCount >= 1)
-	// 		{
-	// 			$statement2 = "UPDATE admin_reject_comment SET Rejected = 0, Reason = :Reason, Active = 1 ";
-	// 			$statement2 .= "WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
-
-	// 			$parameters2 = array(":Reason" => $reason, ":UserID" => $adminID, ":CommentID" => $commentID);
-	// 			return $this->fetch($statement2, $parameters2);
-	// 		}
-	// 		else
-	// 		{
-	// 			return approveCommentAsAdmin($adminID, $commentID, $reason);
-	// 		}
-	// 	}
-	// 	catch(PDOException $e)
-	// 	{
-	// 		return $e->getMessage();
-	// 	}
-	// }
-
-	// public function changeApprovedToRejectedAsAdmin($adminID, $commentID, $reason)
-	// {
-	// 	//Accepts the adminID, the comment id and the reason why it was rejected
-	// 	//Change an approved comment to a rejected comment
-	// 	//returns bool whether it was saved succesfully or not
-
-	// 	try
-	// 	{
-	// 		$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Comment_CommentId = :CommentID AND Active = 1", array($commentID));
-
-	// 		$statement = "SELECT * FROM admin_reject_comment WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
-
-	// 		$parameters = array(":UserID" => $adminID, ":CommentID" => $commentID);
-
-	// 		$rowCount = $this->fetchRowCount($statement, $parameters);
-
-	// 		if($rowCount >= 1)
-	// 		{
-	// 			$statement2 = "UPDATE admin_reject_comment SET Rejected = 1, Reason = :Reason, Active = 1 ";
-	// 			$statement2 .= "WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
-
-	// 			$parameters2 = array(":Reason" => $reason, ":UserID" => $adminID, ":CommentID" => $commentID);
-	// 			return $this->fetch($statement2, $parameters2);
-	// 		}
-	// 		else
-	// 		{
-	// 			return rejectCommentAsAdmin($adminID, $commentID, $reason);
-	// 		}
-	// 	}
-	// 	catch(PDOException $e)
-	// 	{
-	// 		return $e->getMessage();
-	// 	}
-	// }
-
 	public function getListUsers($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
@@ -995,6 +925,47 @@ class AdminModel extends Model {
 		}
 	}
 
+public function getDropdownListItem($tableName, $itemId)
+	{
+		try
+		{
+			$statement = "";
+
+			switch(true)
+			{
+				case strtolower($tableName) == "languagetype":
+					$statement = "SELECT *, LanguageId AS Id FROM languagetype WHERE LanguageId = :Id";
+					break;
+				case strtolower($tableName) == "gendertype":
+					$statement = "SELECT *, GenderTypeId AS Id FROM gendertype WHERE GenderTypeId = :Id";
+					break;
+				case strtolower($tableName) == "achievementleveltype":
+					$statement = "SELECT *, LevelId AS Id FROM achievementleveltype WHERE LevelId = :Id";
+					break;
+				case strtolower($tableName) == "securityquestion":
+					$statement = "SELECT *, SecurityQuestionId AS Id FROM securityquestion WHERE SecurityQuestionId = :Id";
+					break;
+				case strtolower($tableName) == "picturetype":
+					$statement = "SELECT *, PictureTypeId AS Id FROM picturetype WHERE PictureTypeId = :Id";
+					break;
+				case strtolower($tableName) == "profileprivacytype":
+					$statement = "SELECT *, PrivacyTypeId AS Id FROM profileprivacytype WHERE PrivacyTypeId = :Id";
+					break;
+				case strtolower($tableName) == "storyprivacytype":
+					$statement = "SELECT *, StoryPrivacyTypeId AS Id FROM storyprivacytype WHERE StoryPrivacyTypeId = :Id";
+					break;
+				default:
+					return $tableName." is not a proper table name";
+			}			
+
+			return $this->fetchIntoClass($statement, array(":Id" => $itemId), "shared/DropdownItemViewModel");
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
 	public function getListDropdowns($tableName)
 	{
 		//Accepts admin id
@@ -1007,38 +978,38 @@ class AdminModel extends Model {
 			switch(true)
 			{
 				case strtolower($tableName) == "languagetype":
-					$statement = "SELECT *, (SELECT COUNT(*) FROM languagetype) AS TotalNumber FROM languagetype";
+					$statement = "SELECT *, LanguageId AS Id, (SELECT COUNT(*) FROM languagetype) AS TotalNumber FROM languagetype";
 					break;
 				case strtolower($tableName) == "gendertype":
-					$statement = "SELECT *, (SELECT COUNT(*) FROM gendertype) AS TotalNumber FROM gendertype";
+					$statement = "SELECT *, GenderTypeId AS Id, (SELECT COUNT(*) FROM gendertype) AS TotalNumber FROM gendertype";
 					break;
 				case strtolower($tableName) == "achievementleveltype":
-					$statement = "SELECT *, (SELECT COUNT(*) FROM achievementleveltype) AS TotalNumber FROM achievementleveltype";
+					$statement = "SELECT *, LevelId AS Id, (SELECT COUNT(*) FROM achievementleveltype) AS TotalNumber FROM achievementleveltype";
 					break;
 				case strtolower($tableName) == "securityquestion":
-					$statement = "SELECT *, (SELECT COUNT(*) FROM securityquestion) AS TotalNumber FROM securityquestion";
+					$statement = "SELECT *, SecurityQuestionId AS Id, (SELECT COUNT(*) FROM securityquestion) AS TotalNumber FROM securityquestion";
 					break;
 				case strtolower($tableName) == "picturetype":
-					$statement = "SELECT *, (SELECT COUNT(*) FROM picturetype) AS TotalNumber FROM picturetype";
+					$statement = "SELECT *, PictureTypeId AS Id, (SELECT COUNT(*) FROM picturetype) AS TotalNumber FROM picturetype";
 					break;
 				case strtolower($tableName) == "profileprivacytype":
-					$statement = "SELECT *, (SELECT COUNT(*) FROM profileprivacytype) AS TotalNumber FROM profileprivacytype";
+					$statement = "SELECT *, PrivacyTypeId AS Id, (SELECT COUNT(*) FROM profileprivacytype) AS TotalNumber FROM profileprivacytype";
 					break;
 				case strtolower($tableName) == "storyprivacytype":
-					$statement = "SELECT *, (SELECT COUNT(*) FROM storyprivacytype) AS TotalNumber FROM storyprivacytype";
+					$statement = "SELECT *, StoryPrivacyTypeId AS Id, (SELECT COUNT(*) FROM storyprivacytype) AS TotalNumber FROM storyprivacytype";
 					break;
 				default:
 					return $tableName." is not a proper table name";
 			}			
 
-			return $this->fetchIntoObject($statement, array());
+			return $this->fetchIntoClass($statement, array(), "shared/DropdownItemViewModel");
 		}
 		catch(PDOException $e)
 		{
 			return $e->getMessage();
 		}
 	}
-	public function addDropdownValue($tableName, $dropdownValueE, $dropdownValueF)
+	public function addDropdownItem($tableName, $dropdownValueE, $dropdownValueF)
 	{
 		//Accepts a english dropdownValueE, a french dropdownValueF
 		//returns bool if saved succesfully
@@ -1093,9 +1064,34 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "UPDATE :TableName 
-							SET NameE = :NameE, NameF = :NameF 
-							WHERE typeId = :Id";
+			$statement = "";
+
+			switch(true)
+			{
+				case strtolower($tableName) == "languagetype":
+					$statement = "UPDATE languagetype SET NameE = :NameE, NameF = :NameF  WHERE LanguageId = :Id";
+					break;
+				case strtolower($tableName) == "gendertype":
+					$statement = "UPDATE gendertype SET NameE = :NameE, NameF = :NameF  WHERE GenderTypeId = :Id";
+					break;
+				case strtolower($tableName) == "achievementleveltype":
+					$statement = "UPDATE achievementleveltype SET NameE = :NameE, NameF = :NameF  WHERE LevelId = :Id";
+					break;
+				case strtolower($tableName) == "securityquestion":
+					$statement = "UPDATE securityquestion SET NameE = :NameE, NameF = :NameF  WHERE SecurityQuestionId = :Id";
+					break;
+				case strtolower($tableName) == "picturetype":
+					$statement = "UPDATE picturetype SET NameE = :NameE, NameF = :NameF  WHERE PictureTypeId = :Id";
+					break;
+				case strtolower($tableName) == "profileprivacytype":
+					$statement = "UPDATE profileprivacytype SET NameE = :NameE, NameF = :NameF  WHERE PrivacyTypeId = :Id";
+					break;
+				case strtolower($tableName) == "storyprivacytype":
+					$statement = "UPDATE storyprivacytype SET NameE = :NameE, NameF = :NameF  WHERE StoryPrivacyTypeId = :Id";
+					break;
+				default:
+					return $tableName." is not a proper table name";
+			}
 
 			$parameters = array(
 				":NameE" => $dropdownValueE,
