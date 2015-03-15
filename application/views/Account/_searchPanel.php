@@ -3,7 +3,7 @@
 <div class="row StoryRowSection" style="margin-top: 40px; padding:20px; padding-bottom: 0px;">
 	<div class="col-md-2">
 		<div class="row">
-			<a href="<?php echo BASE_URL . "account/user/" . $user->UserId; ?>">
+			<a href="<?php echo BASE_URL . "account/home/" . $user->UserId; ?>">
   				<img style="max-height: 150px;" class="img-responsive storyProfilePic" src="<?php echo BASE_URL; ?>static/images/default-user-image.png" alt="<?php echo gettext("Profile Picture"); ?>">
 			</a>			
 		</div>			

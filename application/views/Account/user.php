@@ -8,4 +8,8 @@
 
 ?>
 
-<h1>User Display Page</h1>
+<div class="container" style="padding-top: 50px; padding-bottom: 50px;">
+    <div class="row">
+    	<h2>User Home Page</h2>
+    </div>
+</div>
