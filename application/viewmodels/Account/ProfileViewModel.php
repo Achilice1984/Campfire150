@@ -34,7 +34,7 @@ class ProfileViewModel extends ViewModel
 	public $ProfilePrivacyType_PrivacyTypeId;
 	public $Gender_GenderId;
 
-	public $ActionStatement;
+	public $UserActionStatement;
 
 	function __construct()
 	{		

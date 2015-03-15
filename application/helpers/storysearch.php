@@ -33,7 +33,7 @@ class StorySearch extends Model
     	$replace = array("\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z");
 		$storySearch = str_replace($search, $replace, strtolower($storySearch));
 
-		$statement = "SELECT DISTINCT
+		$statement = "SELECT 
 					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, s.Published,
 
 					urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,

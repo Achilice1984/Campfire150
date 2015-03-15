@@ -69,7 +69,7 @@ class SiteContentModel extends Model {
 	private function fetchDropdownValues($statement)
 	{
 		//Get dropdown values
-		$dropdownValues = $this->fetchIntoClass($statement, null, "shared/DropdownItemViewModel");
+		$dropdownValues = $this->fetchIntoClass($statement, null, "shared/DropDownItemViewModel");
 
 		return $dropdownValues;
 	}
@@ -94,7 +94,7 @@ class SiteContentModel extends Model {
 						FROM question
 						WHERE question.Active = TRUE";
 
-		$storyQuestions = $this->fetchIntoClass($statement, null, "shared/DropdownItemViewModel");
+		$storyQuestions = $this->fetchIntoClass($statement, null, "shared/DropDownItemViewModel");
 
 		foreach ($storyQuestions as $question) {
 			$question->Answers = $this->getAnswersForQuestion($question->Value);
@@ -112,7 +112,7 @@ class SiteContentModel extends Model {
 						WHERE a.Active = TRUE
 						AND afq.Question_QuestionId = :questionID";
 
-		$dropdownValues = $this->fetchIntoClass($statement, array(":questionID" => $questionID), "shared/DropdownItemViewModel");
+		$dropdownValues = $this->fetchIntoClass($statement, array(":questionID" => $questionID), "shared/DropDownItemViewModel");
 
 		return $dropdownValues;
 	}
