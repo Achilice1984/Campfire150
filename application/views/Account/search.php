@@ -1,9 +1,9 @@
 
 <div class="container" style="padding-top: 50px; padding-bottom: 50px; min-height: 600px;">
 	<ul class="nav nav-pills UserSearchBar">
-	    <li role="presentation" class="active"><a href="#User_Search" aria-controls="User_Search" role="tab" data-toggle="tab">Search</a></li>
-	    <li role="presentation"><a href="#User_MostFollowers" aria-controls="User_MostFollowers" role="tab" data-toggle="tab">Most Followers</a></li>
-	    <li role="presentation"><a href="#User_Latest" aria-controls="User_Latest" role="tab" data-toggle="tab">Latest</a></li>
+	    <li role="presentation" class="active"><a href="#User_Search" aria-controls="User_Search" role="tab" data-toggle="tab"><?php echo gettext("Search"); ?></a></li>
+	    <li role="presentation"><a href="#User_MostFollowers" aria-controls="User_MostFollowers" role="tab" data-toggle="tab"><?php echo gettext("Most Followers"); ?></a></li>
+	    <li role="presentation"><a href="#User_Latest" aria-controls="User_Latest" role="tab" data-toggle="tab"><?php echo gettext("Latest"); ?></a></li>
 	</ul>   
 
 	<div class="tab-content" style="padding:20px;">

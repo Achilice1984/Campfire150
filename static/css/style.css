@@ -2,7 +2,7 @@
 
 /* -------------------- General -------------------- */
 
-*:not(img) {
+*:not(img):not(.badge):not(.WriteStoryButton):not(.jumbotron) {
 	border-radius: 0 !important;
 }
 body {

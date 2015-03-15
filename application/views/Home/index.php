@@ -1,11 +1,12 @@
 <script type="text/javascript">
     var WordCloudWords = <?php echo $homeViewModel->WordCloud; ?>
 </script>
-    
-<?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
         <section style="padding-top: 20px; margin-bottom: 50px;">
             <div class="container">
+
+                <?php include(APP_DIR . 'views/shared/messages.php'); ?>
+                
                 <h1><?php echo gettext("Campfire Stories"); ?></h1>
                 <nav role="navigation">
                     <ul class="nav nav-tabs">

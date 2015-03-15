@@ -8,36 +8,36 @@ class Account extends Controller {
 	}
 
 	//The home view will be where a user can view all of their account information
-	function home()
-	{	
-		try
-		{
-			//Check if users is authenticated for this request
-			//Will kick out if not authenticated
-			$this->AuthRequest();
+	// function home()
+	// {	
+	// 	try
+	// 	{
+	// 		//Check if users is authenticated for this request
+	// 		//Will kick out if not authenticated
+	// 		$this->AuthRequest();
 
-			//Load the accountHomeViewModel
-			$accountHomeViewModel = $this->loadViewModel('AccountHomeViewModel');
+	// 		//Load the accountHomeViewModel
+	// 		$accountHomeViewModel = $this->loadViewModel('AccountHomeViewModel');
 
-			//Load the AccountModel to access account functions
-			$model = $this->loadModel('AccountModel');
+	// 		//Load the AccountModel to access account functions
+	// 		$model = $this->loadModel('AccountModel');
 
-			//Load the home view
-			$view = $this->loadView('home');
+	// 		//Load the home view
+	// 		$view = $this->loadView('home');
 
-			//Add a variable with data so that it can be accessed in the view
-			$view->set('accountHomeViewModel', $accountHomeViewModel);
+	// 		//Add a variable with data so that it can be accessed in the view
+	// 		$view->set('accountHomeViewModel', $accountHomeViewModel);
 
-			//Render the home view. true indicates to load the layout pages as well
-			$view->render(true);
-		}
-		catch(Exception $ex)
-		{
+	// 		//Render the home view. true indicates to load the layout pages as well
+	// 		$view->render(true);
+	// 	}
+	// 	catch(Exception $ex)
+	// 	{
 
-		}
-	}	
+	// 	}
+	// }	
 
-	function user($userID)
+	function home($userID)
 	{
 		try
 		{
@@ -61,42 +61,55 @@ class Account extends Controller {
 			//Load the AccountModel to access account functions
 			$storyModel = $this->loadModel('Story/StoryModel');
 
-			//Populate data to be shown on the page
-			$accountHomeViewModel->recommendedStoryList = $storyModel->getStoriesRecommendedByCurrentUser($userID);
-			$accountHomeViewModel->usersStoryList = $storyModel->getStoriesWrittenByCurrentUser($userID);
-			$accountHomeViewModel->followingList = $model->getFollowing($userID);
-
-			//How many people are they following
-			$accountHomeViewModel->totalFollowing = $model->getTotalFollowing($userID);
-
-			// How many people are following the user
-			$accountHomeViewModel->totalFollowers = $model->getTotalFollowers($userID);
-
-			//How many approved stories
-			$accountHomeViewModel->totalApprovedStories = $storyModel->getTotalStoriesApproved($userID);
-
-			//How many pending stories
-			$accountHomeViewModel->totalPendingStories = $storyModel->getTotalStoriesPending($userID);
-
-			//How many denied stories
-			$accountHomeViewModel->totalDeniedStories = $storyModel->getTotalStoriesDenied($userID);
-
-			//How many approved comments
-			$accountHomeViewModel->totalApprovedComments = $storyModel->getTotalCommentsApproved($userID);
-
-			//How many penfing comments
-			$accountHomeViewModel->totalPendingComments = $storyModel->getTotalCommentsPending($userID);
-
 			$accountHomeViewModel->userDetails = $model->getProfileByID($userID);
 
-			//Load the home view
-			$view = $this->loadView('home');
+			if(isset($accountHomeViewModel->userDetails) && $accountHomeViewModel->userDetails->ProfilePrivacyType_PrivacyTypeId == 1 && $accountHomeViewModel->userDetails->Active == TRUE)
+			{
+				//Populate data to be shown on the page
+				$accountHomeViewModel->recommendedStoryList = $storyModel->getStoriesRecommendedByCurrentUser($userID);
+				$accountHomeViewModel->usersStoryList = $storyModel->getStoriesWrittenByCurrentUser($userID);
+				$accountHomeViewModel->followingList = $model->getFollowing($userID);
+				$accountHomeViewModel->followerList = $model->getFollowers($userID);
 
-			//Add a variable with data so that it can be accessed in the view
-			$view->set('accountHomeViewModel', $accountHomeViewModel);
+				//How many people are they following
+				$accountHomeViewModel->totalFollowing = $model->getTotalFollowing($userID);
 
-			//Render the home view. true indicates to load the layout pages as well
-			$view->render(true);
+				// How many people are following the user
+				$accountHomeViewModel->totalFollowers = $model->getTotalFollowers($userID);
+
+				$accountHomeViewModel->totalRecommendations = $storyModel->getTotalRecommendations($userID);
+
+				//How many approved stories
+				$accountHomeViewModel->totalApprovedStories = $storyModel->getTotalStoriesApproved($userID);
+
+				//How many pending stories
+				$accountHomeViewModel->totalPendingStories = $storyModel->getTotalStoriesPending($userID);
+
+				//How many denied stories
+				$accountHomeViewModel->totalDeniedStories = $storyModel->getTotalStoriesDenied($userID);
+
+				//How many approved comments
+				$accountHomeViewModel->totalApprovedComments = $storyModel->getTotalCommentsApproved($userID);
+
+				//How many penfing comments
+				$accountHomeViewModel->totalPendingComments = $storyModel->getTotalCommentsPending($userID);			
+
+				//Load the home view
+				$view = $this->loadView('home');
+
+				//Add a variable with data so that it can be accessed in the view
+				$view->set('accountHomeViewModel', $accountHomeViewModel);
+
+				//Render the home view. true indicates to load the layout pages as well
+				$view->render(true);
+			}
+			else
+			{
+				addErrorMessage("dbError", gettext("An error occurred while attempting to retrieve user details."), 1);
+
+				//$this->redirect("");				
+				debugit($accountHomeViewModel->userDetails);
+			}
 		}
 		catch(Exception $ex)
 		{
@@ -371,7 +384,7 @@ class Account extends Controller {
 					 //echo "<br />" .$savedSuccessfuly;
 					// if($savedSuccessfuly == false)
 					// {
-					// 	//Ann error occoured you hvae to remove new profile picture meta data from the database
+					// 	//Ann error occurred you hvae to remove new profile picture meta data from the database
 					// 	$model->removeImageMetaData($imageId);
 
 					// 	//add error message so user knows whats up
