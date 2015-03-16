@@ -45,6 +45,19 @@ class View {
 		echo ob_get_clean();
 	}
 
+	public function renderAdmin()
+	{
+		extract($this->pageVars);
+
+		ob_start();
+
+		require(APP_DIR .'views/adminHeader.php');
+		require($this->template);
+		require(APP_DIR .'views/footer.php');
+
+		echo ob_get_clean();
+	}
+
 	public function render_layout()
 	{
 		extract($this->pageVars);

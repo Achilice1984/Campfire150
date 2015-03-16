@@ -1,11 +1,16 @@
 <script type="text/javascript">
     var WordCloudWords = <?php echo $homeViewModel->WordCloud; ?>
 </script>
-    
-<?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
         <section>
             <div class="container">
+<<<<<<< HEAD
+=======
+
+                <?php include(APP_DIR . 'views/shared/messages.php'); ?>
+                
+                <h1><?php echo gettext("Campfire Stories"); ?></h1>
+>>>>>>> master
                 <nav role="navigation">
                     <ul class="nav nav-tabs">
                         <li class="active"><a data-request-url="<?php echo BASE_URL; ?>home/latestStoryHome" id="latestStoryListButton" href="#"><?php echo gettext("Latest"); ?></a></li>
@@ -24,7 +29,7 @@
                 </nav>
                 <div id="StoryListContainer" class="row">
                    <?php foreach ($homeViewModel->LatestStories as $story): ?>
-                       <?php include(APP_DIR . 'views/home/_storyList.php') ?>
+                       <?php include(APP_DIR . 'views/shared/_storyList.php') ?>
                    <?php endforeach ?>
                 </div>
                 <p class="clearfix"><a href="<?php echo BASE_URL; ?>story/search" class="btn btn-warning pull-right"><?php echo gettext("View More Stories"); ?></a></p>

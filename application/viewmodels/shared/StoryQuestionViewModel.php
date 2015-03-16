@@ -7,7 +7,7 @@ class StoryQuestionViewModel extends ViewModel
 	//Story properties same as in database
 	public $Value;
 	public $Name;
-	public $Answers;//DropDownViewModel
+	public $Answers;//DropdownItemViewModel
 	
 	function __construct()
 	{

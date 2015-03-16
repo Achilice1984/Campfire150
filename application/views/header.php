@@ -1,5 +1,17 @@
+<?php
+  $language = "Français";
+  $pageLang = "en";
+  
+  if($_SESSION["languagePreference"] != "en_CA")
+  {
+      $language = "English";
+
+      $pageLang = "fr";
+  }
+?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?php echo $pageLang; ?>">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
@@ -28,14 +40,6 @@
     
   </head>
   <body>
-    <?php
-      $language = "Français";
-      
-      if($_SESSION["languagePreference"] != "en_CA")
-      {
-          $language = "English";
-      }
-    ?>
     <div id="c150-head" class="bg-grey">
       <div class="container">
         <div class="row">
@@ -50,6 +54,7 @@
             <nav role="navigation" class="nav-secondary clearfix">
               <div class="container">
                     <ul class="nav nav-pills nav-justified pull-right">
+<<<<<<< HEAD
                 <li><a href="<?php echo BASE_URL; ?>story/search"><span class="glyphicon glyphicon-search"></span><span class="hidden-xs"> <?php echo gettext("Search"); ?></span></a></li>
                 <li><a href="<?php echo BASE_URL; ?>account/changelanguage"><span class="glyphicon glyphicon-globe"></span><span class="hidden-xs"> <?php echo $language; ?></span></a></li>
                 <li><a class="WriteStoryButton" href="<?php echo BASE_URL; ?>story/add"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> <?php echo gettext("Share a Story"); ?></span></a></li>
@@ -76,6 +81,39 @@
                           </li>
                           
                 <?php } ?>
+=======
+
+                      <li><a href="<?php echo BASE_URL; ?>story/search"><span class="glyphicon glyphicon-search"></span><span class="hidden-xs"> <?php echo gettext("Search"); ?></span></a></li>
+                      <li><a href="<?php echo BASE_URL; ?>account/changelanguage"><span class="glyphicon glyphicon-globe"></span><span class="hidden-xs"> <?php echo $language; ?></span></a></li>
+                      
+                      
+                      <li><a class="WriteStoryButton" href="<?php echo BASE_URL; ?>story/add"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> <?php echo gettext("Share a Story"); ?></span></a></li>
+                      
+                      <?php  if(!$currentUser->IsAuth) { ?>
+                                <li class="dropdown">
+                                  <a href="#" class="dropdown-toggle" id="loginMenu" data-toggle="dropdown" aria-expanded="true">
+                                    <span class="glyphicon glyphicon-user"></span><span class="hidden-xs"> <?php echo gettext("Login | Signup"); ?></span> <span class="caret"></span>
+                                  </a>
+                                  <ul class="dropdown-menu" role="menu" aria-labelledby="loginMenu">
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/login"><?php echo gettext("Login"); ?></a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/register"><?php echo gettext("Register"); ?></a></li>
+                                  </ul>
+                                </li>
+                      <?php } else { ?>
+                                <li class="dropdown">
+                                  <a href="#" class="dropdown-toggle" id="loginMenu" data-toggle="dropdown" aria-expanded="true">
+                                    <span class="glyphicon glyphicon-user"></span><span class="hidden-xs"> <?php echo $currentUser->FirstName . " " . $currentUser->LastName; ?></span> <span class="caret"></span>
+                                  </a>
+                                  <ul class="dropdown-menu" role="menu" aria-labelledby="loginMenu">
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/home"><?php echo gettext("Profile"); ?></a></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/logout"><?php echo gettext("Logout") ?></a></li>                              
+                                    <li class="divider"></li>
+                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>admin/"><?php echo gettext("Admin Panel") ?></a></li>
+                                  </ul>
+                                </li>
+                                
+                      <?php } ?>
+>>>>>>> master
                   </ul>
               </div>
             </nav>

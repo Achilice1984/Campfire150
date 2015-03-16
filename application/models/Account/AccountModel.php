@@ -340,7 +340,7 @@ class AccountModel extends Model {
 
 			//Add security questions, add action statement
 			if($this->insertSecurityQuestionAnswer($userID, $user->SecurityQuestionId, $user->SecurityAnswer) &&
-				$this->insertUserActionStatement($userID, $user->UserActionStatement))
+				$this->insertUserActionStatement($userID, $user->ActionStatement))
 			{
 				$success = true;
 			}
@@ -494,11 +494,39 @@ class AccountModel extends Model {
 		return null;
 	}
 
-	public function getProfileByEmail($email)
+	public function getUserProfileByID_home($currentUserId, $userID)
 	{
-		$statement = "SELECT * FROM user
+		$statement = "SELECT user.*,
+						u.ActionStatement as UserActionStatement,
+						f.Active AS FollowingUser
+
+						FROM user
+
 						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
 						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
+
+						LEFT JOIN following f
+						ON (f.User_FollowerId = user.UserId) AND (f.User_UserId = :CurrentUserId) AND (f.Active = TRUE)
+
+						WHERE user.UserId = :UserId
+						AND user.Active = TRUE";
+
+		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":CurrentUserId" => $currentUserId), "shared/UserViewModel");
+
+		if(isset($user[0]))
+		{
+			return $user[0];
+		}
+
+		return null;
+	}
+
+	public function getProfileByEmail($email)
+	{
+		$statement = "SELECT user.* FROM user,
+
+						LEFT JOIN useractionstatement uas ON user.UserId = uas.user_UserId
+						LEFT JOIN securityquestionanswer sq ON user.UserId = s.user_UserId
 						WHERE user.Email = :Email
 						AND user.Active = TRUE";
 
@@ -513,8 +541,8 @@ class AccountModel extends Model {
 	}
 	public function getProfileByID($userID)
 	{
-		$statement = "SELECT * FROM user
-						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
+		$statement = "SELECT user.* FROM user
+						LEFT JOIN useractionstatement uas    ON user.UserId = uas.user_UserId
 						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
 						WHERE user.UserId = :UserId
 						AND user.Active = TRUE";
@@ -543,9 +571,15 @@ class AccountModel extends Model {
 		//Returns the total
 
 		$statement = "SELECT count(*) 
-						FROM following 
-						WHERE User_FollowerId = :UserId
-						AND Active = TRUE";
+						FROM following f
+
+						LEFT JOIN user u 
+						ON u.UserId = f.User_UserId
+
+						WHERE f.User_FollowerId = :UserId
+						AND u.Active = TRUE
+						AND u.ProfilePrivacyType_PrivacyTypeId = 1
+						AND f.Active = TRUE";
 
 		$totalFollowers = $this->fetchNum($statement, array(":UserId" => $userID));
 
@@ -558,9 +592,15 @@ class AccountModel extends Model {
 		//Returns the total
 
 		$statement = "SELECT count(*) 
-						FROM following 
-						WHERE User_UserId = :UserId
-						AND Active = TRUE";
+						FROM following f
+
+						LEFT JOIN user u 
+						ON u.UserId = f.User_FollowerId
+
+						WHERE f.User_UserId = :UserId
+						AND f.Active = TRUE
+						AND u.Active = TRUE
+						AND u.ProfilePrivacyType_PrivacyTypeId = 1";
 
 		$totalFollowing = $this->fetchNum($statement, array(":UserId" => $userID));
 
@@ -613,31 +653,103 @@ class AccountModel extends Model {
 			return $e->getMessage();
 		}
 	}
+	// public function getFollowers($userID, $howMany = self::HOWMANY, $page = self::PAGE)
+	// {
+	// 	//Accepts a user id
+	// 	//Gets all users that are following this userid
+	// 	//Returns array of user class
+	// 	$statement = "SELECT * 
+	// 					FROM user
+	// 					INNER JOIN following 
+	// 					ON user.UserId = following.User_UserId
+	// 					WHERE following.User_FollowerId = :UserId
+	// 					AND following.Active = TRUE
+	// 					LIMIT :start, :howmany";
+
+	// 	$start = $this-> getStartValue($howMany, $page);
+
+	// 	$parameters = array(
+	// 		":UserId" => $userID,
+	// 		":start" => $start,
+	// 		":howmany" => $howMany
+	// 		);
+
+
+	// 	$followers = $this->fetchIntoClass($statement, $parameters, "shared/UserViewModel");
+
+	// 	return $followers;
+	// }
+
 	public function getFollowers($userID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts a user id
-		//Gets all users that are following this userid
+		//Gets all users that this user is following
 		//Returns array of user class
-		$statement = "SELECT * 
-						FROM user
-						INNER JOIN following 
-						ON user.UserId = following.User_UserId
-						WHERE following.User_FollowerId = :UserId
-						AND following.Active = TRUE
+
+		$statement = "SELECT u.*,
+
+						f.Active AS FollowingUser,
+
+						uas.ActionStatement,
+
+						(
+							SELECT COUNT(1)
+							FROM user_recommend_story 
+							WHERE user_recommend_story.User_UserId = u.UserId
+						    AND user_recommend_story.Active = TRUE
+						    AND user_recommend_story.Opinion = TRUE
+						) AS totalRecommends,
+						
+						(
+							SELECT COUNT(1)
+							FROM story 
+							LEFT JOIN admin_approve_story
+							ON (admin_approve_story.Story_StoryId = story.StoryId) AND (admin_approve_story.Active = TRUE)
+							WHERE story.User_UserId = u.UserId
+						    AND story.Active = TRUE
+						    AND story.Published = TRUE
+						    AND story.StoryPrivacyType_StoryPrivacyTypeId = 1
+						    AND admin_approve_story.Approved = TRUE
+						) AS totalPublishedStories,
+						
+						(
+							SELECT COUNT(1)
+							FROM comment 
+							WHERE comment.User_UserId = u.UserId
+						    AND comment.Active = TRUE
+						    AND comment.PublishFlag = TRUE
+						) AS totalPublishedComments,
+
+						(
+							SELECT COUNT(1)
+							FROM following 
+							WHERE following.User_FollowerId = u.UserId
+						    AND following.Active = TRUE
+						) AS totalFollowers
+
+						FROM user u
+						LEFT JOIN following f
+						ON (f.User_UserId = u.UserId) AND (f.User_FollowerId = :UserId) AND (f.Active = TRUE)
+
+						LEFT JOIN useractionstatement uas
+						ON (uas.User_UserId = u.UserId) AND (uas.Active = TRUE)
+
+						WHERE u.Active = TRUE
+						AND u.ProfilePrivacyType_PrivacyTypeId = 1
+						AND f.Active = TRUE
 						LIMIT :start, :howmany";
 
 		$start = $this-> getStartValue($howMany, $page);
 
-		$parameters = array(
-			":UserId" => $userID,
+		$parameters = array(			
 			":start" => $start,
-			":howmany" => $howMany
+			":howmany" => $howMany,
+			":UserId" => $userID
 			);
 
+		$following = $this->fetchIntoClass($statement, $parameters, "shared/UserViewModel");
 
-		$followers = $this->fetchIntoClass($statement, $parameters, "shared/UserViewModel");
-
-		return $followers;
+		return $following;
 	}
 	
 	public function getFollowing($userID, $howMany = self::HOWMANY, $page = self::PAGE)
@@ -646,12 +758,57 @@ class AccountModel extends Model {
 		//Gets all users that this user is following
 		//Returns array of user class
 
-		$statement = "SELECT * 
-						FROM user
-						INNER JOIN following 
-						ON user.UserId = following.User_FollowerId
-						WHERE following.User_UserId = :UserId
-						AND following.Active = TRUE
+		$statement = "SELECT u.*,
+
+						f.Active AS FollowingUser,
+
+						uas.ActionStatement,
+
+						(
+							SELECT COUNT(1)
+							FROM user_recommend_story 
+							WHERE user_recommend_story.User_UserId = u.UserId
+						    AND user_recommend_story.Active = TRUE
+						    AND user_recommend_story.Opinion = TRUE
+						) AS totalRecommends,
+						
+						(
+							SELECT COUNT(1)
+							FROM story 
+							LEFT JOIN admin_approve_story
+							ON (admin_approve_story.Story_StoryId = story.StoryId) AND (admin_approve_story.Active = TRUE)
+							WHERE story.User_UserId = u.UserId
+						    AND story.Active = TRUE
+						    AND story.Published = TRUE
+						    AND story.StoryPrivacyType_StoryPrivacyTypeId = 1
+						    AND admin_approve_story.Approved = TRUE
+						) AS totalPublishedStories,
+						
+						(
+							SELECT COUNT(1)
+							FROM comment 
+							WHERE comment.User_UserId = u.UserId
+						    AND comment.Active = TRUE
+						    AND comment.PublishFlag = TRUE
+						) AS totalPublishedComments,
+
+						(
+							SELECT COUNT(1)
+							FROM following 
+							WHERE following.User_FollowerId = u.UserId
+						    AND following.Active = TRUE
+						) AS totalFollowers
+
+						FROM user u
+						LEFT JOIN following f
+						ON (f.User_FollowerId = u.UserId) AND (f.User_UserId = :UserId) AND (f.Active = TRUE)
+
+						LEFT JOIN useractionstatement uas
+						ON (uas.User_UserId = u.UserId) AND (uas.Active = TRUE)
+
+						WHERE u.Active = TRUE
+						AND u.ProfilePrivacyType_PrivacyTypeId = 1
+						AND f.Active = TRUE
 						LIMIT :start, :howmany";
 
 		$start = $this-> getStartValue($howMany, $page);
@@ -721,9 +878,13 @@ class AccountModel extends Model {
 						(
 							SELECT COUNT(1)
 							FROM story 
+							LEFT JOIN admin_approve_story
+							ON (admin_approve_story.Story_StoryId = story.StoryId) AND (admin_approve_story.Active = TRUE)
 							WHERE story.User_UserId = u.UserId
 						    AND story.Active = TRUE
 						    AND story.Published = TRUE
+						    AND story.StoryPrivacyType_StoryPrivacyTypeId = 1
+						    AND admin_approve_story.Approved = TRUE
 						) AS totalPublishedStories,
 						
 						(
@@ -752,7 +913,7 @@ class AccountModel extends Model {
 						ON (uas.User_UserId = u.UserId) AND (uas.Active = TRUE)
 
 						WHERE u.Active = TRUE
-						
+						AND u.ProfilePrivacyType_PrivacyTypeId = 1
 						ORDER BY hits DESC
 						LIMIT :start, :howmany";
 
@@ -824,9 +985,13 @@ class AccountModel extends Model {
 						(
 							SELECT COUNT(1)
 							FROM story 
+							LEFT JOIN admin_approve_story
+							ON (admin_approve_story.Story_StoryId = story.StoryId) AND (admin_approve_story.Active = TRUE)
 							WHERE story.User_UserId = u.UserId
 						    AND story.Active = TRUE
 						    AND story.Published = TRUE
+						    AND story.StoryPrivacyType_StoryPrivacyTypeId = 1
+						    AND admin_approve_story.Approved = TRUE						    
 						) AS totalPublishedStories,
 						
 						(
@@ -853,6 +1018,7 @@ class AccountModel extends Model {
 						ON (uas.User_UserId = u.UserId) AND (uas.Active = TRUE)
 
 						WHERE u.Active = TRUE
+						AND u.ProfilePrivacyType_PrivacyTypeId = 1
 						ORDER BY u.DateCreated
 						LIMIT :start, :howmany";
 
@@ -897,9 +1063,13 @@ class AccountModel extends Model {
 						(
 							SELECT COUNT(1)
 							FROM story 
+							LEFT JOIN admin_approve_story
+							ON (admin_approve_story.Story_StoryId = story.StoryId) AND (admin_approve_story.Active = TRUE)
 							WHERE story.User_UserId = u.UserId
 						    AND story.Active = TRUE
 						    AND story.Published = TRUE
+						    AND story.StoryPrivacyType_StoryPrivacyTypeId = 1
+						    AND admin_approve_story.Approved = TRUE
 						) AS totalPublishedStories,
 						
 						(
@@ -926,6 +1096,7 @@ class AccountModel extends Model {
 						ON (uas.User_UserId = u.UserId) AND (uas.Active = TRUE)
 
 						WHERE u.Active = TRUE
+						AND u.ProfilePrivacyType_PrivacyTypeId = 1
 						ORDER BY totalFollowers DESC
 						LIMIT :start, :howmany";
 

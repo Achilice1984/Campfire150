@@ -1,6 +1,6 @@
 
 <?php
-	// debugit($storyViewModel);
+	debugit($storyViewModel);
 	// debugit($userViewModel);
 	//debugit($aprovalViewModel);
 ?>
@@ -10,7 +10,7 @@
 	<div class="row">
   		<div class="col-md-3">
   			<div class="thumbnail">
-      			<img src="../../static/images/default-user-image.png" alt="">
+      			<img class="img-rounded" src="../../static/images/default-user-image.png" alt="">
   				<h2><?php echo gettext("Owner Information"); ?></h2>
   				<ul>
   					<li><?php echo $userViewModel->FirstName ?></li>
@@ -38,7 +38,7 @@
 
 	            <?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
-<<<<<<< HEAD
+
 	                //Add success message block to the page
 	                include(APP_DIR . 'views/shared/displaySuccess.php'); 
 	            ?>
@@ -46,14 +46,13 @@
 	            <div class="checkbox">
 	                <label>	                	
 	                    <input type="checkbox" id="Approved" name="Approved"> <?php echo gettext("Approve Story"); ?>
-=======
+
 	            <div class="radio">
 	                <label>
 	                    <input type="radio" name="Approved" value="<?php echo $approvalViewModel->Approved; ?>"> <?php echo gettext("Approve Story"); ?>
 	                </label>
 	                <label>
 	                    <input type="radio" name="Rejected" value="<?php echo $approvalViewModel->Rejected; ?>"> <?php echo gettext("Reject Story"); ?>
->>>>>>> master
 	                </label>
 	              
 	            </div>

@@ -25,7 +25,8 @@ class Model {
 			//Check if a connection exists
 			if(!isset(self::$connection))
 			{
-		    	self::$connection = new PDO($config['db_dsn'], $config['db_username'], $config['db_password']);
+		    	self::$connection = new PDO($config['db_dsn'], $config['db_username'], $config['db_password'],
+		    								array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8", PDO::MYSQL_ATTR_INIT_COMMAND => "SET CHARACTER SET utf8"));
 
 		    	if($config["debugMode"] == true)
 				{

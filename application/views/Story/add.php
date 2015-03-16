@@ -27,9 +27,9 @@
                 <input type="hidden" name="image_y" id="image_y" value="">
                 <input type="hidden" name="image_height" id="image_height" value="">
                 <input type="hidden" name="image_width" id="image_width" value="">
-                <div id="addImageDiv" class="img-rounded center-block" style="border-radius: 15px; position: relative; min-height:200px; border: 1px solid #E8E8E8; overflow: hidden; padding: 0; margin: 0;">
+                <div id="addImageDiv" class="img-rounded center-block" style="border-radius: 10px !important; position: relative; min-height:200px; border: 1px solid #E8E8E8; overflow: hidden; padding: 0; margin: 0;">
                     
-                    <img id="imgPreviewer" src="" class="img-rounded img-responsive center-block" alt="" style="width:1200px; z-index: 10;" />
+                    <img id="imgPreviewer" src="" class="img-rounded img-responsive center-block" alt="" style="width:1200px; z-index: 10; " />
 
 
                       <div class="form-group" style="position: absolute; z-index: 50; bottom:0; float: left;">   

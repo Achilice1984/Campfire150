@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 $(function(){
 	initThumbs();
 });
@@ -18,6 +19,8 @@ function initThumbs()
 } 
 
 
+=======
+>>>>>>> master
 $("#latestStoryListButton").click(function(){
 	var button = $(this);
 

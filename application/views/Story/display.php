@@ -159,7 +159,19 @@
     
 </div>
 
+<?php if(count($relatedStories) > 0) { ?>
+    <div class="bg-grey padding-xl">
+        <div class="container">
+            <h2 style="font-size: 3em;"><?php echo gettext("Related Stories"); ?><small> <?php echo gettext("keep on reading!"); ?></small></h2>
+            <div id="StoryListContainer" class="row">
+               <?php foreach ($relatedStories as $story): ?>
+                   <?php if($story->StoryId != $storyViewModel->StoryId) { include(APP_DIR . 'views/shared/_storyList.php'); } ?>
+               <?php endforeach ?>
+            </div>
+        </div>
+    </div>
+<?php } ?>
 
+<?php //debugit($storyViewModel); 
 
-
-<?php //debugit($storyViewModel); ?>
+//debugit($relatedStories);?>

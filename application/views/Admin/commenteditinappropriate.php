@@ -16,7 +16,7 @@
     <div class="row">
   		<div class="col-md-3">
   			<div class="thumbnail">
-      			<img src="../../static/images/default-user-image.png" alt="">
+      			<img class="img-rounded" src="../../static/images/default-user-image.png" alt="">
   				<h2><?php echo gettext("Owner Information"); ?></h2>
   				<ul>
   					<li><?php echo $userViewModel->FirstName ?></li>

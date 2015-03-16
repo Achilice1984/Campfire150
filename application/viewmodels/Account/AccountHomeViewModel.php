@@ -9,6 +9,7 @@ class AccountHomeViewModel extends ViewModel
 	public $recommendedStoryList;
 	public $usersStoryList;
 	public $followingList;
+	public $followerList;
 
 	//Total Values
 	public $totalFollowing; //How many people are they following

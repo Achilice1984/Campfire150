@@ -8,39 +8,41 @@ class Account extends Controller {
 	}
 
 	//The home view will be where a user can view all of their account information
-	function home()
-	{	
-		try
-		{
-			//Check if users is authenticated for this request
-			//Will kick out if not authenticated
-			$this->AuthRequest();
+	// function home()
+	// {	
+	// 	try
+	// 	{
+	// 		//Check if users is authenticated for this request
+	// 		//Will kick out if not authenticated
+	// 		$this->AuthRequest();
 
-			//Load the accountHomeViewModel
-			$accountHomeViewModel = $this->loadViewModel('AccountHomeViewModel');
+	// 		//Load the accountHomeViewModel
+	// 		$accountHomeViewModel = $this->loadViewModel('AccountHomeViewModel');
 
-			//Load the AccountModel to access account functions
-			$model = $this->loadModel('AccountModel');
+	// 		//Load the AccountModel to access account functions
+	// 		$model = $this->loadModel('AccountModel');
 
-			//Load the home view
-			$view = $this->loadView('home');
+	// 		//Load the home view
+	// 		$view = $this->loadView('home');
 
-			//Add a variable with data so that it can be accessed in the view
-			$view->set('accountHomeViewModel', $accountHomeViewModel);
+	// 		//Add a variable with data so that it can be accessed in the view
+	// 		$view->set('accountHomeViewModel', $accountHomeViewModel);
 
-			//Render the home view. true indicates to load the layout pages as well
-			$view->render(true);
-		}
-		catch(Exception $ex)
-		{
+	// 		//Render the home view. true indicates to load the layout pages as well
+	// 		$view->render(true);
+	// 	}
+	// 	catch(Exception $ex)
+	// 	{
 
-		}
-	}	
+	// 	}
+	// }	
 
-	function user($userID)
+	function home($userID = null)
 	{
 		try
 		{
+			$userID = $userID != null ? $userID : $this->currentUser->UserId;
+
 			//Check if users is authenticated for this request
 			//Will kick out if not authenticated
 			$this->AuthRequest();
@@ -61,42 +63,60 @@ class Account extends Controller {
 			//Load the AccountModel to access account functions
 			$storyModel = $this->loadModel('Story/StoryModel');
 
-			//Populate data to be shown on the page
-			$accountHomeViewModel->recommendedStoryList = $storyModel->getStoriesRecommendedByCurrentUser($userID);
-			$accountHomeViewModel->usersStoryList = $storyModel->getStoriesWrittenByCurrentUser($userID);
-			$accountHomeViewModel->followingList = $model->getFollowing($userID);
+			$accountHomeViewModel->userDetails = $model->getUserProfileByID_home($this->currentUser->UserId, $userID);
 
-			//How many people are they following
-			$accountHomeViewModel->totalFollowing = $model->getTotalFollowing($userID);
+			if(isset($accountHomeViewModel->userDetails) && $accountHomeViewModel->userDetails->ProfilePrivacyType_PrivacyTypeId == 1 && $accountHomeViewModel->userDetails->Active == TRUE)
+			{
+				//Populate data to be shown on the page
+				$accountHomeViewModel->recommendedStoryList = $storyModel->getStoriesRecommendedByCurrentUser($userID);
+				$accountHomeViewModel->usersStoryList = $storyModel->getStoriesWrittenByCurrentUser($userID);
+				$accountHomeViewModel->followingList = $model->getFollowing($userID);
+				$accountHomeViewModel->followerList = $model->getFollowers($userID);
 
-			// How many people are following the user
-			$accountHomeViewModel->totalFollowers = $model->getTotalFollowers($userID);
+				//How many people are they following
+				$accountHomeViewModel->totalFollowing = $model->getTotalFollowing($userID);
 
-			//How many approved stories
-			$accountHomeViewModel->totalApprovedStories = $storyModel->getTotalStoriesApproved($userID);
+				// How many people are following the user
+				$accountHomeViewModel->totalFollowers = $model->getTotalFollowers($userID);
 
-			//How many pending stories
-			$accountHomeViewModel->totalPendingStories = $storyModel->getTotalStoriesPending($userID);
+				$accountHomeViewModel->totalRecommendations = $storyModel->getTotalRecommendations($userID);
 
-			//How many denied stories
-			$accountHomeViewModel->totalDeniedStories = $storyModel->getTotalStoriesDenied($userID);
+				//How many approved stories
+				$accountHomeViewModel->totalApprovedStories = $storyModel->getTotalStoriesApproved($userID);
 
-			//How many approved comments
-			$accountHomeViewModel->totalApprovedComments = $storyModel->getTotalCommentsApproved($userID);
+				//How many pending stories
+				$accountHomeViewModel->totalPendingStories = $storyModel->getTotalStoriesPending($userID);
 
-			//How many penfing comments
-			$accountHomeViewModel->totalPendingComments = $storyModel->getTotalCommentsPending($userID);
+				//How many denied stories
+				$accountHomeViewModel->totalDeniedStories = $storyModel->getTotalStoriesDenied($userID);
 
-			$accountHomeViewModel->userDetails = $model->getProfileByID($userID);
+				//How many approved comments
+				$accountHomeViewModel->totalApprovedComments = $storyModel->getTotalCommentsApproved($userID);
 
-			//Load the home view
-			$view = $this->loadView('home');
+				//How many penfing comments
+				$accountHomeViewModel->totalPendingComments = $storyModel->getTotalCommentsPending($userID);			
 
-			//Add a variable with data so that it can be accessed in the view
-			$view->set('accountHomeViewModel', $accountHomeViewModel);
+				//Load the home view
+				$view = $this->loadView('home');
 
-			//Render the home view. true indicates to load the layout pages as well
-			$view->render(true);
+				//Load up some js files
+				$view->setJS(array(
+					array("static/js/followUser.js", "intern")
+				));
+
+				//Add a variable with data so that it can be accessed in the view
+				$view->set('accountHomeViewModel', $accountHomeViewModel);
+
+				//Render the home view. true indicates to load the layout pages as well
+				$view->render(true);
+			}
+			else
+			{
+				addErrorMessage("dbError", gettext("An error occurred while attempting to retrieve user details."), 1);
+
+				//$this->redirect("");				
+				debugit($accountHomeViewModel->userDetails);
+			}
 		}
 		catch(Exception $ex)
 		{
@@ -371,7 +391,7 @@ class Account extends Controller {
 					 //echo "<br />" .$savedSuccessfuly;
 					// if($savedSuccessfuly == false)
 					// {
-					// 	//Ann error occoured you hvae to remove new profile picture meta data from the database
+					// 	//Ann error occurred you hvae to remove new profile picture meta data from the database
 					// 	$model->removeImageMetaData($imageId);
 
 					// 	//add error message so user knows whats up
@@ -483,7 +503,8 @@ class Account extends Controller {
 
 		//Load up some js files
 		$view->setJS(array(
-			array("static/js/usersearch.js", "intern")
+			array("static/js/usersearch.js", "intern"),
+			array("static/js/followUser.js", "intern")
 		));
 		$view->setCSS(array(
 			array("static/css/usersearch.css", "intern")
@@ -491,6 +512,61 @@ class Account extends Controller {
 
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);
+	}
+
+	function ajaxSearch()
+	{
+		$accountModel = $this->loadModel("AccountModel");
+		$searchResults = array();
+
+		if(isset($_POST["UserSearch"]))
+		{
+			$searchResults = $accountModel->searchForUser($_POST["UserSearch"], $this->currentUser->UserId, 10, isset($_POST["UserSearchPage"]) ? $_POST["UserSearchPage"] : 1);
+		}
+
+		if (isset($searchResults)) {
+
+			$currentUser = $this->currentUser;
+			
+			foreach ($searchResults as $user)
+			{
+				include(APP_DIR . "views/Account/_searchPanel.php");
+			}
+		}
+	}
+
+	function mostFollowersUserList()
+	{
+		$accountModel = $this->loadModel("AccountModel");
+		$searchResults = array();
+
+		$searchResults = $accountModel->getMostFollowersUserList($this->currentUser->UserId, 10, isset($_POST["UserMostFollowersPage"]) ? $_POST["UserMostFollowersPage"] : 1);
+
+		$currentUser = $this->currentUser;
+
+		if (isset($searchResults)) {
+			foreach ($searchResults as $user)
+			{
+				include(APP_DIR . "views/Account/_searchPanel.php");
+			}
+		}
+	}	
+
+	function latestUserList()
+	{
+		$accountModel = $this->loadModel("AccountModel");
+		$searchResults = array();
+
+		$searchResults = $accountModel->getLatestUserList($this->currentUser->UserId, 10, isset($_POST["UsersLatestPage"]) ? $_POST["UsersLatestPage"] : 1);
+
+		$currentUser = $this->currentUser;
+
+		if (isset($searchResults)) {
+			foreach ($searchResults as $user)
+			{
+				include(APP_DIR . "views/Account/_searchPanel.php");
+			}
+		}
 	}
 
 	function follow()

@@ -57,8 +57,8 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="UserActionStatement"><?php echo gettext("User Action Statement"); ?></label>
-                                <input type="text" class="form-control" id="UserActionStatement" name="UserActionStatement" placeholder="<?php echo gettext("Enter Your User Action Statement"); ?>" value="<?php echo $userViewModel->UserActionStatement; ?>">
+                                <label for="ActionStatement"><?php echo gettext("User Action Statement"); ?></label>
+                                <input type="text" class="form-control" id="ActionStatement" name="ActionStatement" placeholder="<?php echo gettext("Enter Your User Action Statement"); ?>" value="<?php echo $userViewModel->ActionStatement; ?>">
                             </div>
                             
                             <h3><?php echo gettext("User Details"); ?></h3>

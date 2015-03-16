@@ -1,4 +1,7 @@
 <?php
+
+header('Content-Type:text/html; charset=UTF-8');
+
 /*
  * PIP v0.5.3
  */
