@@ -63,7 +63,7 @@ class Account extends Controller {
 			//Load the AccountModel to access account functions
 			$storyModel = $this->loadModel('Story/StoryModel');
 
-			$accountHomeViewModel->userDetails = $model->getProfileByID($userID);
+			$accountHomeViewModel->userDetails = $model->getUserProfileByID_home($this->currentUser->UserId, $userID);
 
 			if(isset($accountHomeViewModel->userDetails) && $accountHomeViewModel->userDetails->ProfilePrivacyType_PrivacyTypeId == 1 && $accountHomeViewModel->userDetails->Active == TRUE)
 			{
@@ -98,6 +98,11 @@ class Account extends Controller {
 
 				//Load the home view
 				$view = $this->loadView('home');
+
+				//Load up some js files
+				$view->setJS(array(
+					array("static/js/followUser.js", "intern")
+				));
 
 				//Add a variable with data so that it can be accessed in the view
 				$view->set('accountHomeViewModel', $accountHomeViewModel);

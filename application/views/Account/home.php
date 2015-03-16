@@ -8,57 +8,56 @@
 
 ?>
 
+<div class="bg-primary" style="min-width: 100%; min-height: 200px;">
+	<img style="" class="img-responsive hidden-xs" src="<?php echo BASE_URL; ?>static/images/default_background_image.jpg" alt="<?php echo gettext("Background Picture"); ?>">
+</div>
+
 <div class="container" style="padding-top: 50px; padding-bottom: 50px;">
     <div class="row">
-    	<div class="col-md-3">
+    	<div style="margin-top: -200px; padding-right: 40px;" class="col-md-3">
     		<div class="row">
 	    		<a href="<?php echo BASE_URL . "account/home/" . $accountHomeViewModel->userDetails->UserId; ?>">
-	  				<img style="max-height: 200px;" class="img-responsive storyProfilePic" src="<?php echo BASE_URL; ?>static/images/default-user-image.png" alt="<?php echo gettext("Profile Picture"); ?>">
+	  				<img style="max-height: 270px;" class="img-responsive img-thumbnail storyProfilePic" src="<?php echo BASE_URL; ?>static/images/default-user-image.png" alt="<?php echo gettext("Profile Picture"); ?>">
 				</a>
 			</div>
 			<div class="row">
-				<h3>About</h3>
+				<h2>
+					<?php echo $accountHomeViewModel->userDetails->FirstName . " " . $accountHomeViewModel->userDetails->LastName; ?>
+				</h2>
+			</div>
+			<div style="margin-bottom: 10px;" class="row">
+				<?php
+					if(isset($accountHomeViewModel->userDetails->UserId) && $accountHomeViewModel->userDetails->UserId != $currentUser->UserId && $currentUser->IsAuth)
+		            {
+		                if(isset($accountHomeViewModel->userDetails->FollowingUser) && $accountHomeViewModel->userDetails->FollowingUser == TRUE)
+		                {
+		                    echo '<button style="display:block; width: 100%; margin-top: 5px;" data-userId="' . $accountHomeViewModel->userDetails->UserId . '" data-additional-text="' . gettext("Follow") . '" data-ajaxurl="' . BASE_URL . 'account/follow" class="FollowButton btn btn-primary btn-sm"><span class="glyphicon glyphicon-user"></span> ' . gettext("Following") . '</button>';
+		                }
+		                else
+		                {
+		                    echo '<button style="display:block; width: 100%; margin-top: 5px;" data-userId="' . $accountHomeViewModel->userDetails->UserId . '" data-additional-text="' . gettext("Following") . '" data-ajaxurl="' . BASE_URL . 'account/follow" class="FollowButton btn btn-default btn-sm"><span class="glyphicon glyphicon-user"></span> ' . gettext("Follow") . '</button>';
+		                }
+		            }
+		            else
+		            {
+		            	?> <a class="btn btn-default btn-sm" style="display:block; width: 100%; margin-top: 5px;" href="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><?php echo gettext("Edit Profile"); ?></a> <?php
+		            }
+				?>
+    		</div> 
+			
+			<div style="color: #333;" class="row">
 				<?php echo $accountHomeViewModel->userDetails->About; ?>
 			</div>
-			<div class="row">
-				<h3>Action Statement</h3>
-				<?php echo $accountHomeViewModel->userDetails->UserActionStatement; ?>
+			<div style="margin-bottom: 50px; margin-top: 10px;" class="row">
+				<?php if(isset($accountHomeViewModel->userDetails->UserActionStatement)) { ?>
+					<span class="glyphicon glyphicon-bullhorn"></span> <?php echo $accountHomeViewModel->userDetails->UserActionStatement; ?>
+				<?php } ?>
 			</div>
-			<div class="row">
-				<h3>Followers</h3>
-			</div>
-
-			<div class="row">
-				<h3>Stories</h3>
-			</div>
+			
     	</div>
-    	<div class="col-md-9">
+    	<div style="margin-top: -40px;" class="col-md-9">    		  
     		<div class="row">
-    			<div class="col-md-9">
-    				<h2>
-    					<?php echo $accountHomeViewModel->userDetails->FirstName . " " . $accountHomeViewModel->userDetails->LastName; ?>
-					</h2>
-				</div>
-				<div class="col-md-3">
-					<a href="<?php echo BASE_URL; ?>story/add" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Share a Story"); ?></a>
-				</div>
-    		</div>   
-    		<div class="row">
-    			<!-- <div class="btn-group btn-group-justified" role="group" aria-label="...">
-					<div class="btn-group" role="group">
-				    	<button type="button" class="btn btn-default"><?php echo gettext("News Feed"); ?></button>
-					</div>
-					<div class="btn-group" role="group">
-				    	<button type="button" class="btn btn-default"><?php echo gettext("My Stories"); ?></button>
-					</div>
-					<div class="btn-group" role="group">
-				    	<button type="button" class="btn btn-default"><?php echo gettext("My Recommendations"); ?></button>
-					</div>
-					<div class="btn-group" role="group">
-				    	<button type="button" class="btn btn-default"><?php echo gettext("Following"); ?></button>
-					</div>
-				</div> -->
-				<ul class="nav nav-pills">
+				<ul style="border-bottom: 1px solid #eee" class="nav nav-pills">
 				    <li role="presentation" class="active"><a href="#User_NewsFeed" aria-controls="User_NewsFeed" role="tab" data-toggle="tab"><?php echo gettext("News Feed"); ?></a></li>
 				    <li role="presentation"><a href="#User_MyStories" aria-controls="User_MyStories" role="tab" data-toggle="tab"><?php echo gettext("My Stories"); ?> <span class="badge"><?php echo $accountHomeViewModel->totalApprovedStories; ?></span></a></li>
 				    <li role="presentation"><a href="#User_MyRecommendations" aria-controls="User_MyRecommendations" role="tab" data-toggle="tab"><?php echo gettext("My Recommendations"); ?> <span class="badge"><?php echo $accountHomeViewModel->totalRecommendations; ?></span></a></li>
