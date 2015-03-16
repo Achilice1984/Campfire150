@@ -494,6 +494,33 @@ class AccountModel extends Model {
 		return null;
 	}
 
+	public function getUserProfileByID_home($currentUserId, $userID)
+	{
+		$statement = "SELECT user.*,
+						u.ActionStatement as UserActionStatement,
+						f.Active AS FollowingUser
+
+						FROM user
+
+						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
+						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
+
+						LEFT JOIN following f
+						ON (f.User_FollowerId = user.UserId) AND (f.User_UserId = :CurrentUserId) AND (f.Active = TRUE)
+
+						WHERE user.UserId = :UserId
+						AND user.Active = TRUE";
+
+		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":CurrentUserId" => $currentUserId), "shared/UserViewModel");
+
+		if(isset($user[0]))
+		{
+			return $user[0];
+		}
+
+		return null;
+	}
+
 	public function getProfileByEmail($email)
 	{
 		$statement = "SELECT user.* FROM user,
