@@ -8,7 +8,7 @@
 
 ?>
 
-<div class="bg-primary" style="min-width: 100%; min-height: 200px;">
+<div class="bg-primary" style="min-width: 100%; min-height: 200px; margin-top: -15px;">
 	<img style="" class="img-responsive hidden-xs" src="<?php echo BASE_URL; ?>static/images/default_background_image.jpg" alt="<?php echo gettext("Background Picture"); ?>">
 </div>
 

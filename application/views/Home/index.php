@@ -4,13 +4,11 @@
 
         <section>
             <div class="container">
-<<<<<<< HEAD
-=======
 
                 <?php include(APP_DIR . 'views/shared/messages.php'); ?>
                 
                 <h1><?php echo gettext("Campfire Stories"); ?></h1>
->>>>>>> master
+
                 <nav role="navigation">
                     <ul class="nav nav-tabs">
                         <li class="active"><a data-request-url="<?php echo BASE_URL; ?>home/latestStoryHome" id="latestStoryListButton" href="#"><?php echo gettext("Latest"); ?></a></li>
