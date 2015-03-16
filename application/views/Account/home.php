@@ -21,7 +21,8 @@
 				<?php echo $accountHomeViewModel->userDetails->About; ?>
 			</div>
 			<div class="row">
-				<h3>Following</h3>
+				<h3>Action Statement</h3>
+				<?php echo $accountHomeViewModel->userDetails->UserActionStatement; ?>
 			</div>
 			<div class="row">
 				<h3>Followers</h3>

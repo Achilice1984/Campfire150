@@ -37,10 +37,12 @@ class Account extends Controller {
 	// 	}
 	// }	
 
-	function home($userID)
+	function home($userID = null)
 	{
 		try
 		{
+			$userID = $userID != null ? $userID : $this->currentUser->UserId;
+
 			//Check if users is authenticated for this request
 			//Will kick out if not authenticated
 			$this->AuthRequest();
@@ -496,7 +498,8 @@ class Account extends Controller {
 
 		//Load up some js files
 		$view->setJS(array(
-			array("static/js/usersearch.js", "intern")
+			array("static/js/usersearch.js", "intern"),
+			array("static/js/followUser.js", "intern")
 		));
 		$view->setCSS(array(
 			array("static/css/usersearch.css", "intern")
