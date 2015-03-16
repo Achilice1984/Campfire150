@@ -1,12 +1,14 @@
 
-<div class="container" style="padding-top: 50px; padding-bottom: 50px; min-height: 600px;">
-	<ul class="nav nav-pills storySearchBar">
-	    <li role="presentation" class="active"><a href="#Story_Search" aria-controls="Story_Search" role="tab" data-toggle="tab">Search</a></li>
-	    <li role="presentation"><a href="#Story_Recommended" aria-controls="Story_Recommended" role="tab" data-toggle="tab">Most Recommended</a></li>
-	    <li role="presentation"><a href="#Story_Latest" aria-controls="Story_Latest" role="tab" data-toggle="tab">Latest</a></li>
-	</ul>   
+<div class="container">
+	<nav>
+		<ul class="nav nav-tabs">
+		    <li role="presentation" class="active"><a href="#Story_Search" aria-controls="Story_Search" role="tab" data-toggle="tab">Search</a></li>
+		    <li role="presentation"><a href="#Story_Recommended" aria-controls="Story_Recommended" role="tab" data-toggle="tab">Most Recommended</a></li>
+		    <li role="presentation"><a href="#Story_Latest" aria-controls="Story_Latest" role="tab" data-toggle="tab">Latest</a></li>
+		</ul>  
+	</nav> 
 
-	<div class="tab-content" style="padding:20px;">
+	<div class="tab-content">
 	    <div role="tabpanel" class="tab-pane active" id="Story_Search">
 			<div class="row text-center">
 				<div class="col-md-12">
@@ -14,9 +16,9 @@
 						<input type="hidden" name="StorySearchPage" id="StorySearchPage" value="1">
 
 						<div class="input-group">
-				            <input type="text" name="StorySearch" id="StorySearch" value="<?php echo (isset($_POST["StorySearch"]) ? $_POST["StorySearch"] : ""); ?>" class="form-control" placeholder="<?php echo gettext("Search Stories!"); ?>">
+				            <input type="text" name="StorySearch" id="StorySearch" value="<?php echo (isset($_POST["StorySearch"]) ? $_POST["StorySearch"] : ""); ?>" class="form-control" placeholder="<?php echo gettext("Search Stories"); ?>">
 				            <div class="input-group-btn">
-				                <button id="StorySearchButton" class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+				                <button id="StorySearchButton" class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
 				            </div>
 				        </div>						
 					</form>
