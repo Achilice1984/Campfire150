@@ -2,11 +2,7 @@
 
 /* -------------------- General -------------------- */
 
-<<<<<<< HEAD
-* {
-=======
 *:not(img):not(.badge):not(.WriteStoryButton):not(.jumbotron) {
->>>>>>> master
 	border-radius: 0 !important;
 }
 body {
@@ -127,12 +123,8 @@ header, footer, nav {
 		padding: 0;
 	}
 	.nav-container {
-<<<<<<< HEAD
 		min-height: 145px;
-=======
-		min-height: 110px;
 		margin-top: 5px !important;
->>>>>>> master
 	}
 	.navbar {
 		position: absolute;
@@ -143,22 +135,10 @@ header, footer, nav {
 	.navbar-nav a {
 		padding: 10px !important;		
 	}
-<<<<<<< HEAD
 	.WriteStoryButton {
 		background-color: #fff;
 		border: 1px solid #337ab7;
 		margin: -1px 0px;
-=======
-	.WriteStoryButton {		
-		background-color: white;
-		color: #337ab7;
-		border: 1px solid #5bc0de;
-		border-radius: 20px !important;
-		margin-right: 5px !important;
-		margin-left: 5px !important;
-		
-		margin: 0px;
->>>>>>> master
 	}
 	.WriteStoryButton:hover {
 		background-color: #eea236 !important;

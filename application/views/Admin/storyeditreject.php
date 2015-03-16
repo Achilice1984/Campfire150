@@ -39,11 +39,7 @@
 
 	            <div class="checkbox">
 	                <label>
-<<<<<<< HEAD
 	                    <input type="checkbox" name="Rejected" value="<?php echo $approvalViewModel->Approved; ?>"> <?php echo gettext("Reject Story"); ?>
-=======
-	                    <input type="checkbox" name="Approve" value="<?php echo $aprovalViewModel->Approved; ?>"> <?php echo gettext("Approve Story"); ?>
->>>>>>> master
 	                </label>
 	            </div>
 	            <div class="form-group">
