@@ -20,6 +20,16 @@ class AccountHomeViewModel extends ViewModel
 	public $totalApprovedComments; //How many approved comments
 	public $totalPendingComments; //How many penfing comments
 
+	public $backgroundImage;
+	public $profileImage;
+
+
+	public $newsFeed;
+	public $pendingStories;
+	public $draftStories;
+	public $rejectedStories;
+
+	public $pendingComments;
 
 	//ProfileViewModel.php
 	public $userDetails;
