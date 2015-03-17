@@ -1,14 +1,8 @@
 
 <?php
-<<<<<<< HEAD
-	debugit($storyViewModel);
-	debugit($userViewModel);
-	debugit($approvalViewModel);
-=======
-		debugit($storyViewModel);
-		debugit($userViewModel);
-		debugit($aprovalViewModel);
->>>>>>> master
+ //	debugit($storyViewModel);
+// 	debugit($userViewModel);
+// 	debugit($approvalViewModel);
 ?>
 <div class="container">
 
@@ -30,25 +24,19 @@
   		<div class="col-md-6">
   			<div class="thumbnail">
       			<img src="../../static/images/default_story_image.jpg" alt="">
-  				<h2><?php echo $storyViewModel->StoryTitle ?></h2>
   					<div class="thumbnail">
-						<h3><?php echo gettext("Comment"); ?></h3>
+  						<h2><?php echo $storyViewModel->StoryTitle ?></h2>
   						<p><?php echo $storyViewModel->Content ?></p>
+						<h3><?php echo gettext("Comment"); ?></h3>
+  						<p><?php echo $commentViewModel->Content ?></p>
   					</div>
   			</div>
   		</div>
 	</div>
     <div class="row">
-		
-<<<<<<< HEAD
-		<div class="col-md-6">
-			<form action="<?php echo BASE_URL; ?>account/login" method="post" id="loginForm">
 
-				<input type="hidden" name="Id" value="<?php echo $approvalViewModel->Id; ?>">
-=======
 		<div class="col-md-9">
-			<form action="<?php echo BASE_URL; ?>admin/commenteditreject" method="post" id="editForm">
->>>>>>> master
+			<form action="<?php echo BASE_URL . "admin/commenteditreject/" . $commentViewModel->CommentId; ?>" method="post" id="editForm">
 
 				<input type="hidden" name="Id" value="<?php echo $approvalViewModel->Id; ?>">
 
@@ -56,21 +44,12 @@
 
 	            <div class="checkbox">
 	                <label>
-<<<<<<< HEAD
-	                    <input type="checkbox" name="Approved" value="<?php echo $approvalViewModel->Approved; ?>"> <?php echo gettext("Approve Story"); ?>
-	                </label>
-	            </div>
-	            <div class="form-group">
-	                <label for="Content"><?php echo gettext("Response"); ?></label>
-	                <textarea class="form-control" id="Password" name="Password"><?php echo $approvalViewModel->Content; ?></textarea>
-=======
-	                    <input type="checkbox" name="Approved" value="<?php echo $aprovalViewModel->Approved; ?>"> <?php echo gettext("Approve Comment"); ?>
+	                    <input type="checkbox" name="Approval" value="TRUE"> <?php echo gettext("Approve Story"); ?>
 	                </label>
 	            </div>
 	            <div class="form-group">
 	                <label for="Content"><?php echo gettext("Reason"); ?></label>
-	                <textarea class="form-control" id="Content" name="Content"><?php echo $aprovalViewModel->Content; ?></textarea>
->>>>>>> master
+	                <textarea class="form-control" id="Content" name="Content"><?php echo $approvalViewModel->Content; ?></textarea>
 	            </div>
 	            
 

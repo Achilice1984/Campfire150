@@ -1,7 +1,7 @@
 <?php
-	 debugit($storyViewModel);
-	 debugit($userViewModel);
-	 debugit($approvalViewModel);
+	  //debugit($storyViewModel);
+	 // debugit($userViewModel);
+	 // debugit($approvalViewModel);
 ?>
 <div class="container">
 	
@@ -39,7 +39,7 @@
 
 	            <div class="checkbox">
 	                <label>
-	                    <input type="checkbox" name="Rejected" value="<?php echo $approvalViewModel->Approved; ?>"> <?php echo gettext("Reject Story"); ?>
+	                    <input type="checkbox" name="Approval" value="TRUE"> <?php echo gettext("Approve Story"); ?>
 	                </label>
 	            </div>
 	            <div class="form-group">

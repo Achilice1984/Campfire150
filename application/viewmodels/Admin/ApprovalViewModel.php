@@ -4,23 +4,12 @@
 */
 class ApprovalViewModel extends ViewModel
 {
-	public $test;
 	public $Id; //Id of story, or comment
 	public $Content; // Comment from admin
-	public $Approved; // if story is apporved or not
-	public $Rejected; // if story is apporved or not
-	public $Inappropriated; // if story is apporved or not
+	public $Approval; // if story is apporved or not
 
 	function __construct()
-	{		
-		$errors["test"] = array(
-			'required' =>
-				array(
-					'Message' => gettext('The Id field is required!'),
-					'Properties' => array()
-				)
-		);
-
+	{
 		$errors["Id"] = array(
 			'required' =>
 				array(
@@ -37,26 +26,10 @@ class ApprovalViewModel extends ViewModel
 				)
 		);
 
-		$errors["Approved"] = array(
+		$errors["Approval"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Approved field is required!'),
-					'Properties' => array()
-				)
-		);
-
-		$errors["Rejected"] = array(
-			'required' =>
-				array(
-					'Message' => gettext('The Rejected field is required!'),
-					'Properties' => array()
-				)
-		);
-
-		$errors["Inappropriated"] = array(
-			'required' =>
-				array(
-					'Message' => gettext('The Inappropriated field is required!'),
+					'Message' => gettext('The Approval field is required!'),
 					'Properties' => array()
 				)
 		);

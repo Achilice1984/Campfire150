@@ -2,9 +2,9 @@
 /**
 * 
 */
-class StoryQuestionViewModel extends ViewModel
+class StoryAnswerViewModel extends ViewModel
 {
-	public $QuestionId; //Id of item
+	public $AnswerId; //Id of item
 	public $NameE; // English Name
 	public $NameF; // French Name
 	public $DateCreated;
