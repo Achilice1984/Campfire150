@@ -156,9 +156,12 @@
 					<div class="tab-content" style="padding:20px;">
 					    <div role="tabpanel" class="tab-pane active" id="User_NewsFeed">
 					    	<?php 
-								foreach ($accountHomeViewModel->newsFeed as $feed)
-								{
-									include(APP_DIR . "views/Account/_newsFeed.php");
+					    		if(isset($accountHomeViewModel->newsFeed))
+					    		{
+									foreach ($accountHomeViewModel->newsFeed as $feed)
+									{
+										include(APP_DIR . "views/Account/_newsFeed.php");
+									}
 								}			
 							?>  
 					    </div>
