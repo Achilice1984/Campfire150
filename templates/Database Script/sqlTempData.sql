@@ -84,24 +84,7 @@ INSERT INTO `campfire`.`answer` (`AnswerId`, `AnswerE`, `AnswerF`) VALUES (NULL,
 -- Insert into Tag table
 --
 
-<<<<<<< HEAD:templates/Database Script/sqlTempData.sql
-INSERT INTO Tag (NameE, NameF)
-VALUES ("Art", "Art");
-INSERT INTO Tag (NameE, NameF)
-VALUES ("Challenges", "Défis");
-INSERT INTO Tag (NameE, NameF)
-VALUES ("Climate/Weather", "Climat/Temps");
-INSERT INTO Tag (NameE, NameF)
-VALUES ("Environment", "Environnement");
-INSERT INTO Tag (NameE, NameF)
-VALUES ("Family", "Famille");
-INSERT INTO Tag (NameE, NameF)
-VALUES ("Leadership", "Leadership");
-INSERT INTO Tag (NameE, NameF)
-VALUES ("Technology", "Technologie");
-INSERT INTO Tag (NameE, NameF)
-VALUES ("Uncategorized", "Non classé");
-=======
+
 INSERT INTO Tag (TagName)
 VALUES ("Art");
 INSERT INTO Tag (TagName)
@@ -118,7 +101,7 @@ INSERT INTO Tag (TagName)
 VALUES ("Technology");
 INSERT INTO Tag (TagName)
 VALUES ("Uncategorized");
->>>>>>> origin/master:templates/sqlTempData.sql
+
 
 --
 -- Insert into LanguageType table
@@ -134,22 +117,7 @@ VALUES ("French", "Français");
 --
 
 INSERT INTO StoryPrivacyType (NameE, NameF)
-<<<<<<< HEAD:templates/Database Script/sqlTempData.sql
-VALUES ("Public", "Public");
-INSERT INTO StoryPrivacyType (NameE, NameF)
-VALUES ("Private", "Privé");
-INSERT INTO StoryPrivacyType (NameE, NameF)
-VALUES ("Friends", "Amis");
 
---
--- Insert into PrivacyType table
---
-
-INSERT INTO ProfilePrivacyType (NameE, NameF)
-VALUES ("Public", "Public");
-INSERT INTO ProfilePrivacyType (NameE, NameF)
-VALUES ("Private", "Privé");
-=======
 VALUES ("Public", "Public");
 INSERT INTO StoryPrivacyType (NameE, NameF)
 VALUES ("Private", "Privé");
@@ -160,7 +128,7 @@ INSERT INTO ProfilePrivacyType (NameE, NameF)
 VALUES ("Public", "Public");
 INSERT INTO ProfilePrivacyType (NameE, NameF)
 VALUES ("Private", "Privé");
->>>>>>> origin/master:templates/sqlTempData.sql
+
 INSERT INTO ProfilePrivacyType (NameE, NameF)
 VALUES ("Friends", "Amis");
 

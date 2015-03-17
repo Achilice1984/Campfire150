@@ -731,6 +731,25 @@ class AdminModel extends Model {
 		}
 	}
 
+	public function getAnswerById($answerId)
+	{
+		//Accepts a answer id
+		//returns answer detail of that id
+
+		try
+		{
+			$statement = "SELECT * FROM answer WHERE AnswerId = :AnswerId";
+
+			$answers = $this->fetchIntoClass($statement, array(":AnswerId" => $answerId), "shared/StoryAnswerViewModel");
+
+			return $answers[0];
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
 	public function addAnswer($answerE, $answerF)
 	{
 		//Accepts a question answer id, and english answer, a french answer
@@ -747,9 +766,6 @@ class AdminModel extends Model {
 				);
 
 			return $this->fetch($statement, $parameters);
-
-			//return $this->fetch("INSERT INTO answer_for_question (Question_QuestionId, Answer_AnswerId) VALUES(:QeustionID, :AnswerID)",
-			// array(":QeustionID" => $questionID, ":AnswerID" => $newAnswerID));
 		}
 		catch(PDOException $e)
 		{
@@ -764,8 +780,8 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "UPDATE answer 
-							SET NameE = :AnswerE, NameF = :AnswerF 
+			$statement = "UPDATE answer
+							SET NameE = :AnswerE, NameF = :AnswerF
 							WHERE AnswerId = :AnswerID";
 
 			$parameters = array(
@@ -775,9 +791,6 @@ class AdminModel extends Model {
 				);
 			
 			return $this->fetch($statement, $parameters);
-
-			//return $this->fetch("INSERT INTO answer_for_question (Question_QuestionId, Answer_AnswerId) VALUES(:QeustionID, :AnswerID)",
-			// array(":QeustionID" => $questionID, ":AnswerID" => $newAnswerID));
 		}
 		catch(PDOException $e)
 		{
@@ -834,6 +847,25 @@ class AdminModel extends Model {
 		}
 	}
 
+	public function getQuestionById($questionId)
+	{
+		//Accepts a answer id
+		//returns answer detail of that id
+
+		try
+		{
+			$statement = "SELECT * FROM question WHERE QuestionId = :QuestionId";
+
+			$questions = $this->fetchIntoClass($statement, array(":QuestionId" => $questionId), "shared/StoryQuestionViewModel");
+
+			return $questions[0];
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
 	public function updateQuestion($questionID, $questionE, $questionF)
 	{
 		//Accepts a question id, and english question, a french question
@@ -842,7 +874,7 @@ class AdminModel extends Model {
 		try
 		{
 			$statement = "UPDATE question 
-							SET QuestionE = :QuestionE, QuestionF = :QuestionF 
+							SET NameE = :QuestionE, NameF = :QuestionF 
 							WHERE QuestionId = :QuestionId";
 
 			$parameters = array(
@@ -866,7 +898,7 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "INSERT INTO question (QuestionE, QuestionF) 
+			$statement = "INSERT INTO question (NameE, NameF) 
 							VALUES (:QuestionE, :QuestionF)";
 
 			$parameters = array(

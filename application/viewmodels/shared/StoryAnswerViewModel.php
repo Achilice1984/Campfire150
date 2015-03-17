@@ -2,24 +2,24 @@
 /**
 * 
 */
-class DropdownItemViewModel extends ViewModel
+class StoryAnswerViewModel extends ViewModel
 {
-	public $TableName; //Name of the table
-	public $Id; //Id of item
+	public $AnswerId; //Id of item
 	public $NameE; // English Name
 	public $NameF; // French Name
 	public $DateCreated;
 	public $DateUpdated;
+	public $Active;
 
 	function __construct()
 	{		
-		$errors["TableName"] = array(
-			'required' =>
-				array(
-					'Message' => gettext('The table field is required!'),
-					'Properties' => array()
-				)
-		);
+		// $errors["QuestionId"] = array(
+		// 	'required' =>
+		// 		array(
+		// 			'Message' => gettext('The table field is required!'),
+		// 			'Properties' => array()
+		// 		)
+		// );
 		$errors["NameE"] = array(
 			'required' =>
 				array(

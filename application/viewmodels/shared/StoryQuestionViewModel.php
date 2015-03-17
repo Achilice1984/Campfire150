@@ -4,24 +4,40 @@
 */
 class StoryQuestionViewModel extends ViewModel
 {
-	//Story properties same as in database
-	public $Value;
-	public $Name;
-	public $Answers;//DropdownItemViewModel
-	
+	public $QuestionId; //Id of item
+	public $NameE; // English Name
+	public $NameF; // French Name
+	public $DateCreated;
+	public $DateUpdated;
+	public $Active;
+
 	function __construct()
-	{
-		// $errors["ProfilePrivacyType_PrivacyTypeId"] = array(
+	{		
+		// $errors["QuestionId"] = array(
 		// 	'required' =>
 		// 		array(
-		// 			'Message' => gettext('The privacy field is required!'),
+		// 			'Message' => gettext('The table field is required!'),
 		// 			'Properties' => array()
 		// 		)
 		// );
+		$errors["NameE"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The english Name field is required!'),
+					'Properties' => array()
+				)
+		);
 
+		$errors["NameF"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The french name field is required!'),
+					'Properties' => array()
+				)
+		);
 
-		// //Pass validation to the View Model
-		// parent::__construct($errors);
+		//Pass validation to the View Model
+		parent::__construct($errors);
 	}
 }
 ?>

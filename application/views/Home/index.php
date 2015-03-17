@@ -2,12 +2,13 @@
     var WordCloudWords = <?php echo $homeViewModel->WordCloud; ?>
 </script>
 
-        <section style="padding-top: 20px; margin-bottom: 50px;">
+        <section>
             <div class="container">
 
                 <?php include(APP_DIR . 'views/shared/messages.php'); ?>
                 
                 <h1><?php echo gettext("Campfire Stories"); ?></h1>
+
                 <nav role="navigation">
                     <ul class="nav nav-tabs">
                         <li class="active"><a data-request-url="<?php echo BASE_URL; ?>home/latestStoryHome" id="latestStoryListButton" href="#"><?php echo gettext("Latest"); ?></a></li>
@@ -26,7 +27,7 @@
                 </nav>
                 <div id="StoryListContainer" class="row">
                    <?php foreach ($homeViewModel->LatestStories as $story): ?>
-                       <?php include(APP_DIR . 'views/home/_storyList.php') ?>
+                       <?php include(APP_DIR . 'views/shared/_storyList.php') ?>
                    <?php endforeach ?>
                 </div>
                 <p class="clearfix"><a href="<?php echo BASE_URL; ?>story/search" class="btn btn-warning pull-right"><?php echo gettext("View More Stories"); ?></a></p>
@@ -58,17 +59,17 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">
-                        <canvas id="wordCloudCanvas" height="400" width="500" style="width:75%; max-width: 500px; margin-bottom: 25px;"></canvas> 
+                        <canvas id="wordCloudCanvas" height="400" width="500"></canvas> 
                     </div>
-                    <div class="col-md-6" style="position: relative; min-height: 350px;">
-                        <h1 ><?php echo gettext("How the Campfire Works"); ?></h1>
-                        <ol style="font-size: 1.6em; padding-top: 10px;">
+                    <div class="col-md-6">
+                        <h1><?php echo gettext("How the Campfire Works"); ?></h1>
+                        <ol>
                             <li><?php echo gettext("Submit a story"); ?></li>
                             <li><?php echo gettext("Answer some simple questions"); ?></li>
                             <li><?php echo gettext("We all create a national story"); ?></li>
                             <li><?php echo gettext("Repeat"); ?></li>
                         </ol>
-                        <p style="position: absolute; bottom: 0; width: 100%;"><a href="<?php echo BASE_URL; ?>story/add" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Share a Story"); ?></a></p>
+                        <p><a href="<?php echo BASE_URL; ?>story/add" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Share a Story"); ?></a></p>
                     </div>
                 </div>
             </div>

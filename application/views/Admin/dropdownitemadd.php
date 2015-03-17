@@ -1,9 +1,3 @@
-<?php
-	// debugit($storyViewModel);
-	// debugit($userViewModel);
-	debugit($dropdownListItemViewModel);
-?>
-
 <div class="container" style="margin-top:100px;">
 
 	<h2>Add a new <?php echo gettext($dropdownListItemViewModel->TableName); ?></h2>
@@ -26,7 +20,7 @@
 	                <textarea class="form-control" id="NameE" name="NameF"><?php echo $dropdownListItemViewModel->NameF; ?></textarea>
 
 	            </div>	            
-	            <button type="submit" class="btn btn-default"><?php echo gettext("Submit"); ?></button>
+	            <button type="submit" class="btn btn-default"><?php echo gettext("Add"); ?></button>
 	        </form>
 
         </div>

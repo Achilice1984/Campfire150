@@ -12,9 +12,11 @@ class Admin extends Controller {
 		echo "string";
 		$model = $this->loadModel('Admin/AdminModel');
 	
+		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
+		$storyQuestionViewModel = $model->getQuestionById(1);
 		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
 		//$returnData = $model->getDropdownListItem('gendertype', 1);
-		$returnData = $model->approveStory(1, 7, 'cc');
+		$returnData = $model->updateQuestion(1, "E", "F");
 
 		debugit($returnData);
 
@@ -235,7 +237,7 @@ class Admin extends Controller {
 		//Process story list into array like below:	
 		foreach ($storyList as $story)
 		{
-			$url = '<a href='. BASE_URL . 'admin/storyeditreject/'. $story->StoryId. '>Edit Approval</a>';
+			$url = '<a href='. BASE_URL . 'admin/storyeditreject/' . $story->StoryId . '>Edit Approval</a>';
 			$resultData[] = array($story->StoryTitle, $story->LastName.' '.$story->FirstName, $story->DatePosted, $url);
 		}
 
@@ -274,7 +276,7 @@ class Admin extends Controller {
 		//Process story list into array like below:	
 		foreach ($storyList as $story)
 		{
-			$url = '<a href=' . BASE_URL . 'admin/storyeditinappropriate/' . $story->StoryId. '>Edit Approval</a>';
+			$url = '<a href=' . BASE_URL . 'admin/storyeditinappropriate/' . $story->StoryId . '>Edit Approval</a>';
 
 			$resultData[] = array($story->StoryTitle, $story->LastName.' '.$story->FirstName, $story->DatePosted, $url);
 		}
@@ -504,8 +506,10 @@ class Admin extends Controller {
 		$recordsNum = isset($questionList[0]) ?  $questionList[0]->TotalQuestions : 0;
 
 		//Process story list into array like below:	
-		foreach ($questionList as $question){
-			$resultData[] = array($question->QuestionId, $question->NameE, $question->NameF, $question->DateUpdated);
+		foreach ($questionList as $question)
+		{
+			$url = '<a href=' . BASE_URL . 'admin/storyquestionedit/' . $question->QuestionId . '>Update</a>'; //Add link for edit the record
+			$resultData[] = array($question->QuestionId, $question->NameE, $question->NameF, $question->DateUpdated, $url);
 		}
 			
 		$output = array(
@@ -541,8 +545,10 @@ class Admin extends Controller {
 		$recordsNum = isset($answerList[0]) ?  $answerList[0]->TotalAnswers : 0;
 
 		//Process story list into array like below:	
-		foreach ($answerList as $answer){
-			$resultData[] = array($answer->QuestionId, $answer->AnswerE, $answer->AnswerF, $answer->DateUpdated);
+		foreach ($answerList as $answer)
+		{
+			$url = '<a href=' . BASE_URL . 'admin/storyansweredit/' . $answer->AnswerId . '>Update</a>'; //Add link for edit the record
+			$resultData[] = array($answer->QuestionId, $answer->AnswerE, $answer->AnswerF, $answer->DateUpdated, $url);
 		}
 			
 		$output = array(
@@ -618,7 +624,7 @@ class Admin extends Controller {
 
 		//Process story list into array like below:	
 		foreach ($list as $item){
-			$url = '<a href='.'dropdownitemedit/'.$tableName.'/'.$item->Id.'>Update</a>';
+			$url = '<a href=' . BASE_URL . 'admin/dropdownitemedit/'.$tableName.'/'.$item->Id.'>Edit</a>';
 			$resultData[] = array($item->NameE, $item->NameF, $item->DateUpdated, $url);			
 		}
 			
@@ -996,7 +1002,7 @@ class Admin extends Controller {
 			if($dropdownListItemViewModel->validate())
 			{
 				$model->addDropdownItem($dropdownListItemViewModel->TableName,
-				 $dropdownListItemViewModel->NameE, $dropdownListItemViewModel->NameF);
+				$dropdownListItemViewModel->NameE, $dropdownListItemViewModel->NameF);
 
 				$this->redirect("admin/index");
 			}
@@ -1011,46 +1017,82 @@ class Admin extends Controller {
 		}
 	}
 
-	function storyansweredit()
+	function storyansweredit($answerId)
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
 
-		//Loads a view model from corresponding viewmodel folder
-		//$viewModel = $this->loadModel('SomeViewModel');
-
 		//Loads a view from corresponding view folder
-		$template = $this->loadView('storyansweredit');
+		$view = $this->loadView('storyansweredit');
 
-		//  $template->setCSS(array(
-		// 	array("static/css/style.css", "intern")
-		// 	array("http://www.example.com/default.css", "extern")
-		// ));
-		$template->setJS(array(
-			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
-			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
-			array("static/js/adminDataTables.js", "intern")//,
-			//array("static/js/tinymce.js", "intern")
-			//array("http://www.example.com/static.js", "extern")
-		));
-		 $template->setCSS(array(
-			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
-		));
-		//Adds a variable or object to that can be accessed in the view
-		//$template->set('viewModel', $viewModel);
+		$storyAnswerViewModel = $this->loadViewModel('shared/StoryAnswerViewModel');
+		$storyAnswerViewModel = $model->getAnswerById($answerId);
+
+		$view->set('storyAnswerViewModel', $storyAnswerViewModel);
 
 		//Renders the view. true indicates to load the layout
-		$template->render(true);
+		$view->render(true);
 
 		//Execute code if a post back
 		if($this->isPost())
 		{
-			//Can be used to redirect to another controller
-			//Can add query values ?id=1
-			//$this->redirect("controller/action");
+			$storyAnswerViewModel->NameE = $_POST["NameE"];
+			$storyAnswerViewModel->NameF = $_POST["NameF"];
 
-			//Check if request is ajax
-			//$this->isAjax()
+			//Map post values to the loginViewModel
+			$storyAnswerViewModel  = AutoMapper::mapPost($storyAnswerViewModel );
+			
+			if($storyAnswerViewModel->validate())
+			{
+				$model->updateAnswer($storyAnswerViewModel->AnswerId, $storyAnswerViewModel->NameE, $storyAnswerViewModel->NameF);
+
+				$this->redirect("admin/index");
+			}
+			else
+			{
+				echo "Failed to save the change";
+			}
+		}
+		else
+		{
+			//Execute this code if NOT a post back
+		}
+	}
+
+	function storyansweradd()
+	{
+		//Loads a model from corresponding model folder
+		$model = $this->loadModel('AdminModel');
+
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('storyansweradd');
+
+		$storyAnswerViewModel = $this->loadViewModel('shared/StoryAnswerViewModel');
+
+		$view->set('storyAnswerViewModel', $storyAnswerViewModel);
+
+		//Renders the view. true indicates to load the layout
+		$view->render(true);
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			$storyAnswerViewModel->NameE = $_POST["NameE"];
+			$storyAnswerViewModel->NameF = $_POST["NameF"];
+
+			//Map post values to the loginViewModel
+			$storyAnswerViewModel  = AutoMapper::mapPost($storyAnswerViewModel );
+			
+			if($storyAnswerViewModel->validate())
+			{
+				$model->addAnswer($storyAnswerViewModel->NameE, $storyAnswerViewModel->NameF);
+
+				$this->redirect("admin/index");
+			}
+			else
+			{
+				echo "Failed to save the change";
+			}
 		}
 		else
 		{
@@ -1058,47 +1100,84 @@ class Admin extends Controller {
 		}
 	}
  
-
-	function storyquestionedit()
+	function storyquestionedit($questionId)
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
 
-		//Loads a view model from corresponding viewmodel folder
-		//$viewModel = $this->loadModel('SomeViewModel');
-
 		//Loads a view from corresponding view folder
-		$template = $this->loadView('storyquestionedit');
+		$view = $this->loadView('storyquestionedit');
 
-		//  $template->setCSS(array(
-		// 	array("static/css/style.css", "intern")
-		// 	array("http://www.example.com/default.css", "extern")
-		// ));
-		$template->setJS(array(
-			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
-			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
-			array("static/js/adminDataTables.js", "intern")//,
-			//array("static/js/tinymce.js", "intern")
-			//array("http://www.example.com/static.js", "extern")
-		));
-		 $template->setCSS(array(
-			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
-		));
-		//Adds a variable or object to that can be accessed in the view
-		//$template->set('viewModel', $viewModel);
+		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
+		$storyQuestionViewModel = $model->getQuestionById($questionId);
+
+		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
 
 		//Renders the view. true indicates to load the layout
-		$template->render(true);
+		$view->render(true);
 
 		//Execute code if a post back
 		if($this->isPost())
 		{
-			//Can be used to redirect to another controller
-			//Can add query values ?id=1
-			//$this->redirect("controller/action");
+			$storyQuestionViewModel->NameE = $_POST["NameE"];
+			$storyQuestionViewModel->NameF = $_POST["NameF"];
+			
+			//Map post values to the loginViewModel
+			$storyQuestionViewModel  = AutoMapper::mapPost($storyQuestionViewModel );
+			
+			if($storyQuestionViewModel->validate())
+			{
+				$model->updateQuestion($storyQuestionViewModel->QuestionId,
+				$storyQuestionViewModel->NameE, $storyQuestionViewModel->NameF);
 
-			//Check if request is ajax
-			//$this->isAjax()
+				$this->redirect("admin/index");
+			}
+			else
+			{
+				echo "Failed to save the change";
+			}
+		}
+		else
+		{
+			//Execute this code if NOT a post back
+		}
+	}
+
+	function storyquestionadd()
+	{
+		//Loads a model from corresponding model folder
+		$model = $this->loadModel('AdminModel');
+
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('storyquestionadd');
+
+		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
+
+		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
+
+		//Renders the view. true indicates to load the layout
+		$view->render(true);
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			$storyQuestionViewModel->NameE = $_POST["NameE"];
+			$storyQuestionViewModel->NameF = $_POST["NameF"];
+			debugit($storyQuestionViewModel);
+
+			//Map post values to the loginViewModel
+			$storyQuestionViewModel  = AutoMapper::mapPost($storyQuestionViewModel );
+			
+			if($storyQuestionViewModel->validate())
+			{
+				$model->addQuestion($storyQuestionViewModel->NameE, $storyQuestionViewModel->NameF);
+
+				$this->redirect("admin/index");
+			}
+			else
+			{
+				echo "Failed to save the change";
+			}
 		}
 		else
 		{

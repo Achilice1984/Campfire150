@@ -22,7 +22,7 @@
 	                <textarea class="form-control" id="NameE" name="NameF"><?php echo $dropdownListItemViewModel->NameF; ?></textarea>
 
 	            </div>	            
-	            <button type="submit" class="btn btn-default"><?php echo gettext("Submit"); ?></button>
+	            <button type="submit" class="btn btn-default"><?php echo gettext("Update"); ?></button>
 	        </form>
 
         </div>

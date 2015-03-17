@@ -461,7 +461,9 @@ class Story extends Controller {
 
 		//Load up some js files
 		$view->setJS(array(
-			array("static/js/displaystory.js", "intern")
+			array("static/js/displaystory.js", "intern"),
+			array("static/js/storyThumbs.js", "intern"),
+			array("static/js/followUser.js", "intern")
 		));
 
 		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
@@ -483,7 +485,7 @@ class Story extends Controller {
 		{
 			for ($i=0; $i < count($storyViewModel->Tags); $i++) { 
 				$tmp = null;
-				$tmp = $model->getStoryListByTag($storyViewModel->Tags[$i]->Tag);
+				$tmp = $model->getStoryListByTag($this->currentUser->UserId, $storyViewModel->Tags[$i]->Tag);
 
 				if(isset($tmp) && count($tmp) > 0)
 				{
@@ -516,10 +518,11 @@ class Story extends Controller {
 			return $relatedStories;
 		}
 
-		for ($i=0; $i < count($relatedStories); $i++) { 
-			if($storyViewModel->StoryId == $relatedStories[$i]->StoryId)
+		foreach ($relatedStories as $story) {
+			if($storyViewModel->StoryId == $story->StoryId)
 			{
-				unset($relatedStories[$i]);
+				unset($story);
+				break;
 			}
 		}
 		
