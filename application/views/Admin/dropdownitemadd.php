@@ -3,24 +3,24 @@
 	// debugit($userViewModel);
 	debugit($dropdownListItemViewModel);
 ?>
-<div class="container" style="margin-top:100px;">
+<div class="container">
 
 	<h1>Add new item table <?php echo gettext($dropdownListItemViewModel->TableName); ?></h1>
 
     <div class="row">
 		
 		<div class="col-md-6">
-			<form action="<?php echo BASE_URL . "admin/dropdownitemadd/" . $dropdownListItemViewModel->TableName; ?>" method="post" id="loginForm">
-
+			<form action="<?php echo BASE_URL; ?>admin/dropdownedit" method="post" id="dropdownForm">
+				<input type="hidden" name="ID" value="<?php echo $dropdownItemViewModel->Id; ?>">
+				<input type="hidden" name="tabel" value="<?php echo $dropdownItemViewModel->TableName; ?>">
 
 	            <?php include(APP_DIR . 'views/shared/messages.php'); ?>
+
 	            <div class="form-group">
-	                <label for="Content"><?php echo gettext("Reason"); ?></label>
-	                <textarea class="form-control" id="NameE" name="NameE" value="<?php echo $dropdownListItemViewModel->NameE; ?>"></textarea>
-	            </div>
-	            <div class="form-group">
-	                <label for="Content"><?php echo gettext("Reason"); ?></label>
-	                <textarea class="form-control" id="NameF" name="NameF" value="<?php echo $dropdownListItemViewModel->NameF; ?>"></textarea>
+	                <label for="NameEng"><?php echo gettext("English"); ?></label>
+	                <textarea class="form-control" id="eng" name="eng" value="<?php echo $dropdownListItemViewModel->NameE; ?>"></textarea>
+	                <label for="NameFra"><?php echo gettext("French"); ?></label>
+	                <textarea class="form-control" id="fra" name="fra" value="<?php echo $dropdownListItemViewModel->NameF; ?>"></textarea>
 	            </div>
 	            
 

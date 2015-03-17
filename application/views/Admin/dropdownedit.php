@@ -4,26 +4,23 @@
 	// debugit($userViewModel);
 	debugit($dropdownListItemViewModel);
 ?>
-<div class="container" style="margin-top:100px;">
+<div class="container">
 
-	<h1>Edit answer for a website dropdown</h1>
+	<h1><?php echo gettext("Edit answer for a website dropdown"); ?></h1>
 
     <div class="row">
 		
 		<div class="col-md-6">
-			<form action="<?php echo BASE_URL; ?>account/login" method="post" id="loginForm">
-
+			<form action="<?php echo BASE_URL; ?>admin/dropdownedit" method="post" id="dropdownForm">
+				<input type="hidden" name="ID" value="<?php echo $dropdownItemViewModel->Id; ?>">
 
 	            <?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
-	            <div class="checkbox">
-	                <label>
-	                    <input type="checkbox" name="Approved" value="xx"> <?php echo gettext($dropdownListItemViewModel->NameE); ?>
-	                </label>
-	            </div>
 	            <div class="form-group">
-	                <label for="Content"><?php echo gettext("Response"); ?></label>
-	                <textarea class="form-control" id="Password" name="Password"><?php echo $dropdownListItemViewModel->NameF; ?></textarea>
+	                <label for="NameEng"><?php echo gettext("English"); ?></label>
+	                <textarea class="form-control" id="eng" name="eng" value="<?php echo $dropdownListItemViewModel->NameE; ?>"></textarea>
+	                <label for="NameFra"><?php echo gettext("French"); ?></label>
+	                <textarea class="form-control" id="fra" name="fra" value="<?php echo $dropdownListItemViewModel->NameF; ?>"></textarea>
 	            </div>
 	            
 
