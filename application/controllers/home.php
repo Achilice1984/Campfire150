@@ -72,7 +72,8 @@ class Home extends Controller {
 		$view->setJS(array(
 			array("static/plugins/wordcloud/wordcloud2.js", "intern"),
 			array("static/js/wordcloud.js", "intern"),
-			array("static/js/home.js", "intern")
+			array("static/js/home.js", "intern"),
+			array("static/js/storyThumbs.js", "intern")
 		));
 
 
@@ -139,7 +140,7 @@ class Home extends Controller {
 		if(isset($stories))
 		{
 			foreach ($stories as $story) {
-				include(APP_DIR . 'views/home/_storyList.php');
+				include(APP_DIR . 'views/shared/_storyList.php');
 			}
 		}
 	}
@@ -152,7 +153,7 @@ class Home extends Controller {
 		if(isset($stories))
 		{
 			foreach ($stories as $story) {
-				include(APP_DIR . 'views/home/_storyList.php');
+				include(APP_DIR . 'views/shared/_storyList.php');
 			}
 		}
 	}
@@ -165,7 +166,7 @@ class Home extends Controller {
 		if(isset($stories))
 		{
 			foreach ($stories as $story) {
-				include(APP_DIR . 'views/home/_storyList.php');
+				include(APP_DIR . 'views/shared/_storyList.php');
 			}
 		}
 	}

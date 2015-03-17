@@ -255,7 +255,7 @@ class AccountModel extends Model {
 
 		$pictureViewModel = $this->fetchIntoClass($statement, array(":User_UserId" => $userId), "shared/PictureViewModel");
 
-		if(isset($pictureViewModel))
+		if(isset($pictureViewModel[0]))
 		{
 			return $pictureViewModel[0];
 		}
@@ -270,7 +270,7 @@ class AccountModel extends Model {
 
 		$pictureViewModel = $this->fetchIntoClass($statement, array(":User_UserId" => $userId), "shared/PictureViewModel");
 
-		if(isset($pictureViewModel))
+		if(isset($pictureViewModel[0]))
 		{
 			return $pictureViewModel[0];
 		}
@@ -306,8 +306,8 @@ class AccountModel extends Model {
 		$authentication = new Authentication();
 		$user->Password = $authentication->hashPassword($user->Password);
 
-		$statement = "INSERT INTO user (Email, Password, LanguageType_LanguageId, FirstName, LastName, MidName, Address, PostalCode, PhoneNumber, VerificationCode, VerifiedEmail, ProfilePrivacyType_PrivacyTypeId, Gender_GenderId, Ethnicity, Birthday)";
-		$statement .= " VALUES (:Email, :Password, :LanguageType_LanguageId, :FirstName, :LastName, :MidName, :Address, :PostalCode, :PhoneNumber, :VerificationCode, :VerifiedEmail, :ProfilePrivacyType_PrivacyTypeId, :Gender_GenderId, :Ethnicity, :Birthday)";
+		$statement = "INSERT INTO user (YearsInCanada, Email, Password, LanguageType_LanguageId, FirstName, LastName, MidName, Address, PostalCode, PhoneNumber, VerificationCode, VerifiedEmail, ProfilePrivacyType_PrivacyTypeId, Gender_GenderId, Ethnicity, Birthday)";
+		$statement .= " VALUES (:YearsInCanada, :Email, :Password, :LanguageType_LanguageId, :FirstName, :LastName, :MidName, :Address, :PostalCode, :PhoneNumber, :VerificationCode, :VerifiedEmail, :ProfilePrivacyType_PrivacyTypeId, :Gender_GenderId, :Ethnicity, :Birthday)";
 
 		$hashedEmailVerification = md5(uniqid());
 
@@ -326,7 +326,8 @@ class AccountModel extends Model {
 			":ProfilePrivacyType_PrivacyTypeId" => $user->ProfilePrivacyType_PrivacyTypeId,
 			":Gender_GenderId" => $user->Gender_GenderId,
 			":Ethnicity" => $user->Ethnicity,
-			":Birthday" => $user->Birthday//DateTime::createFromFormat("d/m/Y", $user->Birthday)->format('Y-m-d H:i:s')
+			":Birthday" => $user->Birthday,
+			":YearsInCanada" => $user->YearsInCanada//DateTime::createFromFormat("d/m/Y", $user->Birthday)->format('Y-m-d H:i:s')
 		);
 		
 		//$this->sendEmailVerification($user->Email, $hashedEmailVerification);
@@ -393,7 +394,7 @@ class AccountModel extends Model {
 	{
 		$authentication = new Authentication();
 
-		$statement = "UPDATE user SET LanguageType_LanguageId = :LanguageType_LanguageId, Email = :Email, Address = :Address, PostalCode = :PostalCode, PhoneNumber = :PhoneNumber, FirstName = :FirstName, LastName = :LastName, MidName = :MidName, ProfilePrivacyType_PrivacyTypeId = :ProfilePrivacyType_PrivacyTypeId, Gender_GenderId = :Gender_GenderId, Ethnicity = :Ethnicity, Birthday = :Birthday";
+		$statement = "UPDATE user SET YearsInCanada = :YearsInCanada, LanguageType_LanguageId = :LanguageType_LanguageId, Email = :Email, Address = :Address, PostalCode = :PostalCode, PhoneNumber = :PhoneNumber, FirstName = :FirstName, LastName = :LastName, MidName = :MidName, ProfilePrivacyType_PrivacyTypeId = :ProfilePrivacyType_PrivacyTypeId, Gender_GenderId = :Gender_GenderId, Ethnicity = :Ethnicity, Birthday = :Birthday";
 		$statement .= " WHERE UserId = :UserId";
 
 		$parameters = array( 
@@ -409,7 +410,8 @@ class AccountModel extends Model {
 			":ProfilePrivacyType_PrivacyTypeId" => $user->ProfilePrivacyType_PrivacyTypeId,
 			":Gender_GenderId" => $user->Gender_GenderId,
 			":Ethnicity" => $user->Ethnicity,
-			":Birthday" => $user->Birthday
+			":Birthday" => $user->Birthday,
+			":YearsInCanada" => $user->YearsInCanada
 		);
 		
 		return $this->fetch($statement, $parameters);
@@ -485,6 +487,33 @@ class AccountModel extends Model {
 						AND user.Active = TRUE";
 
 		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/UserViewModel");
+
+		if(isset($user[0]))
+		{
+			return $user[0];
+		}
+
+		return null;
+	}
+
+	public function getUserProfileByID_home($currentUserId, $userID)
+	{
+		$statement = "SELECT user.*,
+						u.ActionStatement as UserActionStatement,
+						f.Active AS FollowingUser
+
+						FROM user
+
+						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
+						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
+
+						LEFT JOIN following f
+						ON (f.User_FollowerId = user.UserId) AND (f.User_UserId = :CurrentUserId) AND (f.Active = TRUE)
+
+						WHERE user.UserId = :UserId
+						AND user.Active = TRUE";
+
+		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":CurrentUserId" => $currentUserId), "shared/UserViewModel");
 
 		if(isset($user[0]))
 		{

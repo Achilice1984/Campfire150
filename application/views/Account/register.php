@@ -104,7 +104,20 @@
 
                             <div class="form-group">
                                 <label for="Birthday"><?php echo gettext("Birthday"); ?></label>
-                                <input type="text" class="form-control" id="Birthday" name="Birthday" placeholder="<?php echo gettext("YYYY-MM-DD"); ?>" value="<?php echo $userViewModel->Birthday; ?>">
+                                <input type="date" class="form-control" id="Birthday" name="Birthday" placeholder="<?php echo gettext("YYYY-MM-DD"); ?>" value="<?php echo $userViewModel->Birthday; ?>">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="YearsInCanada"><?php echo gettext("Years Living In Canada"); ?></label>
+                                <select class="form-control" name="YearsInCanada">
+                                    <?php 
+                                        for ($i=0; $i <= 100; $i++) { 
+                                            echo "<option " . ($userViewModel->YearsInCanada == $i ? 'selected=selected' : "") . " value='" . $i . "'>"; 
+                                                echo $i;
+                                            echo "</option>";
+                                        }
+                                    ?>
+                                </select>
                             </div>
                             
 

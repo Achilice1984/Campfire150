@@ -46,10 +46,8 @@
           <div class="col-md-4">
             <header role="banner">
               <a href="<?php echo BASE_URL; ?>">
-                <img style="height: 80px;" src="<?php echo BASE_URL; ?>/static/c150/c150.png" id="c150-logo" alt="Campfire 150" />
+                <img src="<?php echo BASE_URL; ?>/static/c150/c150.png" id="c150-logo" alt="Campfire 150" />
               </a>
-              <br />
-              <span class="h4 hidden-sm hidden-xs text-primary text-right motto"><?php echo gettext("Gathering Canadians through story."); ?></span>
             </header>
           </div>
           <div class="col-md-8 nav-container">
@@ -89,9 +87,9 @@
                       <?php } ?>
                   </ul>
               </div>
-                </nav>
-            
-            <nav class="navbar navbar-default nav-primary">
+            </nav>
+            <p class="h4 hidden-sm hidden-xs text-primary text-right motto"><?php echo gettext("Gathering Canadians through story."); ?></p>
+            <nav role ="navigation" class="navbar navbar-default nav-primary">
               <div class="navbar-header">
                   <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#c150-navbar-collapse">
                     <span class="sr-only">Toggle navigation</span>
@@ -113,10 +111,13 @@
                           <li><a href="<?php echo BASE_URL; ?>home/team"><?php echo gettext("Our Team"); ?></a></li>
                           <li><a href="<?php echo BASE_URL; ?>home/partners"><?php echo gettext("Our Partners"); ?></a></li>
                           <li><a href="<?php echo BASE_URL; ?>home/research"><?php echo gettext("Research Objectives"); ?></a></li>
-
-                          <li class="divider"></li>
-
-                          <li><a href="<?php echo BASE_URL; ?>home/domore"><?php echo gettext("Do More"); ?></a></li>
+                      </ul>
+                    </li>
+                    <li class="dropdown">
+                      <a href="<?php echo BASE_URL; ?>home/domore" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><?php echo gettext("More"); ?> <span class="caret"></span></a>
+                      <ul class="dropdown-menu" role="menu">
+                        <li><a href="#"><?php echo gettext("Volunteer"); ?></a></li>
+                        <li><a href="#"><?php echo gettext("Celebrate"); ?></a></li>
                       </ul>
                     </li>
                 </ul>

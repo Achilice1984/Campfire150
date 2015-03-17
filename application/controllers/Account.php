@@ -37,10 +37,14 @@ class Account extends Controller {
 	// 	}
 	// }	
 
-	function home($userID)
+	function home($userID = null)
 	{
+		require_once(APP_DIR . 'helpers/image_get_path.php');
+
 		try
 		{
+			$userID = $userID != null ? $userID : $this->currentUser->UserId;
+
 			//Check if users is authenticated for this request
 			//Will kick out if not authenticated
 			$this->AuthRequest();
@@ -61,7 +65,7 @@ class Account extends Controller {
 			//Load the AccountModel to access account functions
 			$storyModel = $this->loadModel('Story/StoryModel');
 
-			$accountHomeViewModel->userDetails = $model->getProfileByID($userID);
+			$accountHomeViewModel->userDetails = $model->getUserProfileByID_home($this->currentUser->UserId, $userID);
 
 			if(isset($accountHomeViewModel->userDetails) && $accountHomeViewModel->userDetails->ProfilePrivacyType_PrivacyTypeId == 1 && $accountHomeViewModel->userDetails->Active == TRUE)
 			{
@@ -70,6 +74,35 @@ class Account extends Controller {
 				$accountHomeViewModel->usersStoryList = $storyModel->getStoriesWrittenByCurrentUser($userID);
 				$accountHomeViewModel->followingList = $model->getFollowing($userID);
 				$accountHomeViewModel->followerList = $model->getFollowers($userID);
+
+				$accountHomeViewModel->backgroundImage = $model->getCurrentBackgroundPictureMetadata($userID);
+
+				if(isset($accountHomeViewModel->backgroundImage))
+				{
+					$accountHomeViewModel->backgroundImage->PictureUrl = 
+											image_get_path_basic($userID, $accountHomeViewModel->backgroundImage->PictureId, IMG_BACKGROUND, IMG_LARGE);
+				}
+
+				$accountHomeViewModel->profileImage = $model->getCurrentProfilePictureMetadata($userID);
+
+				if(isset($accountHomeViewModel->profileImage))
+				{
+					$accountHomeViewModel->profileImage->PictureUrl = 
+											image_get_path_basic($userID, $accountHomeViewModel->profileImage->PictureId, IMG_PROFILE, IMG_MEDIUM);
+				}
+
+
+				//get additional data
+				if($userID == $this->currentUser->UserId)
+				{
+					// public $newsFeed;
+					// public $pendingStories;
+					// public $draftStories;
+					// public $rejectedStories;
+					$accountHomeViewModel->newsFeed = $storyModel->getStoriesRecommendedByFriends_Latest($userID);
+
+					//debugit($accountHomeViewModel->newsFeed);
+				}
 
 				//How many people are they following
 				$accountHomeViewModel->totalFollowing = $model->getTotalFollowing($userID);
@@ -96,6 +129,17 @@ class Account extends Controller {
 
 				//Load the home view
 				$view = $this->loadView('home');
+
+				//Load up some js files
+				$view->setJS(array(
+					array("static/js/followUser.js", "intern"),
+					array("static/js/userHome.js", "intern"),
+					array("static/plugins/cropper/cropper.min.js", "intern")
+				));
+
+				$view->setCSS(array(
+					array("static/plugins/cropper/cropper.min.css", "intern")
+				));
 
 				//Add a variable with data so that it can be accessed in the view
 				$view->set('accountHomeViewModel', $accountHomeViewModel);
@@ -350,67 +394,85 @@ class Account extends Controller {
 		//This just checks to see if a form was submitted
 		if($this->isPost())
 		{				
-			//Map post values to the userViewModel
-			$pictureViewModel = AutoMapper::mapPost($pictureViewModel);
+			require_once(APP_DIR.'helpers/image_save.php');
+			require_once(APP_DIR . 'helpers/image_get_path.php');
 
-			$savedSuccessfuly = move_uploaded_file($pictureViewModel->PictureFile["tmp_name"], APP_DIR . "userdata/test.jpg");
+			//Check if users is authenticated for this request
+			//Will kick out if not authenticated
+			$this->AuthRequest();
+			
+			//This loads up your model for talking to the database
+			//it contains all functions needed to update database
+			$model = $this->loadModel('AccountModel');
 
+			//Load the userViewModel
+			$pictureViewModel = $this->loadViewModel('shared/PictureViewModel');
 
-					echo $pictureViewModel->PictureFile["tmp_name"];
+			$pictureViewModel->PictureFile = $_FILES["ProfileImage"];
 
-			//Validate data that was posted to the server
-			//This will also set the temp errors to be shown in the view
-			if($pictureViewModel->validate())
-			{	
-				//Call the database
-				//this function will save image meta data in the database
-				//it will return the image id
-				//1 == profile type image in the database
-				$imageId = $model->saveUserImageMetadata($this->currentUser->UserId, $pictureViewModel, 1);
+			//Execute code if a post back
+			//This just checks to see if a form was submitted
+			if($this->isPost())
+			{			
+				$imageId = $model->saveUserImageMetadata($this->currentUser->UserId, $pictureViewModel, IMG_PROFILE);
 
 				if($imageId != 0)
 				{
-					//image saved succefully in database
-					//process image and save in file system
-					//debugit($pictureViewModel);
-
-					//this is your image file
-					//$pictureViewModel->ProfilePicture;
-
-					
-
-
-					 //$savedSuccessfuly = saveImage($cuurentUser->UserId, $pictureViewModel, 1);
-					 //echo "<br />" .$savedSuccessfuly;
-					// if($savedSuccessfuly == false)
-					// {
-					// 	//Ann error occurred you hvae to remove new profile picture meta data from the database
-					// 	$model->removeImageMetaData($imageId);
-
-					// 	//add error message so user knows whats up
-					// 	addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
-					// }
+					if(isset($imageId) && $imageId > 0)
+					{
+						image_save($pictureViewModel->PictureFile, $this->currentUser->UserId, $imageId, IMG_PROFILE_URL, 
+										 $_POST["image_profile_height"], $_POST["image_profile_width"], $_POST["image_profile_x"], $_POST["image_profile_y"]); 					
+					}
 				}
-				else
+
+				echo image_get_path_basic($this->currentUser->UserId, $imageId, IMG_PROFILE, IMG_MEDIUM);
+			}
+			else
+			{
+				$this->redirect("");
+			}
+		}
+	}
+
+	function changebackgroundpicture()
+	{
+		require_once(APP_DIR.'helpers/image_save.php');
+		require_once(APP_DIR . 'helpers/image_get_path.php');
+
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		$this->AuthRequest();
+		
+		//This loads up your model for talking to the database
+		//it contains all functions needed to update database
+		$model = $this->loadModel('AccountModel');
+
+		//Load the userViewModel
+		$pictureViewModel = $this->loadViewModel('shared/PictureViewModel');
+
+		$pictureViewModel->PictureFile = $_FILES["HeaderImage"];
+
+		//Execute code if a post back
+		//This just checks to see if a form was submitted
+		if($this->isPost())
+		{			
+			$imageId = $model->saveUserImageMetadata($this->currentUser->UserId, $pictureViewModel, IMG_BACKGROUND);
+
+			if($imageId != 0)
+			{
+				if(isset($imageId) && $imageId > 0)
 				{
-					//add error message so user knows whats up
-					addErrorMessage("imageError", gettext("Opps, it looks like something went wrong while trying to save your profile picture."));
+					image_save($pictureViewModel->PictureFile, $this->currentUser->UserId, $imageId, IMG_BACKGROUND_URL, 
+									 $_POST["image_header_height"], $_POST["image_header_width"], $_POST["image_header_x"], $_POST["image_header_y"]); 					
 				}
-
 			}
 
+			echo image_get_path_basic($this->currentUser->UserId, $imageId, IMG_BACKGROUND, IMG_LARGE);
 		}
 		else
 		{
 			$this->redirect("");
 		}
-
-
-		//$this->redirect("account/profile");
-	}
-
-	function changebackgroundpicture()
-	{
 	}
 
 	function profile()
@@ -435,7 +497,7 @@ class Account extends Controller {
 			
 			//Validate data that was posted to the server
 			//This will also set the temp errors to be shown in the view
-			if($profileViewModel->validate())
+			if($profileViewModel->validate(1))
 			{		
 				//Attempt to register the user with our website				
 				if($model->updateUserProfile($profileViewModel))
@@ -448,8 +510,16 @@ class Account extends Controller {
 				}
 				else
 				{
-					addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your profile."));
+					addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your profile."), 1);
+
+					//If success, send user to the home page
+					$this->redirect("account/home");
 				}					
+			}
+			else
+			{
+				//If success, send user to the home page
+				$this->redirect("account/home");
 			}			
 		}
 
@@ -466,7 +536,7 @@ class Account extends Controller {
 		$view->set('secureityQuestionDropdownValues', $siteModel->getDropdownValues_SecurityQuestions());
 		
 		//Render the profile view. true indicates to load the layout pages as well
-		$view->render(true);
+		$view->render(false);
 	}
 
 	function search()
@@ -496,7 +566,8 @@ class Account extends Controller {
 
 		//Load up some js files
 		$view->setJS(array(
-			array("static/js/usersearch.js", "intern")
+			array("static/js/usersearch.js", "intern"),
+			array("static/js/followUser.js", "intern")
 		));
 		$view->setCSS(array(
 			array("static/css/usersearch.css", "intern")

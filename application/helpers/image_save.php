@@ -12,9 +12,9 @@ function image_save($imageFile, $userid, $imageid, $imageType,
 
 
     $imageQuality    = 100;
-    $largeImageSize  = 1200;
-    $mediumImageSize = 600;
-    $smallImageSize  = 300;
+    $largeImageSize  = 2200;
+    $mediumImageSize = 1100;
+    $smallImageSize  = 550;
 
     /*  $imageFileType=$uploadedImageObject->PictureFile; */
     /*debugit($uploadedImageObject); */

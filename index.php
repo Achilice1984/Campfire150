@@ -37,6 +37,10 @@ define('IMG_PROFILE', 1);
 define('IMG_BACKGROUND', 2);
 define('IMG_STORY', 3);
 
+define('IMG_PROFILE_URL', 'profile');
+define('IMG_BACKGROUND_URL', 'background');
+define('IMG_STORY_URL', 'story');
+
 // Includes
 require(APP_DIR .'config/config.php');
 require(ROOT_DIR .'system/model.php');
