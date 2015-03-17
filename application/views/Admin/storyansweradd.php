@@ -2,7 +2,7 @@
 <?php
 	// debugit($storyViewModel);
 	// debugit($userViewModel);
-	 debugit($storyAnswerViewModel);
+	// debugit($aprovalViewModel);
 ?>
 <div class="container" style="margin-top:100px;">
 
@@ -11,10 +11,7 @@
     <div class="row">
 		
 		<div class="col-md-6">
-			<form action="<?php echo BASE_URL . "admin/storyansweredit/" . $storyAnswerViewModel->AnswerId; ?>" 
-				method="post" id="loginForm">
-
-				<input type="hidden" name="AnswerId" value="<?php echo $storyAnswerViewModel->AnswerId; ?>">
+			<form action="<?php echo BASE_URL . "admin/storyansweradd"; ?>" method="post" id="loginForm">
 
 	            <?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
@@ -28,7 +25,7 @@
 	                <textarea class="form-control" id="NameE" name="NameF"><?php echo $storyAnswerViewModel->NameF; ?></textarea>
 
 	            </div>	            
-	            <button type="submit" class="btn btn-default"><?php echo gettext("Update"); ?></button>
+	            <button type="submit" class="btn btn-default"><?php echo gettext("Add"); ?></button>
 	        </form>
 
         </div>
