@@ -12,7 +12,7 @@ class ViewModel
 		$this->validationDecorators = $validationDecorators;
 	}
 
-	public function validate()
+	public function validate($persistCount = 0)
 	{
 		$sessionManager = new SessionManager();
 		$validator = new Validator();
@@ -22,6 +22,8 @@ class ViewModel
 		if(count($validationMessages) > 0)
 		{
 			$sessionManager->setErrorMessages($validationMessages);
+
+			$sessionManager->setPersistCount_Errors($persistCount);
 			$this->isValid = false;
 		}
 		else

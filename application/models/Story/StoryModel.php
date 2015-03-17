@@ -980,7 +980,7 @@ class StoryModel extends Model {
 						FROM story 
 
 						LEFT JOIN user_recommend_story urs
-						ON (urs.Story_StoryId = story.StoryId) AND (urs.Active = TRUE)
+						ON (urs.Story_StoryId = story.StoryId) AND (urs.Active = TRUE) AND (urs.User_UserId = :UserId)
 						LEFT JOIN admin_approve_story 
 						ON (story.StoryId = admin_approve_story.Story_StoryId) AND (admin_approve_story.Active = TRUE)
 						INNER JOIN user u
@@ -990,8 +990,8 @@ class StoryModel extends Model {
 						AND StoryPrivacyType_StoryPrivacyTypeId = 1
 						AND admin_approve_story.Approved = TRUE
 						AND admin_approve_story.Active = TRUE
-						AND urs.User_UserId = :UserId
 						AND urs.Active = TRUE
+						AND urs.Opinion = TRUE
 						AND story.Published = TRUE
 						AND u.Active = TRUE
 						AND u.ProfilePrivacyType_PrivacyTypeId = 1	
@@ -1169,23 +1169,85 @@ class StoryModel extends Model {
 		//Gets an array of stories that were recommended to the owner of this user id
 		//Returns an array of Story class
 		
-		$statement = "SELECT story.*, user_recommend_story.LatestChange
-		FROM story LEFT JOIN user_recommend_story 
-		ON story.StoryId = user_recommend_story.Story_StoryId
-		WHERE story.User_UserId IN 
-		(SELECT DISTINCT following.User_FollowerId 
-		FROM following 
-		WHERE following.User_UserId = :UserId AND following.Active = TRUE)
-		AND user_recommend_story.Opinion = TRUE
-		AND story.Published = TRUE
-		AND StoryPrivacyType_StoryPrivacyTypeId = 1
-		GROUP BY story.StoryId
-		ORDER BY user_recommend_story.LatestChange DESC
-		LIMIT :start, :howmany";
+		$statement = "SELECT DISTINCT
+
+						s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+
+						urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
+
+						aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
+
+						shp.Story_StoryId, shp.PictureId, shp.Active,
+
+						p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
+
+						u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+
+						f.Active AS FollowingUser,
+
+						(
+							SELECT COUNT(1)
+							FROM user_recommend_story 
+							WHERE user_recommend_story.Story_StoryId = s.StoryId
+						    AND user_recommend_story.Active = TRUE
+						    AND user_recommend_story.Opinion = FALSE
+						) AS totalFlags,
+						(
+							SELECT COUNT(1)
+							FROM user_recommend_story 
+							WHERE user_recommend_story.Story_StoryId = s.StoryId
+						    AND user_recommend_story.Active = TRUE
+						    AND user_recommend_story.Opinion = TRUE
+						) AS totalRecommends,
+
+						(
+							SELECT COUNT(1)
+							FROM comment c
+							WHERE c.Story_StoryId = s.StoryId
+						    AND c.Active = TRUE
+						    AND c.PublishFlag = TRUE
+						) AS totalComments
+						
+
+						FROM story s
+
+						INNER JOIN user u
+						ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+						LEFT JOIN admin_approve_story aps
+						ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
+
+						LEFT JOIN user_recommend_story urs
+						ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :UserId) AND (urs.Active = TRUE)
+
+						LEFT JOIN story_has_picture shp
+						ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+						LEFT JOIN picture p
+						ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+						LEFT JOIN following f
+						ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
+
+						WHERE s.User_UserId IN 
+						(SELECT DISTINCT following.User_FollowerId 
+						FROM following 
+						WHERE following.User_UserId = :UserId2 AND following.Active = TRUE)
+
+						
+						AND StoryPrivacyType_StoryPrivacyTypeId = 1
+						AND s.Active = TRUE
+						AND aps.Active = TRUE
+						AND aps.Approved = TRUE
+						AND u.Active = TRUE
+						AND s.Published = TRUE						
+						
+						AND u.ProfilePrivacyType_PrivacyTypeId = 1	
+						GROUP BY s.StoryId
+						
+						LIMIT :start, :howmany";
 
 		$start = $this-> getStartValue($howMany, $page);
 
-		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
+		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":UserId2" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
 
 		return $stories;
 	}
@@ -1242,7 +1304,7 @@ class StoryModel extends Model {
 					ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
 
 					LEFT JOIN user_recommend_story urs
-					ON (urs.Story_StoryId = s.StoryId) AND (urs.Active = TRUE)
+					ON (urs.Story_StoryId = s.StoryId) AND (urs.Active = TRUE) AND (urs.User_UserId = :UserId)
 
 					LEFT JOIN story_has_picture shp
 					ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
@@ -1258,7 +1320,7 @@ class StoryModel extends Model {
 					AND aps.Approved = TRUE
 					AND u.Active = TRUE
 					AND s.Published = TRUE
-					AND urs.User_UserId = :UserId
+					AND urs.Opinion = TRUE
 					AND urs.Active = TRUE
 					AND u.ProfilePrivacyType_PrivacyTypeId = 1		
 					ORDER BY totalRecommends DESC

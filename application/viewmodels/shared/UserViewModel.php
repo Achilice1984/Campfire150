@@ -42,6 +42,8 @@ class UserViewModel extends ViewModel
 	public $SecurityQuestionId;
 	public $SecurityAnswer;
 
+	public $YearsInCanada;
+
 	public $ActionStatement;
 
 	public $PicUrl;

@@ -19,7 +19,6 @@
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#update_profile" aria-controls="update_profile" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Profile"); ?></a></li>
             <li role="presentation"><a href="#dangerZone" aria-controls="dangerZone" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-console"></span> <?php echo gettext("Danger Zone"); ?></a></li>
-            <li role="presentation"><a href="#update_profile_picture" aria-controls="update_profile_picture" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-picture"></span> <?php echo gettext("Profile Picture"); ?></a></li>
         </ul>
 
         <!-- Tab panes -->
@@ -80,6 +79,24 @@
                             <div class="form-group">
                                 <label for="Birthday"><?php echo gettext("Birthday"); ?></label>
                                 <input type="text" class="form-control" id="Birthday" name="Birthday" placeholder="<?php echo gettext("YYYY-MM-DD"); ?>" value="<?php echo $userViewModel->Birthday; ?>">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="Birthday"><?php echo gettext("Years Living In Canada"); ?></label>
+                                <input type="date" class="form-control" id="YearsInCanada" name="YearsInCanada" placeholder="<?php echo gettext("YYYY-MM-DD"); ?>" value="<?php echo $userViewModel->Birthday; ?>">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="YearsInCanada"><?php echo gettext("Years Living In Canada"); ?></label>
+                                <select class="form-control" name="YearsInCanada">
+                                    <?php 
+                                        for ($i=0; $i <= 100; $i++) { 
+                                            echo "<option " . ($userViewModel->YearsInCanada == $i ? 'selected=selected' : "") . " value='" . $i . "'>"; 
+                                                echo $i;
+                                            echo "</option>";
+                                        }
+                                    ?>
+                                </select>
                             </div>
 
                             <h3 style="padding-top:10px;"><?php echo gettext("Contact Details"); ?></h3>
@@ -175,32 +192,6 @@
                         </form>
                     </div>
                 </div>
-            </div>
-            <div role="tabpanel" class="tab-pane" id="update_profile_picture">
-
-                <h2><?php echo gettext("Profile Picture"); ?></h2>
-
-                <form action="<?php echo BASE_URL; ?>Account/changeprofilepicture" method="post" enctype="multipart/form-data">                    
-                    <div class="form-group">
-                        <input type="file" id="ProfilePicture" name="PictureFile" placeholder="<?php echo gettext("Re-Type Password"); ?>">
-                    </div>
-
-                    <button style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Change Profile Picture"); ?></button>
-                    <br />
-                </form>
-                <hr />
-
-                <h2><?php echo gettext("Background Picture"); ?></h2>
-
-                <form action="<?php echo BASE_URL; ?>Account/changebackgroundpicture" method="post" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <!-- <label for="BackgroundPicture"><?php echo gettext("Re-Type Password"); ?></label> -->
-                        <input type="file" id="BackgroundPicture" name="PictureFile" placeholder="<?php echo gettext("Re-Type Password"); ?>">
-                    </div>
-
-                    <button style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Change Background Picture"); ?></button>
-                    <br />
-                </form>
             </div>
         </div>
     </div>

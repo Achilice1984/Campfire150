@@ -146,6 +146,11 @@ class SessionManager
 		$_SESSION["errorMessages_persistCount"] = $persistCount;
 	}
 
+	public function setPersistCount_Errors($persistCount)
+	{
+		$_SESSION["errorMessages_persistCount"] = $persistCount;
+	}
+
 	public function addSuccessMessages($key, $successMessage, $persistCount)
 	{
 		if(!isset($_SESSION["successMessages"]))

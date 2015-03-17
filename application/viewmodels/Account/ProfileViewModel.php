@@ -31,6 +31,8 @@ class ProfileViewModel extends ViewModel
 	public $Ethnicity;
 	public $Birthday;
 
+	public $YearsInCanada;
+
 	public $ProfilePrivacyType_PrivacyTypeId;
 	public $Gender_GenderId;
 
