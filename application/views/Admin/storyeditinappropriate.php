@@ -1,6 +1,6 @@
 
 <?php
-		debugit($storyViewModel);
+//		debugit($storyViewModel);
 		debugit($userViewModel);
 		debugit($aprovalViewModel);
 ?>
