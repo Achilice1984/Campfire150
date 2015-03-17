@@ -60,7 +60,7 @@
             <article class="row">
                 <div class="col-md-2 col-sm-2 hidden-xs">
                     <figure class="thumbnail">
-                        <a href="<?php echo BASE_URL . "account/user/" . $storyViewModel->UserId; ?>">
+                        <a href="<?php echo BASE_URL . "account/home/" . $storyViewModel->UserId; ?>">
                             <img class="img-responsive" style="height: 150px;" src="<?php echo image_get_path_basic($storyViewModel->UserId, 0, 1, IMG_SMALL); ?>" />
                         </a>
                     </figure>
