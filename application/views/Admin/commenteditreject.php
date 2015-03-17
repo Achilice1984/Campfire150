@@ -1,14 +1,9 @@
 
 <?php
-<<<<<<< HEAD
 	debugit($storyViewModel);
 	debugit($userViewModel);
 	debugit($approvalViewModel);
-=======
-		debugit($storyViewModel);
-		debugit($userViewModel);
-		debugit($aprovalViewModel);
->>>>>>> master
+
 ?>
 <div class="container">
 
@@ -39,16 +34,14 @@
   		</div>
 	</div>
     <div class="row">
-		
-<<<<<<< HEAD
+
 		<div class="col-md-6">
 			<form action="<?php echo BASE_URL; ?>account/login" method="post" id="loginForm">
 
 				<input type="hidden" name="Id" value="<?php echo $approvalViewModel->Id; ?>">
-=======
+
 		<div class="col-md-9">
 			<form action="<?php echo BASE_URL; ?>admin/commenteditreject" method="post" id="editForm">
->>>>>>> master
 
 				<input type="hidden" name="Id" value="<?php echo $approvalViewModel->Id; ?>">
 
@@ -56,21 +49,18 @@
 
 	            <div class="checkbox">
 	                <label>
-<<<<<<< HEAD
 	                    <input type="checkbox" name="Approved" value="<?php echo $approvalViewModel->Approved; ?>"> <?php echo gettext("Approve Story"); ?>
 	                </label>
 	            </div>
 	            <div class="form-group">
 	                <label for="Content"><?php echo gettext("Response"); ?></label>
 	                <textarea class="form-control" id="Password" name="Password"><?php echo $approvalViewModel->Content; ?></textarea>
-=======
 	                    <input type="checkbox" name="Approved" value="<?php echo $aprovalViewModel->Approved; ?>"> <?php echo gettext("Approve Comment"); ?>
 	                </label>
 	            </div>
 	            <div class="form-group">
 	                <label for="Content"><?php echo gettext("Reason"); ?></label>
 	                <textarea class="form-control" id="Content" name="Content"><?php echo $aprovalViewModel->Content; ?></textarea>
->>>>>>> master
 	            </div>
 	            
 

@@ -1,8 +1,8 @@
 
 <?php
-	debugit($storyViewModel);
+	//debugit($storyViewModel);
 	// debugit($userViewModel);
-	//debugit($aprovalViewModel);
+	//debugit($approvalViewModel);
 ?>
 <div class="container">
 	
@@ -38,21 +38,12 @@
 
 	            <?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
-
-	                //Add success message block to the page
-	                include(APP_DIR . 'views/shared/displaySuccess.php'); 
-	            ?>
-
-	            <div class="checkbox">
-	                <label>	                	
-	                    <input type="checkbox" id="Approved" name="Approved"> <?php echo gettext("Approve Story"); ?>
-
 	            <div class="radio">
 	                <label>
-	                    <input type="radio" name="Approved" value="<?php echo $approvalViewModel->Approved; ?>"> <?php echo gettext("Approve Story"); ?>
+	                    <input type="radio" name="Approval" value='TRUE'> <?php echo gettext("Approve Story"); ?>
 	                </label>
 	                <label>
-	                    <input type="radio" name="Rejected" value="<?php echo $approvalViewModel->Rejected; ?>"> <?php echo gettext("Reject Story"); ?>
+	                    <input type="radio" name="Approval" value='FALSE'> <?php echo gettext("Reject Story"); ?>
 	                </label>
 	              
 	            </div>
