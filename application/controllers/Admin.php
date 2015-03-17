@@ -194,7 +194,7 @@ class Admin extends Controller {
 		//Process story list into array like below:	
 		foreach ($storyList as $story)
 		{
-			$url = '<a href='. BASE_URL . 'admin/storyeditpending/' . $story->StoryId . '>action</a>';
+			$url = '<a class="btn" href='. BASE_URL . 'admin/storyeditpending/' . $story->StoryId . '>action</a>';
 			
 			//$url = BASE_URL."Admin/AjaxStoryListPending/".$story->StoryId;
 			$resultData[] = array($story->StoryTitle, $story->LastName.' '.$story->FirstName, $story->DatePosted, $url);
@@ -235,7 +235,7 @@ class Admin extends Controller {
 		//Process story list into array like below:	
 		foreach ($storyList as $story)
 		{
-			$url = '<a href='. BASE_URL . 'admin/storyeditreject/'. $story->StoryId. '>action</a>';
+			$url = '<a class="btn" href='. BASE_URL . 'admin/storyeditreject/'. $story->StoryId. '>action</a>';
 			$resultData[] = array($story->StoryTitle, $story->LastName.' '.$story->FirstName, $story->DatePosted, $url);
 		}
 

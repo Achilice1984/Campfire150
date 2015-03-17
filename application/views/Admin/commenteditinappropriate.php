@@ -4,9 +4,9 @@
 	debugit($userViewModel);
 	debugit($approvalViewModel);
 ?>
-<div class="container" style="margin-top:100px;">
+<div class="container">
 
-	<h1><?php echo gettext(">Edit inappropriate comment"); ?></h1>
+	 <h1><?php echo gettext("Edit inappropriate comment"); ?></h1>
     <div class="row">
   		<div class="col-md-3">
   			<div class="thumbnail">
@@ -33,31 +33,21 @@
   		</div>
 	</div>
     <div class="row">
-		
 		<div class="col-md-9">
 			<form action="<?php echo BASE_URL; ?>admin/commenteditinappropriate" method="post" id="editForm">
 
-		<div class="col-md-6">
-			<form action="<?php echo BASE_URL; ?>account/login" method="post" id="loginForm">
-
-				<input type="hidden" name="Id" value="<?php echo $approvalViewModel->Id; ?>">
-
-	            <?php 
-	                //Add error message block to the page
-	                include(APP_DIR . 'views/shared/messages.php'); 
-	            ?>
 				<input type="hidden" name="Id" value="<?php echo $approvalViewModel->Id; ?>">
 
 	            <?php include(APP_DIR . 'views/shared/messages.php'); ?>
-	            
+
 	            <div class="checkbox">
 	                <label>
-	                    <input type="checkbox" name="Approved" value="<?php echo $approvalViewModel->Approved; ?>"> <?php echo gettext("Approve Story"); ?>
+	                    <input type="checkbox" name="Approved" value="TRUE"> <?php echo gettext("Approve Comment"); ?>
 	                </label>
 	            </div>
 	            <div class="form-group">
-	                <label for="Content"><?php echo gettext("Response"); ?></label>
-	                <textarea class="form-control" id="Password" name="Password"><?php echo $approvalViewModel->Content; ?></textarea>
+	                <label for="Content"><?php echo gettext("Reason"); ?></label>
+	                <textarea class="form-control" id="Content" name="Content" value="<?php echo $approvalViewModel->Content; ?>"></textarea>
 	            </div>
 	            
 

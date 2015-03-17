@@ -31,7 +31,7 @@
     <div class="row">
 		
 		<div class="col-md-9">
-			<form action="<?php echo BASE_URL . "admin/storyeditreject/" . $storyViewModel->StoryId; ?>" method="post" id="editForm">
+			<form action="<?php echo BASE_URL; ?>admin/storyeditreject" method="post" id="editForm">
 
 				<input type="hidden" name="Id" value="<?php echo $approvalViewModel->Id; ?>">
 
@@ -39,12 +39,12 @@
 
 	            <div class="checkbox">
 	                <label>
-	                    <input type="checkbox" name="Approval" value="TRUE"> <?php echo gettext("Approve Story"); ?>
+	                    <input type="checkbox" name="Approved" value="TRUE"> <?php echo gettext("Approve Story"); ?>
 	                </label>
 	            </div>
 	            <div class="form-group">
 	                <label for="Content"><?php echo gettext("Reason"); ?></label>
-	                <textarea class="form-control" id="Content" name="Content"><?php echo $approvalViewModel->Content; ?></textarea>
+	                <textarea class="form-control" id="Content" name="Content"><?php echo $aprovalViewModel->Content; ?></textarea>
 	            </div>
 	            
 

@@ -40,10 +40,10 @@
 
 	            <div class="radio">
 	                <label>
-	                    <input type="radio" name="Approval" value='TRUE'> <?php echo gettext("Approve Story"); ?>
+	                    <input type="radio" name="Approval" value="TRUE"> <?php echo gettext("Approve Story"); ?>
 	                </label>
 	                <label>
-	                    <input type="radio" name="Approval" value='FALSE'> <?php echo gettext("Reject Story"); ?>
+	                    <input type="radio" name="Approval" value="FALSE"> <?php echo gettext("Reject Story"); ?>
 	                </label>
 	              
 	            </div>
