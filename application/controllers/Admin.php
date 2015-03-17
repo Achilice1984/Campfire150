@@ -194,7 +194,7 @@ class Admin extends Controller {
 		//Process story list into array like below:	
 		foreach ($storyList as $story)
 		{
-			$url = '<a href='. BASE_URL . 'admin/storyeditpending/' . $story->StoryId . '>action</a>';
+			$url = '<a href='. BASE_URL . 'admin/storyeditpending/' . $story->StoryId . '>Edit Approval</a>';
 			
 			//$url = BASE_URL."Admin/AjaxStoryListPending/".$story->StoryId;
 			$resultData[] = array($story->StoryTitle, $story->LastName.' '.$story->FirstName, $story->DatePosted, $url);
@@ -235,7 +235,7 @@ class Admin extends Controller {
 		//Process story list into array like below:	
 		foreach ($storyList as $story)
 		{
-			$url = '<a href='. BASE_URL . 'admin/storyeditreject/'. $story->StoryId. '>action</a>';
+			$url = '<a href='. BASE_URL . 'admin/storyeditreject/'. $story->StoryId. '>Edit Approval</a>';
 			$resultData[] = array($story->StoryTitle, $story->LastName.' '.$story->FirstName, $story->DatePosted, $url);
 		}
 
@@ -274,7 +274,7 @@ class Admin extends Controller {
 		//Process story list into array like below:	
 		foreach ($storyList as $story)
 		{
-			$url = '<a href=' . BASE_URL . 'admin/storyeditinappropriate/' . $story->StoryId. '>action</a>';
+			$url = '<a href=' . BASE_URL . 'admin/storyeditinappropriate/' . $story->StoryId. '>Edit Approval</a>';
 
 			$resultData[] = array($story->StoryTitle, $story->LastName.' '.$story->FirstName, $story->DatePosted, $url);
 		}
@@ -314,7 +314,7 @@ class Admin extends Controller {
 		//Process story list into array like below:	
 		foreach ($commentList as $comment)
 		{
-			$url = '<a href='. BASE_URL . 'admin/commenteditreject/' . $comment->CommentId . '>action</a>';
+			$url = '<a href='. BASE_URL . 'admin/commenteditreject/' . $comment->CommentId . '>Edit Approval</a>';
 			$resultData[] = array($comment->StoryTitle, $comment->Content, $comment->DateUpdated, $url);
 		}
 			
@@ -353,7 +353,7 @@ class Admin extends Controller {
 		//Process story list into array like below:	
 		foreach ($commentList as $comment)
 		{
-			$url = '<a href=' . BASE_URL . 'admin/commenteditinappropriate/' . $comment->CommentId . '>action</a>';
+			$url = '<a href=' . BASE_URL . 'admin/commenteditinappropriate/' . $comment->CommentId . '>Edit Approval</a>';
 			$resultData[] = array($comment->StoryTitle, $comment->Content, $comment->DateUpdated, $url);
 		}
 			
@@ -505,7 +505,7 @@ class Admin extends Controller {
 
 		//Process story list into array like below:	
 		foreach ($questionList as $question){
-			$resultData[] = array($question->QuestionId, gettext($question->NameE), gettext($question->NameF), $question->DateUpdated);
+			$resultData[] = array($question->QuestionId, $question->NameE, $question->NameF, $question->DateUpdated);
 		}
 			
 		$output = array(
@@ -542,7 +542,7 @@ class Admin extends Controller {
 
 		//Process story list into array like below:	
 		foreach ($answerList as $answer){
-			$resultData[] = array($answer->QuestionId, gettext($answer->AnswerE), gettext($answer->AnswerF), $answer->DateUpdated);
+			$resultData[] = array($answer->QuestionId, $answer->AnswerE, $answer->AnswerF, $answer->DateUpdated);
 		}
 			
 		$output = array(
@@ -553,42 +553,6 @@ class Admin extends Controller {
 	    );
 		echo json_encode($output);
 	}
-
-	// function AjaxUserSecurityQuestionList()
-	// {
-	// 	$questionList;
-	// 	$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
-	// 	$resultData = array();
-
-	// 	$adminModel = $this->loadModel('AdminModel');
-
-	// 	if(!empty($_POST["search"]["value"]))
-	// 	{			
-	// 		//Perform a search
-	// 		$questionList = $adminModel->searchForUser($userSearch, $howMany, $page);
-	// 	}
-	// 	else
-	// 	{
-	// 		$questionList = $adminModel->getListDropdowns("securityquestion");
-	// 	}
-
-	// 	$recordsNum = isset($questionList[0]) ?  $questionList[0]->TotalNumber : 0;
-
-	// 	//Process story list into array like below:	
-	// 	foreach ($questionList as $question)
-	// 	{
-	// 		$resultData[] = array($question->SecurityQuestionId, gettext($question->NameE), 
-	// 			gettext($question->NameF), $question->DateUpdated);
-	// 	}
-			
-	// 	$output = array(
-	//         "draw" => intval($_POST["draw"]),
-	//         "recordsTotal" => $recordsNum,
-	//         "recordsFiltered" => $recordsNum,
-	//         "data" => $resultData
-	//     );
-	// 	echo json_encode($output);
-	// }
 
 	function AjaxUserSecurityQuestionList()
 	{
@@ -654,8 +618,8 @@ class Admin extends Controller {
 
 		//Process story list into array like below:	
 		foreach ($list as $item){
-			$url = '<a href='.'dropdownitemedit/'.$tableName.'/'.$item->Id.'>action</a>';
-			$resultData[] = array(gettext($item->NameE), gettext($item->NameF), $item->DateUpdated, $url);			
+			$url = '<a href='.'dropdownitemedit/'.$tableName.'/'.$item->Id.'>Update</a>';
+			$resultData[] = array($item->NameE, $item->NameF, $item->DateUpdated, $url);			
 		}
 			
 		$output = array(
@@ -687,12 +651,7 @@ class Admin extends Controller {
 		$accountModel = $this->loadModel('Account/AccountModel');
 		$userViewModel = $this->loadViewModel('shared/UserViewModel');	
 
-		if(isset($storyViewModel[0]))
-		{
-			//eliminate array
-			$storyViewModel = $storyViewModel[0];
-			$userViewModel = $accountModel->getUserProfileByID($storyViewModel->UserId);
-		}
+		$userViewModel = $accountModel->getUserProfileByID($storyViewModel->UserId);
 		
 		//Load the approval view model
 		$approvalViewModel = $this->loadViewModel('ApprovalViewModel');
@@ -754,12 +713,7 @@ class Admin extends Controller {
 		$accountModel = $this->loadModel('Account/AccountModel');
 		$userViewModel = $this->loadViewModel('shared/UserViewModel');
 
-		if(isset($storyViewModel[0]))
-		{
-			//eliminate array
-			$storyViewModel = $storyViewModel[0];
-			$userViewModel = $accountModel->getUserProfileByID($storyViewModel->UserId);
-		}
+		$userViewModel = $accountModel->getUserProfileByID($storyViewModel->UserId);
 		
 		//Load the approval view model
 		$approvalViewModel = $this->loadViewModel('ApprovalViewModel');
@@ -847,73 +801,6 @@ class Admin extends Controller {
 		}
 	}
 
-	function commenteditinappropriate($commentId)
-	{
-		//Loads a model from corresponding model folder
-		$model = $this->loadModel('AdminModel');
-		//Loads a view from corresponding view folder
-		$view = $this->loadView('commenteditinappropriate');
-
-		$accountModel = $this->loadModel('Account/AccountModel');
-		$userViewModel = $this->loadViewModel('shared/UserViewModel');
-		$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
-		$commentViewModel = $this->loadViewModel('shared/CommentViewModel');
-
-		//Load the approval view model
-		$approvalViewModel = $this->loadViewModel('ApprovalViewModel');
-		$approvalViewModel->Id = $commentId;
-
-		$view->setJS(array(
-			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
-			array("static/js/adminDataTables.js", "intern")//,
-		));
-		 $view->setCSS(array(
-			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
-		));
-		//Adds variables or objects to that can be accessed in the view
-		$commentViewModel = $model->getCommentById($commentId);
-
-		if(isset($commentViewModel[0]))
-		{
-			$commentViewModel = $commentViewModel[0];
-		}
-		$storyViewModel = $model->getStoryById($commentViewModel->Story_StoryId);
-		$userViewModel = $accountModel->getUserProfileByID($commentViewModel->User_UserId);
-
-		$view->set('approvalViewModel', $approvalViewModel);
-
-		$view->set('storyViewModel', $storyViewModel);
-
-		$view->set('userViewModel', $userViewModel);
-
-		//Renders the view. true indicates to load the layout
-		$view->render(true);
-
-		//Execute code if a post back
-		if($this->isPost())
-		{
-			$approvalViewModel->Approved = isset($_POST["Approved"]) ? 0 : 1;
-
-			//Map post values to the loginViewModel
-			$approvalViewModel  = AutoMapper::mapPost($approvalViewModel );
-
-			if($approvalViewModel->validate())
-			{
-				// Save data
-				$model->rejectCommentAsAdmin($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
-				$this->redirect("admin/index");
-			}
-			else
-			{
-				echo "Failed to save the change";
-			}
-		}
-		else
-		{
-			//Execute this code if NOT a post back
-		}
-	}  
-
 	function commenteditreject($commentId)
 	{
 		//Loads a model from corresponding model folder
@@ -922,10 +809,9 @@ class Admin extends Controller {
 		$view = $this->loadView('commenteditreject');
 
 		$accountModel = $this->loadModel('Account/AccountModel');
+		$commentViewModel = $this->loadViewModel('shared/CommentViewModel');
 		$userViewModel = $this->loadViewModel('shared/UserViewModel');
 		$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
-		$commentViewModel = $this->loadViewModel('shared/CommentViewModel');
-
 		//Load the approval view model
 		$approvalViewModel = $this->loadViewModel('ApprovalViewModel');
 		$approvalViewModel->Id = $commentId;
@@ -933,15 +819,12 @@ class Admin extends Controller {
 		//Adds variables or objects to that can be accessed in the view
 		$commentViewModel = $model->getCommentById($commentId);
 
-		if(isset($commentViewModel[0]))
-		{
-			$commentViewModel = $commentViewModel[0];
-		}
-
 		$storyViewModel = $model->getStoryById($commentViewModel->Story_StoryId);
 		$userViewModel = $accountModel->getUserProfileByID($commentViewModel->User_UserId);
 
 		$view->set('approvalViewModel', $approvalViewModel);
+
+		$view->set('commentViewModel', $commentViewModel);
 
 		$view->set('storyViewModel', $storyViewModel);
 
@@ -952,8 +835,8 @@ class Admin extends Controller {
 
 		//Execute code if a post back
 		if($this->isPost())
-		{
-			$approvalViewModel->Approved = isset($_POST["Approved"]) ? 0 : 1;
+		{			
+			$approvalViewModel->Approval = $_POST["Approval"];
 
 			//Map post values to the loginViewModel
 			$approvalViewModel  = AutoMapper::mapPost($approvalViewModel );
@@ -961,7 +844,8 @@ class Admin extends Controller {
 			if($approvalViewModel->validate())
 			{
 				// Save data
-				$model->rejectCommentAsAdmin($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
+				$model->approveCommentAsAdmin($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
+
 				$this->redirect("admin/index");
 			}
 			else
@@ -975,13 +859,75 @@ class Admin extends Controller {
 		}
 	}
 
+	function commenteditinappropriate($commentId)
+	{
+		//Loads a model from corresponding model folder
+		$model = $this->loadModel('AdminModel');
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('commenteditinappropriate');
+
+		$accountModel = $this->loadModel('Account/AccountModel');
+		$commentViewModel = $this->loadViewModel('shared/CommentViewModel');
+		$userViewModel = $this->loadViewModel('shared/UserViewModel');
+		$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
+		//Load the approval view model
+		$approvalViewModel = $this->loadViewModel('ApprovalViewModel');
+		$approvalViewModel->Id = $commentId;
+
+		//Adds variables or objects to that can be accessed in the view
+		$commentViewModel = $model->getCommentById($commentId);
+
+		$storyViewModel = $model->getStoryById($commentViewModel->Story_StoryId);
+		$userViewModel = $accountModel->getUserProfileByID($commentViewModel->UserId);
+
+		$view->set('approvalViewModel', $approvalViewModel);
+
+		$view->set('commentViewModel', $commentViewModel);
+
+		$view->set('storyViewModel', $storyViewModel);
+
+		$view->set('userViewModel', $userViewModel);
+
+		//Renders the view. true indicates to load the layout
+		$view->render(true);
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			$approvalViewModel->Approval = $_POST["Approval"];
+
+			//Map post values to the loginViewModel
+			$approvalViewModel  = AutoMapper::mapPost($approvalViewModel );
+
+			if($approvalViewModel->validate())
+			{
+				// Save data
+				if($approvalViewModel->Approval == 'TRUE')
+					$model->approveCommentAsAdmin($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
+
+				elseif($approvalViewModel->Approval == 'FALSE')
+					$model->rejectCommentAsAdmin($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
+
+				$this->redirect("admin/index");
+			}
+			else
+			{
+				echo "Failed to save the change";
+			}
+		}
+		else
+		{
+			//Execute this code if NOT a post back
+		}
+	}  
+
 	function dropdownitemedit($tableName, $Id)
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
 
 		//Loads a view from corresponding view folder
-		$view = $this->loadView('dropdownedit');
+		$view = $this->loadView('dropdownitemedit');
 
 		$dropdownListItemViewModel = $this->loadViewModel('shared/DropdownItemViewModel');
 
@@ -989,11 +935,7 @@ class Admin extends Controller {
 
 		//Adds variables or objects to that can be accessed in the view
 		$dropdownListItemViewModel = $model->getDropdownListItem($tableName, $Id);
-
-		if(isset($dropdownListItemViewModel[0]))
-		{
-			$dropdownListItemViewModel = $dropdownListItemViewModel[0];
-		}
+		$dropdownListItemViewModel->TableName = $tableName;
 
 		$view->set('dropdownListItemViewModel', $dropdownListItemViewModel);
 
@@ -1004,12 +946,18 @@ class Admin extends Controller {
 		//Execute code if a post back
 		if($this->isPost())
 		{
+			$dropdownListItemViewModel->NameE = $_POST["NameE"];
+			$dropdownListItemViewModel->NameF = $_POST["NameF"];
+
 			//Map post values to the loginViewModel
 			$dropdownListItemViewModel  = AutoMapper::mapPost($dropdownListItemViewModel );
 
 			if($dropdownListItemViewModel->validate())
 			{
 				// Save data
+				$model->updateDropdownValue($dropdownListItemViewModel->TableName, $dropdownListItemViewModel->Id, $dropdownListItemViewModel->NameE, $dropdownListItemViewModel->NameF);
+
+				$this->redirect("admin/index");
 			}
 			else
 			{

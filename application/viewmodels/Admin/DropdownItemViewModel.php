@@ -13,13 +13,13 @@ class DropdownItemViewModel extends ViewModel
 
 	function __construct()
 	{		
-		// $errors["TableName"] = array(
-		// 	'required' =>
-		// 		array(
-		// 			'Message' => gettext('The table field is required!'),
-		// 			'Properties' => array()
-		// 		)
-		// );
+		$errors["TableName"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The table field is required!'),
+					'Properties' => array()
+				)
+		);
 		$errors["NameE"] = array(
 			'required' =>
 				array(

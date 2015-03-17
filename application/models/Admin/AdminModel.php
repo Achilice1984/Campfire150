@@ -78,7 +78,7 @@ class AdminModel extends Model {
 
 			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
-			return $storyList;
+			return $storyList[0];
 
 		}
 		catch(PDOException $e) 
@@ -260,7 +260,7 @@ class AdminModel extends Model {
 							WHERE User_UserId = :UserID AND Story_StoryId = :StoryID";
 
 			$rowCount = $this->fetchRowCount($statement, array(":UserID"=>$adminID, ":StoryID"=>$storyID));
-			
+
 			echo $rowCount;
 			if($rowCount <= 0)
 			{
@@ -302,7 +302,7 @@ class AdminModel extends Model {
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
-		//Gets a list of comments that have been marked as inappropriate by users
+		//Gets a list of comments that is not rejected and have been marked as inappropriate by users
 		//Order the list by how many inappropriate flags there are
 		//returns an array of Comment class
 		
@@ -317,14 +317,16 @@ class AdminModel extends Model {
 									GROUP BY Comment_CommentId
 									)tmpTable
 								) AS TotalComments
-							FROM comment c 
-							INNER JOIN user_inappropriateflag_comment uic 
+							FROM user_inappropriateflag_comment uic 
+							INNER JOIN  comment c
 							ON c.CommentId = uic.Comment_CommentId 
+							LEFT JOIN admin_reject_comment arc
+							ON arc.Comment_CommentId = c.CommentId
 							INNER JOIN story s 
 							ON c.Story_StoryId = s.StoryId 
 							INNER JOIN user u 
 							ON c.User_UserId=u.UserId
-							WHERE uic.Active = 1
+							WHERE uic.Active = 1 AND arc.Rejected != 1 AND arc.Active != 0
 							GROUP BY CommentId 
 							ORDER BY COUNT(uic.User_UserId) DESC 
 							LIMIT :Start, :HowMany";
@@ -357,9 +359,9 @@ class AdminModel extends Model {
 
 			$parameters = array(":CommentId" => $commentId);
 
-			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/CommentViewModel");
+			$commentList = $this->fetchIntoClass($statement, $parameters, "shared/CommentViewModel");
 
-			return $storyList;
+			return $commentList[0];
 
 		}
 		catch(PDOException $e) 
@@ -381,7 +383,7 @@ class AdminModel extends Model {
 			$statement = "SELECT *, (
 								SELECT COUNT( * )
 								FROM admin_reject_comment
-								WHERE Active = 1
+								WHERE Active = 1 AND Rejected = 1
 								) AS TotalComments
 							FROM admin_reject_comment arc 
 							INNER JOIN comment c
@@ -390,7 +392,7 @@ class AdminModel extends Model {
 							ON c.Story_StoryId = s.StoryId 
 							INNER JOIN user u 
 							ON c.User_UserId=u.UserId
-							WHERE arc.Active = 1
+							WHERE arc.Active = 1 AND arc.Rejected = 1
 							ORDER BY c.CommentId 
 							LIMIT :Start, :HowMany";
 			
@@ -476,76 +478,6 @@ class AdminModel extends Model {
 			return $e->getMessage();
 		}
 	}
-
-	// public function changeRejectedToApprovedAsAdmin($adminID, $commentID, $reason)
-	// {
-	// 	//Accepts the adminID and the comment id
-	// 	//Change a rejected comment to an approved comment
-	// 	//returns bool whether it was saved succesfully or not
-
-	// 	try
-	// 	{
-	// 		$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Comment_CommentId = :CommentID AND Active = 1", array(":CommentID" => $commentID));
-
-	// 		$statement = "SELECT * FROM admin_reject_comment WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
-
-	// 		$parameters = array(":UserID" => $adminID, ":CommentID" => $commentID);
-
-	// 		$rowCount = $this->fetchRowCount($statement, $parameters);
-
-	// 		if($rowCount >= 1)
-	// 		{
-	// 			$statement2 = "UPDATE admin_reject_comment SET Rejected = 0, Reason = :Reason, Active = 1 ";
-	// 			$statement2 .= "WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
-
-	// 			$parameters2 = array(":Reason" => $reason, ":UserID" => $adminID, ":CommentID" => $commentID);
-	// 			return $this->fetch($statement2, $parameters2);
-	// 		}
-	// 		else
-	// 		{
-	// 			return approveCommentAsAdmin($adminID, $commentID, $reason);
-	// 		}
-	// 	}
-	// 	catch(PDOException $e)
-	// 	{
-	// 		return $e->getMessage();
-	// 	}
-	// }
-
-	// public function changeApprovedToRejectedAsAdmin($adminID, $commentID, $reason)
-	// {
-	// 	//Accepts the adminID, the comment id and the reason why it was rejected
-	// 	//Change an approved comment to a rejected comment
-	// 	//returns bool whether it was saved succesfully or not
-
-	// 	try
-	// 	{
-	// 		$this->fetch("UPDATE admin_reject_comment SET Active = 0 WHERE Comment_CommentId = :CommentID AND Active = 1", array($commentID));
-
-	// 		$statement = "SELECT * FROM admin_reject_comment WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
-
-	// 		$parameters = array(":UserID" => $adminID, ":CommentID" => $commentID);
-
-	// 		$rowCount = $this->fetchRowCount($statement, $parameters);
-
-	// 		if($rowCount >= 1)
-	// 		{
-	// 			$statement2 = "UPDATE admin_reject_comment SET Rejected = 1, Reason = :Reason, Active = 1 ";
-	// 			$statement2 .= "WHERE User_UserId = :UserID AND Comment_CommentId = :CommentID";
-
-	// 			$parameters2 = array(":Reason" => $reason, ":UserID" => $adminID, ":CommentID" => $commentID);
-	// 			return $this->fetch($statement2, $parameters2);
-	// 		}
-	// 		else
-	// 		{
-	// 			return rejectCommentAsAdmin($adminID, $commentID, $reason);
-	// 		}
-	// 	}
-	// 	catch(PDOException $e)
-	// 	{
-	// 		return $e->getMessage();
-	// 	}
-	// }
 
 	public function getListUsers($howMany = self::HOWMANY, $page = self::PAGE)
 	{
@@ -983,7 +915,8 @@ class AdminModel extends Model {
 					return $tableName." is not a proper table name";
 			}			
 
-			return $this->fetchIntoClass($statement, array(":Id" => $itemId), "shared/DropdownItemViewModel");
+			$items = $this->fetchIntoClass($statement, array(":Id" => $itemId), "shared/DropdownItemViewModel");
+			return $items[0];
 		}
 		catch(PDOException $e)
 		{
