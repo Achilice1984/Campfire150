@@ -116,8 +116,8 @@
             <div role="tabpanel" class="tab-pane" id="Users">
 
                 <ul class="nav nav-pills">
-                    <li role="presentation" class="active"><a href="#Users_Find" aria-controls="Users_Find" role="tab" data-toggle="tab">Find Users</a></li>
-                    <li role="presentation"><a href="#Users_Disabled_Account" aria-controls="Users_Disabled_Account" role="tab" data-toggle="tab">Disabled Accounts</a></li>
+                    <li role="presentation" class="active"><a href="#Users_Find" aria-controls="Users_Find" role="tab" data-toggle="tab">Find Actived Users</a></li>
+                    <li role="presentation"><a href="#Users_Disabled_Account" aria-controls="Users_Disabled_Account" role="tab" data-toggle="tab">Deactived Accounts</a></li>
                     <li role="presentation"><a href="#Users_Inappropriate" aria-controls="Users_Inappropriate" role="tab" data-toggle="tab">Ranked By Inappropriate Flags Issued</a></li>
                 </ul>   
 
@@ -191,12 +191,14 @@
                                     <th>English Version</th>
                                     <th>French Version</th>
                                     <th>Date Created</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
                             <tbody>
                             </tbody>
                         </table>
+                        <h3> Add a new question <a href="<?php echo BASE_URL . 'admin/storyquestionadd' ?> ">here</a></h3>
                     </div>  
                     <div role="tabpanel" class="tab-pane" id="Story_Answers_Find">
                         <!--This table will contain all users that are disabled -->
@@ -207,12 +209,14 @@
                                     <th>Answer English Version</th>
                                     <th>Answer French Version</th>
                                     <th>Date Created</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
                             <tbody>
                             </tbody>
                         </table>
+                        <h3> Add a new answer <a href="<?php echo BASE_URL . 'admin/storyansweradd' ?> ">here</a></h3>
                     </div>
                 </div>
 
@@ -245,6 +249,7 @@
                             <tbody>
                             </tbody>
                         </table>
+                        <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/securityquestion' ?> ">here</a></h3>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="LanguageType_Find">
                         <!--This table will contain all users -->
@@ -261,6 +266,7 @@
                             <tbody>
                             </tbody>
                         </table>
+                        <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/languagetype' ?> ">here</a></h3>
                     </div>  
                     <div role="tabpanel" class="tab-pane" id="GenderType_Find">
                         <!--This table will contain all users that are disabled -->
@@ -277,6 +283,7 @@
                             <tbody>
                             </tbody>
                         </table>
+                        <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/gendertype' ?> ">here</a></h3>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="AchievementLevelType_Find">
                         <!--This table will contain all users -->
@@ -293,6 +300,7 @@
                             <tbody>
                             </tbody>
                         </table>
+                        <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/achievementleveltype' ?> ">here</a></h3>
                     </div>  
                     <div role="tabpanel" class="tab-pane" id="PictureType_Find">
                         <!--This table will contain all users that are disabled -->
@@ -309,6 +317,7 @@
                             <tbody>
                             </tbody>
                         </table>
+                        <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/picturetype' ?> ">here</a></h3>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="ProfilePrivacyType_Find">
                         <!--This table will contain all users -->
@@ -325,6 +334,7 @@
                             <tbody>
                             </tbody>
                         </table>
+                        <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/profileprivacytype' ?> ">here</a></h3>
                     </div>  
                     <div role="tabpanel" class="tab-pane" id="StoryPrivacyType_Find">
                         <!--This table will contain all users that are disabled -->
@@ -341,6 +351,7 @@
                             <tbody>
                             </tbody>
                         </table>
+                        <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/storyprivacytype' ?> ">here</a></h3>
                     </div>
                 </div>
 
