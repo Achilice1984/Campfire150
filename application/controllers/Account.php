@@ -47,7 +47,10 @@ class Account extends Controller {
 
 			//Check if users is authenticated for this request
 			//Will kick out if not authenticated
-			$this->AuthRequest();
+			if(!isset($userID))
+			{
+				$this->AuthRequest();
+			}
 
 
 			/*******************************************
@@ -65,15 +68,21 @@ class Account extends Controller {
 			//Load the AccountModel to access account functions
 			$storyModel = $this->loadModel('Story/StoryModel');
 
+			//Load the home view
+			$view = $this->loadView('home');
+
 			$accountHomeViewModel->userDetails = $model->getUserProfileByID_home($this->currentUser->UserId, $userID);
 
-			if(isset($accountHomeViewModel->userDetails) && $accountHomeViewModel->userDetails->ProfilePrivacyType_PrivacyTypeId == 1 && $accountHomeViewModel->userDetails->Active == TRUE)
+			if(isset($accountHomeViewModel->userDetails) && 
+				($accountHomeViewModel->userDetails->ProfilePrivacyType_PrivacyTypeId == 1 || $userID == $this->currentUser->UserId) && $accountHomeViewModel->userDetails->Active == TRUE)
 			{
 				//Populate data to be shown on the page
 				$accountHomeViewModel->recommendedStoryList = $storyModel->getStoriesRecommendedByCurrentUser($userID);
 				$accountHomeViewModel->usersStoryList = $storyModel->getStoriesWrittenByCurrentUser($userID);
 				$accountHomeViewModel->followingList = $model->getFollowing($userID);
 				$accountHomeViewModel->followerList = $model->getFollowers($userID);
+
+				$accountHomeViewModel->ActionTakenList = $model->getActionTakenList($userID);
 
 				$accountHomeViewModel->backgroundImage = $model->getCurrentBackgroundPictureMetadata($userID);
 
@@ -95,12 +104,20 @@ class Account extends Controller {
 				//get additional data
 				if($userID == $this->currentUser->UserId)
 				{
+					$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+					$view->set('actionsTakenTypes', $siteModel->getDropdownValues_ActionsTaken());
+
 					// public $newsFeed;
 					// public $pendingStories;
 					// public $draftStories;
 					// public $rejectedStories;
 					$accountHomeViewModel->newsFeed = $storyModel->getStoriesRecommendedByFriends_Latest($userID);
+					$accountHomeViewModel->pendingStories = $storyModel->getStoryListPendingApproval($userID);
 
+					$accountHomeViewModel->rejectedStories = $storyModel->getStoryListRejected($userID);
+					$accountHomeViewModel->draftStories = $storyModel->getStoryListDrafts($userID);
+					
+					//debugit($accountHomeViewModel->draftStories);
 					//debugit($accountHomeViewModel->newsFeed);
 				}
 
@@ -125,10 +142,7 @@ class Account extends Controller {
 				$accountHomeViewModel->totalApprovedComments = $storyModel->getTotalCommentsApproved($userID);
 
 				//How many penfing comments
-				$accountHomeViewModel->totalPendingComments = $storyModel->getTotalCommentsPending($userID);			
-
-				//Load the home view
-				$view = $this->loadView('home');
+				$accountHomeViewModel->totalPendingComments = $storyModel->getTotalCommentsPending($userID);							
 
 				//Load up some js files
 				$view->setJS(array(
@@ -151,8 +165,7 @@ class Account extends Controller {
 			{
 				addErrorMessage("dbError", gettext("An error occurred while attempting to retrieve user details."), 1);
 
-				//$this->redirect("");				
-				debugit($accountHomeViewModel->userDetails);
+				$this->redirect("");				
 			}
 		}
 		catch(Exception $ex)
@@ -685,6 +698,30 @@ class Account extends Controller {
 
 			if ($this->isAjax()) {
 				return $result;			
+			}
+			else
+			{
+				$this->redirect("account/home");
+			}
+		}
+	}
+
+	function addActionsTaken()
+	{
+		if($this->currentUser->IsAuth)
+		{
+			$result;
+
+			//Load the AccountModel to access account functions
+			$accountModel = $this->loadModel('AccountModel');
+
+			if($this->isPost() && isset($_POST["ActionTakenType"]) && isset($_POST["Content"]))
+			{
+				$result = $accountModel->addActionTaken($this->currentUser->UserId, $_POST["ActionTakenType"], $_POST["Content"]);
+			}
+
+			if ($this->isAjax()) {
+				echo $result;			
 			}
 			else
 			{
