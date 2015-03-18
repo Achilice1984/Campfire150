@@ -1,12 +1,6 @@
-
-<?php
- //	debugit($storyViewModel);
-// 	debugit($userViewModel);
-// 	debugit($approvalViewModel);
-?>
 <div class="container">
-
-    <h1><?php echo gettext("Edit reject comment"); ?></h1>
+	
+	<h1><?php echo gettext("Edit pending approval story"); ?></h1>
 	<div class="row">
   		<div class="col-md-3">
   			<div class="thumbnail">
@@ -24,32 +18,33 @@
   		<div class="col-md-6">
   			<div class="thumbnail">
       			<img src="../../static/images/default_story_image.jpg" alt="">
-  					<div class="thumbnail">
-  						<h2><?php echo $storyViewModel->StoryTitle ?></h2>
-  						<p><?php echo $storyViewModel->Content ?></p>
-						<h3><?php echo gettext("Comment"); ?></h3>
-  						<p><?php echo $commentViewModel->Content ?></p>
-  					</div>
+  				<h2><?php echo $storyViewModel->StoryTitle ?></h2>
+  				<p><?php echo $storyViewModel->Content ?></p>
   			</div>
   		</div>
 	</div>
     <div class="row">
-
+		
 		<div class="col-md-9">
-			<form action="<?php echo BASE_URL . "admin/commenteditreject/" . $commentViewModel->CommentId; ?>" method="post" id="editForm">
+			<form action="<?php echo BASE_URL . "admin/storyeditapproval/" . $storyViewModel->StoryId; ?>" method="post" id="editForm">
 
 				<input type="hidden" name="Id" value="<?php echo $approvalViewModel->Id; ?>">
 
 	            <?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
-	            <div class="checkbox">
+	            <div class="radio">
 	                <label>
-	                    <input type="checkbox" name="Approval" value="TRUE"> <?php echo gettext("Approve Story"); ?>
+	                    <input type="radio" name="Approval" value='TRUE'> <?php echo gettext("Approve Story"); ?>
 	                </label>
+	                <label>
+	                    <input type="radio" name="Approval" value='FALSE'> <?php echo gettext("Reject Story"); ?>
+	                </label>
+	              
 	            </div>
+
 	            <div class="form-group">
 	                <label for="Content"><?php echo gettext("Reason"); ?></label>
-	                <textarea class="form-control" id="Content" name="Content"><?php echo $approvalViewModel->Content; ?></textarea>
+	                <textarea class="form-control" id="Content" name="Content" value="<?php echo $approvalViewModel->Content; ?>"></textarea>
 	            </div>
 	            
 
