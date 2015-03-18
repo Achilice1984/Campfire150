@@ -454,6 +454,23 @@ class AdminModel extends Model {
 		}
 	}
 
+	public function getUserByID($userID)
+	{
+		$statement = "SELECT * FROM user
+						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
+						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
+						WHERE user.UserId = :UserId";
+
+		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/UserViewModel");
+
+		if(isset($user[0]))
+		{
+			return $user[0];
+		}
+
+		return null;
+	}
+
 	public function getListUsers($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
@@ -486,7 +503,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function deActivateUser($userID, $adminID, $reason)
+	public function deActivateUser($adminID, $userID, $reason)
 	{
 		//Accepts a User class for $user and a User class for $admin
 		//Sets the active flag to false in user profile
@@ -525,7 +542,7 @@ class AdminModel extends Model {
 	}
 
 
-	public function activateUser($userID, $adminID, $reason)
+	public function activateUser($adminID, $userID, $reason)
 	{
 		//Accepts a User class for $user and a User class for $admin
 		//Sets the active flag to false in user profile
@@ -556,6 +573,39 @@ class AdminModel extends Model {
 				);
 
 			return $this->fetch($statement, $parameters);
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function getListUsersActive($howMany = self::HOWMANY, $page = self::PAGE)
+	{
+		//Accepts how many, page
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Gets a list of users that have been disabled with reason
+		//returns an array of User class
+
+		try
+		{
+			$statement = "SELECT * ,
+								(SELECT COUNT(*) FROM user WHERE Active = 0) AS totalUsers
+							FROM user 
+							WHERE Active = 1 
+							ORDER BY UserId ASC 
+							LIMIT :Start, :HowMany";
+
+			$start = $this->getStartValue($howMany, $page);
+
+			$parameters = array( 
+					":Start" => $start,
+					":HowMany" => $howMany
+				);
+
+			$userList = $this->fetchIntoClass($statement, $parameters, "shared/UserViewModel");
+
+			return $userList;
 		}
 		catch(PDOException $e)
 		{
