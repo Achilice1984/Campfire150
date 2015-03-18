@@ -251,44 +251,25 @@ class AdminModel extends Model {
 		try
 		{
 			$this->fetch(
-				"UPDATE admin_approve_story SET Active = 0 WHERE Story_StoryId = :StoryID AND Active = 1", 
-				array(":StoryID"=>$storyID)
-				);//Set the active record for the story to deactive;
+				"UPDATE admin_approve_story 
+				SET Active = 0
+			 	WHERE Story_StoryId = :StoryID AND Active = 1", 
+			 	array(":StoryID"=>$storyID)
+			 	);//Set the active record for the story to deactive;
 
-			$statement = "SELECT *  
-							FROM admin_approve_story 
-							WHERE User_UserId = :UserID AND Story_StoryId = :StoryID";
+			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved)
+			  				VALUES(:AdminID, :StoryID, :Reason, TRUE)
+							ON DUPLICATE KEY
+							UPDATE Reason=:NewReason, Approved=1, Active=1";
 
-			$rowCount = $this->fetchRowCount($statement, array(":UserID"=>$adminID, ":StoryID"=>$storyID));
-
-			echo $rowCount;
-			if($rowCount <= 0)
-			{
-				$statement2 = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved, Pending, Active)
-								VALUES(:AdminID, :StoryID, :Reason, 1, 0, 1)";
-
-				$parameters = array(
-					":AdminID" => $adminID, 
-					":StoryID" => $storyID, 
-					":Reason" => $reason
+			$parameters = array(
+					":AdminID" => $adminID,
+					":StoryID" => $storyID,
+					":Reason" => $reason,
+					":NewReason" => $reason
 					);
 
-				return $this->fetch($statement2, $parameters);
-			}
-			else
-			{
-				$statement2 = "UPDATE admin_approve_story 
-								SET Reason = :Reason, Active = 1, Approved = 1
-								WHERE User_UserId = :AdminID AND Story_StoryId = :StoryID";
-
-				$parameters = array(
-					":Reason" => $reason, 
-					":StoryID" => $storyID, 
-					":AdminID" => $adminID
-					);
-
-				return $this->fetch($statement2, $parameters);	
-			}
+			return $this->fetch($statement, $parameters);
 		}
 		catch(PDOException $e)
 		{
@@ -308,27 +289,21 @@ class AdminModel extends Model {
 		
 		try
 		{
-			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged, (
-								SELECT COUNT( * )
-									FROM (
-									SELECT COUNT( * )
-									FROM user_inappropriateflag_comment
-									WHERE user_inappropriateflag_comment.Active = 1
-									GROUP BY Comment_CommentId
-									)tmpTable
-								) AS TotalComments
-							FROM user_inappropriateflag_comment uic 
-							INNER JOIN  comment c
-							ON c.CommentId = uic.Comment_CommentId 
-							LEFT JOIN admin_reject_comment arc
-							ON arc.Comment_CommentId = c.CommentId
-							INNER JOIN story s 
-							ON c.Story_StoryId = s.StoryId 
-							INNER JOIN user u 
-							ON c.User_UserId=u.UserId
-							WHERE uic.Active = 1 AND arc.Rejected != 1 AND arc.Active != 0
-							GROUP BY CommentId 
-							ORDER BY COUNT(uic.User_UserId) DESC 
+			$statement = "SELECT c.Content AS Content, s.StoryTitle, c.CommentId, COUNT( * ) AS TotalFlagNumber, (
+
+							SELECT COUNT( * ) 
+								FROM (
+
+								SELECT * 
+								FROM user_inappropriateflag_comment
+								GROUP BY Comment_CommentId
+								) tmptable
+							) AS TotalComments
+							FROM user_inappropriateflag_comment uic
+							INNER JOIN COMMENT c ON c.CommentId = uic.Comment_CommentId
+							INNER JOIN story s ON s.StoryId = c.Story_StoryId
+							GROUP BY uic.Comment_CommentId
+							ORDER BY TotalFlagNumber DESC 
 							LIMIT :Start, :HowMany";
 			
 			$start = $this->getStartValue($howMany, $page);
