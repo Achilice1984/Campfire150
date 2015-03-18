@@ -883,13 +883,23 @@ class StoryModel extends Model {
 
 		try
 		{
-			$statement = "SELECT s.*, aas.Approved, aas.Pending 
-						  FROM Story s 
-						  LEFT JOIN admin_approve_story aas
-						  ON s.StoryId = aas.Story_StoryId
-						  WHERE (s.User_UserId = :User_UserId AND aas.Pending IS NULL )
-                          OR (s.User_UserId = :User_UserId2 AND aas.Approved = FALSE AND aas.Pending = TRUE)
-						  LIMIT :start,:howmany";
+			$statement = "SELECT s.*, aas.Approved, aas.Pending,
+
+							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId
+
+							FROM Story s 
+
+							LEFT JOIN admin_approve_story aas
+							ON s.StoryId = aas.Story_StoryId
+
+							LEFT JOIN story_has_picture shp
+							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+							LEFT JOIN picture p
+							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+							WHERE (s.User_UserId = :User_UserId AND aas.Pending IS NULL )
+							OR (s.User_UserId = :User_UserId2 AND aas.Approved = FALSE AND aas.Pending = TRUE)
+							LIMIT :start,:howmany";
 
 			$start = $this-> getStartValue($howMany, $page);
  
@@ -905,8 +915,8 @@ class StoryModel extends Model {
 		}		
 	}
 
-	//Tested getStoryListRejected(3,5,1);
-	public function getStoryListRejected($howMany = self::HOWMANY, $page = self::PAGE)
+	//Tested getStoryListPendingApproval(3,5,1);
+	public function getStoryListDrafts($userID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts a user id, how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -917,16 +927,68 @@ class StoryModel extends Model {
 		try
 		{
 			
-			$statement = "SELECT s.*, aas.Approved
-						  FROM Story s 
-						  LEFT JOIN admin_approve_story aas
-						  ON s.StoryId = aas.Story_StoryId
-						  AND aas.Approved = FALSE
-						  LIMIT :start , :howmany";
+			$statement = "SELECT s.*, 
+
+						 	p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId
+
+							FROM Story s 
+							LEFT JOIN admin_approve_story aas
+							ON s.StoryId = aas.Story_StoryId AND aas.Approved = FALSE AND aas.Active = TRUE
+
+							LEFT JOIN story_has_picture shp
+							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+							LEFT JOIN picture p
+							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+							WHERE s.Published = FALSE
+							AND s.User_UserId = :UserId
+							LIMIT :start , :howmany";
 
 			$start = $this-> getStartValue($howMany, $page);
  
-			$parameters = array(":start" => $start, ":howmany" => $howMany);
+			$parameters = array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany);
+
+			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+
+			return $story;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+	//Tested getStoryListRejected(3,5,1);
+	public function getStoryListRejected($userID, $howMany = self::HOWMANY, $page = self::PAGE)
+	{
+		//Accepts a user id, how many, page
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Gets a list of stories that have been rejected by admin
+		//Should not contain any published stories
+		//Should have the admin user details an reason for being rejected
+		//returns an array of Story class
+		try
+		{
+			
+			$statement = "SELECT s.*, aas.Approved, aas.Pending,
+						 	p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId
+							FROM Story s 
+							LEFT JOIN admin_approve_story aas
+							ON s.StoryId = aas.Story_StoryId AND aas.Approved = FALSE AND aas.Active = TRUE
+
+							LEFT JOIN story_has_picture shp
+							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+							LEFT JOIN picture p
+							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+							WHERE aas.Active = TRUE
+							AND aas.Approved = FALSE
+							AND s.User_UserId = :UserId
+							LIMIT :start , :howmany";
+
+			$start = $this-> getStartValue($howMany, $page);
+ 
+			$parameters = array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany);
 
 			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
@@ -1088,6 +1150,10 @@ class StoryModel extends Model {
 					(
 						SELECT COUNT(1)
 						FROM user_recommend_story 
+
+						INNER JOIN user
+						ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
 						WHERE user_recommend_story.Story_StoryId = s.StoryId
 					    AND user_recommend_story.Active = TRUE
 					    AND user_recommend_story.Opinion = TRUE
@@ -1195,6 +1261,10 @@ class StoryModel extends Model {
 						(
 							SELECT COUNT(1)
 							FROM user_recommend_story 
+
+							INNER JOIN user
+							ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
 							WHERE user_recommend_story.Story_StoryId = s.StoryId
 						    AND user_recommend_story.Active = TRUE
 						    AND user_recommend_story.Opinion = TRUE
@@ -1227,10 +1297,21 @@ class StoryModel extends Model {
 						LEFT JOIN following f
 						ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
 
-						WHERE s.User_UserId IN 
-						(SELECT DISTINCT following.User_FollowerId 
-						FROM following 
-						WHERE following.User_UserId = :UserId2 AND following.Active = TRUE)
+						WHERE
+						(
+							SELECT DISTINCT user_recommend_story.Opinion 
+							FROM user_recommend_story 
+							
+							INNER JOIN user
+							ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
+							INNER JOIN following
+							ON (following.User_FollowerId = user_recommend_story.User_UserId) AND (following.User_UserId = :UserId2) AND (following.Active = TRUE)
+
+							WHERE user_recommend_story.Story_StoryId = s.StoryId 
+							AND user_recommend_story.Opinion = TRUE
+							AND user_recommend_story.Active = TRUE
+						)
 
 						
 						AND StoryPrivacyType_StoryPrivacyTypeId = 1
@@ -1283,6 +1364,10 @@ class StoryModel extends Model {
 					(
 						SELECT COUNT(1)
 						FROM user_recommend_story 
+
+						INNER JOIN user
+						ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
 						WHERE user_recommend_story.Story_StoryId = s.StoryId
 					    AND user_recommend_story.Active = TRUE
 					    AND user_recommend_story.Opinion = TRUE
@@ -1377,6 +1462,10 @@ class StoryModel extends Model {
 					(
 						SELECT COUNT(1)
 						FROM user_recommend_story 
+
+						INNER JOIN user
+						ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
 						WHERE user_recommend_story.Story_StoryId = s.StoryId
 					    AND user_recommend_story.Active = TRUE
 					    AND user_recommend_story.Opinion = FALSE
@@ -1473,6 +1562,10 @@ class StoryModel extends Model {
 					(
 						SELECT COUNT(1)
 						FROM user_recommend_story 
+
+						INNER JOIN user
+						ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
 						WHERE user_recommend_story.Story_StoryId = s.StoryId
 					    AND user_recommend_story.Active = TRUE
 					    AND user_recommend_story.Opinion = FALSE

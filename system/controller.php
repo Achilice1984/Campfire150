@@ -63,6 +63,8 @@ class Controller {
 
 			if(!$auth->isAuthenticated())
 			{
+				addErrorMessage("dbError", gettext("Please login to view this page."), 1);
+
 				$this->redirect("");
 			}
 		}

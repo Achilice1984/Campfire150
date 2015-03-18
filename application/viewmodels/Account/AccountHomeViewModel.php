@@ -29,6 +29,8 @@ class AccountHomeViewModel extends ViewModel
 	public $draftStories;
 	public $rejectedStories;
 
+	public $ActionTakenList;
+
 	public $pendingComments;
 
 	//ProfileViewModel.php

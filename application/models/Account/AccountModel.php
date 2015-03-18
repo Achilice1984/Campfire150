@@ -697,6 +697,16 @@ class AccountModel extends Model {
 						(
 							SELECT COUNT(1)
 							FROM user_recommend_story 
+
+							INNER JOIN story 
+							ON (story.StoryId = user_recommend_story.Story_StoryId) AND (story.Active = TRUE) AND (story.Published = TRUE) AND (story.StoryPrivacyType_StoryPrivacyTypeId = 1)
+
+							INNER JOIN user 
+							ON (user.UserId = story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
+							INNER JOIN admin_approve_story 
+							ON (admin_approve_story.Story_StoryId = story.StoryId) AND (admin_approve_story.Approved = TRUE) AND (admin_approve_story.Active = TRUE)
+
 							WHERE user_recommend_story.User_UserId = u.UserId
 						    AND user_recommend_story.Active = TRUE
 						    AND user_recommend_story.Opinion = TRUE
@@ -769,6 +779,16 @@ class AccountModel extends Model {
 						(
 							SELECT COUNT(1)
 							FROM user_recommend_story 
+
+							INNER JOIN story 
+							ON (story.StoryId = user_recommend_story.Story_StoryId) AND (story.Active = TRUE) AND (story.Published = TRUE) AND (story.StoryPrivacyType_StoryPrivacyTypeId = 1)
+
+							INNER JOIN user 
+							ON (user.UserId = story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
+							INNER JOIN admin_approve_story 
+							ON (admin_approve_story.Story_StoryId = story.StoryId) AND (admin_approve_story.Approved = TRUE) AND (admin_approve_story.Active = TRUE)
+
 							WHERE user_recommend_story.User_UserId = u.UserId
 						    AND user_recommend_story.Active = TRUE
 						    AND user_recommend_story.Opinion = TRUE
@@ -872,6 +892,16 @@ class AccountModel extends Model {
 						(
 							SELECT COUNT(1)
 							FROM user_recommend_story 
+
+							INNER JOIN story 
+							ON (story.StoryId = user_recommend_story.Story_StoryId) AND (story.Active = TRUE) AND (story.Published = TRUE) AND (story.StoryPrivacyType_StoryPrivacyTypeId = 1)
+
+							INNER JOIN user 
+							ON (user.UserId = story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
+							INNER JOIN admin_approve_story 
+							ON (admin_approve_story.Story_StoryId = story.StoryId) AND (admin_approve_story.Approved = TRUE) AND (admin_approve_story.Active = TRUE)
+
 							WHERE user_recommend_story.User_UserId = u.UserId
 						    AND user_recommend_story.Active = TRUE
 						    AND user_recommend_story.Opinion = TRUE
@@ -979,6 +1009,16 @@ class AccountModel extends Model {
 						(
 							SELECT COUNT(1)
 							FROM user_recommend_story 
+
+							INNER JOIN story 
+							ON (story.StoryId = user_recommend_story.Story_StoryId) AND (story.Active = TRUE) AND (story.Published = TRUE) AND (story.StoryPrivacyType_StoryPrivacyTypeId = 1)
+
+							INNER JOIN user 
+							ON (user.UserId = story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
+							INNER JOIN admin_approve_story 
+							ON (admin_approve_story.Story_StoryId = story.StoryId) AND (admin_approve_story.Approved = TRUE) AND (admin_approve_story.Active = TRUE)
+
 							WHERE user_recommend_story.User_UserId = u.UserId
 						    AND user_recommend_story.Active = TRUE
 						    AND user_recommend_story.Opinion = TRUE
@@ -1057,6 +1097,16 @@ class AccountModel extends Model {
 						(
 							SELECT COUNT(1)
 							FROM user_recommend_story 
+
+							INNER JOIN story 
+							ON (story.StoryId = user_recommend_story.Story_StoryId) AND (story.Active = TRUE) AND (story.Published = TRUE) AND (story.StoryPrivacyType_StoryPrivacyTypeId = 1)
+
+							INNER JOIN user 
+							ON (user.UserId = story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
+							INNER JOIN admin_approve_story 
+							ON (admin_approve_story.Story_StoryId = story.StoryId) AND (admin_approve_story.Approved = TRUE) AND (admin_approve_story.Active = TRUE)
+
 							WHERE user_recommend_story.User_UserId = u.UserId
 						    AND user_recommend_story.Active = TRUE
 						    AND user_recommend_story.Opinion = TRUE
@@ -1085,6 +1135,7 @@ class AccountModel extends Model {
 						(
 							SELECT COUNT(1)
 							FROM following 
+
 							WHERE following.User_FollowerId = u.UserId
 						    AND following.Active = TRUE
 						) AS totalFollowers
@@ -1115,6 +1166,40 @@ class AccountModel extends Model {
 		$users = $this->fetchIntoClass($statement, $parameters, "shared/UserViewModel");
 
 		return $users;
+	}
+
+	public function addActionTaken($userId, $actionTypeId, $content)
+	{
+		$statement = "INSERT INTO actions_taken
+						(user_UserId, actions_taken_type_ActionsTakenTypeId, Content, DateCreated) 
+						VALUES (:UserID, :ActionTypeID, :Content, :DateCreated)";
+
+		$parameters = array( 
+			":UserID" => $userId, 
+			":ActionTypeID" => $actionTypeId, 
+			":Content" => $content,
+			":DateCreated" => $this->getDateNow()
+		);
+		
+		return $this->fetch($statement, $parameters);
+	}
+
+	public function getActionTakenList($userId)
+	{
+		$statement = "SELECT at.*, att.*
+						FROM actions_taken at
+
+						LEFT JOIN actions_taken_type att
+						ON att.ActionsTakenTypeId = at.actions_taken_type_ActionsTakenTypeId
+
+						WHERE at.Active = TRUE
+						AND at.user_UserId = :UserID";
+
+		$parameters = array( 
+			":UserID" => $userId
+		);
+		
+		return $this->fetchIntoObject($statement, $parameters);
 	}
 }
 

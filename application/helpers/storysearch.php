@@ -51,6 +51,10 @@ class StorySearch extends Model
 					(
 						SELECT COUNT(1)
 						FROM user_recommend_story 
+
+						INNER JOIN user
+						ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+						
 						WHERE user_recommend_story.Story_StoryId = s.StoryId
 					    AND user_recommend_story.Active = TRUE
 					    AND user_recommend_story.Opinion = FALSE

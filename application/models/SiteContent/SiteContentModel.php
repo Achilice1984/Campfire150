@@ -59,6 +59,12 @@ class SiteContentModel extends Model {
 		return $this->fetchDropdownValues($statement);
 	}
 
+	public function getDropdownValues_ActionsTaken()
+	{
+		$statement = "SELECT ActionsTakenTypeId AS Value, " . $this->getLanguage() . " AS Name FROM actions_taken_type WHERE actions_taken_type.Active = TRUE";
+
+		return $this->fetchDropdownValues($statement);
+	}
 
 	/******************************************************************************************************************
 	*
