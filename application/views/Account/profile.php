@@ -8,7 +8,7 @@
 
 ?>
 
-<div class="container" style="padding-top: 50px; padding-bottom: 50px;">
+<div class="container">
 
     <div class="row">
        <?php include(APP_DIR . 'views/shared/messages.php'); ?>

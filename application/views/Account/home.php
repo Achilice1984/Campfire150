@@ -145,12 +145,16 @@
 
     		<div class="regularContent">   		  
 	    		<div class="row">
-					<ul style="border-bottom: 1px solid #eee" class="nav nav-pills">
-					    <li role="presentation" class="active"><a href="#User_NewsFeed" aria-controls="User_NewsFeed" role="tab" data-toggle="tab"><?php echo gettext("News Feed"); ?></a></li>
+					<ul style="border-bottom: 1px solid #eee" id="User_Tabs" class="nav nav-pills">
+
+						<?php if($currentUser->UserId == $accountHomeViewModel->userDetails->UserId) { ?>
+					    	<li role="presentation" class="active"><a href="#User_NewsFeed" aria-controls="User_NewsFeed" role="tab" data-toggle="tab"><?php echo gettext("News Feed"); ?></a></li>
+				    	<?php } ?>
 					    <li role="presentation"><a href="#User_MyStories" aria-controls="User_MyStories" role="tab" data-toggle="tab"><?php echo gettext("My Stories"); ?> <span class="badge"><?php echo $accountHomeViewModel->totalApprovedStories; ?></span></a></li>
 					    <li role="presentation"><a href="#User_MyRecommendations" aria-controls="User_MyRecommendations" role="tab" data-toggle="tab"><?php echo gettext("My Recommendations"); ?> <span class="badge"><?php echo $accountHomeViewModel->totalRecommendations; ?></span></a></li>
 					    <li role="presentation"><a href="#User_Following" aria-controls="User_Following" role="tab" data-toggle="tab"><?php echo gettext("Following"); ?> <span class="badge"><?php echo $accountHomeViewModel->totalFollowing; ?></span></a></li>
 					    <li role="presentation"><a href="#User_Followers" aria-controls="User_Followers" role="tab" data-toggle="tab"><?php echo gettext("Followers"); ?> <span class="badge"><?php echo $accountHomeViewModel->totalFollowers; ?></span></a></li>
+					    <li role="presentation"><a href="#User_ActionsTaken" aria-controls="User_ActionsTaken" role="tab" data-toggle="tab"><?php echo gettext("Actions Taken"); ?></a></li>
 					</ul>   
 
 					<div class="tab-content" style="padding:20px;">
@@ -169,9 +173,16 @@
 
 					    <div role="tabpanel" class="tab-pane" id="User_MyStories">
 							<?php 
-								foreach ($accountHomeViewModel->usersStoryList as $story)
+								if($currentUser->UserId != $accountHomeViewModel->userDetails->UserId)	
 								{
-									include(APP_DIR . "views/Account/_myStories.php");
+									foreach ($accountHomeViewModel->usersStoryList as $story)
+									{
+										include(APP_DIR . "views/Account/_myStories.php");
+									}
+								}
+								else
+								{
+									include(APP_DIR . "views/Account/_currentUserStories.php");
 								}			
 							?>
 					    </div>
@@ -210,6 +221,54 @@
 									}
 								}			
 							?>
+					    </div> 
+					    <div role="tabpanel" class="tab-pane" id="User_ActionsTaken">
+					    	<div class="row">
+								<?php 
+									if(isset($accountHomeViewModel->ActionTakenList) && count($accountHomeViewModel->ActionTakenList))
+									{
+										//debugit($accountHomeViewModel->followerList);
+										foreach ($accountHomeViewModel->ActionTakenList as $action)
+										{
+											echo "<h2>" . ($currentUser->LanguagePreference == "en_CA" ? $action->NameE : $action->NameF) . " <small>" . date("Y-m-d", strtotime($action->DateCreated)) . "</small></h2>";
+
+											echo "<div style='font-size:1.4em; padding-left:10px;'>" . $action->Content . "</div>";
+
+											echo "<hr />";
+										}
+									}
+
+									if($currentUser->UserId == $accountHomeViewModel->userDetails->UserId)	
+									{
+										?> 
+
+											<form id="ActionTakenForm" action="<?php echo BASE_URL; ?>account/addActionsTaken" method="post">
+									    															
+												<div class="form-group">
+					                               <!--  <label for="ActionTakenType"><?php echo gettext("Action Taken"); ?></label> -->
+					                                <select class="form-control" name="ActionTakenType">
+					                                    <?php 
+					                                        foreach ($actionsTakenTypes as $dropdownValue) {
+					                                            echo "<option value='" . $dropdownValue->Value . "'>"; 
+					                                                echo $dropdownValue->Name;
+					                                            echo "</option>";
+					                                        } 
+					                                    ?>
+					                                </select>
+					                            </div>
+													
+												<div class="form-group">
+									             	<textarea name="Content" id="Content" class="form-control" rows="3" placeholder="<?php echo gettext("What did you do to take action?!"); ?>"></textarea>
+								             	</div>
+
+									             <button type="submit" class="btn btn-default"><?php echo gettext("Add Action"); ?></button>
+									         </form>
+
+										<?php
+									}		
+								?>
+								
+							</div>
 					    </div> 
 					</div> 
 				</div> 		
