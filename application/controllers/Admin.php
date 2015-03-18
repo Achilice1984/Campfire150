@@ -294,21 +294,14 @@ class Admin extends Controller {
 		}
 		else
 		{
-			if(!empty($_POST["deactiveId"]))
-			{
-				echo "haha";
-				$results = $adminModel->deActivateUser($this->currentUser->UserId, $_POST["deactiveId"], "NULL");
-debugit($results);
-			}
-
-			$userList = $adminModel->getListUsers($howMany, $page);
+			$userList = $adminModel->getListUsersActive($howMany, $page);
 		}
 
 		$recordsNum = isset($userList[0]) ?  $userList[0]->totalUsers : 0;
 
 		foreach ($userList as $user)
 		{
-			$url = '<a href=?deactiveId=' . $user->UserId . '>DeActive</a>';
+			$url = '<a href=' . BASE_URL . 'admin/userstatusedit/' . $user->UserId . '>Action on User</a>';
 
 			$resultData[] = array($user->FirstName, $user->LastName,
 			  $user->Email, $user->DateCreated, $url);
@@ -350,9 +343,10 @@ debugit($results);
 
 		foreach ($userList as $user)
 		{
-			$url = 
+			$url = '<a href=' . BASE_URL . 'admin/userstatusedit/' . $user->UserId . '>Action on User</a>';
 
-			$resultData[] = array($user->FirstName, $user->LastName, $user->Email, $user->DateCreated);
+			$resultData[] = array($user->FirstName, $user->LastName,
+			  $user->Email, $user->DateCreated, $url);
 		}
 			
 			
@@ -391,8 +385,12 @@ debugit($results);
 		$resultData = array();
 
 		foreach ($userList as $user)
+		{
+			$url = '<a href=' . BASE_URL . 'admin/userstatusedit/' . $user->UserId . '>Action on User</a>';
+
 			$resultData[] = array($user->FirstName, $user->LastName,
-			  $user->Email, $user->DateCreated);
+			  $user->Email, $user->DateCreated, $url);
+		}
 			
 		//Process user list into array like below:	
 		$output = array(
@@ -579,11 +577,10 @@ debugit($results);
 		$storyViewModel = $model->getStoryById($storyId);
 
 		//Loads a model from corresponding model folder
-		$accountModel = $this->loadModel('Account/AccountModel');
 		$userViewModel = $this->loadViewModel('shared/UserViewModel');	
 
-		$userViewModel = $accountModel->getUserProfileByID($storyViewModel->UserId);
-		
+		$userViewModel = $model->getUserByID($storyViewModel->UserId);
+	
 		//Load the approval view model
 		$approvalViewModel = $this->loadViewModel('ApprovalViewModel');
 
@@ -674,6 +671,64 @@ debugit($results);
 
 				elseif($approvalViewModel->Approval == 'FALSE')
 					$model->rejectCommentAsAdmin($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
+
+				$this->redirect("admin/index");
+			}
+			else
+			{
+				echo "Failed to save the change";
+			}
+		}
+		else
+		{
+			//Execute this code if NOT a post back
+		}
+	}
+
+	function userstatusedit($userId)
+	{		
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('userstatusedit');
+
+		//Loads a model from corresponding model folder
+		$model = $this->loadModel('AdminModel');
+
+		//Loads view models
+		$activeViewModel = $this->loadViewModel('ActiveViewModel');
+		$activeViewModel->Id = $userId;
+		$activeViewModel->TableName = "user"; //This function is working on 'user' table.
+
+
+		$userViewModel = $this->loadViewModel('shared/UserViewModel');
+		$userViewModel = $model->getUserByID($userId);
+
+		$view->set('activeViewModel', $activeViewModel);
+
+		$view->set('userViewModel', $userViewModel);
+
+		//Renders the view. true indicates to load the layout
+		$view->render(true);
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			//$approvalViewModel->Approval = $_POST["Approval"];
+			$activeViewModel->Active = isset($_POST["Active"]) ? $_POST["Active"] : "";
+			$activeViewModel->Reason = isset($_POST["Reason"]) ? $_POST["Reason"] : "";
+
+			//Map post values to the loginViewModel
+			$activeViewModel  = AutoMapper::mapPost($activeViewModel );
+
+			if($activeViewModel->validate())
+			{
+				debugit($_POST["Reason"]);
+				debugit($activeViewModel);
+				// Save data
+				if($activeViewModel->Active == 'TRUE')
+					$model->activateUser($this->currentUser->UserId, $activeViewModel->Id, $activeViewModel->Reason);
+
+				elseif($approvalViewModel->Active == 'FALSE')
+					$model->deActivateUser($this->currentUser->UserId, $activeViewModel->Id, $activeViewModel->Reason);
 
 				$this->redirect("admin/index");
 			}

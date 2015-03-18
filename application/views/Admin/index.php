@@ -148,6 +148,7 @@
                                     <th>Last Name</th>
                                     <th>Email</th>
                                     <th>DateCreated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -164,6 +165,7 @@
                                     <th>Last Name</th>
                                     <th>Email</th>
                                     <th>DateCreated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>

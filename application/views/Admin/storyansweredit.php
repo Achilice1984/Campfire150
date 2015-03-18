@@ -2,7 +2,7 @@
 <?php
 	// debugit($storyViewModel);
 	// debugit($userViewModel);
-	 debugit($storyAnswerViewModel);
+	// debugit($storyAnswerViewModel);
 ?>
 <div class="container" style="margin-top:100px;">
 
