@@ -16,7 +16,7 @@ class Admin extends Controller {
 		$storyQuestionViewModel = $model->getQuestionById(1);
 		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
 		//$returnData = $model->getDropdownListItem('gendertype', 1);
-		$returnData = $model->approveStory(1, 7, "F going on");
+		$returnData = $model->getListUsersOderedByMostInappropriateFlags(7,1);
 
 		debugit($returnData);
 
@@ -368,7 +368,7 @@ class Admin extends Controller {
 		$howMany = $_POST["length"]; //How many results to return
 		$start = $_POST["start"]; 
 		$page = ($start / $howMany) + 1; //What page number in results
-		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+		$resultData = array();
 
 		$adminModel = $this->loadModel('AdminModel');
 
@@ -379,24 +379,24 @@ class Admin extends Controller {
 		}
 		else
 		{
-			$userList = $adminModel->getCommentListFlaggedInappropriate($howMany, $page);
+			$userList = $adminModel->getListUsersOderedByMostInappropriateFlags($howMany, $page);
 		}
 
-		$resultData = array();
+		$recordsNum = isset($userList[0]) ?  $userList[0]->TotalRecords : 0;
 
 		foreach ($userList as $user)
 		{
 			$url = '<a href=' . BASE_URL . 'admin/userstatusedit/' . $user->UserId . '>Action on User</a>';
 
 			$resultData[] = array($user->FirstName, $user->LastName,
-			  $user->Email, $user->DateCreated, $url);
+			  $user->Email, $user->DateCreated, $user->TotalInappropriate, $url);
 		}
 			
 		//Process user list into array like below:	
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
-	        "recordsTotal" => 50,
-	        "recordsFiltered" =>50,
+	        "recordsTotal" => $recordsNum,
+	        "recordsFiltered" =>$recordsNum,
 	        "data" => $resultData
 	    );
 
@@ -718,6 +718,9 @@ class Admin extends Controller {
 
 			//Map post values to the loginViewModel
 			$activeViewModel  = AutoMapper::mapPost($activeViewModel );
+			
+				debugit($_POST["Reason"]);
+				debugit($activeViewModel);
 
 			if($activeViewModel->validate())
 			{
