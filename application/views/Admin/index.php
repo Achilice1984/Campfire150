@@ -165,6 +165,7 @@
                                     <th>Last Name</th>
                                     <th>Email</th>
                                     <th>DateCreated</th>
+                                    <th>Inappropriate Flag Number</th> 
                                     <th>Action</th>
                                    
                                 </tr>
