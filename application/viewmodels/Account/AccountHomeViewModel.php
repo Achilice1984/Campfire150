@@ -28,6 +28,7 @@ class AccountHomeViewModel extends ViewModel
 	public $pendingStories;
 	public $draftStories;
 	public $rejectedStories;
+	public $publishedStories;
 
 	public $ActionTakenList;
 

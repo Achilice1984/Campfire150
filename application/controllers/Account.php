@@ -77,8 +77,7 @@ class Account extends Controller {
 				($accountHomeViewModel->userDetails->ProfilePrivacyType_PrivacyTypeId == 1 || $userID == $this->currentUser->UserId) && $accountHomeViewModel->userDetails->Active == TRUE)
 			{
 				//Populate data to be shown on the page
-				$accountHomeViewModel->recommendedStoryList = $storyModel->getStoriesRecommendedByCurrentUser($userID);
-				$accountHomeViewModel->usersStoryList = $storyModel->getStoriesWrittenByCurrentUser($userID);
+				$accountHomeViewModel->recommendedStoryList = $storyModel->getStoriesRecommendedByCurrentUser($userID);				
 				$accountHomeViewModel->followingList = $model->getFollowing($userID);
 				$accountHomeViewModel->followerList = $model->getFollowers($userID);
 
@@ -111,14 +110,19 @@ class Account extends Controller {
 					// public $pendingStories;
 					// public $draftStories;
 					// public $rejectedStories;
-					$accountHomeViewModel->newsFeed = $storyModel->getStoriesRecommendedByFriends_Latest($userID);
+					$accountHomeViewModel->newsFeed = $storyModel->getNewsFeed($userID);
 					$accountHomeViewModel->pendingStories = $storyModel->getStoryListPendingApproval($userID);
 
 					$accountHomeViewModel->rejectedStories = $storyModel->getStoryListRejected($userID);
 					$accountHomeViewModel->draftStories = $storyModel->getStoryListDrafts($userID);
+					$accountHomeViewModel->publishedStories = $storyModel->getStoriesPublished_Public_Private($userID);
 					
 					//debugit($accountHomeViewModel->draftStories);
 					//debugit($accountHomeViewModel->newsFeed);
+				}
+				else
+				{
+					$accountHomeViewModel->usersStoryList = $storyModel->getStoriesWrittenByCurrentUser($userID);
 				}
 
 				//How many people are they following
@@ -144,16 +148,31 @@ class Account extends Controller {
 				//How many penfing comments
 				$accountHomeViewModel->totalPendingComments = $storyModel->getTotalCommentsPending($userID);							
 
-				//Load up some js files
-				$view->setJS(array(
-					array("static/js/followUser.js", "intern"),
-					array("static/js/userHome.js", "intern"),
-					array("static/plugins/cropper/cropper.min.js", "intern")
-				));
+				if($userID == $this->currentUser->UserId)
+				{
+					//Load up some js files
+					$view->setJS(array(
+						array("static/js/followUser.js", "intern"),
+						array("static/js/userHome.js", "intern"),
+						array("static/js/storyButtons.js", "intern"),
+						array("static/plugins/cropper/cropper.min.js", "intern"),
+						array("static/plugins/datepicker/js/bootstrap-datepicker.min.js", "intern"),
+						array("static/plugins/maxlength/js/bootstrap-maxlength.min.js", "intern")
+					));
 
-				$view->setCSS(array(
-					array("static/plugins/cropper/cropper.min.css", "intern")
-				));
+					$view->setCSS(array(
+						array("static/plugins/cropper/cropper.min.css", "intern"),
+						array("static/plugins/datepicker/css/bootstrap-datepicker3.min.css", "intern")
+					));
+				}
+				else
+				{
+					//Load up some js files
+					$view->setJS(array(
+						array("static/js/followUser.js", "intern"),
+						array("static/js/userHome.js", "intern")
+					));
+				}
 
 				//Add a variable with data so that it can be accessed in the view
 				$view->set('accountHomeViewModel', $accountHomeViewModel);
@@ -302,6 +321,16 @@ class Account extends Controller {
 		//Load the register view
 		$view = $this->loadView('register');
 
+		//Load up some js files
+		$view->setJS(array(
+			array("static/plugins/datepicker/js/bootstrap-datepicker.min.js", "intern"),
+			array("static/js/register.js", "intern"),
+		));
+
+		$view->setCSS(array(
+			array("static/plugins/datepicker/css/bootstrap-datepicker3.min.css", "intern")
+		));
+
 		//Add a variable with old userViewModel data so that it can be accessed in the view
 		$view->set('userViewModel', $userViewModel);
 
@@ -323,57 +352,104 @@ class Account extends Controller {
 	{
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
-		$this->AuthRequest();
+		
+		$IsSuccess = FALSE;
+		
+		if($this->isAuth())
+		{
+			$model = $this->loadModel('AccountModel');
+			$securityAnswerViewModel = $this->loadViewModel('Account/SecurityAnswerViewModel');
 
-		$model = $this->loadModel('AccountModel');
-		$securityAnswerViewModel = $this->loadViewModel('Account/SecurityAnswerViewModel');
+			//Map post values to the userViewModel
+			$securityAnswerViewModel = AutoMapper::mapPost($securityAnswerViewModel);
 
-		//Map post values to the userViewModel
-		$securityAnswerViewModel = AutoMapper::mapPost($securityAnswerViewModel);
+			if($securityAnswerViewModel->validate())
+			{
+				$model = $this->loadModel('AccountModel');
+
+				if($model->updateSecurityQuestionAnswer($this->currentUser->UserId, $securityAnswerViewModel))
+				{
+					$IsSuccess = TRUE;
+				}
+			}
+		}
+
+		if ($this->isAjax()) 
+		{
+			if($IsSuccess)
+			{
+				echo getSuccessMessage();
+			}	
+			else
+			{
+				echo getErrorMessage();
+			}		
+
+			exit;
+		}
+		else
+		{
+			$this->redirect("Account/home");			
+		}
 	}
 
 	function changepassword()
 	{
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
-		$this->AuthRequest();
-		
-		$model = $this->loadModel('AccountModel');
 
-		//Load the userViewModel
-		$changePasswordViewModel = $this->loadViewModel('Account/ChangePasswordViewModel');
+		$IsSuccess = FALSE;
 
-		//Map post values to the userViewModel
-		$changePasswordViewModel = AutoMapper::mapPost($changePasswordViewModel);
-		
-		if($changePasswordViewModel->Password == $changePasswordViewModel->RePassword)
-		{
-			if($model->updateUserPassword($this->currentUser, $changePasswordViewModel))
+		if($this->isAuth())
+		{		
+			$model = $this->loadModel('AccountModel');
+
+			//Load the userViewModel
+			$changePasswordViewModel = $this->loadViewModel('Account/ChangePasswordViewModel');
+
+			//Map post values to the userViewModel
+			$changePasswordViewModel = AutoMapper::mapPost($changePasswordViewModel);			
+
+			if($changePasswordViewModel->Password == $changePasswordViewModel->RePassword)
 			{
-				//If success
-				$this->redirect("Account/profile");	
+				if($model->updateUserPassword($this->currentUser, $changePasswordViewModel))
+				{
+					$IsSuccess = TRUE;
+				}
+				else
+				{
+					if(!$this->isAjax())
+					{
+						addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your password."), 1);
+					}
+				}
 			}
 			else
 			{
-				addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your password."));
+				if(!$this->isAjax())
+				{
+					addErrorMessage("dbError", gettext("Opps, it looks like your passwords don't match."), 1);
+				}
 			}
+		}
+
+		if ($this->isAjax()) 
+		{
+			if($IsSuccess)
+			{
+				echo getSuccessMessage();
+			}	
+			else
+			{
+				echo getErrorMessage();
+			}		
+
+			exit;
 		}
 		else
 		{
-			addErrorMessage("dbError", gettext("Opps, it looks like your passwords don't match."));
+			$this->redirect("Account/home");			
 		}
-
-		//Load the userViewModel
-		$userViewModel = $this->loadViewModel('shared/UserViewModel');		
-
-		//Load the register view
-		$view = $this->loadView('profile');
-
-		//Add a variable with old userViewModel data so that it can be accessed in the view
-		$view->set('userViewModel', $userViewModel);
-		
-		//Render the register view. true indicates to load the layout pages as well
-		$view->render(true);
 	}
 
 	function changeprofilepicture()
@@ -502,6 +578,8 @@ class Account extends Controller {
 
 		$profileViewModel = $model->getProfileByID($this->currentUser->UserId);
 
+		$IsSuccess = FALSE;
+
 		//Execute code if a post back
 		if($this->isPost())
 		{			
@@ -518,23 +596,34 @@ class Account extends Controller {
 					$sessionManger = new SessionManager();
 					$sessionManger->setLanguageSession($profileViewModel->LanguageType_LanguageId);
 
-					//If success, send user to the home page
-					$this->redirect("account/home");	
-				}
+					$IsSuccess = TRUE;	
+				}				
+			}
+
+			if ($this->isAjax()) 
+			{
+				if($IsSuccess)
+				{
+					echo getSuccessMessage();
+				}	
 				else
 				{
-					addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your profile."), 1);
+					echo getErrorMessage();
+				}		
 
-					//If success, send user to the home page
-					$this->redirect("account/home");
-				}					
+				exit;
 			}
 			else
 			{
+				if(!$IsSuccess)
+				{
+					addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your profile."), 1);
+				}	
+
 				//If success, send user to the home page
 				$this->redirect("account/home");
 			}			
-		}
+		}		
 
 		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
 		$privacyDropdownValues = $siteModel->getDropdownValues_ProfilePrivacyType();
@@ -721,11 +810,275 @@ class Account extends Controller {
 			}
 
 			if ($this->isAjax()) {
-				echo $result;			
+				if($result)
+				{
+					$actionsTaken = $accountModel->getActionTakenList($this->currentUser->UserId);
+
+					$currentUser = $this->currentUser;
+
+					foreach ($actionsTaken as $action) {
+						include(APP_DIR . "views/Account/_actionsTaken.php");
+					}
+				}			
 			}
 			else
 			{
 				$this->redirect("account/home");
+			}
+		}
+	}
+
+	function updateAbout()
+	{
+		if($this->currentUser->IsAuth)
+		{
+			$result;
+
+			//Load the AccountModel to access account functions
+			$accountModel = $this->loadModel('AccountModel');
+
+			if($this->isPost() && isset($_POST["About"]))
+			{
+				$result = $accountModel->updateUserAbout($this->currentUser->UserId, $_POST["About"]);
+			}
+
+			if ($this->isAjax()) {
+				if($result)
+				{
+					echo getSuccessMessage();
+				}	
+				else
+				{
+					echo getErrorMessage();
+				}		
+			}
+			else
+			{
+				$this->redirect("account/home");
+			}
+		}
+	}
+
+	function updateActionStatement()
+	{
+		if($this->currentUser->IsAuth)
+		{
+			$result;
+
+			//Load the AccountModel to access account functions
+			$accountModel = $this->loadModel('AccountModel');
+
+			if($this->isPost() && isset($_POST["UserActionStatement"]))
+			{
+				$result = $accountModel->updateUserActionStatement($this->currentUser->UserId);
+
+				if($result == TRUE)
+				{
+					$result = $accountModel->insertUserActionStatement($this->currentUser->UserId, $_POST["UserActionStatement"]);
+				}
+			}
+
+			if ($this->isAjax()) {
+				if($result)
+				{
+					echo getSuccessMessage();
+				}	
+				else
+				{
+					echo getErrorMessage();
+				}			
+			}
+			else
+			{
+				$this->redirect("account/home");
+			}
+		}
+	}
+
+
+	/*********************************************************
+	*
+	*			USER HOME PAGE FUNCTIONS
+	*
+	***********************************************************/
+
+	function newsFeed()
+	{
+		require_once(APP_DIR.'helpers/image_get_path.php');
+
+		$storyModel = $this->loadModel("Story/StoryModel");
+		$searchResults = array();
+
+		$searchResults = $storyModel->getNewsFeed($this->currentUser->UserId, 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+
+		if (isset($searchResults)) {
+			foreach ($searchResults as $feed)
+			{
+				include(APP_DIR . "views/Account/_newsFeed.php");
+			}
+		}
+	}
+
+	function userStories()
+	{
+		if(isset($_POST["UserId"]))
+		{
+			require_once(APP_DIR.'helpers/image_get_path.php');
+
+			$storyModel = $this->loadModel("Story/StoryModel");
+			$searchResults = array();
+
+			$searchResults = $storyModel->getStoriesWrittenByCurrentUser($_POST["UserId"], 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+
+			if (isset($searchResults)) {
+				foreach ($searchResults as $story)
+				{
+					include(APP_DIR . "views/Account/_myStories.php");
+				}
+			}
+		}
+	}
+
+	function recommendations()
+	{
+		if(isset($_POST["UserId"]))
+		{
+			require_once(APP_DIR.'helpers/image_get_path.php');
+
+			$storyModel = $this->loadModel("Story/StoryModel");
+			$searchResults = array();
+
+			$searchResults = $storyModel->getStoriesRecommendedByCurrentUser($_POST["UserId"], 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+
+			if (isset($searchResults)) {
+				foreach ($searchResults as $story)
+				{
+					include(APP_DIR . "views/Account/_myRecommendations.php");
+				}
+			}
+		}
+	}
+
+	function followinglist()
+	{
+		if(isset($_POST["UserId"]))
+		{
+			require_once(APP_DIR.'helpers/image_get_path.php');
+
+			$accountModel = $this->loadModel('AccountModel');
+			$searchResults = array();
+
+			$searchResults = $accountModel->getFollowing($_POST["UserId"], 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+
+			if (isset($searchResults)) {
+
+				$currentUser = $this->currentUser;
+				foreach ($searchResults as $user)
+				{
+					include(APP_DIR . "views/Account/_searchPanel.php");
+				}
+			}
+		}
+	}
+
+	function followerslist()
+	{
+		if(isset($_POST["UserId"]))
+		{
+			require_once(APP_DIR.'helpers/image_get_path.php');
+
+			$accountModel = $this->loadModel('AccountModel');
+			$searchResults = array();
+
+			$searchResults = $accountModel->getFollowers($_POST["UserId"], 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+
+			if (isset($searchResults)) {
+
+				$currentUser = $this->currentUser;
+				foreach ($searchResults as $user)
+				{
+					include(APP_DIR . "views/Account/_searchPanel.php");
+				}
+			}
+		}
+	}
+
+	function publishedList()
+	{
+		if($this->isAuth() && $this->isAjax())
+		{
+			require_once(APP_DIR.'helpers/image_get_path.php');
+
+			$storyModel = $this->loadModel("Story/StoryModel");
+			$searchResults = array();
+
+			$searchResults = $storyModel->getStoriesPublished_Public_Private($this->currentUser->UserId, 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+
+			if (isset($searchResults)) {
+				foreach ($searchResults as $story)
+				{
+					include(APP_DIR . "views/Account/_publishedStories.php");
+				}
+			}
+		}
+	}
+
+	function draftsList()
+	{
+		if($this->isAuth() && $this->isAjax())
+		{
+			require_once(APP_DIR.'helpers/image_get_path.php');
+
+			$storyModel = $this->loadModel("Story/StoryModel");
+			$searchResults = array();
+
+			$searchResults = $storyModel->getStoryListDrafts($this->currentUser->UserId, 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+
+			if (isset($searchResults)) {
+				foreach ($searchResults as $story)
+				{
+					include(APP_DIR . "views/Account/_draftStories.php");
+				}
+			}
+		}
+	}
+
+	function pendingList()
+	{
+		if($this->isAuth() && $this->isAjax())
+		{
+			require_once(APP_DIR.'helpers/image_get_path.php');
+
+			$storyModel = $this->loadModel("Story/StoryModel");
+			$searchResults = array();
+
+			$searchResults = $storyModel->getStoryListPendingApproval($this->currentUser->UserId, 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+
+			if (isset($searchResults)) {
+				foreach ($searchResults as $story)
+				{
+					include(APP_DIR . "views/Account/_pendingStories.php");
+				}
+			}
+		}
+	}
+
+	function rejectedList()
+	{
+		if($this->isAuth() && $this->isAjax())
+		{
+			require_once(APP_DIR.'helpers/image_get_path.php');
+
+			$storyModel = $this->loadModel("Story/StoryModel");
+			$searchResults = array();
+
+			$searchResults = $storyModel->getStoryListRejected($this->currentUser->UserId, 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+
+			if (isset($searchResults)) {
+				foreach ($searchResults as $story)
+				{
+					include(APP_DIR . "views/Account/_rejectedStories.php");
+				}
 			}
 		}
 	}

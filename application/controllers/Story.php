@@ -86,7 +86,8 @@ class Story extends Controller {
 
 		//Load up some js files
 		$view->setJS(array(
-			array("static/js/storysearch.js", "intern")
+			array("static/js/storysearch.js", "intern"),
+			array("static/js/storyButtons.js", "intern")
 		));
 		$view->setCSS(array(
 			array("static/css/storysearch.css", "intern")
@@ -463,7 +464,7 @@ class Story extends Controller {
 		$view->setJS(array(
 			array("static/js/displaystory.js", "intern"),
 			array("static/js/storyThumbs.js", "intern"),
-			array("static/js/followUser.js", "intern")
+			array("static/js/followUser.js", "intern"),
 		));
 
 		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
@@ -671,8 +672,6 @@ class Story extends Controller {
 			}
 		}
 	}
-
-
 }
 
 ?>

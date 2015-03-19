@@ -47,6 +47,8 @@ class StorySearch extends Model
 					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
 
 					f.Active AS FollowingUser,
+
+					up.PictureId as UserProfilePicureId,
 					
 					(
 						SELECT COUNT(1)
@@ -128,6 +130,9 @@ class StorySearch extends Model
 					LEFT JOIN following f
 					ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
 
+					LEFT JOIN picture up
+					ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
+
 					WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
 					AND s.Active = :ActiveStory
 					AND s.Published = TRUE
@@ -136,6 +141,7 @@ class StorySearch extends Model
 					AND u.Active = TRUE
 					AND u.ProfilePrivacyType_PrivacyTypeId = 1
 					HAVING hits > 0
+					GROUP BY s.StoryId
 					ORDER BY hits DESC
 					LIMIT :start,:howmany";	
 

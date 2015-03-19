@@ -17,8 +17,6 @@ $(function(){
 			    //alert(item[0] + ': ' + item[1]);
 			  },
 			  backgroundColor: 'transparent'		
-		 });
-
-	
+		 });	
 });
 

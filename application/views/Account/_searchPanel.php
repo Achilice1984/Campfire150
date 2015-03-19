@@ -4,7 +4,7 @@
 	<div class="col-md-2">
 		<div class="row">
 			<a href="<?php echo BASE_URL . "account/home/" . $user->UserId; ?>">
-  				<img style="max-height: 150px;" class="img-responsive storyProfilePic" src="<?php echo BASE_URL; ?>static/images/default-user-image.png" alt="<?php echo gettext("Profile Picture"); ?>">
+  				<img style="max-height: 150px;" class="img-responsive storyProfilePic" src="<?php echo image_get_path_basic($user->UserId, $user->UserProfilePicureId, IMG_PROFILE, IMG_SMALL) ?>" alt="<?php echo gettext("Profile Picture"); ?>">
 			</a>			
 		</div>			
 	</div>

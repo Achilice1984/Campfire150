@@ -1,4 +1,4 @@
-$("#CommentStoryMoreButton").click(function(){
+$(document.body).on('click', "#CommentStoryMoreButton", function(){
 
 	$("#CommentPage").val(parseInt($("#CommentPage").val()) + 1);
 
@@ -24,12 +24,12 @@ $("#CommentStoryMoreButton").click(function(){
 	});
 });
 
-$("#ShowCommentsButton").click(function(){
+$(document.body).on('click', "#ShowCommentsButton", function(){
 	$("#commentsContainer").show();
 	$("#ShowCommentsButton").hide();
 });
 
-$("#postCommentButton").click(function(event){
+$(document.body).on('click', "#postCommentButton", function(event){
 	event.preventDefault();
 	event.stopPropagation();
 
@@ -57,7 +57,7 @@ $("#postCommentButton").click(function(event){
 });
 
 
-$(".StoryRecommendButton").on("click", function(event){
+$(document.body).on('click', ".StoryRecommendButton", function(event){
 	event.preventDefault();
 
 	var thisRecom = $(this);
@@ -107,7 +107,7 @@ $(".StoryRecommendButton").on("click", function(event){
 
 
 
-$(".StoryFlagButton").on("click", function(event){
+$(document.body).on('click', ".StoryFlagButton", function(event){
 	event.preventDefault();
 
 	var thisFlag = $(this);
