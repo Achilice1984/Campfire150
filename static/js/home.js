@@ -1,5 +1,5 @@
 
-$("#latestStoryListButton").click(function(){
+$(document.body).on('click', "#latestStoryListButton", function(){
 	var button = $(this);
 
 	$.ajax({
@@ -23,7 +23,7 @@ $("#latestStoryListButton").click(function(){
 	});
 });
 
-$("#recommendedStoryListButton").click(function(){
+$(document.body).on('click', "#recommendedStoryListButton", function(){
 	var button = $(this);
 
 	$.ajax({
@@ -47,7 +47,7 @@ $("#recommendedStoryListButton").click(function(){
 	});
 });
 
-$(".categoryListButton").click(function(){
+$(document.body).on('click', ".categoryListButton", function(){
 
 	var button = $(this);
 	var challengeId = $(this).attr("data-challengeId");

@@ -58,7 +58,7 @@ function initCrop(url) {
 }
 
 
- $("#cropImage").click(function(){
+$(document.body).on('click', "#cropImage", function(){
  	var url = $('#imgPreviewer').cropper('getDataURL');
 
  	$('#imgPreviewer').cropper('destroy');

@@ -340,8 +340,8 @@ class AccountModel extends Model {
 			$userID = $this->lastInsertId();
 
 			//Add security questions, add action statement
-			if($this->insertSecurityQuestionAnswer($userID, $user->SecurityQuestionId, $user->SecurityAnswer) &&
-				$this->insertUserActionStatement($userID, $user->ActionStatement))
+			if($this->insertSecurityQuestionAnswer($userID, $user->SecurityQuestionId, $user->SecurityAnswer))
+				//&& $this->insertUserActionStatement($userID, $user->ActionStatement))
 			{
 				$success = true;
 			}
@@ -373,21 +373,22 @@ class AccountModel extends Model {
 			":SecurityAnswer" => $questionAnswer
 		);
 
-		return $this->fetchRowCount($statement, $parameters) > 0;
+		return $this->fetch($statement, $parameters);
 	}
 
 	public function insertUserActionStatement($userID, $userActionStatement)
 	{
-		$statement = "INSERT INTO useractionstatement (user_UserId, ActionStatement, Active)";
-		$statement .= " VALUES (:user_UserId, :ActionStatement, :Active)";
+		$statement = "INSERT INTO useractionstatement (user_UserId, ActionStatement, Active, DateCreated)";
+		$statement .= " VALUES (:user_UserId, :ActionStatement, :Active, :DateCreated)";
 
 		$parameters = array( 
 			":user_UserId" => $userID,
 			":ActionStatement" => $userActionStatement,
-			":Active" => true
+			":Active" => true,
+			":DateCreated" => $this->getDateNow()
 		);
 
-		return $this->fetchRowCount($statement, $parameters) > 0;
+		return $this->fetch($statement, $parameters) > 0;
 	}
 	
 	public function updateUserProfile($user)
@@ -417,31 +418,74 @@ class AccountModel extends Model {
 		return $this->fetch($statement, $parameters);
 	}
 
-	public function updateSecurityQuestionAnswer($userID, $questionAnswer)
+	public function updateSecurityQuestionAnswer($userID, $questionAnswerViewModel)
 	{
-		$statement = "UPDATE securityquestionanswer SET SecurityQuestion_SecurityQuestionId = :SecurityQuestion_SecurityQuestionId, SecurityAnswer = :SecurityAnswer";
-		$statement .= " WHERE user_UserId = :user_UserId";
-
 		$authentication = new Authentication();
-		$questionAnswer = $authentication->hashPassword($questionAnswer);
+
+		$statement = "SELECT * FROM user WHERE UserId = :UserId";
+
+		//Get user that matches email address
+		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/UserViewModel");
+
+		// Does a user exists?
+		if (isset($user[0])) 
+		{
+			//Eliminate array 
+			$user = $user[0];
+
+			//check to see if user is properly authenticated
+			if($authentication->authenticate($questionAnswerViewModel->Password, $user)) //Is user peoperly authenticated?
+			{
+				$statement = "SELECT * 
+								FROM securityquestionanswer sqa
+								WHERE sqa.Active = TRUE
+								AND sqa.user_UserId = :user_UserId";
+
+				$rowCount = $this->fetchRowCount($statement, array(":user_UserId" => $userID));
+
+				if($rowCount > 0)
+				{
+					$statement = "UPDATE securityquestionanswer SET SecurityQuestion_SecurityQuestionId = :SecurityQuestion_SecurityQuestionId, SecurityAnswer = :SecurityAnswer";
+					$statement .= " WHERE user_UserId = :user_UserId";
+
+					$parameters = array( 
+						":user_UserId" => $userID,
+						":SecurityAnswer" => $authentication->hashPassword($questionAnswerViewModel->SecurityAnswer),
+						":SecurityQuestion_SecurityQuestionId" => $questionAnswerViewModel->SecurityQuestionId
+					);
+
+					return $this->fetch($statement, $parameters);
+				}
+				else
+				{
+					return $this->insertSecurityQuestionAnswer($userID, $questionAnswerViewModel->SecurityQuestionId, $questionAnswerViewModel->SecurityAnswer);
+				}
+			}
+		}	
+	}
+
+	public function updateUserActionStatement($userID)
+	{
+		$statement = "UPDATE useractionstatement SET Active = FALSE, DateDeactived = :Deactive
+		 				WHERE User_UserId = :user_UserId 
+		 				AND Active = TRUE";
 
 		$parameters = array( 
 			":user_UserId" => $userID,
-			":SecurityAnswer" => $questionAnswer
+			":Deactive" => $this->getDateNow()
 		);
 
 		return $this->fetch($statement, $parameters);
 	}
 
-	public function updateUserActionStatement($userID, $userActionStatement)
+	public function updateUserAbout($userID, $content)
 	{
-		$statement = "INSERT INTO useractionstatement (user_UserId, ActionStatement, Active)";
-		$statement .= " VALUES (:user_UserId, :ActionStatement, :Active)";
+		$statement = "UPDATE user SET About = :Content
+		 				WHERE UserId = :user_UserId";
 
 		$parameters = array( 
 			":user_UserId" => $userID,
-			":ActionStatement" => $userActionStatement,
-			":Active" => false
+			":Content" => $content
 		);
 
 		return $this->fetch($statement, $parameters);
@@ -464,7 +508,7 @@ class AccountModel extends Model {
 	public function getUserProfileByEmail($email)
 	{
 		$statement = "SELECT * FROM user
-						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
+						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId  AND u.Active = TRUE
 						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
 						WHERE user.Email = :Email
 						AND user.Active = TRUE";
@@ -481,7 +525,7 @@ class AccountModel extends Model {
 	public function getUserProfileByID($userID)
 	{
 		$statement = "SELECT * FROM user
-						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
+						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId AND u.Active = TRUE
 						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
 						WHERE user.UserId = :UserId
 						AND user.Active = TRUE";
@@ -504,7 +548,7 @@ class AccountModel extends Model {
 
 						FROM user
 
-						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
+						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId AND u.Active = TRUE
 						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
 
 						LEFT JOIN following f
@@ -527,7 +571,7 @@ class AccountModel extends Model {
 	{
 		$statement = "SELECT user.* FROM user,
 
-						LEFT JOIN useractionstatement uas ON user.UserId = uas.user_UserId
+						LEFT JOIN useractionstatement uas ON user.UserId = uas.user_UserId AND uas.Active = TRUE
 						LEFT JOIN securityquestionanswer sq ON user.UserId = s.user_UserId
 						WHERE user.Email = :Email
 						AND user.Active = TRUE";
@@ -543,9 +587,13 @@ class AccountModel extends Model {
 	}
 	public function getProfileByID($userID)
 	{
-		$statement = "SELECT user.* FROM user
-						LEFT JOIN useractionstatement uas    ON user.UserId = uas.user_UserId
-						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
+		$statement = "SELECT user.*
+						
+						FROM user
+
+						LEFT JOIN useractionstatement uas    
+						ON user.UserId = uas.user_UserId AND uas.Active = TRUE
+
 						WHERE user.UserId = :UserId
 						AND user.Active = TRUE";
 
@@ -694,6 +742,8 @@ class AccountModel extends Model {
 
 						uas.ActionStatement,
 
+						up.PictureId as UserProfilePicureId,
+
 						(
 							SELECT COUNT(1)
 							FROM user_recommend_story 
@@ -746,9 +796,13 @@ class AccountModel extends Model {
 						LEFT JOIN useractionstatement uas
 						ON (uas.User_UserId = u.UserId) AND (uas.Active = TRUE)
 
+						LEFT JOIN picture up
+						ON (up.User_UserId = u.UserId) AND (up.Active = TRUE) AND (Picturetype_PictureTypeId = 1)
+
 						WHERE u.Active = TRUE
 						AND u.ProfilePrivacyType_PrivacyTypeId = 1
 						AND f.Active = TRUE
+						GROUP BY u.UserId
 						LIMIT :start, :howmany";
 
 		$start = $this-> getStartValue($howMany, $page);
@@ -775,6 +829,8 @@ class AccountModel extends Model {
 						f.Active AS FollowingUser,
 
 						uas.ActionStatement,
+
+						up.PictureId as UserProfilePicureId,
 
 						(
 							SELECT COUNT(1)
@@ -828,9 +884,13 @@ class AccountModel extends Model {
 						LEFT JOIN useractionstatement uas
 						ON (uas.User_UserId = u.UserId) AND (uas.Active = TRUE)
 
+						LEFT JOIN picture up
+						ON (up.User_UserId = u.UserId) AND (up.Active = TRUE) AND (Picturetype_PictureTypeId = 1)
+
 						WHERE u.Active = TRUE
 						AND u.ProfilePrivacyType_PrivacyTypeId = 1
 						AND f.Active = TRUE
+						GROUP BY u.UserId
 						LIMIT :start, :howmany";
 
 		$start = $this-> getStartValue($howMany, $page);
@@ -889,6 +949,8 @@ class AccountModel extends Model {
 
 						uas.ActionStatement,
 
+						up.PictureId as UserProfilePicureId,
+
 						(
 							SELECT COUNT(1)
 							FROM user_recommend_story 
@@ -944,8 +1006,12 @@ class AccountModel extends Model {
 						LEFT JOIN useractionstatement uas
 						ON (uas.User_UserId = u.UserId) AND (uas.Active = TRUE)
 
+						LEFT JOIN picture up
+						ON (up.User_UserId = u.UserId) AND (up.Active = TRUE) AND (Picturetype_PictureTypeId = 1)
+
 						WHERE u.Active = TRUE
 						AND u.ProfilePrivacyType_PrivacyTypeId = 1
+						GROUP BY u.UserId
 						ORDER BY hits DESC
 						LIMIT :start, :howmany";
 
@@ -1006,6 +1072,8 @@ class AccountModel extends Model {
 
 						uas.ActionStatement,
 
+						up.PictureId as UserProfilePicureId,
+
 						(
 							SELECT COUNT(1)
 							FROM user_recommend_story 
@@ -1059,8 +1127,12 @@ class AccountModel extends Model {
 						LEFT JOIN useractionstatement uas
 						ON (uas.User_UserId = u.UserId) AND (uas.Active = TRUE)
 
+						LEFT JOIN picture up
+						ON (up.User_UserId = u.UserId) AND (up.Active = TRUE) AND (Picturetype_PictureTypeId = 1)
+
 						WHERE u.Active = TRUE
 						AND u.ProfilePrivacyType_PrivacyTypeId = 1
+						GROUP BY u.UserId
 						ORDER BY u.DateCreated
 						LIMIT :start, :howmany";
 
@@ -1093,6 +1165,8 @@ class AccountModel extends Model {
 						f.Active AS FollowingUser,
 
 						uas.ActionStatement,
+
+						up.PictureId as UserProfilePicureId,
 
 						(
 							SELECT COUNT(1)
@@ -1148,8 +1222,12 @@ class AccountModel extends Model {
 						LEFT JOIN useractionstatement uas
 						ON (uas.User_UserId = u.UserId) AND (uas.Active = TRUE)
 
+						LEFT JOIN picture up
+						ON (up.User_UserId = u.UserId) AND (up.Active = TRUE) AND (Picturetype_PictureTypeId = 1)
+
 						WHERE u.Active = TRUE
 						AND u.ProfilePrivacyType_PrivacyTypeId = 1
+						GROUP BY u.UserId
 						ORDER BY totalFollowers DESC
 						LIMIT :start, :howmany";
 
