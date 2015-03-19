@@ -330,6 +330,9 @@ class StoryModel extends Model {
 							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
 
 							u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
+
+							up.PictureId as UserProfilePicureId,
+
 							(
 								SELECT COUNT(1)
 								FROM user_recommend_story 
@@ -366,6 +369,9 @@ class StoryModel extends Model {
 							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
 							LEFT JOIN picture p
 							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+							LEFT JOIN picture up
+							ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (Picturetype_PictureTypeId = 1)
 
 							WHERE s.StoryId = :StoryId
 							AND aps.Active = TRUE";
@@ -409,6 +415,8 @@ class StoryModel extends Model {
 							u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
 							
 							f.Active AS FollowingUser,
+
+							up.PictureId as UserProfilePicureId,
 
 							uas.ActionStatement,
 
@@ -454,6 +462,9 @@ class StoryModel extends Model {
 
 							LEFT JOIN following f
 							ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
+
+							LEFT JOIN picture up
+							ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
 
 							WHERE s.StoryId = :StoryId
 							AND StoryPrivacyType_StoryPrivacyTypeId = 1
@@ -502,6 +513,9 @@ class StoryModel extends Model {
 							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
 
 							u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
+
+							up.PictureId as UserProfilePicureId,
+
 							(
 								SELECT COUNT(1)
 								FROM user_recommend_story 
@@ -537,16 +551,21 @@ class StoryModel extends Model {
 							LEFT JOIN story_has_picture shp
 							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
 							LEFT JOIN picture p
-							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)							
+							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+							LEFT JOIN picture up
+							ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)							
 
 							WHERE s.StoryId = :StoryId
 							AND StoryPrivacyType_StoryPrivacyTypeId = 1
 							AND u.ProfilePrivacyType_PrivacyTypeId = 1
 							AND s.Active = TRUE							
 							AND s.Published = FALSE
+							AND aps.Active = TRUE
+							AND aps.Approved = TRUE
+							GROUP BY s.StoryId
 							";
-							// AND aps.Active = TRUE
-							// AND aps.Approved = TRUE
+							
 			$parameters = array(":User_UserId" => $userID, 
 								":StoryId" => $storyID);
 
@@ -584,6 +603,9 @@ class StoryModel extends Model {
 							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
 
 							u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
+
+							up.PictureId as UserProfilePicureId,
+
 							(
 								SELECT COUNT(1)
 								FROM user_recommend_story 
@@ -627,6 +649,9 @@ class StoryModel extends Model {
 							LEFT JOIN admin_approve_story aps
 							ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
 
+							LEFT JOIN picture up
+							ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
+
 							INNER JOIN story_has_tag sht
 						  	ON s.StoryId = sht.Story_StoryId
 						  	INNER JOIN tag t 
@@ -640,6 +665,7 @@ class StoryModel extends Model {
 							  AND u.Active = TRUE
 							  AND u.ProfilePrivacyType_PrivacyTypeId = 1
 							  AND t.Tag= :tag
+							  GROUP BY s.StoryId
 							  LIMIT :start , :howmany";
 
 		
@@ -680,6 +706,7 @@ class StoryModel extends Model {
 						  AND StoryPrivacyType_StoryPrivacyTypeId = 1
 						  AND aas.Approved = TRUE
 						  AND s.Active = TRUE
+						  GROUP BY s.StoryId
 						  LIMIT :start , :howmany";
 
 		
@@ -726,6 +753,8 @@ class StoryModel extends Model {
 
 							f.Active AS FollowingUser,
 
+							up.PictureId as UserProfilePicureId,
+
 							(
 								SELECT COUNT(1)
 								FROM user_recommend_story 
@@ -769,6 +798,9 @@ class StoryModel extends Model {
 						LEFT JOIN admin_approve_story aps
 						ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
 
+						LEFT JOIN picture up
+						ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
+
 						  WHERE saq.answer_for_question_answer_answerId = :challengesID
 						  AND StoryPrivacyType_StoryPrivacyTypeId = 1
 						  AND u.ProfilePrivacyType_PrivacyTypeId = 1
@@ -777,6 +809,7 @@ class StoryModel extends Model {
 						  AND s.Active = TRUE
 						  AND s.Published = TRUE
 						  AND u.Active = TRUE
+						  GROUP BY s.StoryId
 						  LIMIT :start , :howmany";
 
 		
@@ -817,6 +850,7 @@ class StoryModel extends Model {
 						  AND aas.Approved = TRUE
 						  AND s.Active = TRUE
 						  WHERE saq.answer_for_question_answer_answerId = :genreID
+						  GROUP BY s.StoryId
 						  LIMIT :start , :howmany";
 
 		
@@ -854,6 +888,7 @@ class StoryModel extends Model {
 						  AND StoryPrivacyType_StoryPrivacyTypeId = 1
 						  AND s.Active = TRUE
 						  ORDER BY StoryTitle ASC 
+						  GROUP BY s.StoryId
 						  LIMIT :start, :howmany";
 
 			$start = $this-> getStartValue($howMany, $page);
@@ -897,8 +932,10 @@ class StoryModel extends Model {
 							LEFT JOIN picture p
 							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
 
-							WHERE (s.User_UserId = :User_UserId AND aas.Pending IS NULL )
-							OR (s.User_UserId = :User_UserId2 AND aas.Approved = FALSE AND aas.Pending = TRUE)
+							WHERE ((s.User_UserId = :User_UserId AND aas.Pending IS NULL )
+							OR (s.User_UserId = :User_UserId2 AND aas.Approved = FALSE AND aas.Pending = TRUE AND aas.Active = TRUE))
+							AND s.Published = TRUE
+							GROUP BY s.StoryId
 							LIMIT :start,:howmany";
 
 			$start = $this-> getStartValue($howMany, $page);
@@ -932,8 +969,6 @@ class StoryModel extends Model {
 						 	p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId
 
 							FROM Story s 
-							LEFT JOIN admin_approve_story aas
-							ON s.StoryId = aas.Story_StoryId AND aas.Approved = FALSE AND aas.Active = TRUE
 
 							LEFT JOIN story_has_picture shp
 							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
@@ -942,6 +977,7 @@ class StoryModel extends Model {
 
 							WHERE s.Published = FALSE
 							AND s.User_UserId = :UserId
+							GROUP BY s.StoryId
 							LIMIT :start , :howmany";
 
 			$start = $this-> getStartValue($howMany, $page);
@@ -1140,6 +1176,8 @@ class StoryModel extends Model {
 
 					f.Active AS FollowingUser,
 
+					up.PictureId as UserProfilePicureId,
+
 					(
 						SELECT COUNT(1)
 						FROM user_recommend_story 
@@ -1183,7 +1221,10 @@ class StoryModel extends Model {
 					ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
 
 					LEFT JOIN following f
-					ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
+					ON (f.User_FollowerId = s.User_UserId) AND (f.User_UserId = :UserId2) AND (f.Active = TRUE)
+
+					LEFT JOIN picture up
+					ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
 
 					WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
 					AND s.Active = TRUE
@@ -1192,16 +1233,106 @@ class StoryModel extends Model {
 					AND u.Active = TRUE
 					AND s.Published = TRUE
 					AND s.User_UserId = :UserId 
-					AND u.ProfilePrivacyType_PrivacyTypeId = 1		
+					AND u.ProfilePrivacyType_PrivacyTypeId = 1	
+					GROUP BY s.StoryId	
 					ORDER BY totalRecommends DESC
 					LIMIT :start,:howmany";
 
 		$start = $this-> getStartValue($howMany, $page);			
 
-		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
+		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":UserId2" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
 
 		return $stories;
 	}
+
+	public function getStoriesPublished_Public_Private($userID, $howMany = self::HOWMANY, $page = self::PAGE)
+	{
+		//Accepts a user id
+		//Gets an array of stories written by the owner of this user id
+		//Returns an array of Story class
+
+		$statement = "SELECT DISTINCT
+					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+
+					urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
+
+					aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
+
+					shp.Story_StoryId, shp.PictureId, shp.Active,
+
+					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
+
+					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+
+					f.Active AS FollowingUser,
+
+					up.PictureId as UserProfilePicureId,
+
+					(
+						SELECT COUNT(1)
+						FROM user_recommend_story 
+						WHERE user_recommend_story.Story_StoryId = s.StoryId
+					    AND user_recommend_story.Active = TRUE
+					    AND user_recommend_story.Opinion = FALSE
+					) AS totalFlags,
+					(
+						SELECT COUNT(1)
+						FROM user_recommend_story 
+
+						INNER JOIN user
+						ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
+						WHERE user_recommend_story.Story_StoryId = s.StoryId
+					    AND user_recommend_story.Active = TRUE
+					    AND user_recommend_story.Opinion = TRUE
+					) AS totalRecommends,
+
+					(
+						SELECT COUNT(1)
+						FROM comment c
+						WHERE c.Story_StoryId = s.StoryId
+					    AND c.Active = TRUE
+					    AND c.PublishFlag = TRUE
+					) AS totalComments
+					 
+					FROM story s
+
+					INNER JOIN user u
+					ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+					LEFT JOIN admin_approve_story aps
+					ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
+
+					LEFT JOIN user_recommend_story urs
+					ON (urs.Story_StoryId = s.StoryId) AND (urs.Active = TRUE)
+
+					LEFT JOIN story_has_picture shp
+					ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+					LEFT JOIN picture p
+					ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+					LEFT JOIN following f
+					ON (f.User_FollowerId = s.User_UserId) AND (f.User_UserId = :UserId2) AND (f.Active = TRUE)
+
+					LEFT JOIN picture up
+					ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
+
+					WHERE s.Active = TRUE
+					AND aps.Active = TRUE
+					AND aps.Approved = TRUE
+					AND u.Active = TRUE
+					AND s.Published = TRUE
+					AND s.User_UserId = :UserId 	
+					GROUP BY s.StoryId	
+					ORDER BY totalRecommends DESC
+					LIMIT :start,:howmany";
+
+		$start = $this-> getStartValue($howMany, $page);			
+
+		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":UserId2" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
+
+		return $stories;
+	}
+
 	public function getStoriesRecommendedByFriends_MostPopular($userID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts a user id
@@ -1251,6 +1382,8 @@ class StoryModel extends Model {
 
 						f.Active AS FollowingUser,
 
+						up.PictureId as UserProfilePicureId,
+
 						(
 							SELECT COUNT(1)
 							FROM user_recommend_story 
@@ -1296,6 +1429,118 @@ class StoryModel extends Model {
 
 						LEFT JOIN following f
 						ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
+
+						LEFT JOIN picture up
+						ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
+
+						WHERE
+						(
+							SELECT DISTINCT user_recommend_story.Opinion 
+							FROM user_recommend_story 
+							
+							INNER JOIN user
+							ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
+							INNER JOIN following
+							ON (following.User_FollowerId = user_recommend_story.User_UserId) AND (following.User_UserId = :UserId2) AND (following.Active = TRUE)
+
+							WHERE user_recommend_story.Story_StoryId = s.StoryId 
+							AND user_recommend_story.Opinion = TRUE
+							AND user_recommend_story.Active = TRUE
+						)
+
+						
+						AND StoryPrivacyType_StoryPrivacyTypeId = 1
+						AND s.Active = TRUE
+						AND aps.Active = TRUE
+						AND aps.Approved = TRUE
+						AND u.Active = TRUE
+						AND s.Published = TRUE						
+						
+						AND u.ProfilePrivacyType_PrivacyTypeId = 1	
+						GROUP BY s.StoryId
+						
+						LIMIT :start, :howmany";
+
+		$start = $this-> getStartValue($howMany, $page);
+
+		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":UserId2" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
+
+		return $stories;
+	}
+
+	public function getNewsFeed($userID, $howMany = self::HOWMANY, $page = self::PAGE)
+	{
+		//Accepts a user id
+		//Gets an array of stories that were recommended to the owner of this user id
+		//Returns an array of Story class
+		
+		$statement = "SELECT DISTINCT
+
+						s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+
+						urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
+
+						aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
+
+						shp.Story_StoryId, shp.PictureId, shp.Active,
+
+						p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
+
+						u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+
+						f.Active AS FollowingUser,
+
+						up.PictureId as UserProfilePicureId,
+
+						(
+							SELECT COUNT(1)
+							FROM user_recommend_story 
+							WHERE user_recommend_story.Story_StoryId = s.StoryId
+						    AND user_recommend_story.Active = TRUE
+						    AND user_recommend_story.Opinion = FALSE
+						) AS totalFlags,
+						(
+							SELECT COUNT(1)
+							FROM user_recommend_story 
+
+							INNER JOIN user
+							ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
+							WHERE user_recommend_story.Story_StoryId = s.StoryId
+						    AND user_recommend_story.Active = TRUE
+						    AND user_recommend_story.Opinion = TRUE
+						) AS totalRecommends,
+
+						(
+							SELECT COUNT(1)
+							FROM comment c
+							WHERE c.Story_StoryId = s.StoryId
+						    AND c.Active = TRUE
+						    AND c.PublishFlag = TRUE
+						) AS totalComments
+						
+
+						FROM story s
+
+						INNER JOIN user u
+						ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+						LEFT JOIN admin_approve_story aps
+						ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
+
+						LEFT JOIN user_recommend_story urs
+						ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :UserId) AND (urs.Active = TRUE)
+
+						LEFT JOIN story_has_picture shp
+						ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+						LEFT JOIN picture p
+						ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+						LEFT JOIN following f
+						ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
+
+						LEFT JOIN picture up
+						ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
 
 						WHERE
 						(
@@ -1354,6 +1599,8 @@ class StoryModel extends Model {
 
 					f.Active AS FollowingUser,
 
+					up.PictureId as UserProfilePicureId,
+
 					(
 						SELECT COUNT(1)
 						FROM user_recommend_story 
@@ -1399,6 +1646,9 @@ class StoryModel extends Model {
 					LEFT JOIN following f
 					ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
 
+					LEFT JOIN picture up
+					ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
+
 					WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
 					AND s.Active = TRUE
 					AND aps.Active = TRUE
@@ -1408,6 +1658,7 @@ class StoryModel extends Model {
 					AND urs.Opinion = TRUE
 					AND urs.Active = TRUE
 					AND u.ProfilePrivacyType_PrivacyTypeId = 1		
+					GROUP BY s.StoryId
 					ORDER BY totalRecommends DESC
 					LIMIT :start,:howmany";
 
@@ -1459,6 +1710,8 @@ class StoryModel extends Model {
 
 					f.Active AS FollowingUser,
 
+					up.PictureId as UserProfilePicureId,
+
 					(
 						SELECT COUNT(1)
 						FROM user_recommend_story 
@@ -1504,13 +1757,17 @@ class StoryModel extends Model {
 					LEFT JOIN following f
 					ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
 
+					LEFT JOIN picture up
+					ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
+
 					WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
 					AND s.Active = TRUE
 					AND aps.Active = TRUE
 					AND aps.Approved = TRUE
 					AND u.Active = TRUE
 					AND s.Published = TRUE
-					AND u.ProfilePrivacyType_PrivacyTypeId = 1		
+					AND u.ProfilePrivacyType_PrivacyTypeId = 1	
+					GROUP BY s.StoryId	
 					ORDER BY totalRecommends DESC
 					LIMIT :start,:howmany";
 
@@ -1558,6 +1815,8 @@ class StoryModel extends Model {
 					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
 
 					f.Active AS FollowingUser,
+
+					up.PictureId as UserProfilePicureId,
 					
 					(
 						SELECT COUNT(1)
@@ -1604,13 +1863,16 @@ class StoryModel extends Model {
 					LEFT JOIN following f
 					ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
 
+					LEFT JOIN picture up
+					ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
+
 					WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
 					AND s.Active = TRUE
 					AND u.ProfilePrivacyType_PrivacyTypeId = 1
 					AND aps.Active = TRUE
 					AND aps.Approved = TRUE
 					AND u.Active = TRUE
-		
+					GROUP BY s.StoryId		
 					ORDER BY s.DatePosted DESC
 					LIMIT :start,:howmany";
 

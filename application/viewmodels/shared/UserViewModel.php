@@ -144,13 +144,13 @@ class UserViewModel extends ViewModel
 					'Properties' => array()
 				)
 		);
-		$errors["ActionStatement"] = array(
-			'required' =>
-				array(
-					'Message' => gettext('The user action statement field is required!'),
-					'Properties' => array()
-				)
-		);
+		// $errors["ActionStatement"] = array(
+		// 	'required' =>
+		// 		array(
+		// 			'Message' => gettext('The user action statement field is required!'),
+		// 			'Properties' => array()
+		// 		)
+		// );
 
 		//Pass validation to the View Model
 		parent::__construct($errors);

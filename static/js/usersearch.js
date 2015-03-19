@@ -1,5 +1,5 @@
 
-$("#UserSearchMoreButton").click(function(){
+$(document.body).on('click', "#UserSearchMoreButton", function(){
 
 	$("#UserSearchPage").val(parseInt($("#UserSearchPage").val()) + 1);
 
@@ -22,7 +22,7 @@ $("#UserSearchMoreButton").click(function(){
 	});
 });
 
-$("#UserMostFollowersMoreButton").click(function(){
+$(document.body).on('click', "#UserMostFollowersMoreButton", function(){
 
 	$("#UserMostFollowersPage").val(parseInt($("#UserMostFollowersPage").val()) + 1);
 
@@ -45,7 +45,7 @@ $("#UserMostFollowersMoreButton").click(function(){
 	});
 });
 
-$("#UsersLatestMoreButton").click(function(){
+$(document.body).on('click', "#UsersLatestMoreButton", function(){
 
 	$("#UsersLatestPage").val(parseInt($("#UsersLatestPage").val()) + 1);
 

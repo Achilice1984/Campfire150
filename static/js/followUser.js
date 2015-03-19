@@ -1,4 +1,4 @@
-$(".FollowButton").click(function (event) {
+$(document.body).on('click', ".FollowButton", function (event) {
 	event.preventDefault();
 
 	var thisButton = $(this);

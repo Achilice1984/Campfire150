@@ -56,10 +56,10 @@
                                 <input type="text" class="form-control" id="SecurityAnswer" name="SecurityAnswer" placeholder="<?php echo gettext("Enter Your Answer"); ?>" value="<?php echo $userViewModel->SecurityAnswer; ?>">
                             </div>
 
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label for="ActionStatement"><?php echo gettext("User Action Statement"); ?></label>
                                 <input type="text" class="form-control" id="ActionStatement" name="ActionStatement" placeholder="<?php echo gettext("Enter Your User Action Statement"); ?>" value="<?php echo $userViewModel->ActionStatement; ?>">
-                            </div>
+                            </div> -->
                             
                             <h3><?php echo gettext("User Details"); ?></h3>
                             <hr />
@@ -129,10 +129,10 @@
                                 <label for="FirstName"><?php echo gettext("First Name"); ?></label>
                                 <input type="text" class="form-control" id="FirstName" name="FirstName" placeholder="<?php echo gettext("Enter Your First Name"); ?>" value="<?php echo $userViewModel->FirstName; ?>">
                             </div>
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label for="MidName"><?php echo gettext("Middle Name"); ?></label>
                                 <input type="text" class="form-control" id="MidName" name="MidName" placeholder="<?php echo gettext("Enter Your Middle Name"); ?>" value="<?php echo $userViewModel->MidName; ?>">
-                            </div>
+                            </div> -->
                             <div class="form-group">
                                 <label for="LastName"><?php echo gettext("Last Name"); ?></label>
                                 <input type="text" class="form-control" id="LastName" name="LastName" placeholder="<?php echo gettext("Enter Your Last Name"); ?>" value="<?php echo $userViewModel->LastName; ?>">

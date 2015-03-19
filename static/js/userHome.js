@@ -1,4 +1,14 @@
-$("#EditProfileButton").click(function(event){
+$(function(){
+
+	if($('textarea#Content').length)
+	{
+		$('textarea#Content').maxlength({
+	        alwaysShow: true
+	    });
+    }
+});
+
+$(document.body).on('click', "#EditProfileButton", function(event){
 	event.preventDefault();
 	event.stopPropagation();
 
@@ -11,6 +21,17 @@ $("#EditProfileButton").click(function(event){
 			if(data)
 			{
 				$("#profileContentContainer").html(data);
+
+				$('#Birthday').datepicker({
+				    format: 'yyyy-mm-dd'
+				});
+
+				$('textarea#About').maxlength({
+		            alwaysShow: true
+		        });
+		        $('textarea#UserActionStatement').maxlength({
+		            alwaysShow: true
+		        });
 			}
 			else
 			{
@@ -19,21 +40,34 @@ $("#EditProfileButton").click(function(event){
 		}
 	});
 
+
 	$("#EditProfileButton").hide();
 	$("#CancelProfileButton").show();
+
+	$("#AboutDiv").hide();
+	$("#AboutFormDiv").show();
+
+	$("#ActionStatementDiv").hide();
+	$("#ActionStatementFormDiv").show();
 
 	$(".profileContent").show();
 });
 
-$("#CancelProfileButton").click(function(event){
+$(document.body).on('click', "#CancelProfileButton", function(event){
 	event.preventDefault();
 	event.stopPropagation();
 
 	$(".profileContent").hide();
 	$(".regularContent").show();
 
+	$("#AboutFormDiv").hide();
+	$("#AboutDiv").show();
+
+	$("#ActionStatementFormDiv").hide();
+	$("#ActionStatementDiv").show();
+
 	$("#CancelProfileButton").hide();
-	$("#EditProfileButton").show();	
+	$("#EditProfileButton").show();		
 });
 
 
@@ -45,7 +79,7 @@ $("#CancelProfileButton").click(function(event){
 ********************************/
 
 
-$("#headerImageChange").click(function(){
+$(document.body).on('click', "#headerImageChange", function(){
 	$('#headerImgModal').modal();	
 });
 
@@ -101,7 +135,7 @@ function initCrop(url) {
 }
 
 
- $("#cropImage_header").click(function(){
+$(document.body).on('click', "#cropImage_header", function(){
  	var formData = new FormData(document.getElementById("imgHeaderForm"));
 
  	$.ajax({
@@ -145,7 +179,7 @@ function initCrop(url) {
 ********************************/
 
 
-$("#profileImageChange").click(function(){
+$(document.body).on('click', "#profileImageChange", function(){
 	$('#profileImgModal').modal();	
 });
 
@@ -165,7 +199,7 @@ function readURL_profile(input) {
     }
 }
 
-$("#ProfileImage").change(function(){
+$(document.body).on('change', "#ProfileImage", function(){
     readURL_profile(this);     
 });
 
@@ -201,7 +235,7 @@ function initCrop_profile(url) {
 }
 
 
- $("#cropImage_profile").click(function(){
+$(document.body).on('click', "#cropImage_profile", function(){
  	var formData = new FormData(document.getElementById("imgProfileForm"));
 
  	$.ajax({
@@ -269,3 +303,463 @@ else if (image_size.top < 0 && image_size.top + image_size.height < header.heigh
 $cropper.cropper('move', 0, -(image_size.top + image_size.height - header.height));
 }
 }; 
+
+
+
+/*******************************
+*
+*	AJAX Stories
+*
+********************************/
+// $("#").click(function(event){
+// 	event.preventDefault();
+// 	event.stopPropagation();
+
+// });
+
+/*******************************
+*
+*	AJAX Users
+*
+********************************/
+$(document.body).on('click', "#AboutSubmitButton", function(event){
+	event.preventDefault();
+	event.stopPropagation();
+
+	$.ajax({
+		type: "POST",
+		url: $("#AboutForm").attr("action"),
+		data: $("#AboutForm").serialize(),
+		success: function(data){
+			if(data)
+			{
+				$("#AboutFormDiv").find(".messageDiv").html(data);
+				$("#AboutDivText").text($("#About").val());
+			}
+			else
+			{
+
+			}
+		}
+	});	
+});
+
+$(document.body).on('click', "#UserActionSubmitButton", function(event){
+	event.preventDefault();
+	event.stopPropagation();
+
+	$.ajax({
+		type: "POST",
+		url: $("#ActionStatementForm").attr("action"),
+		data: $("#ActionStatementForm").serialize(),
+		success: function(data){
+			if(data)
+			{
+				$("#Content").val("");
+
+				$("#ActionStatementFormDiv").find(".messageDiv").html(data);
+				$("#ActionStatementDivText").text($("#UserActionStatement").val());
+			}
+			else
+			{
+
+			}
+		}
+	});	
+	
+});
+
+$(document.body).on('click', "#ActionTakenSubmitButton", function(event){
+	event.preventDefault();
+	event.stopPropagation();
+
+	$.ajax({
+		type: "POST",
+		url: $("#ActionTakenForm").attr("action"),
+		data: $("#ActionTakenForm").serialize(),
+		success: function(data){
+			if(data)
+			{
+				$("#ActionsTakenListContainer").html(data);
+			}
+			else
+			{
+
+			}
+		}
+	});	
+});
+
+$(document.body).on('click', "#ProfileSubmitButton", function(event){
+	event.preventDefault();
+	event.stopPropagation();
+
+	$.ajax({
+		type: "POST",
+		url: $("#profileForm").attr("action"),
+		data: $("#profileForm").serialize(),
+		success: function(data){
+			if(data)
+			{
+				$("#profileForm").find(".messageDiv").html(data);
+			}
+			else
+			{
+
+			}
+		}
+	});	
+});
+
+$(document.body).on('click', "#PasswordSubmitButton", function(event){
+	event.preventDefault();
+	event.stopPropagation();
+	
+	$.ajax({
+		type: "POST",
+		url: $("#changePasswordForm").attr("action"),
+		data: $("#changePasswordForm").serialize(),
+		success: function(data){
+			if(data)
+			{
+				$("#changePasswordForm").find(".messageDiv").html(data);
+			}
+			else
+			{
+
+			}
+		}
+	});
+});
+
+$(document.body).on('click', "#SecurityQuestionSubmitButton", function(event){
+	event.preventDefault();
+	event.stopPropagation();
+	
+	$.ajax({
+		type: "POST",
+		url: $("#ChangeSecurityQuestionForm").attr("action"),
+		data: $("#ChangeSecurityQuestionForm").serialize(),
+		success: function(data){
+			if(data)
+			{
+				$("#ChangeSecurityQuestionForm").find(".messageDiv").html(data);
+			}
+			else
+			{
+
+			}
+		}
+	});
+});
+
+
+
+/*****************************
+*
+*		SHOW MORE BUTTONS
+*
+******************************/
+
+$(document.body).on('click', "#NewFeedContentMoreButton", function(){
+
+	var pageInputName  = "#NewFeedContentPage";
+	var urlInputName   = "#NewFeedContentUrl";
+	var contentDivName = "#NewFeedContent";
+	var infoBarName    = "#NewFeedContentInfoBar";
+	var moreButtonName = "#NewFeedContentMoreButton";
+
+	$(pageInputName).val(parseInt($(pageInputName).val()) + 1);
+
+	$.ajax({
+		type: "POST",
+		url: $(urlInputName).val(),
+		data: { Page: $(pageInputName).val() },
+		success: function(data){
+			if(data)
+			{
+				$(contentDivName).append(data).show("slow");
+			}
+			else
+			{
+				$(infoBarName).show();
+
+				$(moreButtonName).hide();
+			}
+		}
+	});
+});
+
+$(document.body).on('click', "#Stories_ContentMoreButton", function(){
+
+	var pageInputName  = "#Stories_ContentPage";
+	var urlInputName   = "#Stories_ContentUrl";
+	var contentDivName = "#Stories_Content";
+	var infoBarName    = "#Stories_ContentInfoBar";
+	var moreButtonName = "#Stories_ContentMoreButton";
+	var userid         = $("#userid").val();
+
+	$(pageInputName).val(parseInt($(pageInputName).val()) + 1);
+
+	$.ajax({
+		type: "POST",
+		url: $(urlInputName).val(),
+		data: { Page: $(pageInputName).val(), UserId: userid },
+		success: function(data){
+			if(data)
+			{
+				$(contentDivName).append(data).show("slow");
+			}
+			else
+			{
+				$(infoBarName).show();
+
+				$(moreButtonName).hide();
+			}
+		}
+	});
+});
+
+$(document.body).on('click', "#StoryRecommendationContentMoreButton", function(){
+
+	var pageInputName  = "#StoryRecommendationContentPage";
+	var urlInputName   = "#StoryRecommendationContentUrl";
+	var contentDivName = "#StoryRecommendationContent";
+	var infoBarName    = "#StoryRecommendationContentInfoBar";
+	var moreButtonName = "#StoryRecommendationContentMoreButton";
+	var userid         = $("#userid").val();
+
+	$(pageInputName).val(parseInt($(pageInputName).val()) + 1);
+
+	$.ajax({
+		type: "POST",
+		url: $(urlInputName).val(),
+		data: { Page: $(pageInputName).val(), UserId: userid },
+		success: function(data){
+			if(data)
+			{
+				$(contentDivName).append(data).show("slow");
+			}
+			else
+			{
+				$(infoBarName).show();
+
+				$(moreButtonName).hide();
+			}
+		}
+	});
+});
+
+$(document.body).on('click', "#UserFollowingContentMoreButton", function(){
+
+	var pageInputName  = "#UserFollowingContentPage";
+	var urlInputName   = "#UserFollowingContentUrl";
+	var contentDivName = "#UserFollowingContent";
+	var infoBarName    = "#UserFollowingContentInfoBar";
+	var moreButtonName = "#UserFollowingContentMoreButton";
+	var userid         = $("#userid").val();
+
+	$(pageInputName).val(parseInt($(pageInputName).val()) + 1);
+
+	$.ajax({
+		type: "POST",
+		url: $(urlInputName).val(),
+		data: { Page: $(pageInputName).val(), UserId: userid },
+		success: function(data){
+			if(data)
+			{
+				$(contentDivName).append(data).show("slow");
+			}
+			else
+			{
+				$(infoBarName).show();
+
+				$(moreButtonName).hide();
+			}
+		}
+	});
+});
+
+$(document.body).on('click', "#UserFollowersContentMoreButton", function(){
+
+	var pageInputName  = "#UserFollowersContentPage";
+	var urlInputName   = "#UserFollowersContentUrl";
+	var contentDivName = "#UserFollowersContent";
+	var infoBarName    = "#UserFollowersContentInfoBar";
+	var moreButtonName = "#UserFollowersContentMoreButton";
+	var userid         = $("#userid").val();
+
+	$(pageInputName).val(parseInt($(pageInputName).val()) + 1);
+
+	$.ajax({
+		type: "POST",
+		url: $(urlInputName).val(),
+		data: { Page: $(pageInputName).val(), UserId: userid },
+		success: function(data){
+			if(data)
+			{
+				$(contentDivName).append(data).show("slow");
+			}
+			else
+			{
+				$(infoBarName).show();
+
+				$(moreButtonName).hide();
+			}
+		}
+	});
+});
+
+
+/*****************************
+*
+*		SHOW MORE BUTTONS
+*
+*		CURRENT USER SECTION
+*
+******************************/
+
+$(document.body).on('click', "#CurrentPublishedContentMoreButton", function(){
+
+	var pageInputName  = "#CurrentPublishedContentPage";
+	var urlInputName   = "#CurrentPublishedContentUrl";
+	var contentDivName = "#CurrentPublishedContent";
+	var infoBarName    = "#CurrentPublishedContentInfoBar";
+	var moreButtonName = "#CurrentPublishedContentMoreButton";
+
+	$(pageInputName).val(parseInt($(pageInputName).val()) + 1);
+
+	$.ajax({
+		type: "POST",
+		url: $(urlInputName).val(),
+		data: { Page: $(pageInputName).val() },
+		success: function(data){
+			if(data)
+			{
+				$(contentDivName).append(data).show("slow");
+			}
+			else
+			{
+				$(infoBarName).show();
+
+				$(moreButtonName).hide();
+			}
+		}
+	});
+});
+
+$(document.body).on('click', "#CurrentDraftsContentMoreButton", function(){
+
+	var pageInputName  = "#CurrentDraftsContentPage";
+	var urlInputName   = "#CurrentDraftsContentUrl";
+	var contentDivName = "#CurrentDraftsContent";
+	var infoBarName    = "#CurrentDraftsContentInfoBar";
+	var moreButtonName = "#CurrentDraftsContentMoreButton";
+
+	$(pageInputName).val(parseInt($(pageInputName).val()) + 1);
+
+	$.ajax({
+		type: "POST",
+		url: $(urlInputName).val(),
+		data: { Page: $(pageInputName).val() },
+		success: function(data){
+			if(data)
+			{
+				$(contentDivName).append(data).show("slow");
+			}
+			else
+			{
+				$(infoBarName).show();
+
+				$(moreButtonName).hide();
+			}
+		}
+	});
+});
+
+$(document.body).on('click', "#CurrentPendingContentMoreButton", function(){
+
+	var pageInputName  = "#CurrentPendingContentPage";
+	var urlInputName   = "#CurrentPendingContentUrl";
+	var contentDivName = "#CurrentPendingContent";
+	var infoBarName    = "#CurrentPendingContentInfoBar";
+	var moreButtonName = "#CurrentPendingContentMoreButton";
+
+	$(pageInputName).val(parseInt($(pageInputName).val()) + 1);
+
+	$.ajax({
+		type: "POST",
+		url: $(urlInputName).val(),
+		data: { Page: $(pageInputName).val() },
+		success: function(data){
+			if(data)
+			{
+				$(contentDivName).append(data).show("slow");
+			}
+			else
+			{
+				$(infoBarName).show();
+
+				$(moreButtonName).hide();
+			}
+		}
+	});
+});
+
+$(document.body).on('click', "#CurrentRejectedContentMoreButton", function(){
+
+	var pageInputName  = "#CurrentRejectedContentPage";
+	var urlInputName   = "#CurrentRejectedContentUrl";
+	var contentDivName = "#CurrentRejectedContent";
+	var infoBarName    = "#CurrentRejectedContentInfoBar";
+	var moreButtonName = "#CurrentRejectedContentMoreButton";
+
+	$(pageInputName).val(parseInt($(pageInputName).val()) + 1);
+
+	$.ajax({
+		type: "POST",
+		url: $(urlInputName).val(),
+		data: { Page: $(pageInputName).val() },
+		success: function(data){
+			if(data)
+			{
+				$(contentDivName).append(data).show("slow");
+			}
+			else
+			{
+				$(infoBarName).show();
+
+				$(moreButtonName).hide();
+			}
+		}
+	});
+});
+
+// $(document.body).on('click', "#MoreButton", function(){
+
+// 	var pageInputName  = "#Page";
+// 	var urlInputName   = "#Url";
+// 	var contentDivName = "#Content";
+// 	var infoBarName    = "#InfoBar";
+// 	var moreButtonName = "#MoreButton";
+
+// 	$(pageInputName).val(parseInt($(pageInputName).val()) + 1);
+
+// 	$.ajax({
+// 		type: "POST",
+// 		url: $(urlInputName).val(),
+// 		data: { LatestStoryPage: $(pageInputName).val() },
+// 		success: function(data){
+// 			if(data)
+// 			{
+// 				$(contentDivName).append(data).show("slow");
+// 			}
+// 			else
+// 			{
+// 				$(infoBarName).show();
+
+// 				$(moreButtonName).hide();
+// 			}
+// 		}
+// 	});
+// });
