@@ -88,7 +88,7 @@
                   </ul>
               </div>
             </nav>
-            <p class="h4 hidden-sm hidden-xs text-primary text-right motto"><?php echo gettext("Gathering Canadians through story."); ?></p>
+            <p class="h4 hidden-sm hidden-xs text-warning text-right motto"><?php echo gettext("Gathering Canadians through story."); ?></p>
             <nav role ="navigation" class="navbar navbar-default nav-primary">
               <div class="navbar-header">
                   <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#c150-navbar-collapse">

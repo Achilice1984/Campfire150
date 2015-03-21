@@ -6,9 +6,6 @@
             <div class="container">
 
                 <?php include(APP_DIR . 'views/shared/messages.php'); ?>
-                
-                <h1><?php echo gettext("Campfire Stories"); ?></h1>
-
                 <nav role="navigation">
                     <ul class="nav nav-tabs">
                         <li class="active"><a data-request-url="<?php echo BASE_URL; ?>home/latestStoryHome" id="latestStoryListButton" href="#"><?php echo gettext("Latest"); ?></a></li>
@@ -55,7 +52,7 @@
                 </div>
             </div>
         </section>
-        <section class="bg-blue">
+        <section class="bg-blue margin-bottom--15">
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">

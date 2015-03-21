@@ -2,7 +2,7 @@
 
 /* -------------------- General -------------------- */
 
-*:not(img):not(.badge):not(.WriteStoryButton):not(.jumbotron) {
+* {
 	border-radius: 0 !important;
 }
 body {
@@ -64,6 +64,10 @@ header, footer, nav {
 }
 .icon-bar {
 	background-color: #333 !important;
+}
+
+.text-warning {
+	color: #eea236;
 }
 
 @media (max-width: 991px) {
@@ -137,7 +141,6 @@ header, footer, nav {
 	}
 	.nav-container {
 		min-height: 145px;
-		margin-top: 5px !important;
 	}
 	.navbar {
 		position: absolute;
@@ -231,10 +234,23 @@ header, footer, nav {
 	display: block;
 }
 
+.margin-top--15 {
+	margin-top: -15px;
+}
+.margin-bottom--15 {
+	margin-bottom: -15px;
+}
+
 #wordCloudCanvas {
 	width: 80% !important;
 	margin: 20px auto 10px;
 	display: block;
+}
+
+.caption .readBtn {
+	position: absolute;
+	bottom: 0;
+	width: calc(100% - 20px);
 }
 
 /* This overides the validation css to make it work on dropdown inputs */
