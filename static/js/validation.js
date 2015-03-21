@@ -1,6 +1,6 @@
 //http://formvalidation.io/getting-started/
 $(document).ready(function() {
-    $('form').not("#loginForm").formValidation({
+    $('form').not("#loginForm").not("#AboutForm").not("#ActionStatementForm").not("#ActionTakenForm").formValidation({
     	locale: $("#LanguagePreference").val(),
         framework: 'bootstrap',
         trigger: 'blur',

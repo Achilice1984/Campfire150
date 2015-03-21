@@ -8,7 +8,7 @@
 
 ?>
 
-<div class="container" style="padding-top: 50px; padding-bottom: 50px;">
+<div class="container">
 
     <div class="row">
        <?php include(APP_DIR . 'views/shared/messages.php'); ?>
@@ -28,8 +28,8 @@
 
                     <div class="col-md-6"> 
 
-                        <form action="<?php echo BASE_URL; ?>account/profile" method="post">                            
-
+                        <form id="profileForm" action="<?php echo BASE_URL; ?>account/profile" method="post">                            
+                                                        
                             <h3><?php echo gettext("Profile Details"); ?></h3>
                             <hr />
 
@@ -82,11 +82,6 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="Birthday"><?php echo gettext("Years Living In Canada"); ?></label>
-                                <input type="date" class="form-control" id="YearsInCanada" name="YearsInCanada" placeholder="<?php echo gettext("YYYY-MM-DD"); ?>" value="<?php echo $userViewModel->Birthday; ?>">
-                            </div>
-
-                            <div class="form-group">
                                 <label for="YearsInCanada"><?php echo gettext("Years Living In Canada"); ?></label>
                                 <select class="form-control" name="YearsInCanada">
                                     <?php 
@@ -129,9 +124,11 @@
                             <div class="form-group">
                                 <label for="PostalCode"><?php echo gettext("Postal Code"); ?></label>
                                 <input type="text" class="form-control" id="PostalCode" name="PostalCode" placeholder="<?php echo gettext("Enter Your Postal Code"); ?>" value="<?php echo $userViewModel->PostalCode; ?>">
-                            </div>       
+                            </div>     
+
+                            <div class="messageDiv"></div>  
                                                        
-                            <button style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Update Profile"); ?></button>
+                            <button id="ProfileSubmitButton" style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Update Profile"); ?></button>
                             <br />
                         </form>
                     </div>
@@ -142,10 +139,13 @@
             <div role="tabpanel" class="tab-pane" id="dangerZone">
 
                 <div class="row">
-                    <div class="col-md-6"> 
-                        <h2><?php echo gettext("Password"); ?></h2>
+                    <div class="col-md-6">                        
 
-                        <form action="<?php echo BASE_URL; ?>Account/changepassword" method="post">
+                        <form id="changePasswordForm" action="<?php echo BASE_URL; ?>Account/changepassword" method="post">
+                            <h2><?php echo gettext("Password"); ?></h2>
+
+                            <div class="messageDiv"></div>
+
                             <div class="form-group">
                                 <label for="OldPassword"><?php echo gettext("Old Password"); ?></label>
                                 <input type="password" class="form-control" id="OldPassword" name="OldPassword" placeholder="<?php echo gettext("Enter Old Password"); ?>">
@@ -159,12 +159,16 @@
                                 <input type="password" class="form-control" id="RePassword" name="RePassword" placeholder="<?php echo gettext("Re-Type Password"); ?>">
                             </div>
 
-                            <button style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Change Password"); ?></button>
+                            <button id="PasswordSubmitButton" style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Change Password"); ?></button>
                             <br />
-                        </form>
-                        
-                        <h2><?php echo gettext("Security Question"); ?></h2>
-                        <form action="<?php echo BASE_URL; ?>Account/changesecurityquestion" method="post">
+                        </form>                       
+
+                        <form id="ChangeSecurityQuestionForm" action="<?php echo BASE_URL; ?>Account/changesecurityquestion" method="post">
+
+                            <h2><?php echo gettext("Security Question"); ?></h2>
+
+                            <div class="messageDiv"></div>
+
                             <div class="form-group">
                                 <label for="Password"><?php echo gettext("Password"); ?></label>
                                 <input type="password" class="form-control" id="Password" name="Password" placeholder="<?php echo gettext("Enter Password"); ?>">
@@ -187,7 +191,7 @@
                                 <input type="text" class="form-control" id="SecurityAnswer" name="SecurityAnswer" placeholder="<?php echo gettext("Enter Your Answer"); ?>" value="">
                             </div>
 
-                            <button style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Change Answer"); ?></button>
+                            <button id="SecurityQuestionSubmitButton" style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Change Answer"); ?></button>
                             <br />
                         </form>
                     </div>

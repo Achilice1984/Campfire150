@@ -251,44 +251,25 @@ class AdminModel extends Model {
 		try
 		{
 			$this->fetch(
-				"UPDATE admin_approve_story SET Active = 0 WHERE Story_StoryId = :StoryID AND Active = 1", 
-				array(":StoryID"=>$storyID)
-				);//Set the active record for the story to deactive;
+				"UPDATE admin_approve_story 
+				SET Active = 0
+			 	WHERE Story_StoryId = :StoryID AND Active = 1", 
+			 	array(":StoryID"=>$storyID)
+			 	);//Set the active record for the story to deactive;
 
-			$statement = "SELECT *  
-							FROM admin_approve_story 
-							WHERE User_UserId = :UserID AND Story_StoryId = :StoryID";
+			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved)
+			  				VALUES(:AdminID, :StoryID, :Reason, TRUE)
+							ON DUPLICATE KEY
+							UPDATE Reason=:NewReason, Approved=1, Active=1";
 
-			$rowCount = $this->fetchRowCount($statement, array(":UserID"=>$adminID, ":StoryID"=>$storyID));
-
-			echo $rowCount;
-			if($rowCount <= 0)
-			{
-				$statement2 = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved, Pending, Active)
-								VALUES(:AdminID, :StoryID, :Reason, 1, 0, 1)";
-
-				$parameters = array(
-					":AdminID" => $adminID, 
-					":StoryID" => $storyID, 
-					":Reason" => $reason
+			$parameters = array(
+					":AdminID" => $adminID,
+					":StoryID" => $storyID,
+					":Reason" => $reason,
+					":NewReason" => $reason
 					);
 
-				return $this->fetch($statement2, $parameters);
-			}
-			else
-			{
-				$statement2 = "UPDATE admin_approve_story 
-								SET Reason = :Reason, Active = 1, Approved = 1
-								WHERE User_UserId = :AdminID AND Story_StoryId = :StoryID";
-
-				$parameters = array(
-					":Reason" => $reason, 
-					":StoryID" => $storyID, 
-					":AdminID" => $adminID
-					);
-
-				return $this->fetch($statement2, $parameters);	
-			}
+			return $this->fetch($statement, $parameters);
 		}
 		catch(PDOException $e)
 		{
@@ -308,27 +289,21 @@ class AdminModel extends Model {
 		
 		try
 		{
-			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged, (
-								SELECT COUNT( * )
-									FROM (
-									SELECT COUNT( * )
-									FROM user_inappropriateflag_comment
-									WHERE user_inappropriateflag_comment.Active = 1
-									GROUP BY Comment_CommentId
-									)tmpTable
-								) AS TotalComments
-							FROM user_inappropriateflag_comment uic 
-							INNER JOIN  comment c
-							ON c.CommentId = uic.Comment_CommentId 
-							LEFT JOIN admin_reject_comment arc
-							ON arc.Comment_CommentId = c.CommentId
-							INNER JOIN story s 
-							ON c.Story_StoryId = s.StoryId 
-							INNER JOIN user u 
-							ON c.User_UserId=u.UserId
-							WHERE uic.Active = 1 AND arc.Rejected != 1 AND arc.Active != 0
-							GROUP BY CommentId 
-							ORDER BY COUNT(uic.User_UserId) DESC 
+			$statement = "SELECT c.Content AS Content, s.StoryTitle, c.CommentId, COUNT( * ) AS TotalFlagNumber, (
+
+							SELECT COUNT( * ) 
+								FROM (
+
+								SELECT * 
+								FROM user_inappropriateflag_comment
+								GROUP BY Comment_CommentId
+								) tmptable
+							) AS TotalComments
+							FROM user_inappropriateflag_comment uic
+							INNER JOIN COMMENT c ON c.CommentId = uic.Comment_CommentId
+							INNER JOIN story s ON s.StoryId = c.Story_StoryId
+							GROUP BY uic.Comment_CommentId
+							ORDER BY TotalFlagNumber DESC 
 							LIMIT :Start, :HowMany";
 			
 			$start = $this->getStartValue($howMany, $page);
@@ -479,6 +454,23 @@ class AdminModel extends Model {
 		}
 	}
 
+	public function getUserByID($userID)
+	{
+		$statement = "SELECT * FROM user
+						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
+						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
+						WHERE user.UserId = :UserId";
+
+		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/UserViewModel");
+
+		if(isset($user[0]))
+		{
+			return $user[0];
+		}
+
+		return null;
+	}
+
 	public function getListUsers($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
@@ -511,7 +503,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function deActivateUser($userID, $adminID, $reason)
+	public function deActivateUser($adminID, $userID, $reason)
 	{
 		//Accepts a User class for $user and a User class for $admin
 		//Sets the active flag to false in user profile
@@ -550,7 +542,7 @@ class AdminModel extends Model {
 	}
 
 
-	public function activateUser($userID, $adminID, $reason)
+	public function activateUser($adminID, $userID, $reason)
 	{
 		//Accepts a User class for $user and a User class for $admin
 		//Sets the active flag to false in user profile
@@ -581,6 +573,39 @@ class AdminModel extends Model {
 				);
 
 			return $this->fetch($statement, $parameters);
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function getListUsersActive($howMany = self::HOWMANY, $page = self::PAGE)
+	{
+		//Accepts how many, page
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Gets a list of users that have been disabled with reason
+		//returns an array of User class
+
+		try
+		{
+			$statement = "SELECT * ,
+								(SELECT COUNT(*) FROM user WHERE Active = 0) AS totalUsers
+							FROM user 
+							WHERE Active = 1 
+							ORDER BY UserId ASC 
+							LIMIT :Start, :HowMany";
+
+			$start = $this->getStartValue($howMany, $page);
+
+			$parameters = array( 
+					":Start" => $start,
+					":HowMany" => $howMany
+				);
+
+			$userList = $this->fetchIntoClass($statement, $parameters, "shared/UserViewModel");
+
+			return $userList;
 		}
 		catch(PDOException $e)
 		{
@@ -631,16 +656,51 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged 
-							FROM comment c 
-							INNER JOIN user u
-							ON c.User_UserId = u.UserId
-							INNER JOIN story s
-							ON u.UserId = s.User_UserId
-							INNER JOIN user_inappropriateflag_comment uic 
-							ON c.CommentId = uic.Comment_CommentId					
-							GROUP BY u.UserId
-							LIMIT :Start, :HowMany";
+			// $statement = "SELECT *, (table1.totalInappropriateOnStory + table2.totalInappropriateOnComment) AS TotalInappropriate FROM 
+	
+			// 				(SELECT u.UserId, COUNT( * ) AS totalInappropriateOnStory
+			// 				FROM user AS u
+			// 				LEFT JOIN story AS s ON u.UserId = s.User_UserId
+			// 				LEFT JOIN user_recommend_story AS urs ON urs.Story_StoryId = s.StoryId
+			// 				WHERE urs.Opinion = FALSE 
+			// 				GROUP BY UserId
+			// 				) AS table1
+
+			// 				FULL JOIN
+
+			// 				(SELECT u2.UserId, COUNT( uic2.User_UserId ) AS totalInappropriateOnComment 
+			// 				FROM user AS u2
+			// 				LEFT JOIN COMMENT AS c2 ON u2.UserId = c2.User_UserId
+			// 				LEFT JOIN user_inappropriateflag_comment uic2 ON uic2.Comment_CommentId = c2.CommentId
+			// 				WHERE uic2.Active = TRUE 
+			// 				GROUP BY u2.UserId
+			// 				) AS table2
+
+			// 				ON table1.UserId = table2.UserId
+
+			// 				LIMIT :Start, :HowMany";
+
+			 $statement = "SELECT * , COUNT( * ) AS TotalInappropriate, (
+
+								SELECT COUNT( * ) 
+								FROM (
+
+										SELECT COUNT( * ) AS TotalInappropriate
+										FROM user AS u
+										LEFT JOIN story AS s ON u.UserId = s.User_UserId
+										LEFT JOIN user_recommend_story AS urs ON urs.Story_StoryId = s.StoryId
+										WHERE urs.Opinion = 
+										FALSE 
+										GROUP BY UserId
+									)tmpTable
+								) AS TotalRecords
+							FROM user AS u
+							LEFT JOIN story AS s ON u.UserId = s.User_UserId
+							LEFT JOIN user_recommend_story AS urs ON urs.Story_StoryId = s.StoryId
+							WHERE urs.Opinion = 
+							FALSE 
+							GROUP BY UserId		 				
+			 				LIMIT :Start, :HowMany";
 			
 			$start = $this-> getStartValue($howMany, $page);
 			
@@ -649,7 +709,7 @@ class AdminModel extends Model {
 					":HowMany" => $howMany
 				);
 
-			$userList = $this->fetchIntoClass($statement, $parameters, "shared/CommentViewModel");
+			$userList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $userList;
 		}

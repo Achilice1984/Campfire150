@@ -1,8 +1,7 @@
-
 <?php
-	//debugit($storyViewModel);
-	// debugit($userViewModel);
-	//debugit($approvalViewModel);
+	// debugit($storyViewModel);
+	 debugit($userViewModel);
+	 debugit($activeViewModel);
 ?>
 <div class="container">
 	
@@ -23,34 +22,33 @@
   		</div>
   		<div class="col-md-6">
   			<div class="thumbnail">
-      			<img src="../../static/images/default_story_image.jpg" alt="">
-  				<h2><?php echo $storyViewModel->StoryTitle ?></h2>
-  				<p><?php echo $storyViewModel->Content ?></p>
+      			<img src="../../static/images/default_story_image.jpg" alt=""><br/>
+ 				<h2>More user information click <a href= "<?php echo BASE_URL . 'account/profile/' . $activeViewModel->Id; ?>"> here </a> </h2> 				
   			</div>
   		</div>
 	</div>
     <div class="row">
 		
 		<div class="col-md-9">
-			<form action="<?php echo BASE_URL . "admin/storyeditpending/" . $storyViewModel->StoryId; ?>" method="post" id="editForm">
+			<form action="<?php echo BASE_URL . 'admin/userstatusedit/' . $userViewModel->UserId; ?>" method="post" id="editForm">
 
-				<input type="hidden" name="Id" value="<?php echo $approvalViewModel->Id; ?>">
+				<input type="hidden" name="Id" value="<?php echo $activeViewModel->Id; ?>">
 
 	            <?php include(APP_DIR . 'views/shared/messages.php'); ?>
 
 	            <div class="radio">
 	                <label>
-	                    <input type="radio" name="Approval" value='TRUE'> <?php echo gettext("Approve Story"); ?>
+	                    <input type="radio" name="Active" value='TRUE'> <?php echo gettext("Active this user"); ?>
 	                </label>
 	                <label>
-	                    <input type="radio" name="Approval" value='FALSE'> <?php echo gettext("Reject Story"); ?>
+	                    <input type="radio" name="Active" value='FALSE'> <?php echo gettext("Deactive this user"); ?>
 	                </label>
 	              
 	            </div>
 
 	            <div class="form-group">
-	                <label for="Content"><?php echo gettext("Reason"); ?></label>
-	                <textarea class="form-control" id="Content" name="Content" value="<?php echo $approvalViewModel->Content; ?>"></textarea>
+	                <label for="Reason"><?php echo gettext("Reason"); ?></label>
+	               <textarea class="form-control" id="Reason" name="Reason" value="<?php echo $activeViewModel->Reason; ?>"></textarea>
 	            </div>
 	            
 

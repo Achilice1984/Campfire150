@@ -58,11 +58,17 @@ require(ROOT_DIR .'system/sessionmanager.php');
 // Define base URL
 global $config;
 
+$request_url = sprintf(
+					    "%s://%s:8084/",
+					    isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
+					    $_SERVER['SERVER_NAME']
+					  );
+
 //Check if the requested url is included in the array of valid urls
 //and asign the proper url
-if(in_array($config['request_url'], $config['base_url'], true))
+if(in_array($request_url, $config['base_url'], true))
 {
-	define('BASE_URL', $config['request_url']);
+	define('BASE_URL', $request_url);
 }
 else
 {

@@ -86,7 +86,7 @@
                                 <tr>
                                     <th>Story Title</th>
                                     <th>Comment Content</th>
-                                    <th>Comment Date</th> 
+                                    <th>Comment Date</th>
                                     <th>Action</th>                                    
                                    
                                 </tr>
@@ -101,7 +101,7 @@
                                 <tr>
                                     <th>Story Title</th>
                                     <th>Comment Content</th>
-                                    <th>Comment Date</th>
+                                    <th>Inappropriate Flag Number</th> 
                                     <th>Action</th>                                     
                                    
                                 </tr>
@@ -131,6 +131,7 @@
                                     <th>Last Name</th>
                                     <th>Email</th>
                                     <th>DateCreated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -147,6 +148,7 @@
                                     <th>Last Name</th>
                                     <th>Email</th>
                                     <th>DateCreated</th>
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
@@ -163,6 +165,8 @@
                                     <th>Last Name</th>
                                     <th>Email</th>
                                     <th>DateCreated</th>
+                                    <th>Inappropriate Flag Number</th> 
+                                    <th>Action</th>
                                    
                                 </tr>
                             </thead>
