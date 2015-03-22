@@ -30,7 +30,7 @@
                 <p class="clearfix"><a href="<?php echo BASE_URL; ?>story/search" class="btn btn-warning pull-right"><?php echo gettext("View More Stories"); ?></a></p>
             </div>
         </section>
-        <section class="bg-grey text-center text-xl padding-xl">
+        <section class="bg-grey text-center jumbotron">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-3 col-xs-6">
@@ -52,7 +52,7 @@
                 </div>
             </div>
         </section>
-        <section class="bg-blue margin-bottom--15">
+        <section class="bg-blue marginBottom-15">
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">

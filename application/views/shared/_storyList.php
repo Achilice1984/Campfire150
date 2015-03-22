@@ -7,21 +7,21 @@
         
         <div class="caption">
         	<div class="storyStats clearfix">
-			    <p>
+			    <div>
 			        <span class="glyphicon glyphicon-comment"></span> 
 			        <?php echo $story->totalComments; ?>
-			    </p>
-			    <p>
+			    </div>
+			    <div>
 			        <span class="glyphicon glyphicon-thumbs-up"></span>
 			        <?php echo $story->totalRecommends; ?>
-			    </p>
-			    <p>
+			    </div>
+			    <div>
 			        <span class="glyphicon glyphicon-flag"></span> 
 			        <?php echo $story->totalFlags; ?>
-			    </p>
+			    </div>
 			</div>
 			<div>
-				<?php echo substr($story->Content, 0, 255) . " ..."; ?>
+				<?php echo substr($story->Content, 0, 245) . " ..."; ?>
 			</div>
             <p class="readBtn">
             	<a href="<?php echo BASE_URL . "story/display/" . $story->StoryId; ?>" class="btn btn-warning btn-block"><?php echo gettext("Read"); ?></a>

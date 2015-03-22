@@ -54,11 +54,8 @@
             <nav role="navigation" class="nav-secondary clearfix">
               <div class="container">
                     <ul class="nav nav-pills nav-justified pull-right">
-
                       <li><a href="<?php echo BASE_URL; ?>story/search"><span class="glyphicon glyphicon-search"></span><span class="hidden-xs"> <?php echo gettext("Search"); ?></span></a></li>
                       <li><a href="<?php echo BASE_URL; ?>account/changelanguage"><span class="glyphicon glyphicon-globe"></span><span class="hidden-xs"> <?php echo $language; ?></span></a></li>
-                      
-                      
                       <li><a class="WriteStoryButton" href="<?php echo BASE_URL; ?>story/add"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> <?php echo gettext("Share a Story"); ?></span></a></li>
                       
                       <?php  if(!$currentUser->IsAuth) { ?>
@@ -83,7 +80,6 @@
                                     <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>admin/"><?php echo gettext("Admin Panel") ?></a></li>
                                   </ul>
                                 </li>
-                                
                       <?php } ?>
                   </ul>
               </div>
