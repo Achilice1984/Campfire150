@@ -207,7 +207,7 @@
 					<div class="tab-content" style="padding:20px;">
 						<?php if($isCurrentUser) { ?>
 						    <div role="tabpanel" class="tab-pane active" id="User_NewsFeed">
-						    	<div id="NewFeedContent">
+						    	<div id="NewFeedContent" class="row">
 							    	<?php 
 							    		if(isset($accountHomeViewModel->newsFeed))
 							    		{
@@ -238,7 +238,7 @@
 							<?php 
 								if($currentUser->UserId != $accountHomeViewModel->userDetails->UserId)	
 								{
-									echo "<div id='Stories_Content'>";
+									echo "<div id='Stories_Content' class='row'>";
 
 									foreach ($accountHomeViewModel->usersStoryList as $story)
 									{
@@ -271,7 +271,7 @@
 
 					    <div role="tabpanel" class="tab-pane" id="User_MyRecommendations">
 
-					    	<div id="StoryRecommendationContent">
+					    	<div id="StoryRecommendationContent" class="row">
 								<?php 
 									foreach ($accountHomeViewModel->recommendedStoryList as $story)
 									{
@@ -295,7 +295,7 @@
 					    </div> 
 					    <div role="tabpanel" class="tab-pane" id="User_Following">
 
-					    	<div id="UserFollowingContent">
+					    	<div id="UserFollowingContent" class="row">
 								<?php 
 									if(isset($accountHomeViewModel->followingList) && count($accountHomeViewModel->followingList) > 0)
 									{
@@ -322,7 +322,7 @@
 					    </div> 
 					    <div role="tabpanel" class="tab-pane" id="User_Followers">
 
-					    	<div id="UserFollowersContent">
+					    	<div id="UserFollowersContent" class="row">
 								<?php 
 									if(isset($accountHomeViewModel->followerList) && count($accountHomeViewModel->followerList))
 									{
