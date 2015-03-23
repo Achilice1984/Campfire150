@@ -62,7 +62,7 @@
 		<div class="col-md-10">
 			<div class="col-md-12 comment-post alert alert-info alert-dismissible" id="CurrentRejectedContentInfoBar" role="alert" style="font-size: 1.2em; min-height: 82px;">
 		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("This comment has been removed."); ?>							
+		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo (!isset($comment->IsAdminRejected) || $comment->IsAdminRejected == FALSE) ? gettext("This comment has been removed.") : gettext("This comment has been removed by an administrator."); ?>							
 			</div>
 		</div>
 	</article>
