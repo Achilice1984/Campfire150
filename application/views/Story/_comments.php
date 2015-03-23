@@ -60,19 +60,9 @@
 			
 		</div>
 		<div class="col-md-10">
-			<div class="panel panel-default arrow left">
-				<div class="panel-body">
-					<div style="min-height: 82px;" class="comment-post">
-						<div class="row">
-							<div class="col-md-9" style="padding:20px; font-size: 1.2em;">
-								<div class="alert alert-info alert-dismissible" id="CurrentRejectedContentInfoBar" role="alert" style="display:none;">
-							  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
+			<div class="col-md-12 comment-post alert alert-info alert-dismissible" id="CurrentRejectedContentInfoBar" role="alert" style="font-size: 1.2em; min-height: 82px;">
+		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("This comment has been removed."); ?>							
 			</div>
 		</div>
 	</article>
