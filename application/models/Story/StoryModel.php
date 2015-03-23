@@ -1982,14 +1982,22 @@ class StoryModel extends Model {
 
 		try
 		{
-			$statement = "SELECT c.*, u.FirstName, u.LastName  
+			$statement = "SELECT c.*, 
+
+							u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, u.Active as IsUserActive,
+							arc.Rejected as IsAdminRejected
+
 							FROM Comment c
+
 							LEFT JOIN user u
 							ON u.UserId = c.User_UserId
+							
+							LEFT JOIN admin_reject_comment arc
+							ON arc.Comment_CommentId = c.CommentId AND arc.Active = TRUE
+
 							WHERE Story_StoryId = :storyID 
 							AND c.Active = TRUE
 							AND c.PublishFlag
-							AND u.Active = TRUE
 							ORDER BY CommentId 
 							ASC LIMIT :start, :howmany";
 
