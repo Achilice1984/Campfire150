@@ -1,5 +1,7 @@
 <?php
 
+require_once(APP_DIR . 'helpers/image_get_path.php');
+
     //You have access to the shared/StoryViewModel.php
     
     //You can access everything from this variable:
@@ -18,7 +20,7 @@
     <div class="row">
         <div class="col-md-12">            
         
-            <form action="<?php echo BASE_URL; ?>story/add" method="post" enctype="multipart/form-data">
+            <form action="<?php echo (isset($storyViewModel->StoryId) ? BASE_URL . "story/edit/" . $storyViewModel->StoryId : BASE_URL . "story/add" ) ?>" method="post" enctype="multipart/form-data">
 
                 <?php include(APP_DIR . 'views/shared/messages.php'); ?>         
                 
@@ -29,7 +31,24 @@
                 <input type="hidden" name="image_width" id="image_width" value="">
                 <div id="addImageDiv" class="img-rounded center-block" style="border-radius: 10px !important; position: relative; min-height:200px; border: 1px solid #E8E8E8; overflow: hidden; padding: 0; margin: 0;">
                     
-                    <img id="imgPreviewer" src="" class="img-rounded img-responsive center-block" alt="" style="width:1200px; z-index: 10; " />
+                    <?php
+
+                        if(isset($storyViewModel->PictureId))
+                        {
+                            ?>
+                                <img id="imgPreviewer" src="<?php echo image_get_path_basic($storyViewModel->StoryUserID, $storyViewModel->PictureId, IMG_STORY, IMG_LARGE); ?>" class="img-rounded img-responsive center-block" alt="" style="width:1200px; z-index: 10; " />
+                            <?php
+                        }
+                        else
+                        {
+                            ?>
+                                <img id="imgPreviewer" src="" class="img-rounded img-responsive center-block" alt="" style="width:1200px; z-index: 10; " />
+                            <?php
+                        }
+                    ?>
+
+                     
+                    
 
 
                       <div class="form-group" style="position: absolute; z-index: 50; bottom:0; float: left;">   
