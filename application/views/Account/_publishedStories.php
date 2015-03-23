@@ -35,6 +35,20 @@
 	  		<div class="col-lg-8 col-md-7">
 	    		<h4><?php echo $story->StoryTitle; ?></h4>
     			<?php echo substr($story->Content, 0, 255) . " ..."; ?>
+
+    			<div style="clear:both;"></div>
+				
+				<div class="form-group col-md-6">
+	    			<select class="form-control storyPrivacyDropDown" data-action="<?php echo BASE_URL . "account/changeStoryPrivacy/"; ?>" data-story-id="<?php echo $story->StoryId; ?>" name="StoryPrivacyType_StoryPrivacyTypeId" style="margin-left: -15px; margin-top: 10px;">
+	                    <?php 
+	                        foreach ($privacyDropdownValues as $dropdownValue) {
+	                            echo "<option " . ($story->StoryPrivacyType_StoryPrivacyTypeId == $dropdownValue->Value ? 'selected=selected' : "") . " value='" . $dropdownValue->Value . "'>"; 
+	                                echo $dropdownValue->Name;
+	                            echo "</option>";
+	                        } 
+	                    ?>
+	                </select>
+                </div>
   			</div>
 	
 		</div>
