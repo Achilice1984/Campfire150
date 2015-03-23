@@ -1,6 +1,6 @@
 <?php require_once(APP_DIR . 'helpers/image_get_path.php'); ?>
 
-<div class="row StoryRowSection" style="margin-top: 40px; padding:20px; padding-bottom: 0px;">
+<div class="row StoryRowSection" style="margin-top: 0px; padding:20px; padding-bottom: 0px;">
 	<div class="col-md-2">
 		<div class="row">
 			<a href="<?php echo BASE_URL . "account/home/" . $user->UserId; ?>">
