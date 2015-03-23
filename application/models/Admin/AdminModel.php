@@ -656,16 +656,51 @@ class AdminModel extends Model {
 
 		try
 		{
-			$statement = "SELECT *, COUNT(uic.User_UserId) as NumberOfFlagged 
-							FROM comment c 
-							INNER JOIN user u
-							ON c.User_UserId = u.UserId
-							INNER JOIN story s
-							ON u.UserId = s.User_UserId
-							INNER JOIN user_inappropriateflag_comment uic 
-							ON c.CommentId = uic.Comment_CommentId					
-							GROUP BY u.UserId
-							LIMIT :Start, :HowMany";
+			// $statement = "SELECT *, (table1.totalInappropriateOnStory + table2.totalInappropriateOnComment) AS TotalInappropriate FROM 
+	
+			// 				(SELECT u.UserId, COUNT( * ) AS totalInappropriateOnStory
+			// 				FROM user AS u
+			// 				LEFT JOIN story AS s ON u.UserId = s.User_UserId
+			// 				LEFT JOIN user_recommend_story AS urs ON urs.Story_StoryId = s.StoryId
+			// 				WHERE urs.Opinion = FALSE 
+			// 				GROUP BY UserId
+			// 				) AS table1
+
+			// 				FULL JOIN
+
+			// 				(SELECT u2.UserId, COUNT( uic2.User_UserId ) AS totalInappropriateOnComment 
+			// 				FROM user AS u2
+			// 				LEFT JOIN COMMENT AS c2 ON u2.UserId = c2.User_UserId
+			// 				LEFT JOIN user_inappropriateflag_comment uic2 ON uic2.Comment_CommentId = c2.CommentId
+			// 				WHERE uic2.Active = TRUE 
+			// 				GROUP BY u2.UserId
+			// 				) AS table2
+
+			// 				ON table1.UserId = table2.UserId
+
+			// 				LIMIT :Start, :HowMany";
+
+			 $statement = "SELECT * , COUNT( * ) AS TotalInappropriate, (
+
+								SELECT COUNT( * ) 
+								FROM (
+
+										SELECT COUNT( * ) AS TotalInappropriate
+										FROM user AS u
+										LEFT JOIN story AS s ON u.UserId = s.User_UserId
+										LEFT JOIN user_recommend_story AS urs ON urs.Story_StoryId = s.StoryId
+										WHERE urs.Opinion = 
+										FALSE 
+										GROUP BY UserId
+									)tmpTable
+								) AS TotalRecords
+							FROM user AS u
+							LEFT JOIN story AS s ON u.UserId = s.User_UserId
+							LEFT JOIN user_recommend_story AS urs ON urs.Story_StoryId = s.StoryId
+							WHERE urs.Opinion = 
+							FALSE 
+							GROUP BY UserId		 				
+			 				LIMIT :Start, :HowMany";
 			
 			$start = $this-> getStartValue($howMany, $page);
 			
@@ -674,7 +709,7 @@ class AdminModel extends Model {
 					":HowMany" => $howMany
 				);
 
-			$userList = $this->fetchIntoClass($statement, $parameters, "shared/CommentViewModel");
+			$userList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $userList;
 		}

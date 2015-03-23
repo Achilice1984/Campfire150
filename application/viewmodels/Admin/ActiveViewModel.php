@@ -11,13 +11,13 @@ class ActiveViewModel extends ViewModel
 
 	function __construct()
 	{
-		// $errors["TableName"] = array(
-		// 	'required' =>
-		// 		array(
-		// 			'Message' => gettext('The TableName field is required!'),
-		// 			'Properties' => array()
-		// 		)
-		// );		
+		$errors["TableName"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The TableName field is required!'),
+					'Properties' => array()
+				)
+		);		
 		$errors["UserId"] = array(
 			'required' =>
 				array(
@@ -25,21 +25,21 @@ class ActiveViewModel extends ViewModel
 					'Properties' => array()
 				)
 		);
-		// $errors["Active"] = array(
-		// 	'required' =>
-		// 		array(
-		// 			'Message' => gettext('The Active Name field is required!'),
-		// 			'Properties' => array()
-		// 		)
-		// );
+		$errors["Active"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The Active Name field is required!'),
+					'Properties' => array()
+				)
+		);
 
-		// $errors["Reason"] = array(
-		// 	'required' =>
-		// 		array(
-		// 			'Message' => gettext('The Reason name field is required!'),
-		// 			'Properties' => array()
-		// 		)
-		// );
+		$errors["Reason"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The Reason name field is required!'),
+					'Properties' => array()
+				)
+		);
 
 		//Pass validation to the View Model
 		parent::__construct($errors);
