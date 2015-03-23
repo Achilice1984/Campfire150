@@ -735,6 +735,86 @@ $(document.body).on('click', "#CurrentRejectedContentMoreButton", function(){
 	});
 });
 
+
+$(document.body).on('click', "#CurrentCommentsContentMoreButton", function(){
+
+	var pageInputName  = "#CurrentCommentsContentPage";
+	var urlInputName   = "#CurrentCommentsContentUrl";
+	var contentDivName = "#CurrentCommentContent";
+	var infoBarName    = "#CurrentCommentsContentInfoBar";
+	var moreButtonName = "#CurrentCommentsContentMoreButton";
+
+	$(pageInputName).val(parseInt($(pageInputName).val()) + 1);
+
+	$.ajax({
+		type: "POST",
+		url: $(urlInputName).val(),
+		data: { Page: $(pageInputName).val() },
+		success: function(data){
+			if(data)
+			{
+				$(contentDivName).append(data).show("slow");
+			}
+			else
+			{
+				$(infoBarName).show();
+
+				$(moreButtonName).hide();
+			}
+		}
+	});
+});
+
+$(document.body).on('click', ".commentAction", function(event){
+	event.preventDefault();
+	event.stopPropagation();
+
+	var commentID  = $(this).attr("data-comment-id");
+	var action = $(this).attr("data-action");
+	var thisComment = $(this);
+
+	$.ajax({
+		type: "POST",
+		url: action,
+		data: { CommentID: commentID },
+		success: function(data){
+			if(data)
+			{
+				thisComment.closest(".commentDiv").remove();
+			}
+			else
+			{
+			}
+		}
+	});
+});
+
+$(document.body).on('change', ".storyPrivacyDropDown", function(event){
+	event.preventDefault();
+	event.stopPropagation();
+
+	var storyID  = $(this).attr("data-story-id");
+	var action = $(this).attr("data-action");
+	var privacyType = $(this).val();
+	var thisStory = $(this);
+
+	$.ajax({
+		type: "POST",
+		url: action,
+		data: { StoryID: storyID, PrivacyType: privacyType },
+		success: function(data){
+			if(data)
+			{
+				//thisComment.closest(".commentDiv").remove();
+			}
+			else
+			{
+			}
+		}
+	});
+});
+
+
 // $(document.body).on('click', "#MoreButton", function(){
 
 // 	var pageInputName  = "#Page";
@@ -748,7 +828,7 @@ $(document.body).on('click', "#CurrentRejectedContentMoreButton", function(){
 // 	$.ajax({
 // 		type: "POST",
 // 		url: $(urlInputName).val(),
-// 		data: { LatestStoryPage: $(pageInputName).val() },
+// 		data: { Page: $(pageInputName).val() },
 // 		success: function(data){
 // 			if(data)
 // 			{

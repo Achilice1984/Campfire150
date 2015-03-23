@@ -13,6 +13,9 @@
 	  		<div class="col-lg-8 col-md-7">
 	    		<h4><?php echo $story->StoryTitle; ?></h4>
     			<?php echo substr($story->Content, 0, 255) . " ..."; ?>
+
+    			<h4><?php echo gettext("Reason"); ?></h4>
+    			<?php echo $story->Reason; ?>
   			</div>
 	
 		</div>

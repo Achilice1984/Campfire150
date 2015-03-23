@@ -4,6 +4,7 @@
 	    <li role="presentation"><a href="#User_Current_Drafts" aria-controls="User_Current_Drafts" role="tab" data-toggle="tab"><?php echo gettext("Drafts"); ?></a></li>
 	    <li role="presentation"><a href="#User_Current_Pending" aria-controls="User_Current_Pending" role="tab" data-toggle="tab"><?php echo gettext("Pending"); ?></a></li>
 	    <li role="presentation"><a href="#User_Current_Rejected" aria-controls="User_Current_Rejected" role="tab" data-toggle="tab"><?php echo gettext("Rejected"); ?></a></li>
+	    <li role="presentation"><a href="#User_Current_Comments" aria-controls="User_Current_Comments" role="tab" data-toggle="tab"><?php echo gettext("Comments"); ?></a></li>
 	</ul> 
 
 	<div class="tab-content" style="padding:20px;">
@@ -111,5 +112,31 @@
 				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 			</div>
 		</div>  
+		<div role="tabpanel" class="tab-pane" id="User_Current_Comments">
+
+			<div id="CurrentCommentContent">
+				<?php 
+					if(isset($accountHomeViewModel->pendingComments) && count($accountHomeViewModel->pendingComments))
+					{
+						foreach ($accountHomeViewModel->pendingComments as $comment)
+						{
+							include(APP_DIR . "views/Account/_comments.php");
+						}
+					}			
+				?>
+			</div>
+
+			<div class="alert alert-info alert-dismissible" id="CurrentCommentsContentInfoBar" role="alert" style="display:none;">
+		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+			</div>
+
+			<input type="hidden" name="CurrentCommentsContentPage" id="CurrentCommentsContentPage" value="1">
+			<input type="hidden" name="CurrentCommentsContentUrl" id="CurrentCommentsContentUrl" value="<?php echo BASE_URL; ?>account/commentsPendingApprovalList">
+
+			<div class="row text-center" id="CurrentCommentsContentMoreButton" style="margin-bottom: 100px;">
+				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Comments!"); ?></button>
+			</div>
+		</div>  		
 	</div>
 </div>
