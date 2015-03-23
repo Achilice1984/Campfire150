@@ -16,29 +16,11 @@
 	pointer-events: none;
 }
 
-/*		Will add white to inside of triangle
-.storySearchBar li.active:after {
-	border-bottom-color: #fff;
-	border-width: 6px;
-	margin-left: -6px;
-    z-index: 1;
-}*/
 .UserSearchBar li.active:before {
 	border-bottom-color: orange;
 	border-width: 9px;
 	margin-left: -9px;
     z-index: 1;
-}
-
-
-#UserSearch{
-	height: 50px;
-	font-size: 2em;
-}
-
-#UserSearchButton {
-	height: 50px;
-	width: 50px;
 }
 
 .userProfilePic {

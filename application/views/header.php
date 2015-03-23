@@ -54,11 +54,8 @@
             <nav role="navigation" class="nav-secondary clearfix">
               <div class="container">
                     <ul class="nav nav-pills nav-justified pull-right">
-
                       <li><a href="<?php echo BASE_URL; ?>story/search"><span class="glyphicon glyphicon-search"></span><span class="hidden-xs"> <?php echo gettext("Search"); ?></span></a></li>
                       <li><a href="<?php echo BASE_URL; ?>account/changelanguage"><span class="glyphicon glyphicon-globe"></span><span class="hidden-xs"> <?php echo $language; ?></span></a></li>
-                      
-                      
                       <li><a class="WriteStoryButton" href="<?php echo BASE_URL; ?>story/add"><span class="glyphicon glyphicon-pencil"></span><span class="hidden-xs"> <?php echo gettext("Share a Story"); ?></span></a></li>
                       
                       <?php  if(!$currentUser->IsAuth) { ?>
@@ -83,12 +80,11 @@
                                     <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>admin/"><?php echo gettext("Admin Panel") ?></a></li>
                                   </ul>
                                 </li>
-                                
                       <?php } ?>
                   </ul>
               </div>
             </nav>
-            <p class="h4 hidden-sm hidden-xs text-primary text-right motto"><?php echo gettext("Gathering Canadians through story."); ?></p>
+            <p class="h4 hidden-sm hidden-xs text-warning text-right motto"><?php echo gettext("Gathering Canadians through story."); ?></p>
             <nav role ="navigation" class="navbar navbar-default nav-primary">
               <div class="navbar-header">
                   <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#c150-navbar-collapse">
