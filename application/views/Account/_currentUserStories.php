@@ -10,7 +10,7 @@
 	<div class="tab-content" style="padding:20px;">
 		<div role="tabpanel" class="tab-pane active" id="User_Current_Published">
 
-			<div id="CurrentPublishedContent">
+			<div id="CurrentPublishedContent" class="row">
 				<?php 
 					if(isset($accountHomeViewModel->publishedStories) && count($accountHomeViewModel->publishedStories))
 					{
@@ -36,7 +36,7 @@
 		</div>
 		<div role="tabpanel" class="tab-pane" id="User_Current_Drafts">
 
-			<div id="CurrentDraftsContent">
+			<div id="CurrentDraftsContent" class="row">
 				<?php 
 					if(isset($accountHomeViewModel->draftStories) && count($accountHomeViewModel->draftStories))
 					{
@@ -62,7 +62,7 @@
 		</div>
 		<div role="tabpanel" class="tab-pane" id="User_Current_Pending">
 
-			<div id="CurrentPendingContent">
+			<div id="CurrentPendingContent" class="row">
 				<?php 
 					if(isset($accountHomeViewModel->pendingStories) && count($accountHomeViewModel->pendingStories))
 					{
@@ -88,7 +88,7 @@
 		</div>
 		<div role="tabpanel" class="tab-pane" id="User_Current_Rejected">
 
-			<div id="CurrentRejectedContent">
+			<div id="CurrentRejectedContent" class="row">
 				<?php 
 					if(isset($accountHomeViewModel->rejectedStories) && count($accountHomeViewModel->rejectedStories))
 					{
@@ -114,7 +114,7 @@
 		</div>  
 		<div role="tabpanel" class="tab-pane" id="User_Current_Comments">
 
-			<div id="CurrentCommentContent">
+			<div id="CurrentCommentContent" class="row">
 				<?php 
 					if(isset($accountHomeViewModel->pendingComments) && count($accountHomeViewModel->pendingComments))
 					{
