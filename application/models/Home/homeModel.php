@@ -23,7 +23,8 @@ class HomeModel extends Model
 						AND u.ProfilePrivacyType_PrivacyTypeId = 1
 						AND aps.Active = TRUE
 						AND aps.Approved = TRUE
-						AND u.Active = TRUE";
+						AND u.Active = TRUE
+						AND u.VerifiedEmail = TRUE";
 
 			return $this->fetchNum($statement, array());		
 		}
@@ -41,7 +42,8 @@ class HomeModel extends Model
 			$statement = "SELECT COUNT(1)
 							FROM user u
 							WHERE u.ProfilePrivacyType_PrivacyTypeId = 1
-							AND u.Active = TRUE";
+							AND u.Active = TRUE
+							AND u.VerifiedEmail = TRUE";
 
 			return $this->fetchNum($statement, array());		
 		}

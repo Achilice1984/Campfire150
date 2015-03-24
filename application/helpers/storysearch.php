@@ -140,8 +140,8 @@ class StorySearch extends Model
 					AND aps.Approved = :ApprovedStory
 					AND u.Active = TRUE
 					AND u.ProfilePrivacyType_PrivacyTypeId = 1
-					HAVING hits > 0
 					GROUP BY s.StoryId
+					HAVING hits > 0					
 					ORDER BY hits DESC
 					LIMIT :start,:howmany";	
 

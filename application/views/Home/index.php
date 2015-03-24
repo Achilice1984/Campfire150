@@ -6,9 +6,6 @@
             <div class="container">
 
                 <?php include(APP_DIR . 'views/shared/messages.php'); ?>
-                
-                <h1><?php echo gettext("Campfire Stories"); ?></h1>
-
                 <nav role="navigation">
                     <ul class="nav nav-tabs">
                         <li class="active"><a data-request-url="<?php echo BASE_URL; ?>home/latestStoryHome" id="latestStoryListButton" href="#"><?php echo gettext("Latest"); ?></a></li>
@@ -33,7 +30,7 @@
                 <p class="clearfix"><a href="<?php echo BASE_URL; ?>story/search" class="btn btn-warning pull-right"><?php echo gettext("View More Stories"); ?></a></p>
             </div>
         </section>
-        <section class="bg-grey text-center text-xl padding-xl">
+        <section class="bg-grey text-center jumbotron">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-3 col-xs-6">
@@ -55,7 +52,7 @@
                 </div>
             </div>
         </section>
-        <section class="bg-blue">
+        <section class="bg-blue marginBottom-15">
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">

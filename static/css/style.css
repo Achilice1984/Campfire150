@@ -2,49 +2,15 @@
 
 /* -------------------- General -------------------- */
 
-*:not(img):not(.badge):not(.WriteStoryButton):not(.jumbotron) {
+* {
 	border-radius: 0 !important;
 }
 body {
 	overflow-x: hidden;
-	background-color: #f8f8f8;
+	background-color: #eee;
 }
 header, footer, nav {
 	text-transform: capitalize;
-}
-
-/* -------------------- Fonts -------------------- */
-
-.padding-xl {
-  padding: 48px 0;
-}
-.text-xl h1, .text-xl .h1 {
-  font-size: 72px;
-  font-weight: 200;
-}
-.text-xl h2, .text-xl .h2 {
-  font-size: 60px;
-  font-weight: 200;
-}
-.text-xl h3, .text-xl .h3 {
-  font-size: 48px;
-  font-weight: 200;
-}
-.text-xl h4, .text-xl .h4 {
-  font-size: 36px;
-  font-weight: 200;
-}
-.text-xl h5, .text-xl .h5 {
-  font-size: 28px;
-  font-weight: 200;
-}
-.text-xl h6, .text-xl .h6 {
-  font-size: 24px;
-  font-weight: 200;
-}
-.text-xl p, .text-xl li {
-  font-size: 28px;
-  font-weight: 200;
 }
 
 /* -------------------- Bootstrap Overrides -------------------- */
@@ -64,6 +30,10 @@ header, footer, nav {
 }
 .icon-bar {
 	background-color: #333 !important;
+}
+
+.text-warning {
+	color: #eea236;
 }
 
 @media (max-width: 991px) {
@@ -147,7 +117,6 @@ header, footer, nav {
 	}
 	.nav-container {
 		min-height: 145px;
-		margin-top: 5px !important;
 	}
 	.navbar {
 		position: absolute;
@@ -197,7 +166,7 @@ header, footer, nav {
 /* -------------------- Theme Additions -------------------- */
 
 .bg-grey {
-	background-color: #f8f8f8;
+	background-color: #eee;
 }
 .bg-blue {
 	background-color: #337ab7;
@@ -228,23 +197,58 @@ header, footer, nav {
 	margin-top: 29px;
 }
 
+.storySummary {
+	padding-bottom: 15px;
+	border-bottom: 1px solid #337ab7;
+}
+.storySummary:last-child {
+	border-bottom: 0px;
+}
+
 .storyTitle {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	font-size: 18px;
 	font-weight: normal;
+	text-transform: capitalize;
 }
-.storyStats p {
+.storyStats div {
 	float: left;
 	padding-right: 10px;
 	display: block;
+}
+
+.paddingTop15 {
+	padding-top: 15px;
+}
+.paddingBottom15 {
+	padding-bottom: 15px;
+}
+
+.marginTop15 {
+	margin-top: 15px;
+}
+.marginBottom15 {
+	margin-bottom: 15px;
+}
+.marginTop-15 {
+	margin-top: -15px;
+}
+.marginBottom-15 {
+	margin-bottom: -15px;
 }
 
 #wordCloudCanvas {
 	width: 80% !important;
 	margin: 20px auto 10px;
 	display: block;
+}
+
+.caption .readBtn {
+	position: absolute;
+	bottom: 0;
+	width: calc(100% - 20px);
 }
 
 /* This overides the validation css to make it work on dropdown inputs */
@@ -255,6 +259,9 @@ header, footer, nav {
  
 .StoryActionButtons {
 	color: #333;
+}
+.StoryActionButtons:hover {
+	text-decoration: none;
 }
 
 .fileUpload {

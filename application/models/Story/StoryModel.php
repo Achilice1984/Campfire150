@@ -61,6 +61,39 @@ class StoryModel extends Model {
 		}
 	}
 
+	// tested User_Id FK issue need to check the user
+	public function updateDraft($story, $userId)
+	{
+		//Accepts a story class
+		//inserts a new story with the publish flag set to false
+		//returns bool if the story was saved succesfully
+		try
+		{
+			// create a php timestamp for inserting into the created and updated date fields in the database 
+			//$timestamp = date('Y-m-d G:i:s');
+			$statement = "UPDATE story 
+							SET StoryPrivacyType_StoryPrivacyTypeId=:StoryPrivacyType_StoryPrivacyTypeId, StoryTitle=:StoryTitle, Content=:Content, published=:published, Active=:Active
+
+							 WHERE story.User_UserId = :User_UserId
+							 AND story.StoryId = :StoryId";
+ 
+			$parameters = array(":StoryId" => $story->StoryId, 
+								":User_UserId" => $userId,
+								":StoryPrivacyType_StoryPrivacyTypeId" => $story->StoryPrivacyType_StoryPrivacyTypeId,
+								":StoryTitle" => $story->StoryTitle, 
+								":Content" => $story->Content, 
+								":published" => $story->Published, 
+								":Active" => TRUE
+								);
+
+			return $this->fetch($statement, $parameters);
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
 	public function setPublishFlag($storyID, $userID, $publish)
 	{
 		//Accepts a storyID, a userID, and a bool for if it was thought to be inapropriate
@@ -160,6 +193,14 @@ class StoryModel extends Model {
 		if($this->fetch($statement, $parameters))
 		{
 			$pictureId = $this->lastInsertId();
+
+			$statement = "UPDATE story_has_picture SET Active = FALSE
+							WHERE story_has_picture.Story_StoryId = :Story_StoryId";
+			$parameters = array( 
+				":Story_StoryId" => $storyId
+			);
+
+			$this->fetch($statement, $parameters);
 
 			$statement = "INSERT INTO story_has_picture(Story_StoryId, PictureId, DateCreated)
 						VALUES(:Story_StoryId, :PictureId, NOW())";
@@ -502,11 +543,9 @@ class StoryModel extends Model {
 		{
 			$statement = "SELECT 
 
-							s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, s.Published,
+							s.StoryId, s.User_UserId, s.User_UserId as StoryUserID, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, s.Published,
 
-							urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
-
-							aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
+							urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,						
 
 							shp.Story_StoryId, shp.PictureId, shp.Active,
 
@@ -542,8 +581,6 @@ class StoryModel extends Model {
 
 							INNER JOIN user u
 							ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
-							LEFT JOIN admin_approve_story aps
-							ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
 
 							LEFT JOIN user_recommend_story urs
 							ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :User_UserId) AND (urs.Active = TRUE)
@@ -557,12 +594,9 @@ class StoryModel extends Model {
 							ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)							
 
 							WHERE s.StoryId = :StoryId
-							AND StoryPrivacyType_StoryPrivacyTypeId = 1
 							AND u.ProfilePrivacyType_PrivacyTypeId = 1
 							AND s.Active = TRUE							
 							AND s.Published = FALSE
-							AND aps.Active = TRUE
-							AND aps.Approved = TRUE
 							GROUP BY s.StoryId
 							";
 							
@@ -628,7 +662,7 @@ class StoryModel extends Model {
 							    AND c.PublishFlag = TRUE
 							) AS totalComments
 
-							FROM Story s 
+							FROM story s 
 						  	INNER JOIN user u
 						  	ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
 
@@ -697,7 +731,7 @@ class StoryModel extends Model {
 		{
 			
 			$statement = "SELECT s.*, saq.answer_for_question_answer_answerId
-						  FROM Story s 
+						  FROM story s 
 						  INNER JOIN story_has_answer_for_question saq
 						  ON s.StoryId = saq.Story_StoryId
 						  INNER JOIN admin_approve_story aas
@@ -777,7 +811,7 @@ class StoryModel extends Model {
 							    AND c.PublishFlag = TRUE
 							) AS totalComments
 
-						  FROM Story s 
+						  FROM story s 
 						  INNER JOIN user u
 						  ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
 
@@ -840,7 +874,7 @@ class StoryModel extends Model {
 		{
 			
 			$statement = "SELECT s.*, saq.answer_for_question_answer_answerId
-						  FROM Story s 
+						  FROM story s 
 						  INNER JOIN story_has_answer_for_question saq
 						  ON s.StoryId = saq.Story_StoryId
 						  INNER JOIN admin_approve_story aas
@@ -881,7 +915,7 @@ class StoryModel extends Model {
 		try
 		{
 			$statement = "SELECT s.StoryId, s.StoryTitle, s.Content, s.DatePosted, s.DateUpdated
-						  FROM Story s
+						  FROM story s
 						  INNER JOIN admin_approve_story aas
 						  ON s.StoryId = aas.Story_StoryId
 						  WHERE aas.Approved = TRUE
@@ -922,7 +956,7 @@ class StoryModel extends Model {
 
 							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId
 
-							FROM Story s 
+							FROM story s 
 
 							LEFT JOIN admin_approve_story aas
 							ON s.StoryId = aas.Story_StoryId
@@ -968,7 +1002,7 @@ class StoryModel extends Model {
 
 						 	p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId
 
-							FROM Story s 
+							FROM story s 
 
 							LEFT JOIN story_has_picture shp
 							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
@@ -1006,9 +1040,14 @@ class StoryModel extends Model {
 		try
 		{
 			
-			$statement = "SELECT s.*, aas.Approved, aas.Pending,
+			$statement = "SELECT s.*, 
+
+							aas.Approved, aas.Pending, aas.Reason,
+						 	
 						 	p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId
-							FROM Story s 
+
+							FROM story s 
+
 							LEFT JOIN admin_approve_story aas
 							ON s.StoryId = aas.Story_StoryId AND aas.Approved = FALSE AND aas.Active = TRUE
 
@@ -1049,7 +1088,7 @@ class StoryModel extends Model {
 		{
 			
 			$statement = "SELECT s.*, aas.Approved
-						  FROM Story s 
+						  FROM story s 
 						  INNER JOIN admin_approve_story aas
 						  ON s.StoryId = aas.Story_StoryId
 						  WHERE aas.Approved = TRUE
@@ -1943,14 +1982,26 @@ class StoryModel extends Model {
 
 		try
 		{
-			$statement = "SELECT c.*, u.FirstName, u.LastName  
-							FROM Comment c
+			$statement = "SELECT c.*, 
+
+							u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, u.Active as IsUserActive,
+							arc.Rejected as IsAdminRejected,
+							p.PictureId
+
+							FROM comment c
+
 							LEFT JOIN user u
 							ON u.UserId = c.User_UserId
+
+							LEFT JOIN picture p
+							ON c.User_UserId = p.User_UserId AND (p.Active = TRUE) AND (p.Picturetype_PictureTypeId = 1)
+							
+							LEFT JOIN admin_reject_comment arc
+							ON arc.Comment_CommentId = c.CommentId AND arc.Active = TRUE
+
 							WHERE Story_StoryId = :storyID 
 							AND c.Active = TRUE
 							AND c.PublishFlag
-							AND u.Active = TRUE
 							ORDER BY CommentId 
 							ASC LIMIT :start, :howmany";
 
@@ -1977,7 +2028,7 @@ class StoryModel extends Model {
 		try
 		{
 
-			$statement = "SELECT * FROM Comment WHERE PublishFlag = 1 AND CommentId IN ";
+			$statement = "SELECT * FROM comment WHERE PublishFlag = 1 AND CommentId IN ";
 
 			$statement .= "(SELECT DISTINCT Comment_CommentId FROM user_inappropriateflag_comment) ORDER BY CommentId LIMIT ?, ?";
 
@@ -2003,7 +2054,7 @@ class StoryModel extends Model {
 		//returns an array of comment class related to a story
 	}
 
-	public function getUnpublisedComments($userID)
+	public function getUnpublisedComments($userID, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts a user id
 		//Gets a list of comments that haven't been published by a user
@@ -2012,9 +2063,35 @@ class StoryModel extends Model {
 		
 		try
 		{
-			$statement = "SELECT * FROM comment WHERE User_UserId = ? AND PublishFlag = 0 ORDER BY CommentId";
+			$statement = "SELECT c.*,
 
-			$comment = $this->fetchIntoClass($statement, array($userID), "shared/CommentViewModel");
+							up.PictureId as UserProfilePicureId, up.User_UserId as commenterUserId,
+
+							u.FirstName, u.LastName,
+
+							s.StoryTitle
+
+							FROM comment c
+
+							LEFT JOIN picture up
+							ON (up.User_UserId = c.User_UserId) AND (up.Active = TRUE) AND (Picturetype_PictureTypeId = 1)
+
+							LEFT JOIN user u
+							ON (u.UserId = c.User_UserId) AND (u.Active = TRUE)
+
+							LEFT JOIN story s
+							ON (s.StoryId = c.Story_StoryId)
+
+							WHERE s.User_UserId = :userID 
+							AND c.PublishFlag = 0 
+							AND c.Active = TRUE
+							AND u.Active = TRUE
+							ORDER BY c.CommentId
+							LIMIT :start, :howmany";
+
+			$start = $this-> getStartValue($howMany, $page);
+
+			$comment = $this->fetchIntoClass($statement, array(":userID" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/CommentViewModel");
 
 			return $comment;
 		}
@@ -2037,6 +2114,85 @@ class StoryModel extends Model {
 						  	UPDATE Active = TRUE";
 
 			$parameters = array(":UserId" => $userID, ":CommentID" => $commentID, ":DateCreated" => $this->getDateNow());
+
+			return $this->fetch($statement, $parameters);	
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function approveComment($userID, $commentID)
+	{
+		//Accepts a commentID, a userID, and a bool for if it was thought to be inapropriate
+		//checks to see if user already marked it as inapropriate
+		//returns bool if saved correctly
+		try
+		{
+			$statement = "UPDATE comment c
+							
+							LEFT JOIN story s
+							ON (s.StoryId = c.Story_StoryId)
+							
+							SET c.Active=TRUE, c.PublishFlag=TRUE 
+
+							WHERE s.User_UserId = :UserId
+							AND c.CommentId = :CommentID";
+
+			$parameters = array(":UserId" => $userID, ":CommentID" => $commentID);
+
+			return $this->fetch($statement, $parameters);	
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function changeStoryPrivacy($userID, $storyID, $privacyTypeID)
+	{
+		//Accepts a commentID, a userID, and a bool for if it was thought to be inapropriate
+		//checks to see if user already marked it as inapropriate
+		//returns bool if saved correctly
+		try
+		{
+			$statement = "UPDATE story s
+							
+							SET s.StoryPrivacyType_StoryPrivacyTypeId=:PrivacyTypeID
+
+							WHERE s.User_UserId = :UserId
+							AND s.StoryId = :StoryID";
+
+			$parameters = array(":UserId" => $userID, ":StoryID" => $storyID, ":PrivacyTypeID" => $privacyTypeID);
+
+			return $this->fetch($statement, $parameters);	
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
+
+	public function rejectComment($userID, $commentID)
+	{
+		//Accepts a commentID, a userID, and a bool for if it was thought to be inapropriate
+		//checks to see if user already marked it as inapropriate
+		//returns bool if saved correctly
+		try
+		{
+			$statement = "UPDATE comment c
+							
+							LEFT JOIN story s
+							ON (s.StoryId = c.Story_StoryId)
+							
+							SET c.Active=FALSE, c.PublishFlag=FALSE 
+
+							WHERE s.User_UserId = :UserId
+							AND c.CommentId = :CommentID";
+
+			$parameters = array(":UserId" => $userID, ":CommentID" => $commentID);
 
 			return $this->fetch($statement, $parameters);	
 		}
@@ -2144,7 +2300,10 @@ class StoryModel extends Model {
 	{
 		try
 		{
-			$statement = "SELECT *
+			$statement = "SELECT t.*,
+							
+							t.Tag as text, t.TagId as id
+
 							FROM tag t
 							INNER JOIN story_has_tag sht
 							ON sht.Tag_TagId = t.TagId
@@ -2188,9 +2347,12 @@ class StoryModel extends Model {
 				$jsonFormat[] = array($tag->Tag, $tag->count);
 			}
 
-			for ($i=0; $i < count($jsonFormat); $i++) { 
-				$jsonFormat[$i][1] = round( (($jsonFormat[$i][1] / $totalValue) * 100));
-			}
+			// for ($i=0; $i < count($jsonFormat); $i++) { 
+			// 	$jsonFormat[$i][1] = (($jsonFormat[$i][1] / $totalValue) * 100);
+
+			// 	if($jsonFormat[$i][1] > 10)
+			// 	{}
+			// }
 
 			return $jsonFormat;
 		}

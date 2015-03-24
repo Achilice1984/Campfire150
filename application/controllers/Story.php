@@ -60,6 +60,8 @@ class Story extends Controller {
 		{
 			if(isset($_POST["StorySearch"]))
 			{
+				$_GET["search"] = true;
+				
 				$searchResults = $storyModel->searchStories($_POST["StorySearch"], $this->currentUser->UserId);
 			}			
 		}
@@ -185,6 +187,7 @@ class Story extends Controller {
 		$view->set('storyViewModel', $storyViewModel[0]);
 
 		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+		
 		$view->set('storyQuestions', $siteModel->getStoryQuestions());
 
 
@@ -195,6 +198,121 @@ class Story extends Controller {
 
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);
+	}
+
+	function edit($storyID)
+	{
+		require_once(APP_DIR .'viewmodels/shared/TagViewModel.php');
+		require_once(APP_DIR.'helpers/image_save.php');
+
+		//Check if users is authenticated for this request
+		//Will kick out if not authenticated
+		if($this->isAuth())
+		{
+			//Loads a view model from corresponding viewmodel folder
+			$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
+
+			//Load the AccountModel to access account functions
+		 	$storyModel = $this->loadModel('StoryModel');
+
+			//Execute code if a post back
+			if($this->isPost())
+			{
+				//Map post values to the loginViewModel
+				$storyViewModel = AutoMapper::mapPost($storyViewModel);					
+
+				$storyId;
+
+				if($storyViewModel->validate())
+				{
+					$storyViewModel->Published = FALSE;
+
+					//UPDATE STORY
+					$storyModel->updateDraft($storyViewModel, $this->currentUser->UserId);
+					$storyId = $storyID;
+
+					//$this->saveQuestionAnswers($storyModel, $storyId);
+					$this->saveTags($storyModel, $storyId);
+
+					$imageId = 0;
+
+					if(isset($storyViewModel->Images))
+					{
+						$imageId = $storyModel->saveStoryImageMetadata($this->currentUser->UserId, $storyViewModel->Images, $storyId);
+						debugit($imageId);
+					}
+
+					if(isset($imageId) && $imageId > 0)
+					{
+						image_save($storyViewModel->Images, $this->currentUser->UserId, $imageId, IMG_STORY_URL, 
+										 $_POST["image_height"], $_POST["image_width"], $_POST["image_x"], $_POST["image_y"]); 
+					}
+
+					if(isset($_POST["publish"]))
+					{
+						$this->redirect("story/publish", array($storyId));
+					}
+					else
+					{
+						//$this->redirect("account/home");
+					}
+				}
+
+				$storyViewModel->Tags = $this->getTags($storyModel);			
+			}	
+			else
+			{
+				if(isset($storyID))
+				{
+					$storyViewModel = $storyModel->getStory_unpublished($this->currentUser->UserId, $storyID);
+				}
+
+				//An error occured
+				if(!isset($storyViewModel[0]))
+				{
+					$this->redirect("account/home");
+				}
+				else
+				{
+					$storyViewModel = $storyViewModel[0];
+					$storyViewModel->Tags = $storyModel->getTagsForStory($storyID);
+				}
+			}	
+
+			//Load the profile view
+			$view = $this->loadView('add');
+
+			$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+			$view->set('privacyDropdownValues', $siteModel->getDropdownValues_StoryPrivacyType());
+
+			//Add a variable with old login data so that it can be accessed in the view
+			$view->set('storyViewModel', $storyViewModel);
+
+			//Load up some js files
+			$view->setJS(array(
+				array("static/plugins/tinymce/tinymce.min.js", "intern"),
+				array("static/js/tinymce.js", "intern"),
+				array("static/js/select2.js", "intern"),
+				array("static/js/addstory.js", "intern"),
+				array("static/plugins/cropper/cropper.min.js", "intern")
+				// array("static/plugins/jcrop/js/jquery.Jcrop.min.js", "intern"),
+				// array("static/plugins/jcrop/js/jquery.color.js", "intern")
+			));
+
+			$view->setCSS(array(
+				array("static/css/addstory.css", "intern"),
+				//array("static/plugins/jcrop/css/jquery.Jcrop.min.css", "intern")
+				array("static/plugins/cropper/cropper.min.css", "intern")
+			));
+
+			//Render the profile view. true indicates to load the layout pages as well
+			$view->render(true);
+		}
+		else
+		{
+			addInfoMessage("notReg", gettext("Want to share your story? Register now!"), 1);
+			$this->redirect("account/register");
+		}
 	}
 
 	function add()
@@ -234,7 +352,7 @@ class Story extends Controller {
 
 					if(isset($imageId) && $imageId > 0)
 					{
-						image_save($storyViewModel->Images, $this->currentUser->UserId, $imageId, IMG_STORY, 
+						image_save($storyViewModel->Images, $this->currentUser->UserId, $imageId, IMG_STORY_URL, 
 										 $_POST["image_height"], $_POST["image_width"], $_POST["image_x"], $_POST["image_y"]); 
 					}
 
@@ -375,46 +493,7 @@ class Story extends Controller {
 		}
 
 		return $tags;
-	}
-
-
-	function edit()
-	{
-		//Check if users is authenticated for this request
-		//Will kick out if not authenticated
-		$this->AuthRequest();
-
-		//Loads a view model from corresponding viewmodel folder
-		$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
-
-		//Execute code if a post back
-		if($this->isPost())
-		{
-			//Map post values to the loginViewModel
-			$loginViewModel = AutoMapper::mapPost($loginViewModel);
-
-			//Load the AccountModel to access account functions
-			$storyModel = $this->loadModel('StoryModel');
-		}		
-
-		//Load the profile view
-		$view = $this->loadView('edit');
-
-		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
-		$view->set('privacyDropdownValues', $siteModel->getDropdownValues_StoryPrivacyType());
-
-		//Add a variable with old login data so that it can be accessed in the view
-		$view->set('storyViewModel', $storyViewModel);
-
-		//Load up some js files
-		$view->setJS(array(
-			array("static/plugins/tinymce/tinymce.min.js", "intern"),
-			array("static/js/tinymce.js", "intern")
-		));
-
-		//Render the profile view. true indicates to load the layout pages as well
-		$view->render(true);
-	}
+	}	
 
 	function display($storyID)
 	{

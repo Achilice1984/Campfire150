@@ -1,15 +1,16 @@
-<div>
+
 	<ul style="border-bottom: 1px solid #eee" id="User_Current_Tabs" class="nav nav-pills">
 	    <li role="presentation" class="active"><a href="#User_Current_Published" aria-controls="User_Current_Published" role="tab" data-toggle="tab"><?php echo gettext("Published"); ?></a></li>
 	    <li role="presentation"><a href="#User_Current_Drafts" aria-controls="User_Current_Drafts" role="tab" data-toggle="tab"><?php echo gettext("Drafts"); ?></a></li>
 	    <li role="presentation"><a href="#User_Current_Pending" aria-controls="User_Current_Pending" role="tab" data-toggle="tab"><?php echo gettext("Pending"); ?></a></li>
 	    <li role="presentation"><a href="#User_Current_Rejected" aria-controls="User_Current_Rejected" role="tab" data-toggle="tab"><?php echo gettext("Rejected"); ?></a></li>
+	    <li role="presentation"><a href="#User_Current_Comments" aria-controls="User_Current_Comments" role="tab" data-toggle="tab"><?php echo gettext("Comments"); ?></a></li>
 	</ul> 
 
 	<div class="tab-content" style="padding:20px;">
 		<div role="tabpanel" class="tab-pane active" id="User_Current_Published">
 
-			<div id="CurrentPublishedContent">
+			<div id="CurrentPublishedContent" class="row">
 				<?php 
 					if(isset($accountHomeViewModel->publishedStories) && count($accountHomeViewModel->publishedStories))
 					{
@@ -35,9 +36,9 @@
 		</div>
 		<div role="tabpanel" class="tab-pane" id="User_Current_Drafts">
 
-			<div id="CurrentDraftsContent">
+			<div id="CurrentDraftsContent" class="row">
 				<?php 
-					if(isset($accountHomeViewModel->draftStories) && count($accountHomeViewModel->draftStories))
+					if(isset($accountHomeViewModel->draftStories) && count($accountHomeViewModel->draftStories) > 0)
 					{
 						foreach ($accountHomeViewModel->draftStories as $story)
 						{
@@ -61,9 +62,9 @@
 		</div>
 		<div role="tabpanel" class="tab-pane" id="User_Current_Pending">
 
-			<div id="CurrentPendingContent">
+			<div id="CurrentPendingContent" class="row">
 				<?php 
-					if(isset($accountHomeViewModel->pendingStories) && count($accountHomeViewModel->pendingStories))
+					if(isset($accountHomeViewModel->pendingStories) && count($accountHomeViewModel->pendingStories) > 0)
 					{
 						foreach ($accountHomeViewModel->pendingStories as $story)
 						{
@@ -87,9 +88,9 @@
 		</div>
 		<div role="tabpanel" class="tab-pane" id="User_Current_Rejected">
 
-			<div id="CurrentRejectedContent">
+			<div id="CurrentRejectedContent" class="row">
 				<?php 
-					if(isset($accountHomeViewModel->rejectedStories) && count($accountHomeViewModel->rejectedStories))
+					if(isset($accountHomeViewModel->rejectedStories) && count($accountHomeViewModel->rejectedStories) > 0)
 					{
 						foreach ($accountHomeViewModel->rejectedStories as $story)
 						{
@@ -111,5 +112,31 @@
 				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 			</div>
 		</div>  
+		<div role="tabpanel" class="tab-pane" id="User_Current_Comments">
+
+			<div id="CurrentCommentContent" class="row">
+				<?php 
+					if(isset($accountHomeViewModel->pendingComments) && count($accountHomeViewModel->pendingComments) > 0)
+					{
+						foreach ($accountHomeViewModel->pendingComments as $comment)
+						{
+							include(APP_DIR . "views/Account/_comments.php");
+						}
+					}			
+				?>
+			</div>
+
+			<div class="alert alert-info alert-dismissible" id="CurrentCommentsContentInfoBar" role="alert" style="display:none;">
+		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+			</div>
+
+			<input type="hidden" name="CurrentCommentsContentPage" id="CurrentCommentsContentPage" value="1">
+			<input type="hidden" name="CurrentCommentsContentUrl" id="CurrentCommentsContentUrl" value="<?php echo BASE_URL; ?>account/commentsPendingApprovalList">
+
+			<div class="row text-center" id="CurrentCommentsContentMoreButton" style="margin-bottom: 100px;">
+				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Comments!"); ?></button>
+			</div>
+		</div>  		
 	</div>
-</div>
+

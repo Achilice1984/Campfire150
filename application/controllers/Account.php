@@ -116,8 +116,9 @@ class Account extends Controller {
 					$accountHomeViewModel->rejectedStories = $storyModel->getStoryListRejected($userID);
 					$accountHomeViewModel->draftStories = $storyModel->getStoryListDrafts($userID);
 					$accountHomeViewModel->publishedStories = $storyModel->getStoriesPublished_Public_Private($userID);
+					$accountHomeViewModel->pendingComments = $storyModel->getUnpublisedComments($userID);
 					
-					//debugit($accountHomeViewModel->draftStories);
+					//debugit($accountHomeViewModel->pendingComments);
 					//debugit($accountHomeViewModel->newsFeed);
 				}
 				else
@@ -173,6 +174,9 @@ class Account extends Controller {
 						array("static/js/userHome.js", "intern")
 					));
 				}
+
+				$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+				$view->set('privacyDropdownValues', $siteModel->getDropdownValues_StoryPrivacyType());
 
 				//Add a variable with data so that it can be accessed in the view
 				$view->set('accountHomeViewModel', $accountHomeViewModel);
@@ -346,6 +350,20 @@ class Account extends Controller {
 
 	function verifyemail($email, $hashedEmailVerification)
 	{
+		//Load the AccountModel to access account functions
+		$model = $this->loadModel('AccountModel');
+
+		if($model->verifiyEmail($email, $hashedEmailVerification))
+		{
+			addSuccessMessage("dbError", gettext("Your email has been successfuly verified! Login to start using your account!"), 1);
+
+			$this->redirect("account/login");
+		}
+		else
+		{
+			addErrorMessage("dbError", gettext("Oops, an error occurred while attempting to verify your account!"), 1);
+			$this->redirect("");
+		}
 	}
 
 	function changesecurityquestion()
@@ -504,7 +522,7 @@ class Account extends Controller {
 			if($this->isPost())
 			{			
 				$imageId = $model->saveUserImageMetadata($this->currentUser->UserId, $pictureViewModel, IMG_PROFILE);
-
+				
 				if($imageId != 0)
 				{
 					if(isset($imageId) && $imageId > 0)
@@ -650,6 +668,8 @@ class Account extends Controller {
 		{
 			if(isset($_POST["UserSearch"]))
 			{
+				$_GET["search"] = true;
+				
 				$searchResults = $accountModel->searchForUser($_POST["UserSearch"], $this->currentUser->UserId);
 			}
 		}
@@ -1009,6 +1029,9 @@ class Account extends Controller {
 		{
 			require_once(APP_DIR.'helpers/image_get_path.php');
 
+			$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+			$privacyDropdownValues = $siteModel->getDropdownValues_StoryPrivacyType();
+
 			$storyModel = $this->loadModel("Story/StoryModel");
 			$searchResults = array();
 
@@ -1078,6 +1101,80 @@ class Account extends Controller {
 				foreach ($searchResults as $story)
 				{
 					include(APP_DIR . "views/Account/_rejectedStories.php");
+				}
+			}
+		}
+	}
+
+	function commentsPendingApprovalList()
+	{
+		if($this->isAuth() && $this->isAjax())
+		{
+			require_once(APP_DIR.'helpers/image_get_path.php');
+
+			$storyModel = $this->loadModel("Story/StoryModel");
+			$searchResults = array();
+
+			$searchResults = $storyModel->getUnpublisedComments($this->currentUser->UserId, 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+
+			if (isset($searchResults)) {
+				foreach ($searchResults as $comment)
+				{
+					include(APP_DIR . "views/Account/_comments.php");
+				}
+			}
+		}
+	}
+
+	function approveComment()
+	{
+		if($this->isAuth() && $this->isAjax())
+		{
+			$storyModel = $this->loadModel("Story/StoryModel");
+
+			if(isset($_POST["CommentID"]))
+			{
+				$result = $storyModel->approveComment($this->currentUser->UserId, $_POST["CommentID"]);
+
+				if($result)
+				{
+					echo $result;
+				}
+			}
+		}
+	}
+
+	function rejectComment()
+	{
+		if($this->isAuth() && $this->isAjax())
+		{
+			$storyModel = $this->loadModel("Story/StoryModel");
+
+			if(isset($_POST["CommentID"]))
+			{
+				$result = $storyModel->rejectComment($this->currentUser->UserId, $_POST["CommentID"]);
+
+				if($result)
+				{
+					echo $result;
+				}
+			}
+		}
+	}
+
+	function changeStoryPrivacy()
+	{
+		if($this->isAuth() && $this->isAjax())
+		{
+			$storyModel = $this->loadModel("Story/StoryModel");
+
+			if(isset($_POST["StoryID"]) && isset($_POST["PrivacyType"]))
+			{
+				$result = $storyModel->changeStoryPrivacy($this->currentUser->UserId, $_POST["StoryID"], $_POST["PrivacyType"]);
+
+				if($result)
+				{
+					echo $result;
 				}
 			}
 		}

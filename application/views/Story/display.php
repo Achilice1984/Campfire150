@@ -69,11 +69,12 @@
                 <div class="col-md-2 col-sm-2 hidden-xs">
                     <figure class="thumbnail">
                         <a href="<?php echo BASE_URL . "account/home/" . $storyViewModel->UserId; ?>">
-                            <img class="img-responsive" style="height: 150px;" src="<?php echo image_get_path_basic($storyViewModel->UserId, 0, 1, IMG_SMALL); ?>" />
+                            <img class="img-responsive" style="height: 150px;" src="<?php echo image_get_path_basic($storyViewModel->UserId, $storyViewModel->UserProfilePicureId, IMG_PROFILE, IMG_SMALL); ?>" />
                         </a>
                     </figure>
                 </div>
                 <div style="padding-top: 25px; font-size: 1.2em;" class="col-md-8 col-sm-8">
+                    
                     <div class="row">
                         <?php echo gettext("Posted On:") . " " . $storyViewModel->DatePosted; ?>
                     </div>
@@ -114,6 +115,7 @@
 
             <section id="comment-list">
                 <?php 
+
                     foreach ($storyViewModel->Comments as $comment)
                     {
                         include(APP_DIR . "views/Story/_comments.php");
@@ -167,7 +169,7 @@
     
 </div>
 
-<?php if(count($relatedStories) > 0) { ?>
+<?php if(count($relatedStories) > 0 && !(count($relatedStories) == 1) && $relatedStories[0]->StoryId != $storyViewModel->StoryId) { ?>
     <div class="bg-grey padding-xl">
         <div class="container">
             <h2 style="font-size: 3em;"><?php echo gettext("Related Stories"); ?><small> <?php echo gettext("keep on reading!"); ?></small></h2>
