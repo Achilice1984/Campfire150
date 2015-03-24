@@ -1985,12 +1985,16 @@ class StoryModel extends Model {
 			$statement = "SELECT c.*, 
 
 							u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, u.Active as IsUserActive,
-							arc.Rejected as IsAdminRejected
+							arc.Rejected as IsAdminRejected,
+							p.PictureId
 
 							FROM comment c
 
 							LEFT JOIN user u
 							ON u.UserId = c.User_UserId
+
+							LEFT JOIN picture p
+							ON c.User_UserId = p.User_UserId AND (p.Active = TRUE) AND (p.Picturetype_PictureTypeId = 1)
 							
 							LEFT JOIN admin_reject_comment arc
 							ON arc.Comment_CommentId = c.CommentId AND arc.Active = TRUE
