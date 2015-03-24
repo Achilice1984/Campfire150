@@ -18,8 +18,10 @@ function image_save($imageFile, $userid, $imageid, $imageType,
 
     /*  $imageFileType=$uploadedImageObject->PictureFile; */
     /*debugit($uploadedImageObject); */
-    $writePath       = ROOT_DIR . 'static\\userdata\\images\\' . $imageType . '\\' . $useridhash . '\\' . $imageidhash . '\\';
-    $writePath       = str_replace("/", "\\", $writePath);
+    // $writePath       = ROOT_DIR . 'static\\userdata\\images\\' . $imageType . '\\' . $useridhash . '\\' . $imageidhash . '\\';
+    // $writePath       = str_replace("/", "\\", $writePath);
+
+    $writePath       = ROOT_DIR . 'static/userdata/images/' . $imageType . '/' . $useridhash . '/' . $imageidhash . '/';
 
     $currentFilePath = $writePath . $imageFileName;
 

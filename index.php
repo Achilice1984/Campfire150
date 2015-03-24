@@ -127,7 +127,7 @@ pip();
 	}	
 
 	function exception_error_handler($errno, $errstr, $errfile, $errline ) {
-
+		ob_start();
 		global $config;
 
 		$_SESSION["errno"] = $errno;
@@ -137,5 +137,10 @@ pip();
 
 		header('Location: '. BASE_URL . "error/generic");
 		exit;
+	}
+
+	function getSubText($text)
+	{
+		return strip_tags(substr($text, 0, 255) . " ...");
 	}	
 ?>

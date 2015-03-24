@@ -114,6 +114,7 @@
 
             <section id="comment-list">
                 <?php 
+
                     foreach ($storyViewModel->Comments as $comment)
                     {
                         include(APP_DIR . "views/Story/_comments.php");
@@ -167,7 +168,7 @@
     
 </div>
 
-<?php if(count($relatedStories) > 0) { ?>
+<?php if(count($relatedStories) > 0 && !(count($relatedStories) == 1) && $relatedStories[0]->StoryId != $storyViewModel->StoryId) { ?>
     <div class="bg-grey padding-xl">
         <div class="container">
             <h2 style="font-size: 3em;"><?php echo gettext("Related Stories"); ?><small> <?php echo gettext("keep on reading!"); ?></small></h2>

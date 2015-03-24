@@ -60,6 +60,8 @@ class Story extends Controller {
 		{
 			if(isset($_POST["StorySearch"]))
 			{
+				$_GET["search"] = true;
+				
 				$searchResults = $storyModel->searchStories($_POST["StorySearch"], $this->currentUser->UserId);
 			}			
 		}
@@ -185,6 +187,7 @@ class Story extends Controller {
 		$view->set('storyViewModel', $storyViewModel[0]);
 
 		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+		
 		$view->set('storyQuestions', $siteModel->getStoryQuestions());
 
 

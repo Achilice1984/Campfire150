@@ -34,7 +34,7 @@
 				<p class="col-xs-6 text-right"><?php echo gettext("Posted:") . " " . $story->DatePosted; ?></p>
 			</div>
 			<p>
-				<?php echo substr($story->Content, 0, 255) . " ..."; ?>
+				<?php echo getSubText($story->Content); ?>
 				<a href="<?php echo BASE_URL . "story/display/" . $story->StoryId; ?>"><?php echo gettext("Continue Reading"); ?></a>
 			</p>
 		</div>

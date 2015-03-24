@@ -12,7 +12,10 @@
 			</div>
 	  		<div class="col-lg-8 col-md-7">
 	    		<h4><?php echo $story->StoryTitle; ?></h4>
-    			<?php echo substr($story->Content, 0, 255) . " ..."; ?>
+    			
+    			<div>
+    				<?php echo getSubText($story->Content); ?>
+				</div>
   			</div>
 	
 		</div>
