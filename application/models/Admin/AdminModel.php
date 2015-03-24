@@ -656,27 +656,62 @@ class AdminModel extends Model {
 
 		try
 		{
-			// $statement = "SELECT *, (table1.totalInappropriateOnStory + table2.totalInappropriateOnComment) AS TotalInappropriate FROM 
-	
-			// 				(SELECT u.UserId, COUNT( * ) AS totalInappropriateOnStory
-			// 				FROM user AS u
-			// 				LEFT JOIN story AS s ON u.UserId = s.User_UserId
-			// 				LEFT JOIN user_recommend_story AS urs ON urs.Story_StoryId = s.StoryId
-			// 				WHERE urs.Opinion = FALSE 
-			// 				GROUP BY UserId
-			// 				) AS table1
+			SELECT * FROM
+			// (
+			//     SELECT table1.UserId, IF(total1 IS NULL, 0, total1) as field1, 
+			//     IF(total2 IS NULL, 0, total2) as field2
+			//     FROM
+			//     (SELECT u.UserId, COUNT( * ) AS total1
+			//     FROM user AS u
+			//     LEFT JOIN story AS s ON u.UserId = s.User_UserId
+			//     LEFT JOIN user_recommend_story AS urs ON urs.Story_StoryId = s.StoryId
+			//     WHERE urs.Opinion =
+			//     FALSE
+			//     GROUP BY UserId) table1
+			    
+			//     LEFT JOIN
+			    
+			//     (
+			//         SELECT u.UserId , COUNT( * ) AS total2
+			//         FROM user AS u
+			//         LEFT JOIN COMMENT AS c ON u.UserId = c.User_UserId
+			//         LEFT JOIN user_inappropriateflag_comment AS uic ON uic.Comment_CommentId = c.CommentId
+			//         WHERE uic.Active = TRUE
+			//         GROUP BY UserId
+			//     ) table2
+			    
+			//     ON table1.UserId = table2.UserId
+			// )tmp1
 
-			// 				FULL JOIN
+			// UNION DISTINCT
 
-			// 				(SELECT u2.UserId, COUNT( uic2.User_UserId ) AS totalInappropriateOnComment 
-			// 				FROM user AS u2
-			// 				LEFT JOIN COMMENT AS c2 ON u2.UserId = c2.User_UserId
-			// 				LEFT JOIN user_inappropriateflag_comment uic2 ON uic2.Comment_CommentId = c2.CommentId
-			// 				WHERE uic2.Active = TRUE 
-			// 				GROUP BY u2.UserId
-			// 				) AS table2
+			// SELECT * FROM
 
-			// 				ON table1.UserId = table2.UserId
+			// (
+			//    SELECT table2.UserId, IF(total1 IS NULL, 0, total1) as field1, 
+			//     IF(total2 IS NULL, 0, total2) as field2
+			// 	FROM (
+
+			// 	SELECT u.UserId, COUNT( * ) AS total1
+			// 	FROM user AS u
+			// 	LEFT JOIN story AS s ON u.UserId = s.User_UserId
+			// 	LEFT JOIN user_recommend_story AS urs ON urs.Story_StoryId = s.StoryId
+			// 	WHERE urs.Opinion =
+			// 	FALSE
+			// 	GROUP BY UserId
+			// 	)table1
+			// 	RIGHT JOIN (
+
+			// 	SELECT u.UserId, COUNT( * ) AS total2
+			// 	FROM user AS u
+			// 	LEFT JOIN COMMENT AS c ON u.UserId = c.User_UserId
+			// 	LEFT JOIN user_inappropriateflag_comment AS uic ON uic.Comment_CommentId = c.CommentId
+			// 	WHERE uic.Active =
+			// 	TRUE
+			// 	GROUP BY UserId
+			// 	)table2 ON table1.UserId = table2.UserId
+
+			// )tmp2
 
 			// 				LIMIT :Start, :HowMany";
 
