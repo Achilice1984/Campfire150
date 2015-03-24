@@ -712,15 +712,11 @@ class Admin extends Controller {
 		//Execute code if a post back
 		if($this->isPost())
 		{
-			//$approvalViewModel->Approval = $_POST["Approval"];
 			$activeViewModel->Active = isset($_POST["Active"]) ? $_POST["Active"] : "";
 			$activeViewModel->Reason = isset($_POST["Reason"]) ? $_POST["Reason"] : "";
 
 			//Map post values to the loginViewModel
 			$activeViewModel  = AutoMapper::mapPost($activeViewModel );
-			
-				debugit($_POST["Reason"]);
-				debugit($activeViewModel);
 
 			if($activeViewModel->validate())
 			{
@@ -730,7 +726,7 @@ class Admin extends Controller {
 				if($activeViewModel->Active == 'TRUE')
 					$model->activateUser($this->currentUser->UserId, $activeViewModel->Id, $activeViewModel->Reason);
 
-				elseif($approvalViewModel->Active == 'FALSE')
+				elseif($activeViewModel->Active == 'FALSE')
 					$model->deActivateUser($this->currentUser->UserId, $activeViewModel->Id, $activeViewModel->Reason);
 
 				$this->redirect("admin/index");
