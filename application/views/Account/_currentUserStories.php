@@ -1,4 +1,4 @@
-<div>
+
 	<ul style="border-bottom: 1px solid #eee" id="User_Current_Tabs" class="nav nav-pills">
 	    <li role="presentation" class="active"><a href="#User_Current_Published" aria-controls="User_Current_Published" role="tab" data-toggle="tab"><?php echo gettext("Published"); ?></a></li>
 	    <li role="presentation"><a href="#User_Current_Drafts" aria-controls="User_Current_Drafts" role="tab" data-toggle="tab"><?php echo gettext("Drafts"); ?></a></li>
@@ -38,7 +38,7 @@
 
 			<div id="CurrentDraftsContent" class="row">
 				<?php 
-					if(isset($accountHomeViewModel->draftStories) && count($accountHomeViewModel->draftStories))
+					if(isset($accountHomeViewModel->draftStories) && count($accountHomeViewModel->draftStories) > 0)
 					{
 						foreach ($accountHomeViewModel->draftStories as $story)
 						{
@@ -64,7 +64,7 @@
 
 			<div id="CurrentPendingContent" class="row">
 				<?php 
-					if(isset($accountHomeViewModel->pendingStories) && count($accountHomeViewModel->pendingStories))
+					if(isset($accountHomeViewModel->pendingStories) && count($accountHomeViewModel->pendingStories) > 0)
 					{
 						foreach ($accountHomeViewModel->pendingStories as $story)
 						{
@@ -90,7 +90,7 @@
 
 			<div id="CurrentRejectedContent" class="row">
 				<?php 
-					if(isset($accountHomeViewModel->rejectedStories) && count($accountHomeViewModel->rejectedStories))
+					if(isset($accountHomeViewModel->rejectedStories) && count($accountHomeViewModel->rejectedStories) > 0)
 					{
 						foreach ($accountHomeViewModel->rejectedStories as $story)
 						{
@@ -116,7 +116,7 @@
 
 			<div id="CurrentCommentContent" class="row">
 				<?php 
-					if(isset($accountHomeViewModel->pendingComments) && count($accountHomeViewModel->pendingComments))
+					if(isset($accountHomeViewModel->pendingComments) && count($accountHomeViewModel->pendingComments) > 0)
 					{
 						foreach ($accountHomeViewModel->pendingComments as $comment)
 						{
@@ -139,4 +139,4 @@
 			</div>
 		</div>  		
 	</div>
-</div>
+

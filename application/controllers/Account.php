@@ -350,6 +350,20 @@ class Account extends Controller {
 
 	function verifyemail($email, $hashedEmailVerification)
 	{
+		//Load the AccountModel to access account functions
+		$model = $this->loadModel('AccountModel');
+
+		if($model->verifiyEmail($email, $hashedEmailVerification))
+		{
+			addSuccessMessage("dbError", gettext("Your email has been successfuly verified! Login to start using your account!"), 1);
+
+			$this->redirect("account/login");
+		}
+		else
+		{
+			addErrorMessage("dbError", gettext("Oops, an error occurred while attempting to verify your account!"), 1);
+			$this->redirect("");
+		}
 	}
 
 	function changesecurityquestion()
@@ -508,7 +522,7 @@ class Account extends Controller {
 			if($this->isPost())
 			{			
 				$imageId = $model->saveUserImageMetadata($this->currentUser->UserId, $pictureViewModel, IMG_PROFILE);
-
+				
 				if($imageId != 0)
 				{
 					if(isset($imageId) && $imageId > 0)
@@ -654,6 +668,8 @@ class Account extends Controller {
 		{
 			if(isset($_POST["UserSearch"]))
 			{
+				$_GET["search"] = true;
+				
 				$searchResults = $accountModel->searchForUser($_POST["UserSearch"], $this->currentUser->UserId);
 			}
 		}

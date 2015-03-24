@@ -26,7 +26,7 @@ class AccountModel extends Model {
 			$user = $user[0];
 
 			//echo "<br /><br /><br /><br /><br /><br />". strtotime($user->LockoutTimes) . "<br />" . strtotime('2 minutes') . "<br />" . (strtotime('-1 minutes') > strtotime($user->LockoutTimes));
-			if($user->VerifiedEmail && !isset($user->LockoutTimes) || strtotime('+10 minutes') > strtotime($user->LockoutTimes)) //Is user locked out?
+			if(!isset($user->LockoutTimes) || strtotime('+10 minutes') > strtotime($user->LockoutTimes)) //Is user locked out?
 			{
 				//check to see if user is properly authenticated
 				if($authentication->authenticate($loginViewModel->Password, $user)) //Is user peoperly authenticated?
@@ -43,7 +43,10 @@ class AccountModel extends Model {
 					
 					$this->fetch($statement, $parameters);
 
-					$isUserLoggedIn = true;
+					if($user->VerifiedEmail == TRUE)
+					{
+						$isUserLoggedIn = true;
+					}
 				}
 				else //User exists BUT Login failed, update failed attempts
 				{
@@ -133,25 +136,110 @@ class AccountModel extends Model {
 
 	public function sendEmailVerification($email, $hashedEmailVerification)
 	{
-		$to      = $email; // Send email to our user
-		$subject = 'Signup | Verification'; // Give the email a subject
 		$message = '
-		 
-		Thanks for signing up for CampFire150!
-		Your account has been created, you can login using the credentials you signed up with after you have activated your account by clicking the url below.
-		 
-		Please click this link to activate your account:
-		http://localhost:8084/campfire150/account/verifyemail/' . $email . '/' . $hashedEmailVerification . '
-		 
-		'; // Our message above including the link
-		   
-	   	$headers  = 'MIME-Version: 1.0' . "\r\n";
-		$headers .= 'Content-type: text/html; charset=iso-8859-1' . "\r\n";                  
-		$headers = 	'From: webmaster@example.com' . "\r\n" .
-    				'Reply-To: webmaster@example.com' . "\r\n" .
-					'X-Mailer: PHP/' . phpversion(); // Set from headers
+		<style>
+	
+	
+				@media (min-width: 300px) {
+					.circle
+					{
+						width:50px;
+						height:50px;
+						border-radius:50%;
+						font-size:10px;
+						color:#fff;
+						line-height:50px;
+						text-align:center;
+						background:#eea236;
+						margin: 10px;
+						float: left;
+					}
 
-		mail($to, $subject, $message, $headers); // Send our email
+				}
+
+				@media (min-width: 600px) {
+					.circle
+					{
+						width:100px;
+						height:100px;
+						border-radius:50%;
+						font-size:20px;
+						color:#fff;
+						line-height:100px;
+						text-align:center;
+						background:#eea236;
+						margin: 10px;
+						float: left;
+					}
+				}
+
+				@media (min-width: 991px) {
+					.circle
+					{
+						width:200px;
+						height:200px;
+						border-radius:50%;
+						font-size:40px;
+						color:#fff;
+						line-height:200px;
+						text-align:center;
+						background:#eea236;
+						margin: 10px;
+						float: left;
+					}
+				}
+
+				
+			</style>
+
+			<html stlye="min-width:200px !important; font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;">
+				<head>
+					<title>Campfire 150</title>
+				</head>
+				<body style="padding:0; margin:0;">
+					<div style="background-color: #f8f8f8; padding: 40px;">
+						<h1 style="text-align: center; color: #333; font-weight: bolder; font-size: 4em;">Campfire 150! <small style="font-size: .4em; color:#808080;"><br />Gathering Canadians through story.</small></h1>
+					</div>
+					<div style="padding: 100px; padding-right: 0px; color: #333;">
+						<h1>Your almost done!</h1>
+
+						<p>Thank you so much for registering with Campfire 150!</p>
+						<p>Your profile is almost set up, just click the link below to activate your account.</p>
+						<a style="background-color: #eea236; padding: 10px; color:white; text-decoration: none; width:250px;" href="' . BASE_URL . 'account/verifyemail/' . $email . '/' . $hashedEmailVerification . '">Active Now!</a>
+					</div>
+					<div style="background-color: #2e6da4; color:white; padding: 40px;">
+						<section style="padding: 40px;">
+							<article style="">
+								<h1 style="font-size: 2.4em;">Trending</h1>
+								<div class="circle">Canada</div>
+								<div class="circle">Art</div>
+								<div class="circle">Technology</div>
+								<div class="circle">Winter</div>
+								<div class="circle">People</div>
+							</article>
+							<div style="clear: both;"></div>
+							<article style="width:100%; display:block;">
+								<h1 style="font-size: 2.4em;">How the Campfire Works</h1>
+								<ol style="font-size: 1.4em;">
+									<li>Submit a story</li>
+									<li>Answer some simple questions</li>
+									<li>We all create a national story</li>
+									<li>Repeat</li>
+								</ol>
+							</article>
+						</section>			
+					</div>
+				</body>
+			</html>'; // Our message above including the link
+		   
+	   	$to      = 'josh.dvrs@gmail.com';
+		$subject = 'Welcome to Campfire 150';
+		$headers = 'From: admin@campfire150.com' . "\r\n" .
+		    'Reply-To: admin@campfire150.com' . "\r\n" .
+		    'Content-Type: text/html; charset=ISO-8859-1' . "\r\n" .
+		    'X-Mailer: PHP/' . phpversion();
+
+		mail($to, $subject, $message, $headers);
 	}
 
 	public function verifiyEmail($email, $hashedValue)
@@ -161,17 +249,27 @@ class AccountModel extends Model {
 		//Sets verified flag to true
 		//return bool
 
-		$statement = "SELECT * FROM user WHERE Email = ? AND HashedVerification = ?";
+		$statement = "SELECT * FROM user WHERE Email = :Email AND VerificationCode = :HashCode";
 
-		$user = $this->fetchIntoClass($statement, array($email, $hashedValue), "shared/UserViewModel");
+		$user = $this->fetchIntoClass($statement, array(":Email" => $email, ":HashCode" => $hashedValue), "shared/UserViewModel");
 
 		$verified = false;
+		
 		//Does everything match?
-		if(isset($user))
-		{
-			$updateStatement = "UPDATE User SET Verified = TRUE";
+		if(isset($user[0]))
+		{			
+			$updateStatement = "UPDATE user SET VerifiedEmail = TRUE
+								WHERE user.UserId = :UserId";
 
-			$verified = $this->fetch($updateStatement, array());
+			$this->fetch($updateStatement, array(":UserId" => $user[0]->UserId));
+		}
+
+		$statement = "SELECT * FROM user WHERE Email = :Email";
+
+		$user = $this->fetchIntoClass($statement, array(":Email" => $email), "shared/UserViewModel");
+		if(isset($user[0]) && $user[0]->VerifiedEmail == TRUE)
+		{
+			$verified = TRUE;
 		}
 
 		return $verified;
@@ -322,7 +420,7 @@ class AccountModel extends Model {
 			":PostalCode" => $user->PostalCode, 
 			":PhoneNumber" => $user->PhoneNumber,			
 			":VerificationCode" => $hashedEmailVerification,
-			":VerifiedEmail" => true,
+			":VerifiedEmail" => FALSE,
 			":ProfilePrivacyType_PrivacyTypeId" => $user->ProfilePrivacyType_PrivacyTypeId,
 			":Gender_GenderId" => $user->Gender_GenderId,
 			":Ethnicity" => $user->Ethnicity,
@@ -330,7 +428,7 @@ class AccountModel extends Model {
 			":YearsInCanada" => $user->YearsInCanada//DateTime::createFromFormat("d/m/Y", $user->Birthday)->format('Y-m-d H:i:s')
 		);
 		
-		//$this->sendEmailVerification($user->Email, $hashedEmailVerification);
+		$this->sendEmailVerification($user->Email, $hashedEmailVerification);
 		$rowCount = $this->fetchRowCount($statement, $parameters);
 		$success = $rowCount > 0;
 
@@ -511,7 +609,8 @@ class AccountModel extends Model {
 						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId  AND u.Active = TRUE
 						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
 						WHERE user.Email = :Email
-						AND user.Active = TRUE";
+						AND user.Active = TRUE
+						AND user.VerifiedEmail = TRUE";
 
 		$user = $this->fetchIntoClass($statement, array(":Email" => $email), "shared/UserViewModel");
 
@@ -528,7 +627,8 @@ class AccountModel extends Model {
 						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId AND u.Active = TRUE
 						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
 						WHERE user.UserId = :UserId
-						AND user.Active = TRUE";
+						AND user.Active = TRUE
+						AND user.VerifiedEmail = TRUE";
 
 		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/UserViewModel");
 
@@ -555,7 +655,8 @@ class AccountModel extends Model {
 						ON (f.User_FollowerId = user.UserId) AND (f.User_UserId = :CurrentUserId) AND (f.Active = TRUE)
 
 						WHERE user.UserId = :UserId
-						AND user.Active = TRUE";
+						AND user.Active = TRUE
+						AND user.VerifiedEmail = TRUE";
 
 		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":CurrentUserId" => $currentUserId), "shared/UserViewModel");
 
@@ -574,7 +675,8 @@ class AccountModel extends Model {
 						LEFT JOIN useractionstatement uas ON user.UserId = uas.user_UserId AND uas.Active = TRUE
 						LEFT JOIN securityquestionanswer sq ON user.UserId = s.user_UserId
 						WHERE user.Email = :Email
-						AND user.Active = TRUE";
+						AND user.Active = TRUE
+						AND user.VerifiedEmail = TRUE";
 
 		$user = $this->fetchIntoClass($statement, array(":Email" => $email), "Account/ProfileViewModel");
 
@@ -595,7 +697,8 @@ class AccountModel extends Model {
 						ON user.UserId = uas.user_UserId AND uas.Active = TRUE
 
 						WHERE user.UserId = :UserId
-						AND user.Active = TRUE";
+						AND user.Active = TRUE
+						AND user.VerifiedEmail = TRUE";
 
 		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "Account/ProfileViewModel");
 
@@ -629,6 +732,7 @@ class AccountModel extends Model {
 						WHERE f.User_FollowerId = :UserId
 						AND u.Active = TRUE
 						AND u.ProfilePrivacyType_PrivacyTypeId = 1
+						AND u.VerifiedEmail = TRUE
 						AND f.Active = TRUE";
 
 		$totalFollowers = $this->fetchNum($statement, array(":UserId" => $userID));
@@ -650,6 +754,7 @@ class AccountModel extends Model {
 						WHERE f.User_UserId = :UserId
 						AND f.Active = TRUE
 						AND u.Active = TRUE
+						AND u.VerifiedEmail = TRUE
 						AND u.ProfilePrivacyType_PrivacyTypeId = 1";
 
 		$totalFollowing = $this->fetchNum($statement, array(":UserId" => $userID));
@@ -801,6 +906,7 @@ class AccountModel extends Model {
 
 						WHERE u.Active = TRUE
 						AND u.ProfilePrivacyType_PrivacyTypeId = 1
+						AND u.VerifiedEmail = TRUE
 						AND f.Active = TRUE
 						GROUP BY u.UserId
 						LIMIT :start, :howmany";
@@ -889,6 +995,7 @@ class AccountModel extends Model {
 
 						WHERE u.Active = TRUE
 						AND u.ProfilePrivacyType_PrivacyTypeId = 1
+						AND u.VerifiedEmail = TRUE
 						AND f.Active = TRUE
 						GROUP BY u.UserId
 						LIMIT :start, :howmany";
@@ -1011,6 +1118,7 @@ class AccountModel extends Model {
 
 						WHERE u.Active = TRUE
 						AND u.ProfilePrivacyType_PrivacyTypeId = 1
+						AND u.VerifiedEmail = TRUE
 						GROUP BY u.UserId
 						ORDER BY hits DESC
 						LIMIT :start, :howmany";
@@ -1043,6 +1151,7 @@ class AccountModel extends Model {
 		$statement = "SELECT * 
 						FROM user 
 						WHERE user.Active = TRUE  
+						AND user.VerifiedEmail = TRUE
 						LIMIT :start, :howmany";
 
 		$start = $this->getStartValue($howMany, $page);
@@ -1132,6 +1241,7 @@ class AccountModel extends Model {
 
 						WHERE u.Active = TRUE
 						AND u.ProfilePrivacyType_PrivacyTypeId = 1
+						AND u.VerifiedEmail = TRUE
 						GROUP BY u.UserId
 						ORDER BY u.DateCreated
 						LIMIT :start, :howmany";
@@ -1227,6 +1337,7 @@ class AccountModel extends Model {
 
 						WHERE u.Active = TRUE
 						AND u.ProfilePrivacyType_PrivacyTypeId = 1
+						AND u.VerifiedEmail = TRUE
 						GROUP BY u.UserId
 						ORDER BY totalFollowers DESC
 						LIMIT :start, :howmany";

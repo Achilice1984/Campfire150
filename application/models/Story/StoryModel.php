@@ -662,7 +662,7 @@ class StoryModel extends Model {
 							    AND c.PublishFlag = TRUE
 							) AS totalComments
 
-							FROM Story s 
+							FROM story s 
 						  	INNER JOIN user u
 						  	ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
 
@@ -731,7 +731,7 @@ class StoryModel extends Model {
 		{
 			
 			$statement = "SELECT s.*, saq.answer_for_question_answer_answerId
-						  FROM Story s 
+						  FROM story s 
 						  INNER JOIN story_has_answer_for_question saq
 						  ON s.StoryId = saq.Story_StoryId
 						  INNER JOIN admin_approve_story aas
@@ -811,7 +811,7 @@ class StoryModel extends Model {
 							    AND c.PublishFlag = TRUE
 							) AS totalComments
 
-						  FROM Story s 
+						  FROM story s 
 						  INNER JOIN user u
 						  ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
 
@@ -874,7 +874,7 @@ class StoryModel extends Model {
 		{
 			
 			$statement = "SELECT s.*, saq.answer_for_question_answer_answerId
-						  FROM Story s 
+						  FROM story s 
 						  INNER JOIN story_has_answer_for_question saq
 						  ON s.StoryId = saq.Story_StoryId
 						  INNER JOIN admin_approve_story aas
@@ -915,7 +915,7 @@ class StoryModel extends Model {
 		try
 		{
 			$statement = "SELECT s.StoryId, s.StoryTitle, s.Content, s.DatePosted, s.DateUpdated
-						  FROM Story s
+						  FROM story s
 						  INNER JOIN admin_approve_story aas
 						  ON s.StoryId = aas.Story_StoryId
 						  WHERE aas.Approved = TRUE
@@ -956,7 +956,7 @@ class StoryModel extends Model {
 
 							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId
 
-							FROM Story s 
+							FROM story s 
 
 							LEFT JOIN admin_approve_story aas
 							ON s.StoryId = aas.Story_StoryId
@@ -1002,7 +1002,7 @@ class StoryModel extends Model {
 
 						 	p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId
 
-							FROM Story s 
+							FROM story s 
 
 							LEFT JOIN story_has_picture shp
 							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
@@ -1046,7 +1046,7 @@ class StoryModel extends Model {
 						 	
 						 	p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId
 
-							FROM Story s 
+							FROM story s 
 
 							LEFT JOIN admin_approve_story aas
 							ON s.StoryId = aas.Story_StoryId AND aas.Approved = FALSE AND aas.Active = TRUE
@@ -1088,7 +1088,7 @@ class StoryModel extends Model {
 		{
 			
 			$statement = "SELECT s.*, aas.Approved
-						  FROM Story s 
+						  FROM story s 
 						  INNER JOIN admin_approve_story aas
 						  ON s.StoryId = aas.Story_StoryId
 						  WHERE aas.Approved = TRUE
@@ -1987,7 +1987,7 @@ class StoryModel extends Model {
 							u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, u.Active as IsUserActive,
 							arc.Rejected as IsAdminRejected
 
-							FROM Comment c
+							FROM comment c
 
 							LEFT JOIN user u
 							ON u.UserId = c.User_UserId
@@ -2024,7 +2024,7 @@ class StoryModel extends Model {
 		try
 		{
 
-			$statement = "SELECT * FROM Comment WHERE PublishFlag = 1 AND CommentId IN ";
+			$statement = "SELECT * FROM comment WHERE PublishFlag = 1 AND CommentId IN ";
 
 			$statement .= "(SELECT DISTINCT Comment_CommentId FROM user_inappropriateflag_comment) ORDER BY CommentId LIMIT ?, ?";
 
@@ -2343,9 +2343,12 @@ class StoryModel extends Model {
 				$jsonFormat[] = array($tag->Tag, $tag->count);
 			}
 
-			for ($i=0; $i < count($jsonFormat); $i++) { 
-				$jsonFormat[$i][1] = round( (($jsonFormat[$i][1] / $totalValue) * 100));
-			}
+			// for ($i=0; $i < count($jsonFormat); $i++) { 
+			// 	$jsonFormat[$i][1] = (($jsonFormat[$i][1] / $totalValue) * 100);
+
+			// 	if($jsonFormat[$i][1] > 10)
+			// 	{}
+			// }
 
 			return $jsonFormat;
 		}

@@ -46,7 +46,7 @@
 			</div>
 	  		<div class="col-lg-8 col-md-7">
 	    		<h4><?php echo $feed->StoryTitle; ?></h4>
-    			<?php echo substr($feed->Content, 0, 255) . " ..."; ?>
+    			<?php echo getSubText($feed->Content); ?>
   			</div>
 	
 		</div>
