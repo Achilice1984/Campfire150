@@ -9,7 +9,8 @@ tinymce.init({
  	plugins: "autoresize",
  	autoresize_on_init: true,
 	format : {title : 'Format', items : 'bold italic underline strikethrough | formats | removeformat'},
- 	content_css : $("#tinymce_customCSS").val()
+ 	content_css : $("#tinymce_customCSS").val(),
+    invalid_elements: "script"
 
  });
 

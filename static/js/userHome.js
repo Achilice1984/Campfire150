@@ -32,6 +32,8 @@ $(document.body).on('click', "#EditProfileButton", function(event){
 		        $('textarea#UserActionStatement').maxlength({
 		            alwaysShow: true
 		        });
+
+		        init_validation();
 			}
 			else
 			{
