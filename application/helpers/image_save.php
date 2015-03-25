@@ -55,10 +55,21 @@ function image_save($imageFile, $userid, $imageid, $imageType,
     //Now that width & height assigned get ratio
     $ratio;
 
-    if(!isset($up_height) || !isset($up_width))
+    if($imageType == IMG_STORY)
     {
-        $ratio     = $largeImageSize / $height;
+        $ratio = 16 / 9;
+    }
+    else if ($imageType == IMG_BACKGROUND) {
+        $ratio = 1200 / 400;
+    }
+    else
+    {
+        //profile picture
+        $ratio = 4 / 4;
+    }
 
+    if(!isset($up_height) || !isset($up_width) || !is_numeric($up_height) || !is_numeric($up_width))
+    {
         $newheight = $largeImageSize;
         $newwidth  = floor($width * $ratio);
 
@@ -67,8 +78,6 @@ function image_save($imageFile, $userid, $imageid, $imageType,
     }
     else
     {
-        $ratio      = $up_width / $up_height;
-
         $dif = $up_width - $largeImageSize;
 
         $newwidth    = $up_width - $dif;
@@ -78,7 +87,7 @@ function image_save($imageFile, $userid, $imageid, $imageType,
 
     $src_x  = $x;
     $src_y  = $y;
-    if(!isset($x) || !isset($y))
+    if(!isset($x) || !isset($y) || !is_numeric($x) || !is_numeric($y))
     {
         $src_x  = 0;
         $src_y  = 0;
