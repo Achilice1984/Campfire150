@@ -254,7 +254,7 @@ header, footer, nav {
 /* This overides the validation css to make it work on dropdown inputs */
 .form-control-feedback
 {
-	margin-right: 10px;
+	margin-right: 15px;
 }
  
 .StoryActionButtons {

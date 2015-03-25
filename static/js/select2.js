@@ -39,3 +39,12 @@ $(function(){
 		maximumSelectionLength: 5
 	});
 });  
+
+
+$(document.body).on('select2:select', function (event) {
+	$('form').formValidation('revalidateField', $(event.target).parent("div").find(".form-control").attr("name"));
+});
+
+$(document.body).on('change', '[data-fv-field]', function (event) {
+	$('form').formValidation('revalidateField', $(this).attr("name"));
+});

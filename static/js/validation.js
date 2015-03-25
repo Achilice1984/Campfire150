@@ -9,6 +9,7 @@ function init_validation()
         locale: $("#LanguagePreference").val(),
         framework: 'bootstrap',
         trigger: 'blur',
+        excluded: [':hidden:not(select)'],
         //err: { container: "#errorMessageSection"},
         icon: {
             valid: 'glyphicon glyphicon-ok',
@@ -112,6 +113,12 @@ function init_validation()
                 }
             },
             //Story Add
+            'QuestionAnswers[1][]': {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
             'QuestionAnswers[2][]': {
                 validators: {
                     notEmpty: {
@@ -148,18 +155,30 @@ function init_validation()
                     }
                 }
             },
-            // StoryTitle: {
-            //     validators: {
-            //         notEmpty: {
-            //         }
-            //     }
-            // },
-            // StoryPrivacyType_StoryPrivacyTypeId: {
-            //     validators: {
-            //         notEmpty: {
-            //         }
-            //     }
-            // },
+            'QuestionAnswers[8][]': {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            StoryTitle: {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            StoryPrivacyType_StoryPrivacyTypeId: {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            Tags: {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
         }
     });
 }

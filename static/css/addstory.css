@@ -24,7 +24,10 @@
 
 .mce-menubar {
 	background-color: white !important;
-	width: 100% !important;
+	width: 100% !important;	
+}
+.mce-menubtn {
+	padding: 10px !important;
 }
 #tinymce {
 	font-family: "Helvetica Neue",Helvetica,Arial,sans-serif !important;
