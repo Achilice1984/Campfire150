@@ -46,7 +46,7 @@ class Error extends Controller {
     
     function generic()
 	{
-		if(isset($_SESSION["errno"]))
+		if(isset($_SESSION["errno"]) || isset($_SESSION["exception"]))
 		{
 			//Load the register view
 			$view = $this->loadView('generic');

@@ -22,7 +22,8 @@ class AccountHomeViewModel extends ViewModel
 
 	public $backgroundImage;
 	public $profileImage;
-
+	public $profilePictureURL;
+	public $backgroundPictureURL;
 
 	public $newsFeed;
 	public $pendingStories;

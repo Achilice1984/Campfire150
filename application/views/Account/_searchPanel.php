@@ -1,5 +1,3 @@
-<?php require_once(APP_DIR . 'helpers/image_get_path.php'); ?>
-
 
 <section class="col-sm-6 StoryRowSection">
 	<div class="storySummary marginBottom15">

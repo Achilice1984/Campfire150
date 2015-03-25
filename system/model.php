@@ -14,7 +14,6 @@ class Model {
 	private static $connection;
 
 	const PAGE = 0;
-	const HOWMANY = 10;
 	
 	public function __construct()
 	{
@@ -28,7 +27,7 @@ class Model {
 		    	self::$connection = new PDO($config['db_dsn'], $config['db_username'], $config['db_password'],
 		    								array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8", PDO::MYSQL_ATTR_INIT_COMMAND => "SET CHARACTER SET utf8"));
 
-		    	if($config["debugMode"] == true)
+		    	if(IS_DEBUG == true)
 				{
 		    		self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	    		}
@@ -38,7 +37,10 @@ class Model {
 		} 
 		catch (PDOException $e) 
 		{
-		    echo 'Connection failed: ' . $e->getMessage();
+			if(IS_DEBUG)
+			{
+		    	echo 'Connection failed: ' . $e->getMessage();
+	    	}
 		}
 	}
 
@@ -99,7 +101,14 @@ class Model {
 		}
 		catch(PDOException $e) 
 		{
-			return $e->getMessage();
+			if(IS_DEBUG)
+			{
+				return $e->getMessage();
+			}
+			else
+			{
+				throw $e;
+			}
 		}
 	}
 
@@ -121,7 +130,14 @@ class Model {
 		}
 		catch(PDOException $e) 
 		{
-			return $e->getMessage();
+			if(IS_DEBUG)
+			{
+				return $e->getMessage();
+			}
+			else
+			{
+				throw $e;
+			}
 		}
 	}
 
@@ -144,7 +160,14 @@ class Model {
 		}
 		catch(PDOException $e) 
 		{
-			return $e->getMessage();
+			if(IS_DEBUG)
+			{
+				return $e->getMessage();
+			}
+			else
+			{
+				throw $e;
+			}
 		}
 	}
 
@@ -164,7 +187,14 @@ class Model {
 		}
 		catch(PDOException $e) 
 		{
-			return $e->getMessage();
+			if(IS_DEBUG)
+			{
+				return $e->getMessage();
+			}
+			else
+			{
+				throw $e;
+			}
 		}
 	}
 
@@ -196,7 +226,14 @@ class Model {
 		}
 		catch(PDOException $e) 
 		{
-			return $e->getMessage();
+			if(IS_DEBUG)
+			{
+				return $e->getMessage();
+			}
+			else
+			{
+				throw $e;
+			}
 		}
 	}
 
@@ -224,7 +261,14 @@ class Model {
 		}
 		catch(PDOException $e) 
 		{
-			return $e->getMessage();
+			if(IS_DEBUG)
+			{
+				return $e->getMessage();
+			}
+			else
+			{
+				throw $e;
+			}
 		}
 	}
 
@@ -240,7 +284,14 @@ class Model {
 		}
 		catch(PDOException $e) 
 		{
-			return $e->getMessage();
+			if(IS_DEBUG)
+			{
+				return $e->getMessage();
+			}
+			else
+			{
+				throw $e;
+			}
 		}
 	}
 

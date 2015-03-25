@@ -92,7 +92,7 @@
 		<span style="top: 50%; bottom:50%; font-size: 5em;" class="glyphicon glyphicon-camera text-primary"></span>
 	</div>
 	<!-- <div style="min-height: 450px;"></div> -->
-	<img id="backgroundImage" style="" class="img-responsive" src="<?php echo isset($accountHomeViewModel->backgroundImage) ? $accountHomeViewModel->backgroundImage->PictureUrl : ""; ?>" alt="">
+	<img id="backgroundImage" style="" class="img-responsive" src="<?php echo isset($accountHomeViewModel->backgroundPictureURL) ? $accountHomeViewModel->backgroundPictureURL : ""; ?>" alt="">
 </div>
 
 <div class="container" style="padding-top: 50px; padding-bottom: 50px;">
@@ -103,7 +103,7 @@
 	    			<span style="top: 50%; bottom:50%; font-size: 2em;" class="glyphicon glyphicon-camera text-primary"></span>	  				
 				</div>
 
-				<img id="profilePicture" style="max-height: 270px;" class="img-responsive img-thumbnail" src="<?php echo isset($accountHomeViewModel->profileImage) ? $accountHomeViewModel->profileImage->PictureUrl : BASE_URL . "static/images/default-user-image.png"; ?>" alt="<?php echo gettext("Profile Picture"); ?>">
+				<img id="profilePicture" style="max-height: 270px;" class="img-responsive img-thumbnail" src="<?php echo isset($accountHomeViewModel->profilePictureURL) ? $accountHomeViewModel->profilePictureURL : BASE_URL . "static/images/default-user-image.png"; ?>" alt="<?php echo gettext("Profile Picture"); ?>">
 			</div>
 			<div class="row">
 				<h2>

@@ -6,7 +6,7 @@
 	<ul class="nav nav-tabs marginBottom15">
 		<li role="presentation" <?php echo (!$showSearch ? "class='active'" : "" ); ?>><a href="#Story_Latest" aria-controls="Story_Latest" role="tab" data-toggle="tab"><?php echo gettext("Latest"); ?></a></li>
 	    <li role="presentation"><a href="#Story_Recommended" aria-controls="Story_Recommended" role="tab" data-toggle="tab"><?php echo gettext("Most Recommended"); ?></a></li>
-	    <li role="presentation" <?php echo ($showSearch ? "class='active'" : "" ); ?> ><a href="#Story_Search" aria-controls="Story_Search" role="tab" data-toggle="tab"><?php echo gettext("Search"); ?></a></li>
+	    <li role="presentation" <?php echo ($showSearch ? "class='active'" : "" ); ?>><a href="#Story_Search" aria-controls="Story_Search" role="tab" data-toggle="tab"><?php echo gettext("Search"); ?></a></li>
 	</ul>
 	
 	<div class="tab-content">

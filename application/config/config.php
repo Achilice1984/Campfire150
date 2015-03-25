@@ -14,4 +14,25 @@ $config['db_dsn'] = 'mysql:dbname=wwwcoiox_campfire;localhost';
 $config['db_username'] = 'wwwcoiox_campfir'; // Database username
 $config['db_password'] = 'Ep8qNRvHWUV4NXSu'; // Database password
 
+
+$config['MAX_HOME_STORIES'] 			= 9;
+$config['MAX_HOME_STORIES_MOBILE']		= 6;
+
+$config['MAX_STORIES_LISTS']			= 10;
+$config['MAX_STORIES_LISTS_MOBILE'] 	= 10;
+
+$config['MAX_RELATED_STORIES']			= 6;
+$config['MAX_RELATED_STORIES_MOBILE'] 	= 3;
+
+$config['MAX_USERS']					= 10;
+$config['MAX_USERS_MOBILE']				= 10;
+
+$config['MAX_COMMENTS']					= 10;
+$config['MAX_COMMENTS_MOBILE']			= 10;
+
+$config['MAX_ADMIN_LISTS']				= 10;
+$config['MAX_ADMIN_LISTS_MOBILE']		= 10;
+
+$config['MAX_HOME_CATEGORIES'] 			= 5;
+
 ?>
