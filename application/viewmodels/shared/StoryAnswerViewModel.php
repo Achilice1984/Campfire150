@@ -7,6 +7,7 @@ class StoryAnswerViewModel extends ViewModel
 	public $AnswerId; //Id of item
 	public $NameE; // English Name
 	public $NameF; // French Name
+	public $Question_QuestionId; //Id of item
 	public $DateCreated;
 	public $DateUpdated;
 	public $Active;

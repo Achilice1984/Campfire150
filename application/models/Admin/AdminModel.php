@@ -459,7 +459,9 @@ class AdminModel extends Model {
 		$statement = "SELECT * FROM user
 						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
 						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
-						WHERE user.UserId = :UserId";
+						LEFT JOIN picture ON user.UserId = picture.User_UserId
+						WHERE user.UserId = :UserId
+						AND picture.Picturetype_PictureTypeId = 1";
 
 		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/UserViewModel");
 
@@ -590,7 +592,7 @@ class AdminModel extends Model {
 		try
 		{
 			$statement = "SELECT * ,
-								(SELECT COUNT(*) FROM user WHERE Active = 0) AS totalUsers
+								(SELECT COUNT(*) FROM user WHERE Active = 1) AS totalUsers
 							FROM user 
 							WHERE Active = 1 
 							ORDER BY UserId ASC 
@@ -656,7 +658,7 @@ class AdminModel extends Model {
 
 		try
 		{
-			SELECT * FROM
+			//SELECT * FROM
 			// (
 			//     SELECT table1.UserId, IF(total1 IS NULL, 0, total1) as field1, 
 			//     IF(total2 IS NULL, 0, total2) as field2
@@ -754,7 +756,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getListQuestionaireQuestions()
+	public function getListQuestionaireQuestions($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Gets a list of all the current questionaire questions
 		//This will include a list of possible answers
@@ -764,20 +766,21 @@ class AdminModel extends Model {
 			$statement = "SELECT * , (
 								SELECT COUNT(*) FROM question
 							) AS TotalQuestions
-							FROM question";
+							FROM question
+							LIMIT :Start, :HowMany";
 
-			// $statement = "SELECT * , (
-			// 					SELECT COUNT(*) FROM question
-			// 				) AS TotalQuestions
-			// 				FROM question 
-			// 				LEFT JOIN answer_for_question 
-			// 				ON question.QuestionId=answer_for_question.Question_QuestionId";
+			$start = $this-> getStartValue($howMany, $page);
+			
+			$parameters = array( 
+					":Start" => $start,
+					":HowMany" => $howMany
+				);
 
-			$userList = $this->fetchIntoObject($statement, array());
+			$questionList = $this->fetchIntoObject($statement, $parameters);
 
-			if(isset($userList))
+			if(isset($questionList))
 			{
-				return $userList;
+				return $questionList;
 			}
 
 			return null;
@@ -788,7 +791,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getListQuestionaireAnswers()
+	public function getListQuestionaireAnswers($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Gets a list of all the current questionaire questions
 		//This will include a list of possible answers
@@ -809,9 +812,17 @@ class AdminModel extends Model {
 							ON a.AnswerId = afq.Answer_AnswerId
 							LEFT JOIN question q
 							ON q.QuestionId = afq.Question_QuestionId
-							ORDER BY afq.Question_QuestionId";
+							ORDER BY afq.Question_QuestionId
+							LIMIT :Start, :HowMany";
 
-			$answerList = $this->fetchIntoObject($statement, array());
+			$start = $this-> getStartValue($howMany, $page);
+			
+			$parameters = array( 
+					":Start" => $start,
+					":HowMany" => $howMany
+				);
+
+			$answerList = $this->fetchIntoObject($statement, $parameters);
 
 			if(isset($answerList))
 			{
@@ -838,6 +849,29 @@ class AdminModel extends Model {
 			$answers = $this->fetchIntoClass($statement, array(":AnswerId" => $answerId), "shared/StoryAnswerViewModel");
 
 			return $answers[0];
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function getAnswersByQuestionId($questionId)
+	{
+		//Accepts a answer id
+		//returns answer detail of that id
+
+		try
+		{
+			$statement = "SELECT * 
+							FROM answer_for_question AS afq
+							LEFT JOIN answer
+							ON afq.Answer_AnswerId = answer.AnswerId
+							WHERE afq.Question_QuestionId = :QuestionId";
+
+			$answerList = $this->fetchIntoClass($statement, array(":QuestionId" => $questionId), "shared/StoryAnswerViewModel");
+
+			return $answerList;
 		}
 		catch(PDOException $e)
 		{
@@ -1051,7 +1085,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getListDropdowns($tableName)
+	public function getListDropdowns($tableName, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts admin id
 		//returns list of dropdowns and their values
@@ -1085,9 +1119,18 @@ class AdminModel extends Model {
 					break;
 				default:
 					return $tableName." is not a proper table name";
-			}			
+			}	
 
-			return $this->fetchIntoClass($statement, array(), "shared/DropdownItemViewModel");
+			$statement .= " LIMIT :Start, :HowMany";
+
+			$start = $this-> getStartValue($howMany, $page);
+			
+			$parameters = array( 
+					":Start" => $start,
+					":HowMany" => $howMany
+				);		
+
+			return $this->fetchIntoClass($statement, $parameters, "shared/DropdownItemViewModel");
 		}
 		catch(PDOException $e)
 		{

@@ -13,12 +13,11 @@ class Admin extends Controller {
 		$model = $this->loadModel('Admin/AdminModel');
 	
 		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
-		$storyQuestionViewModel = $model->getQuestionById(1);
+		$storyQuestionViewModel = $model->getAnswersByQuestionId(1);
 		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
 		//$returnData = $model->getDropdownListItem('gendertype', 1);
-		$returnData = $model->getListUsersOderedByMostInappropriateFlags(7,1);
 
-		debugit($returnData);
+		debugit($storyQuestionViewModel);
 
 		
 	}
@@ -375,7 +374,7 @@ class Admin extends Controller {
 		if(!empty($_POST["search"]["value"]))
 		{
 			//Perform a search
-			$userList = $accountModel->searchForUser($userSearch, $howMany, $page);
+			$userList = $adminModel->searchForUser($userSearch, $howMany, $page);
 		}
 		else
 		{
@@ -405,11 +404,10 @@ class Admin extends Controller {
 
 	function AjaxStoryQuestionList()
 	{
-		$storyList;
+		$questionList;
 		$howMany = $_POST["length"]; //How many results to return
-		$start = $_POST["start"]; 
-		$page = ($start / $howMany) + 1; //What page number in results
-		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+		$start = $_POST["start"]; //What page number in results
+		$page = ($start / $howMany) + 1;
 		$resultData = array();
 
 		$adminModel = $this->loadModel('AdminModel');
@@ -426,29 +424,32 @@ class Admin extends Controller {
 
 		$recordsNum = isset($questionList[0]) ?  $questionList[0]->TotalQuestions : 0;
 
-		//Process story list into array like below:	
 		foreach ($questionList as $question)
 		{
-			$url = '<a href=' . BASE_URL . 'admin/storyquestionedit/' . $question->QuestionId . '>Update</a>'; //Add link for edit the record
-			$resultData[] = array($question->QuestionId, $question->NameE, $question->NameF, $question->DateUpdated, $url);
-		}
+			$url = '<a href=' . BASE_URL . 'admin/storyquestionedit/' . $question->QuestionId . '>Action</a>';
+
+			$resultData[] = array($question->QuestionId, $question->NameE,
+			  $question->NameF, $question->DateUpdated, $url);
+		}		
 			
+		//Process question list into array like below:	
+
 		$output = array(
 	        "draw" => intval($_POST["draw"]),
 	        "recordsTotal" => $recordsNum,
 	        "recordsFiltered" => $recordsNum,
 	        "data" => $resultData
 	    );
+
 		echo json_encode($output);
 	}
 
 	function AjaxStoryAnswerList()
 	{
-		$storyList;
+		$answerList;
 		$howMany = $_POST["length"]; //How many results to return
 		$start = $_POST["start"]; 
 		$page = ($start / $howMany) + 1; //What page number in results
-		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
 		$resultData = array();
 
 		$adminModel = $this->loadModel('AdminModel');
@@ -526,6 +527,9 @@ class Admin extends Controller {
 	function dropdownList($tableName)
 	{
 		$list = array();
+		$howMany = $_POST["length"]; //How many results to return
+		$start = $_POST["start"]; 
+		$page = ($start / $howMany) + 1; 
 		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
 		$resultData = array();
 
@@ -538,7 +542,7 @@ class Admin extends Controller {
 		}
 		else
 		{
-			$list = $adminModel->getListDropdowns($tableName);
+			$list = $adminModel->getListDropdowns($tableName, $howMany, $page);
 		}
 
 		$recordsNum = isset($list[0]) ?  $list[0]->TotalNumber : 0;
@@ -609,10 +613,10 @@ class Admin extends Controller {
 			{
 				// Save data
 				if($approvalViewModel->Approval == 'TRUE')
-				$result =	$model->approveStory($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
+					$result = $model->approveStory($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
 
 				elseif($approvalViewModel->Approval == 'FALSE')
-				$result = $model->rejectStory($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
+					$result = $model->rejectStory($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
 
 				$this->redirect("admin/index");
 			}
@@ -630,7 +634,6 @@ class Admin extends Controller {
 
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
-		$accountModel = $this->loadModel('Account/AccountModel');
 		$commentViewModel = $this->loadViewModel('shared/CommentViewModel');
 		$userViewModel = $this->loadViewModel('shared/UserViewModel');
 		$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
@@ -642,7 +645,7 @@ class Admin extends Controller {
 		$commentViewModel = $model->getCommentById($commentId);
 
 		$storyViewModel = $model->getStoryById($commentViewModel->Story_StoryId);
-		$userViewModel = $accountModel->getUserProfileByID($commentViewModel->UserId);
+		$userViewModel = $model->getUserByID($commentViewModel->User_UserId);
 
 		$view->set('approvalViewModel', $approvalViewModel);
 
@@ -874,7 +877,7 @@ class Admin extends Controller {
 		}
 	}
 
-	function storyansweradd()
+	function storyansweradd($questionId)
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
@@ -926,7 +929,12 @@ class Admin extends Controller {
 		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
 		$storyQuestionViewModel = $model->getQuestionById($questionId);
 
+		$storyAnswerViewModelList = $this->loadViewModel('shared/StoryQuestionViewModel');
+		$storyAnswerViewModelList = $model->getAnswersByQuestionId($questionId);
+
+
 		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
+		$view->set('storyAnswerViewModelList', $storyAnswerViewModelList);
 
 		//Renders the view. true indicates to load the layout
 		$view->render(true);
