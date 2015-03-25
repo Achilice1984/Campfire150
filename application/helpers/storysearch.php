@@ -33,18 +33,10 @@ class StorySearch extends Model
     	$replace = array("\\\\","\\0","\\n", "\\r", "\'", '\"', "\\Z");
 		$storySearch = str_replace($search, $replace, strtolower($storySearch));
 
-		$statement = "SELECT 
-					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, s.Published,
+		$statement = "SELECT
+					s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
-					urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
-
-					aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
-
-					shp.Story_StoryId, shp.PictureId, shp.Active,
-
-					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
-
-					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+					urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
 					f.Active AS FollowingUser,
 

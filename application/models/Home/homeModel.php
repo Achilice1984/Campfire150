@@ -60,8 +60,24 @@ class HomeModel extends Model
 
 			$statement = "SELECT COUNT(1)
 							FROM comment c
+
+							LEFT JOIN user u
+							ON (u.UserId = c.User_UserId) AND (u.Active = TRUE)
+
+							LEFT JOIN story s
+							ON (s.StoryId = c.Story_StoryId) AND (u.Active = TRUE)
+
+							LEFT JOIN admin_approve_story aas
+							ON (s.StoryId = aas.Story_StoryId) AND (aas.Active = TRUE)
+
 							WHERE c.PublishFlag = TRUE
-							AND c.Active = TRUE";
+							AND c.Active = TRUE
+							AND u.Active = TRUE
+							AND u.VerifiedEmail = TRUE
+							AND u.ProfilePrivacyType_PrivacyTypeId = 1
+							AND s.Active = TRUE
+							AND s.StoryPrivacyType_StoryPrivacyTypeId = 1
+							AND aas.Approved = TRUE";
 
 			return $this->fetchNum($statement, array());		
 		}
@@ -78,8 +94,15 @@ class HomeModel extends Model
 
 			$statement = "SELECT COUNT(1)
 							FROM user_recommend_story urs
+
+							LEFT JOIN user u
+							ON (u.UserId = urs.User_UserId) AND (u.Active = TRUE)
+
 							WHERE urs.Opinion = TRUE
-							AND urs.Active = TRUE";
+							AND urs.Active = TRUE
+							AND u.VerifiedEmail = TRUE
+							AND u.Active = TRUE
+							AND u.ProfilePrivacyType_PrivacyTypeId = 1";
 
 			return $this->fetchNum($statement, array());		
 		}

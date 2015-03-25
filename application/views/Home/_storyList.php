@@ -1,6 +1,3 @@
-<?php require_once(APP_DIR . 'helpers/image_get_path.php'); ?>
-
-
  <div class="col-md-4 col-sm-6">
  	<h2 class="storyTitle"><?php echo $story->StoryTitle; ?></h2>
     <div  class="thumbnail">
@@ -28,6 +25,6 @@
             </p>
         </div>
 
-        <img class="img-responsive" src="<?php echo image_get_path_basic($story->UserId, $story->PictureId, isset($story->Picturetype_PictureTypeId) ? $story->Picturetype_PictureTypeId : IMG_STORY, IMG_MEDIUM); ?>"  alt="" />
+        <img class="img-responsive" src="<?php echo image_get_path_basic($story->UserId, $story->PictureId, IMG_STORY, IMG_MEDIUM); ?>"  alt="" />
     </div>
 </div>

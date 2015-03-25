@@ -1,4 +1,3 @@
-<?php require_once(APP_DIR . 'helpers/image_get_path.php'); ?>
 
 <div class="row StoryRowSection" style="padding:0px; padding-top: 10px;">
 

@@ -1,12 +1,16 @@
+<?php
+	$showSearch = isset($_GET["search"]);
+?>
+
 <div class="container">
 	<ul class="nav nav-tabs marginBottom15">
-		<li role="presentation" class="active"><a href="#User_Latest" aria-controls="User_Latest" role="tab" data-toggle="tab"><?php echo gettext("Latest"); ?></a></li>
+		<li role="presentation" <?php echo (!$showSearch ? "class='active'" : "" ); ?>><a href="#User_Latest" aria-controls="User_Latest" role="tab" data-toggle="tab"><?php echo gettext("Latest"); ?></a></li>
 	    <li role="presentation"><a href="#User_MostFollowers" aria-controls="User_MostFollowers" role="tab" data-toggle="tab"><?php echo gettext("Most Followers"); ?></a></li>
-	    <li role="presentation"><a href="#User_Search" aria-controls="User_Search" role="tab" data-toggle="tab"><?php echo gettext("Search"); ?></a></li>
+	    <li role="presentation" <?php echo ($showSearch ? "class='active'" : "" ); ?>><a href="#User_Search" aria-controls="User_Search" role="tab" data-toggle="tab"><?php echo gettext("Search"); ?></a></li>
 	</ul>   
 
 	<div class="tab-content">
-		<div role="tabpanel" class="tab-pane active" id="User_Latest">
+		<div role="tabpanel" class="tab-pane <?php echo (!$showSearch ? "active" : "" ); ?>" id="User_Latest">
 			
 			<div id="UsersLatestContainer" class="row">
 				<?php 
@@ -54,7 +58,7 @@
 			</div>
 	    </div>   <!-- <div role="tabpanel" class="tab-pane active" id="Story_Recommended"> -->
 
-	    <div role="tabpanel" class="tab-pane" id="User_Search">
+	    <div role="tabpanel" class="tab-pane <?php echo ($showSearch ? "active" : "" ); ?>" id="User_Search" >
 			<form action="<?php echo BASE_URL; ?>account/search" data-ajax-action="<?php echo BASE_URL; ?>account/ajaxSearch" id="UserSearchForm" method="post">
 				<input type="hidden" name="UserSearchPage" id="UserSearchPage" value="1">
 

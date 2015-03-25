@@ -25,7 +25,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function searchStoriesPendingApproval($storySearch, $adminID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function searchStoriesPendingApproval($storySearch, $adminID, $howMany = MAX_ADMIN_LISTS, $page = self::PAGE)
 	{
 		//Accepts string to search for a story
 		//Checks if user has marked story as inappropriate and if user has recommended story (add these to story viewmodel class)
@@ -44,7 +44,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function searchStoriesRejected($storySearch, $userID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function searchStoriesRejected($storySearch, $userID, $howMany = MAX_ADMIN_LISTS, $page = self::PAGE)
 	{
 		//Accepts string to search for a story
 		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
@@ -87,7 +87,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getStoryListPendingApproval($howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoryListPendingApproval($howMany = MAX_ADMIN_LISTS, $page = self::PAGE)
 	{
 		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -126,7 +126,7 @@ class AdminModel extends Model {
 		}		
 	}
 
-	public function getStoryListRejected($howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoryListRejected($howMany = MAX_ADMIN_LISTS, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -165,7 +165,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getStoryListFlaggedInappropriate($howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoryListFlaggedInappropriate($howMany = MAX_ADMIN_LISTS, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -279,7 +279,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getCommentListFlaggedInappropriate($howMany = self::HOWMANY, $page = self::PAGE)
+	public function getCommentListFlaggedInappropriate($howMany = MAX_ADMIN_LISTS, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -345,7 +345,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getCommentListRejected($howMany = self::HOWMANY, $page = self::PAGE)
+	public function getCommentListRejected($howMany = MAX_ADMIN_LISTS, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -471,7 +471,7 @@ class AdminModel extends Model {
 		return null;
 	}
 
-	public function getListUsers($howMany = self::HOWMANY, $page = self::PAGE)
+	public function getListUsers($howMany = MAX_ADMIN_LISTS, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -580,7 +580,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getListUsersActive($howMany = self::HOWMANY, $page = self::PAGE)
+	public function getListUsersActive($howMany = MAX_ADMIN_LISTS, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -613,7 +613,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getListUsersDisabled($howMany = self::HOWMANY, $page = self::PAGE)
+	public function getListUsersDisabled($howMany = MAX_ADMIN_LISTS, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -647,7 +647,7 @@ class AdminModel extends Model {
 	}
 
 ////////////////////////////////////////confuse about how to calculate the number of flags////////////////////
-	public function getListUsersOderedByMostInappropriateFlags($howMany = self::HOWMANY, $page = self::PAGE)
+	public function getListUsersOderedByMostInappropriateFlags($howMany = MAX_ADMIN_LISTS, $page = self::PAGE)
 	{
 		//Accepts how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
