@@ -39,8 +39,6 @@ class Account extends Controller {
 
 	function home($userID = null)
 	{
-		require_once(APP_DIR . 'helpers/image_get_path.php');
-
 		try
 		{
 			$userID = $userID != null ? $userID : $this->currentUser->UserId;
@@ -83,20 +81,17 @@ class Account extends Controller {
 
 				$accountHomeViewModel->ActionTakenList = $model->getActionTakenList($userID);
 
-				$accountHomeViewModel->backgroundImage = $model->getCurrentBackgroundPictureMetadata($userID);
 
-				if(isset($accountHomeViewModel->backgroundImage))
+				if(isset($accountHomeViewModel->userDetails->BackgroundPictureId))
 				{
-					$accountHomeViewModel->backgroundImage->PictureUrl = 
-											image_get_path_basic($userID, $accountHomeViewModel->backgroundImage->PictureId, IMG_BACKGROUND, IMG_LARGE);
+					$accountHomeViewModel->backgroundPictureURL = 
+											image_get_path_basic($userID, $accountHomeViewModel->userDetails->BackgroundPictureId, IMG_BACKGROUND, (IS_MOBILE ? IMG_MEDIUM : IMG_LARGE));
 				}
 
-				$accountHomeViewModel->profileImage = $model->getCurrentProfilePictureMetadata($userID);
-
-				if(isset($accountHomeViewModel->profileImage))
+				if(isset($accountHomeViewModel->userDetails->ProfilePictureId))
 				{
-					$accountHomeViewModel->profileImage->PictureUrl = 
-											image_get_path_basic($userID, $accountHomeViewModel->profileImage->PictureId, IMG_PROFILE, IMG_MEDIUM);
+					$accountHomeViewModel->profilePictureURL = 
+											image_get_path_basic($userID, $accountHomeViewModel->userDetails->ProfilePictureId, IMG_PROFILE, (IS_MOBILE ? IMG_XSMALL : IMG_SMALL));
 				}
 
 
@@ -106,10 +101,6 @@ class Account extends Controller {
 					$siteModel = $this->loadModel('SiteContent/SiteContentModel');
 					$view->set('actionsTakenTypes', $siteModel->getDropdownValues_ActionsTaken());
 
-					// public $newsFeed;
-					// public $pendingStories;
-					// public $draftStories;
-					// public $rejectedStories;
 					$accountHomeViewModel->newsFeed = $storyModel->getNewsFeed($userID);
 					$accountHomeViewModel->pendingStories = $storyModel->getStoryListPendingApproval($userID);
 
@@ -117,13 +108,13 @@ class Account extends Controller {
 					$accountHomeViewModel->draftStories = $storyModel->getStoryListDrafts($userID);
 					$accountHomeViewModel->publishedStories = $storyModel->getStoriesPublished_Public_Private($userID);
 					$accountHomeViewModel->pendingComments = $storyModel->getUnpublisedComments($userID);
-					
-					//debugit($accountHomeViewModel->pendingComments);
-					//debugit($accountHomeViewModel->newsFeed);
 				}
 				else
 				{
 					$accountHomeViewModel->usersStoryList = $storyModel->getStoriesWrittenByCurrentUser($userID);
+
+					//How many approved stories
+					$accountHomeViewModel->totalApprovedStories = $storyModel->getTotalStoriesApproved($userID);
 				}
 
 				//How many people are they following
@@ -133,21 +124,7 @@ class Account extends Controller {
 				$accountHomeViewModel->totalFollowers = $model->getTotalFollowers($userID);
 
 				$accountHomeViewModel->totalRecommendations = $storyModel->getTotalRecommendations($userID);
-
-				//How many approved stories
-				$accountHomeViewModel->totalApprovedStories = $storyModel->getTotalStoriesApproved($userID);
-
-				//How many pending stories
-				$accountHomeViewModel->totalPendingStories = $storyModel->getTotalStoriesPending($userID);
-
-				//How many denied stories
-				$accountHomeViewModel->totalDeniedStories = $storyModel->getTotalStoriesDenied($userID);
-
-				//How many approved comments
-				$accountHomeViewModel->totalApprovedComments = $storyModel->getTotalCommentsApproved($userID);
-
-				//How many penfing comments
-				$accountHomeViewModel->totalPendingComments = $storyModel->getTotalCommentsPending($userID);							
+										
 
 				if($userID == $this->currentUser->UserId)
 				{
@@ -158,12 +135,20 @@ class Account extends Controller {
 						array("static/js/storyButtons.js", "intern"),
 						array("static/plugins/cropper/cropper.min.js", "intern"),
 						array("static/plugins/datepicker/js/bootstrap-datepicker.min.js", "intern"),
-						array("static/plugins/maxlength/js/bootstrap-maxlength.min.js", "intern")
+						array("static/plugins/maxlength/js/bootstrap-maxlength.min.js", "intern"),
+						array("static/plugins/validation/js/formValidation.min.js", "intern"),
+						array("static/plugins/validation/js/framework/bootstrap.min.js", "intern"),
+						array("static/plugins/select2/js/select2.min.js", "intern"),
+						array("static/plugins/validation/js/language/en_US.js", "intern"),
+						array("static/plugins/validation/js/language/fr_FR.js", "intern"),
+						array("static/js/validation.js", "intern")
 					));
 
 					$view->setCSS(array(
 						array("static/plugins/cropper/cropper.min.css", "intern"),
-						array("static/plugins/datepicker/css/bootstrap-datepicker3.min.css", "intern")
+						array("static/plugins/datepicker/css/bootstrap-datepicker3.min.css", "intern"),
+						array("static/plugins/validation/css/formValidation.min.css", "intern"),
+						array("static/plugins/select2/css/select2.min.css", "intern")
 					));
 				}
 				else
@@ -173,7 +158,7 @@ class Account extends Controller {
 						array("static/js/followUser.js", "intern"),
 						array("static/js/userHome.js", "intern")
 					));
-				}
+				}				
 
 				$siteModel = $this->loadModel('SiteContent/SiteContentModel');
 				$view->set('privacyDropdownValues', $siteModel->getDropdownValues_StoryPrivacyType());
@@ -193,176 +178,234 @@ class Account extends Controller {
 		}
 		catch(Exception $ex)
 		{
-
+			throw $ex;
 		}
 	}
 
 	function login()
 	{			
-		//Load the userViewModel
-		$userViewModel = $this->loadViewModel('shared/UserViewModel');
+		try
+		{
+			//Load the userViewModel
+			$userViewModel = $this->loadViewModel('shared/UserViewModel');
 
-		//Load the loginViewModel
-		$loginViewModel = $this->loadViewModel('LoginViewModel');
+			//Load the loginViewModel
+			$loginViewModel = $this->loadViewModel('LoginViewModel');
 
-		//Execute code if a post back
-		if($this->isPost())
-		{			
-			//Map post values to the loginViewModel
-			$loginViewModel = AutoMapper::mapPost($loginViewModel);
+			//Execute code if a post back
+			if($this->isPost())
+			{			
+				//Map post values to the loginViewModel
+				$loginViewModel = AutoMapper::mapPost($loginViewModel);
 
-			//Load the AccountModel to access account functions
-			$model = $this->loadModel('AccountModel');
-			
-			//Validate data that was posted to the server
-			//This will also set the temp errors to be shown in the view
-			if($loginViewModel->validate())
-			{		
-				//Attempt to log user into website
-				$isLoggedIn = $model->login($loginViewModel);				
+				//Load the AccountModel to access account functions
+				$model = $this->loadModel('AccountModel');
+				
+				//Validate data that was posted to the server
+				//This will also set the temp errors to be shown in the view
+				if($loginViewModel->validate())
+				{		
+					//Attempt to log user into website
+					$isLoggedIn = $model->login($loginViewModel);				
 
-				if($isLoggedIn) //Success
-				{
-					//Redirect to users home page
-					$this->redirect("account/home");	
-				}
-				else //Failed login
-				{
-					// Add an error message because login failed 
-					addErrorMessage("dbError", gettext("Opps, it looks like your attempt to login faild."));
-				}				
-			}			
+					if($isLoggedIn) //Success
+					{
+						//Redirect to users home page
+						$this->redirect("account/home");	
+					}
+					else //Failed login
+					{
+						// Add an error message because login failed 
+						addErrorMessage("dbError", gettext("Opps, it looks like your attempt to login faild."));
+					}				
+				}			
+			}
+
+			//Load the login view
+			$view = $this->loadView('login');
+
+			//Add a variable with old login data so that it can be accessed in the view
+			$view->set('loginViewModel', $loginViewModel);
+
+			//Load up some js files
+			$view->setJS(array(
+				array("static/plugins/validation/js/formValidation.min.js", "intern"),
+				array("static/plugins/validation/js/framework/bootstrap.min.js", "intern"),
+				array("static/plugins/select2/js/select2.min.js", "intern"),
+				array("static/plugins/validation/js/language/en_US.js", "intern"),
+				array("static/plugins/validation/js/language/fr_FR.js", "intern"),
+				array("static/js/validation.js", "intern")
+			));
+
+			$view->setCSS(array(
+				array("static/plugins/validation/css/formValidation.min.css", "intern"),
+				array("static/plugins/select2/css/select2.min.css", "intern")
+			));
+
+			//Render the login view. true indicates to load the layout pages as well
+			$view->render(true);
 		}
-
-		//Load the login view
-		$view = $this->loadView('login');
-
-		//Add a variable with old login data so that it can be accessed in the view
-		$view->set('loginViewModel', $loginViewModel);
-
-		//Render the login view. true indicates to load the layout pages as well
-		$view->render(true);
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
 	}
 
 	function logout()
 	{
-		$model = $this->loadModel('AccountModel');
-		$model->logout();
+		try
+		{
+			$model = $this->loadModel('AccountModel');
+			$model->logout();
 
-		$this->redirect("");
+			$this->redirect("");
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
 	}
 
 	function changelanguage()
 	{		
-		$sessionManger = new SessionManager();
-		$model = $this->loadModel('AccountModel');
-
-		if(isset($this->currentUser) && $this->isAuth())
+		try
 		{
-			if($this->currentUser->LanguagePreference == "en_CA")
-			{
-				$this->currentUser->LanguagePreference = "fr_CA";
-				$sessionManger->setLanguageSession(2);
+			$sessionManger = new SessionManager();
+			$model = $this->loadModel('AccountModel');
 
-				$model->updateUserLanguagePreference($this->currentUser->UserId, 2);
+			if(isset($this->currentUser) && $this->isAuth())
+			{
+				if($this->currentUser->LanguagePreference == "en_CA")
+				{
+					$this->currentUser->LanguagePreference = "fr_CA";
+					$sessionManger->setLanguageSession(2);
+
+					$model->updateUserLanguagePreference($this->currentUser->UserId, 2);
+				}
+				else
+				{
+					$this->currentUser->LanguagePreference = "en_CA";
+					$sessionManger->setLanguageSession(1);
+
+					$model->updateUserLanguagePreference($this->currentUser->UserId, 1);
+				}			
 			}
 			else
 			{
-				$this->currentUser->LanguagePreference = "en_CA";
-				$sessionManger->setLanguageSession(1);
+				if($_SESSION["languagePreference"] == "en_CA")
+				{
+					$_SESSION["languagePreference"] = "fr_CA";
+				}
+				else
+				{
+					$_SESSION["languagePreference"] = "en_CA";
+				}			
+			}	
 
-				$model->updateUserLanguagePreference($this->currentUser->UserId, 1);
-			}			
+			$this->redirect("");
 		}
-		else
+		catch(Exception $ex)
 		{
-			if($_SESSION["languagePreference"] == "en_CA")
-			{
-				$_SESSION["languagePreference"] = "fr_CA";
-			}
-			else
-			{
-				$_SESSION["languagePreference"] = "en_CA";
-			}			
-		}	
-
-		$this->redirect("");	
+			throw $ex;
+		}
 	}
 
 	function register()
 	{	
-		//Load the userViewModel
-		$userViewModel = $this->loadViewModel('shared/UserViewModel');
+		try
+		{
+			//Load the userViewModel
+			$userViewModel = $this->loadViewModel('shared/UserViewModel');
 
-		//Execute code if a post back
-		if($this->isPost())
-		{			
-			//Map post values to the userViewModel
-			$userViewModel = AutoMapper::mapPost($userViewModel);
+			//Execute code if a post back
+			if($this->isPost())
+			{			
+				//Map post values to the userViewModel
+				$userViewModel = AutoMapper::mapPost($userViewModel);
 
-			//Load the AccountModel to access account functions
-			$model = $this->loadModel('AccountModel');
+				//Load the AccountModel to access account functions
+				$model = $this->loadModel('AccountModel');
+				
+				//Validate data that was posted to the server
+				//This will also set the temp errors to be shown in the view
+				if($userViewModel->validate())
+				{		
+					//Attempt to register the user with our website				
+					if($model->registerUserProfile($userViewModel))
+					{
+						addSuccessMessage("dbSuccess", gettext("Your Registered! Verify your email and log in!"));
+
+						//If success, send user to the login page
+						$this->redirect("account/login");	
+					}
+					else
+					{
+						addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to register your profile."));
+					}					
+				}			
+			}		
+
+			//Load the register view
+			$view = $this->loadView('register');
+
+			//Load up some js files
+			$view->setJS(array(
+				array("static/plugins/datepicker/js/bootstrap-datepicker.min.js", "intern"),
+				array("static/js/register.js", "intern"),
+				array("static/plugins/validation/js/formValidation.min.js", "intern"),
+				array("static/plugins/validation/js/framework/bootstrap.min.js", "intern"),
+				array("static/plugins/select2/js/select2.min.js", "intern"),
+				array("static/plugins/validation/js/language/en_US.js", "intern"),
+				array("static/plugins/validation/js/language/fr_FR.js", "intern"),
+				array("static/js/validation.js", "intern")
+			));
+
+			$view->setCSS(array(
+				array("static/plugins/datepicker/css/bootstrap-datepicker3.min.css", "intern"),
+				array("static/plugins/validation/css/formValidation.min.css", "intern"),
+				array("static/plugins/select2/css/select2.min.css", "intern")
+			));		
+
+			//Add a variable with old userViewModel data so that it can be accessed in the view
+			$view->set('userViewModel', $userViewModel);
+
+			$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+
+			$view->set('privacyDropdownValues', $siteModel->getDropdownValues_ProfilePrivacyType());
+			$view->set('genderDropdownValues', $siteModel->getDropdownValues_GenderType());
+			$view->set('secureityQuestionDropdownValues', $siteModel->getDropdownValues_SecurityQuestions());
 			
-			//Validate data that was posted to the server
-			//This will also set the temp errors to be shown in the view
-			if($userViewModel->validate())
-			{		
-				//Attempt to register the user with our website				
-				if($model->registerUserProfile($userViewModel))
-				{
-					addSuccessMessage("dbSuccess", gettext("Your Registered! Verify your email and log in!"));
-
-					//If success, send user to the login page
-					$this->redirect("account/login");	
-				}
-				else
-				{
-					addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to register your profile."));
-				}					
-			}			
-		}		
-
-		//Load the register view
-		$view = $this->loadView('register');
-
-		//Load up some js files
-		$view->setJS(array(
-			array("static/plugins/datepicker/js/bootstrap-datepicker.min.js", "intern"),
-			array("static/js/register.js", "intern"),
-		));
-
-		$view->setCSS(array(
-			array("static/plugins/datepicker/css/bootstrap-datepicker3.min.css", "intern")
-		));
-
-		//Add a variable with old userViewModel data so that it can be accessed in the view
-		$view->set('userViewModel', $userViewModel);
-
-		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
-
-		$view->set('privacyDropdownValues', $siteModel->getDropdownValues_ProfilePrivacyType());
-		$view->set('genderDropdownValues', $siteModel->getDropdownValues_GenderType());
-		$view->set('secureityQuestionDropdownValues', $siteModel->getDropdownValues_SecurityQuestions());
-		
-		//Render the register view. true indicates to load the layout pages as well
-		$view->render(true);
+			//Render the register view. true indicates to load the layout pages as well
+			$view->render(true);
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
 	}
 
 	function verifyemail($email, $hashedEmailVerification)
 	{
-		//Load the AccountModel to access account functions
-		$model = $this->loadModel('AccountModel');
-
-		if($model->verifiyEmail($email, $hashedEmailVerification))
+		try
 		{
-			addSuccessMessage("dbError", gettext("Your email has been successfuly verified! Login to start using your account!"), 1);
+			//Load the AccountModel to access account functions
+			$model = $this->loadModel('AccountModel');
 
-			$this->redirect("account/login");
+			if($model->verifiyEmail($email, $hashedEmailVerification))
+			{
+				addSuccessMessage("dbError", gettext("Your email has been successfuly verified! Login to start using your account!"), 1);
+
+				$this->redirect("account/login");
+			}
+			else
+			{
+				addErrorMessage("dbError", gettext("Oops, an error occurred while attempting to verify your account!"), 1);
+				$this->redirect("");
+			}
 		}
-		else
+		catch(Exception $ex)
 		{
-			addErrorMessage("dbError", gettext("Oops, an error occurred while attempting to verify your account!"), 1);
-			$this->redirect("");
+			throw $ex;
 		}
 	}
 
@@ -370,44 +413,50 @@ class Account extends Controller {
 	{
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
-		
-		$IsSuccess = FALSE;
-		
-		if($this->isAuth())
-		{
-			$model = $this->loadModel('AccountModel');
-			$securityAnswerViewModel = $this->loadViewModel('Account/SecurityAnswerViewModel');
-
-			//Map post values to the userViewModel
-			$securityAnswerViewModel = AutoMapper::mapPost($securityAnswerViewModel);
-
-			if($securityAnswerViewModel->validate())
+		try
+		{		
+			$IsSuccess = FALSE;
+			
+			if($this->isAuth())
 			{
 				$model = $this->loadModel('AccountModel');
+				$securityAnswerViewModel = $this->loadViewModel('Account/SecurityAnswerViewModel');
 
-				if($model->updateSecurityQuestionAnswer($this->currentUser->UserId, $securityAnswerViewModel))
+				//Map post values to the userViewModel
+				$securityAnswerViewModel = AutoMapper::mapPost($securityAnswerViewModel);
+
+				if($securityAnswerViewModel->validate())
 				{
-					$IsSuccess = TRUE;
+					$model = $this->loadModel('AccountModel');
+
+					if($model->updateSecurityQuestionAnswer($this->currentUser->UserId, $securityAnswerViewModel))
+					{
+						$IsSuccess = TRUE;
+					}
 				}
 			}
-		}
 
-		if ($this->isAjax()) 
-		{
-			if($IsSuccess)
+			if ($this->isAjax()) 
 			{
-				echo getSuccessMessage();
-			}	
+				if($IsSuccess)
+				{
+					echo getSuccessMessage();
+				}	
+				else
+				{
+					echo getErrorMessage();
+				}		
+
+				exit;
+			}
 			else
 			{
-				echo getErrorMessage();
-			}		
-
-			exit;
+				$this->redirect("Account/home");			
+			}
 		}
-		else
+		catch(Exception $ex)
 		{
-			$this->redirect("Account/home");			
+			throw $ex;
 		}
 	}
 
@@ -415,58 +464,64 @@ class Account extends Controller {
 	{
 		//Check if users is authenticated for this request
 		//Will kick out if not authenticated
+		try
+		{
+			$IsSuccess = FALSE;
 
-		$IsSuccess = FALSE;
+			if($this->isAuth())
+			{		
+				$model = $this->loadModel('AccountModel');
 
-		if($this->isAuth())
-		{		
-			$model = $this->loadModel('AccountModel');
+				//Load the userViewModel
+				$changePasswordViewModel = $this->loadViewModel('Account/ChangePasswordViewModel');
 
-			//Load the userViewModel
-			$changePasswordViewModel = $this->loadViewModel('Account/ChangePasswordViewModel');
+				//Map post values to the userViewModel
+				$changePasswordViewModel = AutoMapper::mapPost($changePasswordViewModel);			
 
-			//Map post values to the userViewModel
-			$changePasswordViewModel = AutoMapper::mapPost($changePasswordViewModel);			
-
-			if($changePasswordViewModel->Password == $changePasswordViewModel->RePassword)
-			{
-				if($model->updateUserPassword($this->currentUser, $changePasswordViewModel))
+				if($changePasswordViewModel->Password == $changePasswordViewModel->RePassword)
 				{
-					$IsSuccess = TRUE;
+					if($model->updateUserPassword($this->currentUser, $changePasswordViewModel))
+					{
+						$IsSuccess = TRUE;
+					}
+					else
+					{
+						if(!$this->isAjax())
+						{
+							addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your password."), 1);
+						}
+					}
 				}
 				else
 				{
 					if(!$this->isAjax())
 					{
-						addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your password."), 1);
+						addErrorMessage("dbError", gettext("Opps, it looks like your passwords don't match."), 1);
 					}
 				}
 			}
+
+			if ($this->isAjax()) 
+			{
+				if($IsSuccess)
+				{
+					echo getSuccessMessage();
+				}	
+				else
+				{
+					echo getErrorMessage();
+				}		
+
+				exit;
+			}
 			else
 			{
-				if(!$this->isAjax())
-				{
-					addErrorMessage("dbError", gettext("Opps, it looks like your passwords don't match."), 1);
-				}
+				$this->redirect("Account/home");			
 			}
 		}
-
-		if ($this->isAjax()) 
+		catch(Exception $ex)
 		{
-			if($IsSuccess)
-			{
-				echo getSuccessMessage();
-			}	
-			else
-			{
-				echo getErrorMessage();
-			}		
-
-			exit;
-		}
-		else
-		{
-			$this->redirect("Account/home");			
+			throw $ex;
 		}
 	}
 
@@ -485,24 +540,72 @@ class Account extends Controller {
 		// saveUserImageMetadata($userId, $pictureViewModel, $imageType)
 			// Returns a picture id
 
+		try
+		{
+			//Check if users is authenticated for this request
+			//Will kick out if not authenticated
+			$this->AuthRequest();
+			
+			//This loads up your model for talking to the database
+			//it contains all functions needed to update database
+			$model = $this->loadModel('AccountModel');
 
-		//Check if users is authenticated for this request
-		//Will kick out if not authenticated
-		$this->AuthRequest();
-		
-		//This loads up your model for talking to the database
-		//it contains all functions needed to update database
-		$model = $this->loadModel('AccountModel');
+			//Load the userViewModel
+			$pictureViewModel = $this->loadViewModel('shared/PictureViewModel');
 
-		//Load the userViewModel
-		$pictureViewModel = $this->loadViewModel('shared/PictureViewModel');
+			//Execute code if a post back
+			//This just checks to see if a form was submitted
+			if($this->isPost())
+			{				
+				require_once(APP_DIR.'helpers/image_save.php');
 
-		//Execute code if a post back
-		//This just checks to see if a form was submitted
-		if($this->isPost())
-		{				
+				//Check if users is authenticated for this request
+				//Will kick out if not authenticated
+				$this->AuthRequest();
+				
+				//This loads up your model for talking to the database
+				//it contains all functions needed to update database
+				$model = $this->loadModel('AccountModel');
+
+				//Load the userViewModel
+				$pictureViewModel = $this->loadViewModel('shared/PictureViewModel');
+
+				$pictureViewModel->PictureFile = $_FILES["ProfileImage"];
+
+				//Execute code if a post back
+				//This just checks to see if a form was submitted
+				if($this->isPost())
+				{			
+					$imageId = $model->saveUserImageMetadata($this->currentUser->UserId, $pictureViewModel, IMG_PROFILE);
+					
+					if($imageId != 0)
+					{
+						if(isset($imageId) && $imageId > 0)
+						{
+							image_save($pictureViewModel->PictureFile, $this->currentUser->UserId, $imageId, IMG_PROFILE_URL, 
+											 $_POST["image_profile_height"], $_POST["image_profile_width"], $_POST["image_profile_x"], $_POST["image_profile_y"]); 					
+						}
+					}
+
+					echo image_get_path_basic($this->currentUser->UserId, $imageId, IMG_PROFILE, IMG_SMALL);
+				}
+				else
+				{
+					$this->redirect("");
+				}
+			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
+	}
+
+	function changebackgroundpicture()
+	{
+		try
+		{
 			require_once(APP_DIR.'helpers/image_save.php');
-			require_once(APP_DIR . 'helpers/image_get_path.php');
 
 			//Check if users is authenticated for this request
 			//Will kick out if not authenticated
@@ -515,266 +618,304 @@ class Account extends Controller {
 			//Load the userViewModel
 			$pictureViewModel = $this->loadViewModel('shared/PictureViewModel');
 
-			$pictureViewModel->PictureFile = $_FILES["ProfileImage"];
+			$pictureViewModel->PictureFile = $_FILES["HeaderImage"];
 
 			//Execute code if a post back
 			//This just checks to see if a form was submitted
 			if($this->isPost())
 			{			
-				$imageId = $model->saveUserImageMetadata($this->currentUser->UserId, $pictureViewModel, IMG_PROFILE);
-				
+				$imageId = $model->saveUserImageMetadata($this->currentUser->UserId, $pictureViewModel, IMG_BACKGROUND);
+
 				if($imageId != 0)
 				{
 					if(isset($imageId) && $imageId > 0)
 					{
-						image_save($pictureViewModel->PictureFile, $this->currentUser->UserId, $imageId, IMG_PROFILE_URL, 
-										 $_POST["image_profile_height"], $_POST["image_profile_width"], $_POST["image_profile_x"], $_POST["image_profile_y"]); 					
+						image_save($pictureViewModel->PictureFile, $this->currentUser->UserId, $imageId, IMG_BACKGROUND_URL, 
+										 $_POST["image_header_height"], $_POST["image_header_width"], $_POST["image_header_x"], $_POST["image_header_y"]); 					
 					}
 				}
 
-				echo image_get_path_basic($this->currentUser->UserId, $imageId, IMG_PROFILE, IMG_MEDIUM);
+				echo image_get_path_basic($this->currentUser->UserId, $imageId, IMG_BACKGROUND, IMG_LARGE);
 			}
 			else
 			{
 				$this->redirect("");
 			}
 		}
-	}
-
-	function changebackgroundpicture()
-	{
-		require_once(APP_DIR.'helpers/image_save.php');
-		require_once(APP_DIR . 'helpers/image_get_path.php');
-
-		//Check if users is authenticated for this request
-		//Will kick out if not authenticated
-		$this->AuthRequest();
-		
-		//This loads up your model for talking to the database
-		//it contains all functions needed to update database
-		$model = $this->loadModel('AccountModel');
-
-		//Load the userViewModel
-		$pictureViewModel = $this->loadViewModel('shared/PictureViewModel');
-
-		$pictureViewModel->PictureFile = $_FILES["HeaderImage"];
-
-		//Execute code if a post back
-		//This just checks to see if a form was submitted
-		if($this->isPost())
-		{			
-			$imageId = $model->saveUserImageMetadata($this->currentUser->UserId, $pictureViewModel, IMG_BACKGROUND);
-
-			if($imageId != 0)
-			{
-				if(isset($imageId) && $imageId > 0)
-				{
-					image_save($pictureViewModel->PictureFile, $this->currentUser->UserId, $imageId, IMG_BACKGROUND_URL, 
-									 $_POST["image_header_height"], $_POST["image_header_width"], $_POST["image_header_x"], $_POST["image_header_y"]); 					
-				}
-			}
-
-			echo image_get_path_basic($this->currentUser->UserId, $imageId, IMG_BACKGROUND, IMG_LARGE);
-		}
-		else
+		catch(Exception $ex)
 		{
-			$this->redirect("");
+			throw $ex;
 		}
 	}
 
 	function profile()
 	{
-		//Check if users is authenticated for this request
-		//Will kick out if not authenticated
-		$this->AuthRequest();
+		try
+		{
+			//Check if users is authenticated for this request
+			//Will kick out if not authenticated
+			$this->AuthRequest();
 
-		//Load the userViewModel
-		$profileViewModel = $this->loadViewModel('ProfileViewModel');
+			//Load the userViewModel
+			$profileViewModel = $this->loadViewModel('ProfileViewModel');
 
-		//Load the AccountModel to access account functions
-		$model = $this->loadModel('AccountModel');
+			//Load the AccountModel to access account functions
+			$model = $this->loadModel('AccountModel');
 
-		$profileViewModel = $model->getProfileByID($this->currentUser->UserId);
+			$profileViewModel = $model->getProfileByID($this->currentUser->UserId);
 
-		$IsSuccess = FALSE;
+			$IsSuccess = FALSE;
 
-		//Execute code if a post back
-		if($this->isPost())
-		{			
-			//Map post values to the userViewModel
-			$profileViewModel = AutoMapper::mapPost($profileViewModel);			
-			
-			//Validate data that was posted to the server
-			//This will also set the temp errors to be shown in the view
-			if($profileViewModel->validate(1))
-			{		
-				//Attempt to register the user with our website				
-				if($model->updateUserProfile($profileViewModel))
+			//Execute code if a post back
+			if($this->isPost())
+			{			
+				//Map post values to the userViewModel
+				$profileViewModel = AutoMapper::mapPost($profileViewModel);			
+				
+				//Validate data that was posted to the server
+				//This will also set the temp errors to be shown in the view
+				if($profileViewModel->validate())
+				{		
+					//Attempt to register the user with our website				
+					if($model->updateUserProfile($profileViewModel))
+					{
+						$sessionManger = new SessionManager();
+						$sessionManger->setLanguageSession($profileViewModel->LanguageType_LanguageId);
+
+						$IsSuccess = TRUE;	
+					}				
+				}
+
+				if ($this->isAjax()) 
 				{
-					$sessionManger = new SessionManager();
-					$sessionManger->setLanguageSession($profileViewModel->LanguageType_LanguageId);
+					if($IsSuccess)
+					{
+						echo getSuccessMessage();
+					}	
+					else
+					{
+						echo getErrorMessage();
+					}		
 
-					$IsSuccess = TRUE;	
-				}				
-			}
-
-			if ($this->isAjax()) 
-			{
-				if($IsSuccess)
-				{
-					echo getSuccessMessage();
-				}	
+					exit;
+				}
 				else
 				{
-					echo getErrorMessage();
-				}		
+					if(!$IsSuccess)
+					{
+						addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your profile."), 1);
+					}	
 
-				exit;
-			}
-			else
-			{
-				if(!$IsSuccess)
-				{
-					addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your profile."), 1);
-				}	
+					//If success, send user to the home page
+					$this->redirect("account/home");
+				}			
+			}		
 
-				//If success, send user to the home page
-				$this->redirect("account/home");
-			}			
-		}		
+			$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+			$privacyDropdownValues = $siteModel->getDropdownValues_ProfilePrivacyType();
 
-		$siteModel = $this->loadModel('SiteContent/SiteContentModel');
-		$privacyDropdownValues = $siteModel->getDropdownValues_ProfilePrivacyType();
+			//Load the profile view
+			$view = $this->loadView('profile');
 
-		//Load the profile view
-		$view = $this->loadView('profile');
-
-		//Add a variable with old userViewModel data so that it can be accessed in the view
-		$view->set('userViewModel', $profileViewModel);
-		$view->set('privacyDropdownValues', $privacyDropdownValues);
-		$view->set('genderDropdownValues', $siteModel->getDropdownValues_GenderType());
-		$view->set('secureityQuestionDropdownValues', $siteModel->getDropdownValues_SecurityQuestions());
-		
-		//Render the profile view. true indicates to load the layout pages as well
-		$view->render(false);
+			//Add a variable with old userViewModel data so that it can be accessed in the view
+			$view->set('userViewModel', $profileViewModel);
+			$view->set('privacyDropdownValues', $privacyDropdownValues);
+			$view->set('genderDropdownValues', $siteModel->getDropdownValues_GenderType());
+			$view->set('secureityQuestionDropdownValues', $siteModel->getDropdownValues_SecurityQuestions());
+			
+			//Render the profile view. true indicates to load the layout pages as well
+			$view->render(false);
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
 	}
 
 	function search()
 	{
-		$accountModel = $this->loadModel("AccountModel");
-		$searchResults = array();
+		try
+		{			
+			$accountModel = $this->loadModel("Account/AccountModel");
+			
+			$searchResults = array();
 
-		if($this->isPost())
-		{
-			if(isset($_POST["UserSearch"]))
+			if($this->isPost())
 			{
-				$_GET["search"] = true;
-				
-				$searchResults = $accountModel->searchForUser($_POST["UserSearch"], $this->currentUser->UserId);
-			}
+				if(isset($_POST["UserSearch"]))
+				{
+					$_GET["search"] = true;
+					
+					$searchResults = $accountModel->searchForUser($_POST["UserSearch"], $this->currentUser->UserId);
+				}
+			}		
+
+
+			$latestUsersList = $accountModel->getLatestUserList($this->currentUser->UserId);
+			$mostFollowUsersList = $accountModel->getMostFollowersUserList($this->currentUser->UserId);
+
+			//debugit($searchResults);
+
+			//Load the profile view
+			$view = $this->loadView('search');
+
+			$view->set('searchResults', $searchResults);
+			$view->set('latestUsersList', $latestUsersList);
+			$view->set('mostFollowUsersList', $mostFollowUsersList);
+
+			//Load up some js files
+			$view->setJS(array(
+				array("static/js/usersearch.js", "intern"),
+				array("static/js/followUser.js", "intern")
+			));
+			$view->setCSS(array(
+				array("static/css/usersearch.css", "intern")
+			));
+
+			//Render the profile view. true indicates to load the layout pages as well
+			$view->render(true);
 		}
-
-		$latestUsersList = $accountModel->getLatestUserList($this->currentUser->UserId);
-		$mostFollowUsersList = $accountModel->getMostFollowersUserList($this->currentUser->UserId);
-
-		//debugit($searchResults);
-
-		//Load the profile view
-		$view = $this->loadView('search');
-
-		$view->set('searchResults', $searchResults);
-		$view->set('latestUsersList', $latestUsersList);
-		$view->set('mostFollowUsersList', $mostFollowUsersList);
-
-		//Load up some js files
-		$view->setJS(array(
-			array("static/js/usersearch.js", "intern"),
-			array("static/js/followUser.js", "intern")
-		));
-		$view->setCSS(array(
-			array("static/css/usersearch.css", "intern")
-		));
-
-		//Render the profile view. true indicates to load the layout pages as well
-		$view->render(true);
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
 	}
 
 	function ajaxSearch()
 	{
-		$accountModel = $this->loadModel("AccountModel");
-		$searchResults = array();
-
-		if(isset($_POST["UserSearch"]))
+		try
 		{
-			$searchResults = $accountModel->searchForUser($_POST["UserSearch"], $this->currentUser->UserId, 10, isset($_POST["UserSearchPage"]) ? $_POST["UserSearchPage"] : 1);
-		}
+			$accountModel = $this->loadModel("AccountModel");
+			$searchResults = array();
 
-		if (isset($searchResults)) {
-
-			$currentUser = $this->currentUser;
-			
-			foreach ($searchResults as $user)
+			if(isset($_POST["UserSearch"]))
 			{
-				include(APP_DIR . "views/Account/_searchPanel.php");
+				$searchResults = $accountModel->searchForUser($_POST["UserSearch"], $this->currentUser->UserId, MAX_USERS_LISTS, isset($_POST["UserSearchPage"]) ? $_POST["UserSearchPage"] : 1);
 			}
+
+			if (isset($searchResults)) {
+
+				$currentUser = $this->currentUser;
+				
+				foreach ($searchResults as $user)
+				{
+					include(APP_DIR . "views/Account/_searchPanel.php");
+				}
+			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
 	function mostFollowersUserList()
 	{
-		$accountModel = $this->loadModel("AccountModel");
-		$searchResults = array();
+		try
+		{
+			$accountModel = $this->loadModel("AccountModel");
+			$searchResults = array();
 
-		$searchResults = $accountModel->getMostFollowersUserList($this->currentUser->UserId, 10, isset($_POST["UserMostFollowersPage"]) ? $_POST["UserMostFollowersPage"] : 1);
+			$searchResults = $accountModel->getMostFollowersUserList($this->currentUser->UserId, MAX_USERS_LISTS, isset($_POST["UserMostFollowersPage"]) ? $_POST["UserMostFollowersPage"] : 1);
 
-		$currentUser = $this->currentUser;
+			$currentUser = $this->currentUser;
 
-		if (isset($searchResults)) {
-			foreach ($searchResults as $user)
-			{
-				include(APP_DIR . "views/Account/_searchPanel.php");
+			if (isset($searchResults)) {
+				foreach ($searchResults as $user)
+				{
+					include(APP_DIR . "views/Account/_searchPanel.php");
+				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}	
 
 	function latestUserList()
 	{
-		$accountModel = $this->loadModel("AccountModel");
-		$searchResults = array();
+		try
+		{
+			$accountModel = $this->loadModel("AccountModel");
+			$searchResults = array();
 
-		$searchResults = $accountModel->getLatestUserList($this->currentUser->UserId, 10, isset($_POST["UsersLatestPage"]) ? $_POST["UsersLatestPage"] : 1);
+			$searchResults = $accountModel->getLatestUserList($this->currentUser->UserId, MAX_USERS_LISTS, isset($_POST["UsersLatestPage"]) ? $_POST["UsersLatestPage"] : 1);
 
-		$currentUser = $this->currentUser;
+			$currentUser = $this->currentUser;
 
-		if (isset($searchResults)) {
-			foreach ($searchResults as $user)
-			{
-				include(APP_DIR . "views/Account/_searchPanel.php");
+			if (isset($searchResults)) {
+				foreach ($searchResults as $user)
+				{
+					include(APP_DIR . "views/Account/_searchPanel.php");
+				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
 	function follow()
 	{
-		//Check if users is authenticated for this request
-		//Will kick out if not authenticated
-		if($this->isAuth())
+		try
 		{
-			$result;
-
-			//Load the AccountModel to access account functions
-			$accountModel = $this->loadModel('AccountModel');
-
-			if(isset($_POST["UserID"]) && isset($_POST["FollowUser"]) && $_POST["UserID"] != $this->currentUser->UserId)
+			//Check if users is authenticated for this request
+			//Will kick out if not authenticated
+			if($this->isAuth())
 			{
-				if($_POST["FollowUser"] == TRUE)
+				$result;
+
+				//Load the AccountModel to access account functions
+				$accountModel = $this->loadModel('AccountModel');
+
+				if(isset($_POST["UserID"]) && isset($_POST["FollowUser"]) && $_POST["UserID"] != $this->currentUser->UserId)
 				{
-					$result = $accountModel->followUser($this->currentUser->UserId, $_POST["UserID"]);
+					if($_POST["FollowUser"] == TRUE)
+					{
+						$result = $accountModel->followUser($this->currentUser->UserId, $_POST["UserID"]);
+					}
+					else
+					{
+						$result = $accountModel->unfollowUser($this->currentUser->UserId, $_POST["UserID"]);
+					}		
+
+					if ($this->isAjax()) {
+						return $result;			
+					}
+					else
+					{
+						$this->redirect("account/home");
+					}
 				}
-				else
+
+				echo json_encode($result);
+			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
+	}
+
+	function unfollow($userID)
+	{
+		try
+		{
+			//Check if users is authenticated for this request
+			//Will kick out if not authenticated
+			if($this->isAuth())
+			{
+				$result;
+
+				//Load the AccountModel to access account functions
+				$accountModel = $this->loadModel('AccountModel');
+
+				if($userID != $this->currentUser->UserId)
 				{
-					$result = $accountModel->unfollowUser($this->currentUser->UserId, $_POST["UserID"]);
-				}		
+					$result = $accountModel->unfollowUser($this->currentUser->UserId, $userID);
+				}
 
 				if ($this->isAjax()) {
 					return $result;			
@@ -784,134 +925,131 @@ class Account extends Controller {
 					$this->redirect("account/home");
 				}
 			}
-
-			echo json_encode($result);
 		}
-	}
-
-	function unfollow($userID)
-	{
-		//Check if users is authenticated for this request
-		//Will kick out if not authenticated
-		if($this->isAuth())
+		catch(Exception $ex)
 		{
-			$result;
-
-			//Load the AccountModel to access account functions
-			$accountModel = $this->loadModel('AccountModel');
-
-			if($userID != $this->currentUser->UserId)
-			{
-				$result = $accountModel->unfollowUser($this->currentUser->UserId, $userID);
-			}
-
-			if ($this->isAjax()) {
-				return $result;			
-			}
-			else
-			{
-				$this->redirect("account/home");
-			}
+			throw $ex;
 		}
 	}
 
 	function addActionsTaken()
 	{
-		if($this->currentUser->IsAuth)
+		try
 		{
-			$result;
-
-			//Load the AccountModel to access account functions
-			$accountModel = $this->loadModel('AccountModel');
-
-			if($this->isPost() && isset($_POST["ActionTakenType"]) && isset($_POST["Content"]))
+			if($this->currentUser->IsAuth)
 			{
-				$result = $accountModel->addActionTaken($this->currentUser->UserId, $_POST["ActionTakenType"], $_POST["Content"]);
-			}
+				$result;
 
-			if ($this->isAjax()) {
-				if($result)
+				//Load the AccountModel to access account functions
+				$accountModel = $this->loadModel('AccountModel');
+
+				if($this->isPost() && isset($_POST["ActionTakenType"]) && isset($_POST["Content"]))
 				{
-					$actionsTaken = $accountModel->getActionTakenList($this->currentUser->UserId);
+					$result = $accountModel->addActionTaken($this->currentUser->UserId, $_POST["ActionTakenType"], $_POST["Content"]);
+				}
 
-					$currentUser = $this->currentUser;
+				if ($this->isAjax()) {
+					if($result)
+					{
+						$actionsTaken = $accountModel->getActionTakenList($this->currentUser->UserId);
 
-					foreach ($actionsTaken as $action) {
-						include(APP_DIR . "views/Account/_actionsTaken.php");
-					}
-				}			
+						$currentUser = $this->currentUser;
+
+						foreach ($actionsTaken as $action) {
+							include(APP_DIR . "views/Account/_actionsTaken.php");
+						}
+					}			
+				}
+				else
+				{
+					$this->redirect("account/home");
+				}
 			}
-			else
-			{
-				$this->redirect("account/home");
-			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
 	function updateAbout()
 	{
-		if($this->currentUser->IsAuth)
+		try
 		{
-			$result;
-
-			//Load the AccountModel to access account functions
-			$accountModel = $this->loadModel('AccountModel');
-
-			if($this->isPost() && isset($_POST["About"]))
+			if($this->currentUser->IsAuth)
 			{
-				$result = $accountModel->updateUserAbout($this->currentUser->UserId, $_POST["About"]);
-			}
+				$result;
 
-			if ($this->isAjax()) {
-				if($result)
+				//Load the AccountModel to access account functions
+				$accountModel = $this->loadModel('AccountModel');
+
+				if($this->isPost() && isset($_POST["About"]))
 				{
-					echo getSuccessMessage();
-				}	
+					$result = $accountModel->updateUserAbout($this->currentUser->UserId, $_POST["About"]);
+				}
+
+				if ($this->isAjax()) {
+					if($result)
+					{
+						echo getSuccessMessage();
+					}	
+					else
+					{
+						echo getErrorMessage();
+					}		
+				}
 				else
 				{
-					echo getErrorMessage();
-				}		
+					$this->redirect("account/home");
+				}
 			}
-			else
-			{
-				$this->redirect("account/home");
-			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
 	function updateActionStatement()
 	{
-		if($this->currentUser->IsAuth)
+		try
 		{
-			$result;
-
-			//Load the AccountModel to access account functions
-			$accountModel = $this->loadModel('AccountModel');
-
-			if($this->isPost() && isset($_POST["UserActionStatement"]))
+			if($this->currentUser->IsAuth)
 			{
-				$result = $accountModel->updateUserActionStatement($this->currentUser->UserId);
+				$result;
 
-				if($result == TRUE)
+				//Load the AccountModel to access account functions
+				$accountModel = $this->loadModel('AccountModel');
+
+				if($this->isPost() && isset($_POST["UserActionStatement"]))
 				{
-					$result = $accountModel->insertUserActionStatement($this->currentUser->UserId, $_POST["UserActionStatement"]);
+					$result = $accountModel->updateUserActionStatement($this->currentUser->UserId);
+
+					if($result == TRUE)
+					{
+						$result = $accountModel->insertUserActionStatement($this->currentUser->UserId, $_POST["UserActionStatement"]);
+					}
 				}
-			}
 
-			if ($this->isAjax()) {
-				if($result)
-				{
-					echo getSuccessMessage();
-				}	
+				if ($this->isAjax()) {
+					if($result)
+					{
+						echo getSuccessMessage();
+					}	
+					else
+					{
+						echo getErrorMessage();
+					}			
+				}
 				else
 				{
-					echo getErrorMessage();
-				}			
+					$this->redirect("account/home");
+				}
 			}
-			else
-			{
-				$this->redirect("account/home");
-			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
@@ -924,259 +1062,350 @@ class Account extends Controller {
 
 	function newsFeed()
 	{
-		require_once(APP_DIR.'helpers/image_get_path.php');
+		try
+		{
+			require_once(APP_DIR.'helpers/image_get_path.php');
 
-		$storyModel = $this->loadModel("Story/StoryModel");
-		$searchResults = array();
+			$storyModel = $this->loadModel("Story/StoryModel");
+			$searchResults = array();
 
-		$searchResults = $storyModel->getNewsFeed($this->currentUser->UserId, 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+			$searchResults = $storyModel->getNewsFeed($this->currentUser->UserId, MAX_STORIES_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
 
-		if (isset($searchResults)) {
-			foreach ($searchResults as $feed)
-			{
-				include(APP_DIR . "views/Account/_newsFeed.php");
+			if (isset($searchResults)) {
+				foreach ($searchResults as $feed)
+				{
+					include(APP_DIR . "views/Account/_newsFeed.php");
+				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
 	function userStories()
 	{
-		if(isset($_POST["UserId"]))
+		try
 		{
-			require_once(APP_DIR.'helpers/image_get_path.php');
+			if(isset($_POST["UserId"]))
+			{
+				require_once(APP_DIR.'helpers/image_get_path.php');
 
-			$storyModel = $this->loadModel("Story/StoryModel");
-			$searchResults = array();
+				$storyModel = $this->loadModel("Story/StoryModel");
+				$searchResults = array();
 
-			$searchResults = $storyModel->getStoriesWrittenByCurrentUser($_POST["UserId"], 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+				$searchResults = $storyModel->getStoriesWrittenByCurrentUser($_POST["UserId"], MAX_STORIES_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
 
-			if (isset($searchResults)) {
-				foreach ($searchResults as $story)
-				{
-					include(APP_DIR . "views/Account/_myStories.php");
+				if (isset($searchResults)) {
+					foreach ($searchResults as $story)
+					{
+						include(APP_DIR . "views/Account/_myStories.php");
+					}
 				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
 	function recommendations()
 	{
-		if(isset($_POST["UserId"]))
+		try
 		{
-			require_once(APP_DIR.'helpers/image_get_path.php');
+			if(isset($_POST["UserId"]))
+			{
+				require_once(APP_DIR.'helpers/image_get_path.php');
 
-			$storyModel = $this->loadModel("Story/StoryModel");
-			$searchResults = array();
+				$storyModel = $this->loadModel("Story/StoryModel");
+				$searchResults = array();
 
-			$searchResults = $storyModel->getStoriesRecommendedByCurrentUser($_POST["UserId"], 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+				$searchResults = $storyModel->getStoriesRecommendedByCurrentUser($_POST["UserId"], MAX_STORIES_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
 
-			if (isset($searchResults)) {
-				foreach ($searchResults as $story)
-				{
-					include(APP_DIR . "views/Account/_myRecommendations.php");
+				if (isset($searchResults)) {
+					foreach ($searchResults as $story)
+					{
+						include(APP_DIR . "views/Account/_myRecommendations.php");
+					}
 				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
 	function followinglist()
 	{
-		if(isset($_POST["UserId"]))
+		try
 		{
-			require_once(APP_DIR.'helpers/image_get_path.php');
+			if(isset($_POST["UserId"]))
+			{
+				require_once(APP_DIR.'helpers/image_get_path.php');
 
-			$accountModel = $this->loadModel('AccountModel');
-			$searchResults = array();
+				$accountModel = $this->loadModel('AccountModel');
+				$searchResults = array();
 
-			$searchResults = $accountModel->getFollowing($_POST["UserId"], 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+				$searchResults = $accountModel->getFollowing($_POST["UserId"], MAX_USERS_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
 
-			if (isset($searchResults)) {
+				if (isset($searchResults)) {
 
-				$currentUser = $this->currentUser;
-				foreach ($searchResults as $user)
-				{
-					include(APP_DIR . "views/Account/_searchPanel.php");
+					$currentUser = $this->currentUser;
+					foreach ($searchResults as $user)
+					{
+						include(APP_DIR . "views/Account/_searchPanel.php");
+					}
 				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
 	function followerslist()
 	{
-		if(isset($_POST["UserId"]))
+		try
 		{
-			require_once(APP_DIR.'helpers/image_get_path.php');
+			if(isset($_POST["UserId"]))
+			{
+				require_once(APP_DIR.'helpers/image_get_path.php');
 
-			$accountModel = $this->loadModel('AccountModel');
-			$searchResults = array();
+				$accountModel = $this->loadModel('AccountModel');
+				$searchResults = array();
 
-			$searchResults = $accountModel->getFollowers($_POST["UserId"], 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+				$searchResults = $accountModel->getFollowers($_POST["UserId"], MAX_USERS_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
 
-			if (isset($searchResults)) {
+				if (isset($searchResults)) {
 
-				$currentUser = $this->currentUser;
-				foreach ($searchResults as $user)
-				{
-					include(APP_DIR . "views/Account/_searchPanel.php");
+					$currentUser = $this->currentUser;
+					foreach ($searchResults as $user)
+					{
+						include(APP_DIR . "views/Account/_searchPanel.php");
+					}
 				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
 	function publishedList()
 	{
-		if($this->isAuth() && $this->isAjax())
+		try
 		{
-			require_once(APP_DIR.'helpers/image_get_path.php');
+			if($this->isAuth() && $this->isAjax())
+			{
+				require_once(APP_DIR.'helpers/image_get_path.php');
 
-			$siteModel = $this->loadModel('SiteContent/SiteContentModel');
-			$privacyDropdownValues = $siteModel->getDropdownValues_StoryPrivacyType();
+				$siteModel = $this->loadModel('SiteContent/SiteContentModel');
+				$privacyDropdownValues = $siteModel->getDropdownValues_StoryPrivacyType();
 
-			$storyModel = $this->loadModel("Story/StoryModel");
-			$searchResults = array();
+				$storyModel = $this->loadModel("Story/StoryModel");
+				$searchResults = array();
 
-			$searchResults = $storyModel->getStoriesPublished_Public_Private($this->currentUser->UserId, 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+				$searchResults = $storyModel->getStoriesPublished_Public_Private($this->currentUser->UserId, MAX_STORIES_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
 
-			if (isset($searchResults)) {
-				foreach ($searchResults as $story)
-				{
-					include(APP_DIR . "views/Account/_publishedStories.php");
+				if (isset($searchResults)) {
+					foreach ($searchResults as $story)
+					{
+						include(APP_DIR . "views/Account/_publishedStories.php");
+					}
 				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
 	function draftsList()
 	{
-		if($this->isAuth() && $this->isAjax())
+		try
 		{
-			require_once(APP_DIR.'helpers/image_get_path.php');
+			if($this->isAuth() && $this->isAjax())
+			{
+				require_once(APP_DIR.'helpers/image_get_path.php');
 
-			$storyModel = $this->loadModel("Story/StoryModel");
-			$searchResults = array();
+				$storyModel = $this->loadModel("Story/StoryModel");
+				$searchResults = array();
 
-			$searchResults = $storyModel->getStoryListDrafts($this->currentUser->UserId, 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+				$searchResults = $storyModel->getStoryListDrafts($this->currentUser->UserId, MAX_STORIES_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
 
-			if (isset($searchResults)) {
-				foreach ($searchResults as $story)
-				{
-					include(APP_DIR . "views/Account/_draftStories.php");
+				if (isset($searchResults)) {
+					foreach ($searchResults as $story)
+					{
+						include(APP_DIR . "views/Account/_draftStories.php");
+					}
 				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
 	function pendingList()
 	{
-		if($this->isAuth() && $this->isAjax())
+		try
 		{
-			require_once(APP_DIR.'helpers/image_get_path.php');
+			if($this->isAuth() && $this->isAjax())
+			{
+				require_once(APP_DIR.'helpers/image_get_path.php');
 
-			$storyModel = $this->loadModel("Story/StoryModel");
-			$searchResults = array();
+				$storyModel = $this->loadModel("Story/StoryModel");
+				$searchResults = array();
 
-			$searchResults = $storyModel->getStoryListPendingApproval($this->currentUser->UserId, 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+				$searchResults = $storyModel->getStoryListPendingApproval($this->currentUser->UserId, MAX_STORIES_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
 
-			if (isset($searchResults)) {
-				foreach ($searchResults as $story)
-				{
-					include(APP_DIR . "views/Account/_pendingStories.php");
+				if (isset($searchResults)) {
+					foreach ($searchResults as $story)
+					{
+						include(APP_DIR . "views/Account/_pendingStories.php");
+					}
 				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
 	function rejectedList()
 	{
-		if($this->isAuth() && $this->isAjax())
+		try
 		{
-			require_once(APP_DIR.'helpers/image_get_path.php');
+			if($this->isAuth() && $this->isAjax())
+			{
+				require_once(APP_DIR.'helpers/image_get_path.php');
 
-			$storyModel = $this->loadModel("Story/StoryModel");
-			$searchResults = array();
+				$storyModel = $this->loadModel("Story/StoryModel");
+				$searchResults = array();
 
-			$searchResults = $storyModel->getStoryListRejected($this->currentUser->UserId, 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+				$searchResults = $storyModel->getStoryListRejected($this->currentUser->UserId, MAX_STORIES_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
 
-			if (isset($searchResults)) {
-				foreach ($searchResults as $story)
-				{
-					include(APP_DIR . "views/Account/_rejectedStories.php");
+				if (isset($searchResults)) {
+					foreach ($searchResults as $story)
+					{
+						include(APP_DIR . "views/Account/_rejectedStories.php");
+					}
 				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
 	function commentsPendingApprovalList()
 	{
-		if($this->isAuth() && $this->isAjax())
+		try
 		{
-			require_once(APP_DIR.'helpers/image_get_path.php');
+			if($this->isAuth() && $this->isAjax())
+			{
+				require_once(APP_DIR.'helpers/image_get_path.php');
 
-			$storyModel = $this->loadModel("Story/StoryModel");
-			$searchResults = array();
+				$storyModel = $this->loadModel("Story/StoryModel");
+				$searchResults = array();
 
-			$searchResults = $storyModel->getUnpublisedComments($this->currentUser->UserId, 10, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+				$searchResults = $storyModel->getUnpublisedComments($this->currentUser->UserId, MAX_COMMENTS_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
 
-			if (isset($searchResults)) {
-				foreach ($searchResults as $comment)
-				{
-					include(APP_DIR . "views/Account/_comments.php");
+				if (isset($searchResults)) {
+					foreach ($searchResults as $comment)
+					{
+						include(APP_DIR . "views/Account/_comments.php");
+					}
 				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
 	function approveComment()
 	{
-		if($this->isAuth() && $this->isAjax())
+		try
 		{
-			$storyModel = $this->loadModel("Story/StoryModel");
-
-			if(isset($_POST["CommentID"]))
+			if($this->isAuth() && $this->isAjax())
 			{
-				$result = $storyModel->approveComment($this->currentUser->UserId, $_POST["CommentID"]);
+				$storyModel = $this->loadModel("Story/StoryModel");
 
-				if($result)
+				if(isset($_POST["CommentID"]))
 				{
-					echo $result;
+					$result = $storyModel->approveComment($this->currentUser->UserId, $_POST["CommentID"]);
+
+					if($result)
+					{
+						echo $result;
+					}
 				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
 	function rejectComment()
 	{
-		if($this->isAuth() && $this->isAjax())
+		try
 		{
-			$storyModel = $this->loadModel("Story/StoryModel");
-
-			if(isset($_POST["CommentID"]))
+			if($this->isAuth() && $this->isAjax())
 			{
-				$result = $storyModel->rejectComment($this->currentUser->UserId, $_POST["CommentID"]);
+				$storyModel = $this->loadModel("Story/StoryModel");
 
-				if($result)
+				if(isset($_POST["CommentID"]))
 				{
-					echo $result;
+					$result = $storyModel->rejectComment($this->currentUser->UserId, $_POST["CommentID"]);
+
+					if($result)
+					{
+						echo $result;
+					}
 				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 
 	function changeStoryPrivacy()
 	{
-		if($this->isAuth() && $this->isAjax())
+		try
 		{
-			$storyModel = $this->loadModel("Story/StoryModel");
-
-			if(isset($_POST["StoryID"]) && isset($_POST["PrivacyType"]))
+			if($this->isAuth() && $this->isAjax())
 			{
-				$result = $storyModel->changeStoryPrivacy($this->currentUser->UserId, $_POST["StoryID"], $_POST["PrivacyType"]);
+				$storyModel = $this->loadModel("Story/StoryModel");
 
-				if($result)
+				if(isset($_POST["StoryID"]) && isset($_POST["PrivacyType"]))
 				{
-					echo $result;
+					$result = $storyModel->changeStoryPrivacy($this->currentUser->UserId, $_POST["StoryID"], $_POST["PrivacyType"]);
+
+					if($result)
+					{
+						echo $result;
+					}
 				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
 		}
 	}
 }

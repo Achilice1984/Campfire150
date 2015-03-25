@@ -143,10 +143,17 @@ class Validator
           // Check MIME Type by yourself.
           $finfo = new finfo(FILEINFO_MIME_TYPE);
 
-          if (false === $ext = array_search($finfo->file($file['tmp_name']), 
-            array('jpg' => 'image/jpeg', 'png' => 'image/png', 'gif' => 'image/gif'), true )) 
+          if(isset($file['size']) && $file['size'] > 0)
           {
-              return false;
+            if (false === $ext = array_search($finfo->file($file['tmp_name']), 
+              array('jpg' => 'image/jpeg', 'png' => 'image/png', 'gif' => 'image/gif'), true )) 
+            {
+                return false;
+            }
+          }
+          else
+          {
+            return false;
           }
       }
       catch(Exception $ex)
@@ -155,6 +162,10 @@ class Validator
       }
       
       return true;
+  }
+  function img_required($file)
+  {
+      return ($file['size'] > 0);
   }
   function validateYoutubeEmbedTag($embedHtml){
       /*

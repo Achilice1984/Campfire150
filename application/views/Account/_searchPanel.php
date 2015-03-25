@@ -1,5 +1,3 @@
-<?php require_once(APP_DIR . 'helpers/image_get_path.php'); ?>
-
 
 <section class="col-sm-6 StoryRowSection">
 	<div class="storySummary marginBottom15">
@@ -7,7 +5,7 @@
 		<div class="col-sm-5">
 
 			<a href="<?php echo BASE_URL . "account/home/" . $user->UserId; ?>">
-  				<img class="img-responsive storyProfilePic" src="<?php echo image_get_path_basic($user->UserId, $user->UserProfilePicureId, IMG_PROFILE, IMG_SMALL) ?>" alt="<?php echo gettext("Profile Picture"); ?>">
+  				<img class="img-responsive storyProfilePic" src="<?php echo image_get_path_basic($user->UserId, $user->UserProfilePicureId, IMG_PROFILE, IMG_XSMALL) ?>" alt="<?php echo gettext("Profile Picture"); ?>">
 			</a>		
 		</div>
 		<div class="col-sm-7">

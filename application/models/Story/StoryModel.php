@@ -4,7 +4,7 @@ require_once(APP_DIR .'helpers/storysearch.php');
 class StoryModel extends Model {
 
 	// Test doesn't work 
-	public function searchStories($storySearch, $userID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function searchStories($storySearch, $userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts string to search for a story
 		//check privacy
@@ -71,6 +71,14 @@ class StoryModel extends Model {
 		{
 			// create a php timestamp for inserting into the created and updated date fields in the database 
 			//$timestamp = date('Y-m-d G:i:s');
+			$statement = "UPDATE story_has_tag 
+							SET Active=FALSE
+							 WHERE story_has_tag.Story_StoryId = :StoryId";
+ 
+			$parameters = array(":StoryId" => $story->StoryId);
+
+			$this->fetch($statement, $parameters);
+
 			$statement = "UPDATE story 
 							SET StoryPrivacyType_StoryPrivacyTypeId=:StoryPrivacyType_StoryPrivacyTypeId, StoryTitle=:StoryTitle, Content=:Content, published=:published, Active=:Active
 
@@ -345,90 +353,7 @@ class StoryModel extends Model {
 		{
 			return $e->getMessage();
 		}
-	}
-
-	//Tested getStoryAsAdmin(2,8)
-	public function getStoryAsAdmin($adminID, $storyID)
-	{
-		//Accepts a user id, and a storyID
-		//Check privacy type
-		//Must be approved
-		//Checks if user has marked story as inappropriate and if user has recommended story (add these to story viewmodel class)
-		//returns a Story class
-
-		try
-		{
-			$statement = "SELECT 
-
-							s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, s.Published,
-
-							urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
-
-							aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
-
-							shp.Story_StoryId, shp.PictureId, shp.Active,
-
-							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
-
-							u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
-
-							up.PictureId as UserProfilePicureId,
-
-							(
-								SELECT COUNT(1)
-								FROM user_recommend_story 
-								WHERE user_recommend_story.Story_StoryId = s.StoryId
-							    AND user_recommend_story.Active = TRUE
-							    AND user_recommend_story.Opinion = FALSE
-							) AS totalFlags,
-							(
-								SELECT COUNT(1)
-								FROM user_recommend_story 
-								WHERE user_recommend_story.Story_StoryId = s.StoryId
-							    AND user_recommend_story.Active = TRUE
-							    AND user_recommend_story.Opinion = TRUE
-							) AS totalRecommends,
-							(
-								SELECT COUNT(1)
-								FROM comment c
-								WHERE c.Story_StoryId = s.StoryId
-							    AND c.Active = TRUE
-							    AND c.PublishFlag = TRUE
-							) AS totalComments
-							 
-							FROM story s
-
-							INNER JOIN user u
-							ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
-							LEFT JOIN admin_approve_story aps
-							ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
-
-							LEFT JOIN user_recommend_story urs
-							ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :userid) AND (urs.Active = TRUE)
-
-							LEFT JOIN story_has_picture shp
-							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
-							LEFT JOIN picture p
-							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
-
-							LEFT JOIN picture up
-							ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (Picturetype_PictureTypeId = 1)
-
-							WHERE s.StoryId = :StoryId
-							AND aps.Active = TRUE";
-
-			$parameters = array(":User_UserId" => $userID, 
-								":StoryId" => $storyID);
-
-			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
-
-			return $story;
-		}
-		catch(PDOException $e) 
-		{
-			return $e->getMessage();
-		}
-	}
+	}	
 
 	// tested getStory(2,11)
 	public function getStory($userID, $storyID)
@@ -441,20 +366,11 @@ class StoryModel extends Model {
 
 		try
 		{
-			$statement = "SELECT 
+			$statement = "SELECT
+							s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
-							s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, s.Published,
+							urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
-							urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
-
-							aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
-
-							shp.Story_StoryId, shp.PictureId, shp.Active,
-
-							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
-
-							u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
-							
 							f.Active AS FollowingUser,
 
 							up.PictureId as UserProfilePicureId,
@@ -541,17 +457,10 @@ class StoryModel extends Model {
 
 		try
 		{
-			$statement = "SELECT 
+			$statement = "SELECT
+							s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
-							s.StoryId, s.User_UserId, s.User_UserId as StoryUserID, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, s.Published,
-
-							urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,						
-
-							shp.Story_StoryId, shp.PictureId, shp.Active,
-
-							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
-
-							u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
+							urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
 							up.PictureId as UserProfilePicureId,
 
@@ -615,7 +524,7 @@ class StoryModel extends Model {
 	}
 
 	//Tested getStoryListByTag("Art", 5, 1);
-	public function getStoryListByTag($userId, $tag, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoryListByTag($userId, $tag, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts a categoryID, how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -626,17 +535,11 @@ class StoryModel extends Model {
 		{
 			
 			$statement = "	SELECT
-							s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, s.Published,
+							s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
-							urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
+							urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
-							aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
-
-							shp.Story_StoryId, shp.PictureId, shp.Active,
-
-							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
-
-							u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
+							f.Active AS FollowingUser,
 
 							up.PictureId as UserProfilePicureId,
 
@@ -720,7 +623,7 @@ class StoryModel extends Model {
 	}
 
 	//Tested getStoryListByIssueID(1,6,1); it works but we need to know the exact issueID
-	public function getStoryListByIssueID($issueID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoryListByIssueID($issueID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts a categoryID, how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -759,7 +662,7 @@ class StoryModel extends Model {
 		
 	}
 	// it works but we need to know the exact challengesID
-	public function getStoryListByChallengesID($userId, $challengesID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoryListByChallengesID($userId, $challengesID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts a categoryID, how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -769,21 +672,10 @@ class StoryModel extends Model {
 		try 
 		{
 			
-			$statement = "SELECT DISTINCT
+			$statement = "SELECT
+							s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
-							s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, s.Published,
-
-							urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
-
-							aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
-
-							shp.Story_StoryId, shp.PictureId, shp.Active,
-
-							p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
-
-							u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
-
-							saq.answer_for_question_answer_answerId,
+							urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
 							f.Active AS FollowingUser,
 
@@ -863,86 +755,86 @@ class StoryModel extends Model {
 	}
 
 	//it works but we need to know the exact genreID
-	public function getStoryListByGenreID($genreID, $howMany = self::HOWMANY, $page = self::PAGE)
-	{
-		//Accepts a categoryID, how many results to return, what page of results your on
-		//for example, if how many = 10 and page = 2, you would take results 11 to 20
-		//Check privacy type
-		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
-		//returns an array of Story class related to a category
-		try 
-		{
+	// public function getStoryListByGenreID($genreID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
+	// {
+	// 	//Accepts a categoryID, how many results to return, what page of results your on
+	// 	//for example, if how many = 10 and page = 2, you would take results 11 to 20
+	// 	//Check privacy type
+	// 	//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
+	// 	//returns an array of Story class related to a category
+	// 	try 
+	// 	{
 			
-			$statement = "SELECT s.*, saq.answer_for_question_answer_answerId
-						  FROM story s 
-						  INNER JOIN story_has_answer_for_question saq
-						  ON s.StoryId = saq.Story_StoryId
-						  INNER JOIN admin_approve_story aas
-						  ON s.StoryId = aas.Story_StoryId
-						  WHERE saq.answer_for_question_answer_answerId = :challengesID
-						  AND StoryPrivacyType_StoryPrivacyTypeId = 1
-						  AND aas.Approved = TRUE
-						  AND s.Active = TRUE
-						  WHERE saq.answer_for_question_answer_answerId = :genreID
-						  GROUP BY s.StoryId
-						  LIMIT :start , :howmany";
+	// 		$statement = "SELECT s.*, saq.answer_for_question_answer_answerId
+	// 					  FROM story s 
+	// 					  INNER JOIN story_has_answer_for_question saq
+	// 					  ON s.StoryId = saq.Story_StoryId
+	// 					  INNER JOIN admin_approve_story aas
+	// 					  ON s.StoryId = aas.Story_StoryId
+	// 					  WHERE saq.answer_for_question_answer_answerId = :challengesID
+	// 					  AND StoryPrivacyType_StoryPrivacyTypeId = 1
+	// 					  AND aas.Approved = TRUE
+	// 					  AND s.Active = TRUE
+	// 					  WHERE saq.answer_for_question_answer_answerId = :genreID
+	// 					  GROUP BY s.StoryId
+	// 					  LIMIT :start , :howmany";
 
 		
-			$start = $this-> getStartValue($howMany, $page);
+	// 		$start = $this-> getStartValue($howMany, $page);
 
-			$parameters = array(":genreID" => $genreID, ":start" => $start, ":howmany" => $howMany);
-			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+	// 		$parameters = array(":genreID" => $genreID, ":start" => $start, ":howmany" => $howMany);
+	// 		$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
-			return $story;
+	// 		return $story;
 
-		}
-		catch(PDOException $e)
-		{
-			return $e->getMessage();
-		}
+	// 	}
+	// 	catch(PDOException $e)
+	// 	{
+	// 		return $e->getMessage();
+	// 	}
 		
-	}
+	// }
 	
-	//Tested getStoryList(6,1) will show 5 stories 
-	public function getStoryList($howMany = self::HOWMANY, $page = self::PAGE)
-	{
-		//Accepts how many results to return, what page of results your on
-		//for example, if how many = 10 and page = 2, you would take results 11 to 20
-		//Check privacy type
-		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
-		//Should not contain any unpublished stories
-		//returns an array of Story class
-		try
-		{
-			$statement = "SELECT s.StoryId, s.StoryTitle, s.Content, s.DatePosted, s.DateUpdated
-						  FROM story s
-						  INNER JOIN admin_approve_story aas
-						  ON s.StoryId = aas.Story_StoryId
-						  WHERE aas.Approved = TRUE
-						  AND StoryPrivacyType_StoryPrivacyTypeId = 1
-						  AND s.Active = TRUE
-						  ORDER BY StoryTitle ASC 
-						  GROUP BY s.StoryId
-						  LIMIT :start, :howmany";
+	// //Tested getStoryList(6,1) will show 5 stories 
+	// public function getStoryList($howMany = MAX_STORIES_LISTS, $page = self::PAGE)
+	// {
+	// 	//Accepts how many results to return, what page of results your on
+	// 	//for example, if how many = 10 and page = 2, you would take results 11 to 20
+	// 	//Check privacy type
+	// 	//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
+	// 	//Should not contain any unpublished stories
+	// 	//returns an array of Story class
+	// 	try
+	// 	{
+	// 		$statement = "SELECT s.StoryId, s.StoryTitle, s.Content, s.DatePosted, s.DateUpdated
+	// 					  FROM story s
+	// 					  INNER JOIN admin_approve_story aas
+	// 					  ON s.StoryId = aas.Story_StoryId
+	// 					  WHERE aas.Approved = TRUE
+	// 					  AND StoryPrivacyType_StoryPrivacyTypeId = 1
+	// 					  AND s.Active = TRUE
+	// 					  ORDER BY StoryTitle ASC 
+	// 					  GROUP BY s.StoryId
+	// 					  LIMIT :start, :howmany";
 
-			$start = $this-> getStartValue($howMany, $page);
+	// 		$start = $this-> getStartValue($howMany, $page);
  
-			$parameters = array(":start" => $start,
-								":howmany" => $howMany);
+	// 		$parameters = array(":start" => $start,
+	// 							":howmany" => $howMany);
 
-			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+	// 		$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
-			return $story;
-		}
-		catch(PDOException $e) 
-		{
-			return $e->getMessage();
-		}
+	// 		return $story;
+	// 	}
+	// 	catch(PDOException $e) 
+	// 	{
+	// 		return $e->getMessage();
+	// 	}
 
-	}
+	// }
 
 	//Tested getStoryListPendingApproval(3,5,1);
-	public function getStoryListPendingApproval($userID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoryListPendingApproval($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts a user id, how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -987,7 +879,7 @@ class StoryModel extends Model {
 	}
 
 	//Tested getStoryListPendingApproval(3,5,1);
-	public function getStoryListDrafts($userID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoryListDrafts($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts a user id, how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -1029,7 +921,7 @@ class StoryModel extends Model {
 	}
 
 	//Tested getStoryListRejected(3,5,1);
-	public function getStoryListRejected($userID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoryListRejected($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts a user id, how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -1076,7 +968,7 @@ class StoryModel extends Model {
 	}
 
 	//Tested getStoryListApproved(9,5,1)
-	public function getStoryListApproved($howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoryListApproved($howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts a user id, how many, page
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -1194,24 +1086,16 @@ class StoryModel extends Model {
 		return $totalStories;
 	}
 
-	public function getStoriesWrittenByCurrentUser($userID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoriesWrittenByCurrentUser($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts a user id
 		//Gets an array of stories written by the owner of this user id
 		//Returns an array of Story class
 
-		$statement = "SELECT DISTINCT
-					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+		$statement = "SELECT
+					s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
-					urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
-
-					aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
-
-					shp.Story_StoryId, shp.PictureId, shp.Active,
-
-					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
-
-					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+					urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
 					f.Active AS FollowingUser,
 
@@ -1284,24 +1168,16 @@ class StoryModel extends Model {
 		return $stories;
 	}
 
-	public function getStoriesPublished_Public_Private($userID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoriesPublished_Public_Private($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts a user id
 		//Gets an array of stories written by the owner of this user id
 		//Returns an array of Story class
 
-		$statement = "SELECT DISTINCT
-					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+		$statement = "SELECT
+					s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
-					urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
-
-					aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
-
-					shp.Story_StoryId, shp.PictureId, shp.Active,
-
-					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
-
-					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+					urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
 					f.Active AS FollowingUser,
 
@@ -1372,7 +1248,7 @@ class StoryModel extends Model {
 		return $stories;
 	}
 
-	public function getStoriesRecommendedByFriends_MostPopular($userID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoriesRecommendedByFriends_MostPopular($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts a user id
 		//Gets an array of stories that were recommended to the owner of this user id
@@ -1399,25 +1275,16 @@ class StoryModel extends Model {
 		return $stories;
 	}
 
-	public function getStoriesRecommendedByFriends_Latest($userID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoriesRecommendedByFriends_Latest($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts a user id
 		//Gets an array of stories that were recommended to the owner of this user id
 		//Returns an array of Story class
 		
-		$statement = "SELECT DISTINCT
+		$statement = "SELECT
+						s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
-						s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
-
-						urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
-
-						aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
-
-						shp.Story_StoryId, shp.PictureId, shp.Active,
-
-						p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
-
-						u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+						urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
 						f.Active AS FollowingUser,
 
@@ -1508,25 +1375,16 @@ class StoryModel extends Model {
 		return $stories;
 	}
 
-	public function getNewsFeed($userID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getNewsFeed($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts a user id
 		//Gets an array of stories that were recommended to the owner of this user id
 		//Returns an array of Story class
 		
-		$statement = "SELECT DISTINCT
+		$statement = "SELECT
+						s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
-						s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
-
-						urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
-
-						aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
-
-						shp.Story_StoryId, shp.PictureId, shp.Active,
-
-						p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
-
-						u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+						urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
 						f.Active AS FollowingUser,
 
@@ -1617,24 +1475,16 @@ class StoryModel extends Model {
 		return $stories;
 	}
 
-	public function getStoriesRecommendedByCurrentUser($userID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoriesRecommendedByCurrentUser($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts a user id
 		//Gets an array of stories that were recommended to the owner of this user id
 		//Returns an array of Story class
 
-		$statement = "SELECT DISTINCT
-					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+		$statement = "SELECT
+					s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
-					urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
-
-					aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
-
-					shp.Story_StoryId, shp.PictureId, shp.Active,
-
-					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
-
-					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+					urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
 					f.Active AS FollowingUser,
 
@@ -1709,7 +1559,7 @@ class StoryModel extends Model {
 	}
 
 	// Tested getStoryListMostRecommended(6,1)
-	public function getStoryListMostRecommended($userid, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoryListMostRecommended($userid, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -1734,18 +1584,10 @@ class StoryModel extends Model {
 		// 				LIMIT :start, :howmany";
 
 
-		$statement = "SELECT DISTINCT
-					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+		$statement = "SELECT
+					s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
-					urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
-
-					aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
-
-					shp.Story_StoryId, shp.PictureId, shp.Active,
-
-					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
-
-					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+					urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
 					f.Active AS FollowingUser,
 
@@ -1819,7 +1661,7 @@ class StoryModel extends Model {
 	}
 
 	//Tested getStoryListNewest(1,5,1)
-	public function getStoryListNewest($userid, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getStoryListNewest($userid, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -1840,18 +1682,10 @@ class StoryModel extends Model {
 			// 		  GROUP BY s.StoryId DESC
 			// 		  LIMIT :start , :howmany";
 
-			$statement = "SELECT DISTINCT
-					s.StoryId, s.User_UserId, s.StoryPrivacyType_StoryPrivacyTypeId, s.StoryTitle, s.Content, s.Active, s.DatePosted, 
+			$statement = "SELECT
+					s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
-					urs.User_UserId, urs.Story_StoryId, urs.Active, urs.Opinion,
-
-					aps.User_UserId, aps.Story_StoryId, aps.Active, aps.Approved,
-
-					shp.Story_StoryId, shp.PictureId, shp.Active,
-
-					p.PictureId, p.User_UserId, p.FileName, p.PictureExtension, p.Active, p.Picturetype_PictureTypeId,
-
-					u.UserId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, 
+					urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
 					f.Active AS FollowingUser,
 
@@ -1971,7 +1805,7 @@ class StoryModel extends Model {
 		return $this->fetch($statement, $parameters);
 	}
 
-	public function getCommentsForStory($storyID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getCommentsForStory($storyID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts a story id, how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -2017,7 +1851,7 @@ class StoryModel extends Model {
 		}
 	}
 
-	public function getCommentListInappropriate($adminID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getCommentListInappropriate($adminID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -2044,7 +1878,7 @@ class StoryModel extends Model {
 		}
 	}
 
-	public function getCommentListRejected($adminID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getCommentListRejected($adminID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -2054,7 +1888,7 @@ class StoryModel extends Model {
 		//returns an array of comment class related to a story
 	}
 
-	public function getUnpublisedComments($userID, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function getUnpublisedComments($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts a user id
 		//Gets a list of comments that haven't been published by a user
@@ -2202,7 +2036,7 @@ class StoryModel extends Model {
 		}
 	}
 
-	public function searchTags($query, $howMany = self::HOWMANY, $page = self::PAGE)
+	public function searchTags($query, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		try
 		{
@@ -2308,7 +2142,8 @@ class StoryModel extends Model {
 							INNER JOIN story_has_tag sht
 							ON sht.Tag_TagId = t.TagId
 							WHERE t.Active = TRUE
-							AND sht.Story_StoryId = :storyID";
+							AND sht.Story_StoryId = :storyID
+							AND sht.Active = TRUE";
 
 			$result = $this->fetchIntoObject($statement, array(":storyID" => $storyID));
 
@@ -2404,7 +2239,7 @@ class StoryModel extends Model {
 		}
 	}
 
-	public function getTopChallenges()
+	public function getTopChallenges($howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		try
 		{
@@ -2432,9 +2267,11 @@ class StoryModel extends Model {
 							)as count
 							FROM answer a
 							HAVING count > 0 
-							LIMIT 0,5";
+							LIMIT :start, :howmany";
 
-			$result = $this->fetchIntoObject($statement, array());
+			$start = $this-> getStartValue($howMany, $page);
+
+			$result = $this->fetchIntoObject($statement, array(":start" => $start, ":howmany" => $howMany));
 
 			return $result;
 		}

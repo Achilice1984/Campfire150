@@ -30,6 +30,8 @@ class StoryViewModel extends ViewModel
 	public $Tags;
 	public $TagIds;
 
+	public $PictureUrl;
+
 	public $QuestionAnswers;//StoryQuestionViewModel
 
 	function __construct()
@@ -62,6 +64,19 @@ class StoryViewModel extends ViewModel
 			'required' =>
 				array(
 					'Message' => gettext('The content field is required!'),
+					'Properties' => array()
+				)
+		);
+
+		$errors["Images"] = array(
+			'validFileType' =>
+				array(
+					'Message' => gettext('The image you uploaded could not be processed.'),
+					'Properties' => array()
+				),
+			'img_required' =>
+				array(
+					'Message' => gettext('An image is required!'),
 					'Properties' => array()
 				)
 		);
