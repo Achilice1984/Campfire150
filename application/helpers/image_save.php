@@ -15,6 +15,7 @@ function image_save($imageFile, $userid, $imageid, $imageType,
     $largeImageSize  = 2200;
     $mediumImageSize = 1100;
     $smallImageSize  = 550;
+    $xsmallImageSize  = 250;
 
     /*  $imageFileType=$uploadedImageObject->PictureFile; */
     /*debugit($uploadedImageObject); */
@@ -33,6 +34,7 @@ function image_save($imageFile, $userid, $imageid, $imageType,
     $largeDir         = $writePath . 'large.jpg';
     $mediumDir        = $writePath . 'medium.jpg'; 
     $smallDir         = $writePath . 'small.jpg'; 
+    $xsmallDir         = $writePath . 'xsmall.jpg'; 
 
     $jpegImage        = "";
 
@@ -84,21 +86,28 @@ function image_save($imageFile, $userid, $imageid, $imageType,
 
     $virtual_image = imagecreatetruecolor($newwidth, $newheight);
     imagecopyresampled($virtual_image, $jpegImage, 0, 0, $src_x, $src_y, $newwidth, $newheight, $up_width, $up_height);
-    imagejpeg($virtual_image,$largeDir);
+    imagejpeg($virtual_image, $largeDir);
 
     $newheight  = floor($newheight / 2);
     $newwidth   = floor($newwidth  / 2);
 
     $virtual_image = imagecreatetruecolor($newwidth, $newheight);
     imagecopyresampled($virtual_image, $jpegImage, 0, 0, $src_x, $src_y, $newwidth, $newheight, $up_width, $up_height);
-    imagejpeg($virtual_image,$mediumDir);
+    imagejpeg($virtual_image, $mediumDir);
 
     $newheight  = floor($newheight / 2);
     $newwidth   = floor($newwidth  / 2);
 
     $virtual_image = imagecreatetruecolor($newwidth, $newheight);
     imagecopyresampled($virtual_image, $jpegImage, 0, 0, $src_x, $src_y, $newwidth, $newheight, $up_width, $up_height);
-    imagejpeg($virtual_image,$smallDir);
+    imagejpeg($virtual_image, $smallDir);
+
+    $newheight  = floor($newheight / 2);
+    $newwidth   = floor($newwidth  / 2);
+
+    $virtual_image = imagecreatetruecolor($newwidth, $newheight);
+    imagecopyresampled($virtual_image, $jpegImage, 0, 0, $src_x, $src_y, $newwidth, $newheight, $up_width, $up_height);
+    imagejpeg($virtual_image, $xsmallDir);
 
 
     imagedestroy($virtual_image);

@@ -30,6 +30,8 @@ class StoryViewModel extends ViewModel
 	public $Tags;
 	public $TagIds;
 
+	public $PictureUrl;
+
 	public $QuestionAnswers;//StoryQuestionViewModel
 
 	function __construct()

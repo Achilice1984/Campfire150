@@ -17,6 +17,7 @@ require_once('./application/plugins/akismet/akismet.class.php');
 require_once('./application/plugins/mailchimp/Mailchimp.php');
 require_once('./application/plugins/alphaid/alphaID.php');
 require_once('./application/plugins/mobile-detect/Mobile_Detect.php');
+
 //Need this if php version less than 5.5
 require_once('./application/plugins/password/password.php');
 
@@ -32,6 +33,7 @@ define('APP_DIR', ROOT_DIR .'application/');
 define('IMG_LARGE', 'large');
 define('IMG_MEDIUM', 'medium');
 define('IMG_SMALL', 'small');
+define('IMG_XSMALL', 'xsmall');
 
 define('IMG_PROFILE', 1);
 define('IMG_BACKGROUND', 2);
@@ -107,6 +109,8 @@ else
 {
 	error_reporting(0);
 }
+
+require_once(APP_DIR . 'helpers/image_get_path.php');
 
 set_error_handler("exception_error_handler");
 
