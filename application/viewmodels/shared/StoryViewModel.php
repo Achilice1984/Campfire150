@@ -30,6 +30,7 @@ class StoryViewModel extends ViewModel
 	public $Tags;
 	public $TagIds;
 
+	public $PictureId;
 	public $PictureUrl;
 
 	public $QuestionAnswers;//StoryQuestionViewModel

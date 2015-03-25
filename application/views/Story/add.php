@@ -21,6 +21,7 @@
             <form action="<?php echo ((isset($storyViewModel->StoryId) && $storyViewModel->StoryId > 0) ? BASE_URL . "story/edit/" . $storyViewModel->StoryId : BASE_URL . "story/add" ) ?>" method="post" enctype="multipart/form-data">
                 
                 <input type="hidden" name="StoryId" id="StoryId" value="<?php echo $storyViewModel->StoryId; ?>">
+                <input type="hidden" name="PictureId" id="PictureId" value="<?php echo $storyViewModel->PictureId; ?>">
 
                 <?php include(APP_DIR . 'views/shared/messages.php'); ?>         
                 
@@ -33,7 +34,7 @@
                     
                     <?php
                         //This checks to see if a picture exists for a story saved as a draft
-                        if(isset($storyViewModel->PictureId))
+                        if(isset($storyViewModel->PictureId) && $storyViewModel->PictureId > 0)
                         {
                             ?>
                                 <img id="imgPreviewer" src="<?php echo image_get_path_basic($storyViewModel->UserId, $storyViewModel->PictureId, IMG_STORY, (IS_MOBILE ? IMG_MEDIUM : IMG_LARGE)); ?>" class="img-rounded img-responsive center-block" alt="" style="width:1200px; z-index: 10; " />
