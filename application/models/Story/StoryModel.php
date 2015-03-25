@@ -71,6 +71,14 @@ class StoryModel extends Model {
 		{
 			// create a php timestamp for inserting into the created and updated date fields in the database 
 			//$timestamp = date('Y-m-d G:i:s');
+			$statement = "UPDATE story_has_tag 
+							SET Active=FALSE
+							 WHERE story_has_tag.Story_StoryId = :StoryId";
+ 
+			$parameters = array(":StoryId" => $story->StoryId);
+
+			$this->fetch($statement, $parameters);
+
 			$statement = "UPDATE story 
 							SET StoryPrivacyType_StoryPrivacyTypeId=:StoryPrivacyType_StoryPrivacyTypeId, StoryTitle=:StoryTitle, Content=:Content, published=:published, Active=:Active
 
@@ -2308,7 +2316,8 @@ class StoryModel extends Model {
 							INNER JOIN story_has_tag sht
 							ON sht.Tag_TagId = t.TagId
 							WHERE t.Active = TRUE
-							AND sht.Story_StoryId = :storyID";
+							AND sht.Story_StoryId = :storyID
+							AND sht.Active = TRUE";
 
 			$result = $this->fetchIntoObject($statement, array(":storyID" => $storyID));
 

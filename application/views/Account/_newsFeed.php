@@ -4,7 +4,7 @@
  	<div class="col-md-2 hidden-sm hidden-xs">
 		<div class="row">
 			<a href="<?php echo BASE_URL . "account/home/" . $feed->UserId; ?>">
-  				<img style="max-height: 115px;" class="img-responsive storyProfilePic" src="<?php echo image_get_path_basic($feed->UserId, $feed->UserProfilePicureId, IMG_PROFILE, IMG_SMALL) ?>" alt="<?php echo gettext("Profile Picture"); ?>">
+  				<img style="max-height: 115px;" class="img-responsive storyProfilePic" src="<?php echo image_get_path_basic($feed->UserId, $feed->UserProfilePicureId, IMG_PROFILE, IMG_XSMALL) ?>" alt="<?php echo gettext("Profile Picture"); ?>">
 			</a>
 			<div class="storyAuthorDetails">
 				<h4><?php echo $feed->FirstName . " " . $feed->LastName; ?></h4>

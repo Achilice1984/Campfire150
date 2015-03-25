@@ -96,7 +96,7 @@ class Account extends Controller {
 				if(isset($accountHomeViewModel->profileImage))
 				{
 					$accountHomeViewModel->profileImage->PictureUrl = 
-											image_get_path_basic($userID, $accountHomeViewModel->profileImage->PictureId, IMG_PROFILE, IMG_MEDIUM);
+											image_get_path_basic($userID, $accountHomeViewModel->profileImage->PictureId, IMG_PROFILE, IMG_SMALL);
 				}
 
 
@@ -158,12 +158,20 @@ class Account extends Controller {
 						array("static/js/storyButtons.js", "intern"),
 						array("static/plugins/cropper/cropper.min.js", "intern"),
 						array("static/plugins/datepicker/js/bootstrap-datepicker.min.js", "intern"),
-						array("static/plugins/maxlength/js/bootstrap-maxlength.min.js", "intern")
+						array("static/plugins/maxlength/js/bootstrap-maxlength.min.js", "intern"),
+						array("static/plugins/validation/js/formValidation.min.js", "intern"),
+						array("static/plugins/validation/js/framework/bootstrap.min.js", "intern"),
+						array("static/plugins/select2/js/select2.min.js", "intern"),
+						array("static/plugins/validation/js/language/en_US.js", "intern"),
+						array("static/plugins/validation/js/language/fr_FR.js", "intern"),
+						array("static/js/validation.js", "intern")
 					));
 
 					$view->setCSS(array(
 						array("static/plugins/cropper/cropper.min.css", "intern"),
-						array("static/plugins/datepicker/css/bootstrap-datepicker3.min.css", "intern")
+						array("static/plugins/datepicker/css/bootstrap-datepicker3.min.css", "intern"),
+						array("static/plugins/validation/css/formValidation.min.css", "intern"),
+						array("static/plugins/select2/css/select2.min.css", "intern")
 					));
 				}
 				else
@@ -173,7 +181,7 @@ class Account extends Controller {
 						array("static/js/followUser.js", "intern"),
 						array("static/js/userHome.js", "intern")
 					));
-				}
+				}				
 
 				$siteModel = $this->loadModel('SiteContent/SiteContentModel');
 				$view->set('privacyDropdownValues', $siteModel->getDropdownValues_StoryPrivacyType());
@@ -239,6 +247,21 @@ class Account extends Controller {
 
 		//Add a variable with old login data so that it can be accessed in the view
 		$view->set('loginViewModel', $loginViewModel);
+
+		//Load up some js files
+		$view->setJS(array(
+			array("static/plugins/validation/js/formValidation.min.js", "intern"),
+			array("static/plugins/validation/js/framework/bootstrap.min.js", "intern"),
+			array("static/plugins/select2/js/select2.min.js", "intern"),
+			array("static/plugins/validation/js/language/en_US.js", "intern"),
+			array("static/plugins/validation/js/language/fr_FR.js", "intern"),
+			array("static/js/validation.js", "intern")
+		));
+
+		$view->setCSS(array(
+			array("static/plugins/validation/css/formValidation.min.css", "intern"),
+			array("static/plugins/select2/css/select2.min.css", "intern")
+		));
 
 		//Render the login view. true indicates to load the layout pages as well
 		$view->render(true);
@@ -329,11 +352,19 @@ class Account extends Controller {
 		$view->setJS(array(
 			array("static/plugins/datepicker/js/bootstrap-datepicker.min.js", "intern"),
 			array("static/js/register.js", "intern"),
+			array("static/plugins/validation/js/formValidation.min.js", "intern"),
+			array("static/plugins/validation/js/framework/bootstrap.min.js", "intern"),
+			array("static/plugins/select2/js/select2.min.js", "intern"),
+			array("static/plugins/validation/js/language/en_US.js", "intern"),
+			array("static/plugins/validation/js/language/fr_FR.js", "intern"),
+			array("static/js/validation.js", "intern")
 		));
 
 		$view->setCSS(array(
-			array("static/plugins/datepicker/css/bootstrap-datepicker3.min.css", "intern")
-		));
+			array("static/plugins/datepicker/css/bootstrap-datepicker3.min.css", "intern"),
+			array("static/plugins/validation/css/formValidation.min.css", "intern"),
+			array("static/plugins/select2/css/select2.min.css", "intern")
+		));		
 
 		//Add a variable with old userViewModel data so that it can be accessed in the view
 		$view->set('userViewModel', $userViewModel);
@@ -532,7 +563,7 @@ class Account extends Controller {
 					}
 				}
 
-				echo image_get_path_basic($this->currentUser->UserId, $imageId, IMG_PROFILE, IMG_MEDIUM);
+				echo image_get_path_basic($this->currentUser->UserId, $imageId, IMG_PROFILE, IMG_SMALL);
 			}
 			else
 			{

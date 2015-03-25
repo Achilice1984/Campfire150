@@ -193,8 +193,19 @@ class Story extends Controller {
 
 		//Load up some js files
 		$view->setJS(array(
-			array("static/js/select2.js", "intern")
+			array("static/js/select2.js", "intern"),
+			array("static/plugins/validation/js/formValidation.min.js", "intern"),
+			array("static/plugins/validation/js/framework/bootstrap.min.js", "intern"),
+			array("static/plugins/select2/js/select2.min.js", "intern"),
+			array("static/plugins/validation/js/language/en_US.js", "intern"),
+			array("static/plugins/validation/js/language/fr_FR.js", "intern"),
+			array("static/js/validation.js", "intern")
 		));
+
+		$view->setCSS(array(
+			array("static/plugins/validation/css/formValidation.min.css", "intern"),
+			array("static/plugins/select2/css/select2.min.css", "intern")
+		));		
 
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);
@@ -221,44 +232,52 @@ class Story extends Controller {
 				//Map post values to the loginViewModel
 				$storyViewModel = AutoMapper::mapPost($storyViewModel);					
 
-				$storyId;
-
 				if($storyViewModel->validate())
 				{
 					$storyViewModel->Published = FALSE;
 
 					//UPDATE STORY
 					$storyModel->updateDraft($storyViewModel, $this->currentUser->UserId);
-					$storyId = $storyID;
+					
 
 					//$this->saveQuestionAnswers($storyModel, $storyId);
-					$this->saveTags($storyModel, $storyId);
+					$this->saveTags($storyModel, $storyViewModel->StoryId);
 
 					$imageId = 0;
 
-					if(isset($storyViewModel->Images))
+					if(isset($storyViewModel->Images) && $storyViewModel->Images["size"] > 0)
 					{
-						$imageId = $storyModel->saveStoryImageMetadata($this->currentUser->UserId, $storyViewModel->Images, $storyId);
-						debugit($imageId);
-					}
+						$imageId = $storyModel->saveStoryImageMetadata($this->currentUser->UserId, $storyViewModel->Images, $storyViewModel->StoryId);
 
-					if(isset($imageId) && $imageId > 0)
-					{
-						image_save($storyViewModel->Images, $this->currentUser->UserId, $imageId, IMG_STORY_URL, 
-										 $_POST["image_height"], $_POST["image_width"], $_POST["image_x"], $_POST["image_y"]); 
-					}
+						//debugit($imageId);
+
+						if(isset($imageId) && $imageId > 0)
+						{
+							//debugit($_POST);
+							image_save($storyViewModel->Images, $this->currentUser->UserId, $imageId, IMG_STORY_URL, 
+											 $_POST["image_height"], $_POST["image_width"], $_POST["image_x"], $_POST["image_y"]); 
+						}
+					}					
 
 					if(isset($_POST["publish"]))
 					{
-						$this->redirect("story/publish", array($storyId));
+						$this->redirect("story/publish", array($storyViewModel->StoryId));
 					}
 					else
 					{
-						//$this->redirect("account/home");
+						$this->redirect("account/home");
 					}
 				}
 
-				$storyViewModel->Tags = $this->getTags($storyModel);			
+				$storyViewModel->Tags = $this->getTags($storyModel);	
+
+				$storyViewModelOld = $storyModel->getStory_unpublished($this->currentUser->UserId, $storyID);
+
+				if(isset($storyViewModelOld[0]))
+				{
+					$storyViewModel->PictureId = $storyViewModelOld[0]->PictureId;
+					$storyViewModel->StoryUserID = $storyViewModelOld[0]->StoryUserID;
+				}
 			}	
 			else
 			{
@@ -294,16 +313,21 @@ class Story extends Controller {
 				array("static/js/tinymce.js", "intern"),
 				array("static/js/select2.js", "intern"),
 				array("static/js/addstory.js", "intern"),
-				array("static/plugins/cropper/cropper.min.js", "intern")
-				// array("static/plugins/jcrop/js/jquery.Jcrop.min.js", "intern"),
-				// array("static/plugins/jcrop/js/jquery.color.js", "intern")
+				array("static/plugins/cropper/cropper.min.js", "intern"),
+				array("static/plugins/validation/js/formValidation.min.js", "intern"),
+				array("static/plugins/validation/js/framework/bootstrap.min.js", "intern"),
+				array("static/plugins/select2/js/select2.min.js", "intern"),
+				array("static/plugins/validation/js/language/en_US.js", "intern"),
+				array("static/plugins/validation/js/language/fr_FR.js", "intern"),
+				array("static/js/validation.js", "intern")
 			));
 
 			$view->setCSS(array(
 				array("static/css/addstory.css", "intern"),
-				//array("static/plugins/jcrop/css/jquery.Jcrop.min.css", "intern")
-				array("static/plugins/cropper/cropper.min.css", "intern")
-			));
+				array("static/plugins/cropper/cropper.min.css", "intern"),
+				array("static/plugins/validation/css/formValidation.min.css", "intern"),
+				array("static/plugins/select2/css/select2.min.css", "intern")
+			));			
 
 			//Render the profile view. true indicates to load the layout pages as well
 			$view->render(true);
@@ -384,16 +408,21 @@ class Story extends Controller {
 				array("static/js/tinymce.js", "intern"),
 				array("static/js/select2.js", "intern"),
 				array("static/js/addstory.js", "intern"),
-				array("static/plugins/cropper/cropper.min.js", "intern")
-				// array("static/plugins/jcrop/js/jquery.Jcrop.min.js", "intern"),
-				// array("static/plugins/jcrop/js/jquery.color.js", "intern")
+				array("static/plugins/cropper/cropper.min.js", "intern"),
+				array("static/plugins/validation/js/formValidation.min.js", "intern"),
+				array("static/plugins/validation/js/framework/bootstrap.min.js", "intern"),
+				array("static/plugins/select2/js/select2.min.js", "intern"),
+				array("static/plugins/validation/js/language/en_US.js", "intern"),
+				array("static/plugins/validation/js/language/fr_FR.js", "intern"),
+				array("static/js/validation.js", "intern")
 			));
 
 			$view->setCSS(array(
 				array("static/css/addstory.css", "intern"),
-				//array("static/plugins/jcrop/css/jquery.Jcrop.min.css", "intern")
-				array("static/plugins/cropper/cropper.min.css", "intern")
-			));
+				array("static/plugins/cropper/cropper.min.css", "intern"),
+				array("static/plugins/validation/css/formValidation.min.css", "intern"),
+				array("static/plugins/select2/css/select2.min.css", "intern")
+			));			
 
 			//Render the profile view. true indicates to load the layout pages as well
 			$view->render(true);

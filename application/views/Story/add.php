@@ -21,6 +21,8 @@ require_once(APP_DIR . 'helpers/image_get_path.php');
         <div class="col-md-12">            
         
             <form action="<?php echo (isset($storyViewModel->StoryId) ? BASE_URL . "story/edit/" . $storyViewModel->StoryId : BASE_URL . "story/add" ) ?>" method="post" enctype="multipart/form-data">
+                
+                <input type="hidden" name="StoryId" id="StoryId" value="<?php echo $storyViewModel->StoryId; ?>">
 
                 <?php include(APP_DIR . 'views/shared/messages.php'); ?>         
                 
