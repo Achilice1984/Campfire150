@@ -177,18 +177,18 @@
                 </div>
 
             </div>
-            <div role="tabpanel" class="tab-pane" id="Story_Questionaire">
 
-             <!--   List of questions for story questionaire -->
+             <div role="tabpanel" class="tab-pane" id="Story_Questionaire">
+
                 <ul class="nav nav-pills">
-                    <li role="presentation" class="active"><a href="#Questions_Find" aria-controls="Users_Find" role="tab" data-toggle="tab">Find Questions</a></li>
+                    <li role="presentation" class="active"><a href="#Questions_Find" aria-controls="Questions_Find" role="tab" data-toggle="tab">Find Questions</a></li>
                     <li role="presentation"><a href="#Story_Answers_Find" aria-controls="Story_Answers_Find" role="tab" data-toggle="tab">Find Answers</a></li>
                 </ul>   
 
                 <div class="tab-content" style="padding:20px;">
                     <div role="tabpanel" class="tab-pane active" id="Questions_Find">
-                        <!--This table will contain all users -->
-                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxStoryQuestionList" style="display:none;">
+                       <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxStoryQuestionList" style="display:none;">
+                        
                             <thead>
                                 <tr>
                                     <th>Question ID</th>
@@ -205,7 +205,7 @@
                         <h3> Add a new question <a href="<?php echo BASE_URL . 'admin/storyquestionadd' ?> ">here</a></h3>
                     </div>  
                     <div role="tabpanel" class="tab-pane" id="Story_Answers_Find">
-                        <!--This table will contain all users that are disabled -->
+                        <!--This table will contain all story answers -->
                         <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxStoryAnswerList" style="display:none;">
                             <thead>
                                 <tr>
