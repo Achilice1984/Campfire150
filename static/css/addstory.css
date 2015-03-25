@@ -25,6 +25,7 @@
 .mce-menubar {
 	background-color: white !important;
 	width: 100% !important;	
+	z-index: 1000 !important;
 }
 .mce-menubtn {
 	padding: 10px !important;

@@ -30,7 +30,15 @@ $(function(){
 				};
 			},
 			cache: true
-		}
+		},
+		// createTag:function(term, data) {
+		// 	alert(term.toSource());
+		//   if ($(data).filter(function() {
+		//     return this.text.localeCompare(term)===0;
+		//   }).length===0) {
+		//     return {id:term, text:term};
+		//   }
+		// },
 	});
 
 	$('.multiSelect5').select2({
