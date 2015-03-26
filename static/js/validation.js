@@ -167,6 +167,12 @@ function init_validation()
                     }
                 }
             },
+            YearsInCanada: {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
             StoryPrivacyType_StoryPrivacyTypeId: {
                 validators: {
                     notEmpty: {
