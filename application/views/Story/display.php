@@ -132,6 +132,8 @@
             <input type="hidden" name="CommentUrl" id="CommentUrl" value="<?php echo BASE_URL; ?>story/getStoryComments">
 
             <div class="row text-center" id="CommentStoryMoreButton" style="margin-bottom: 50px; <?php echo count($storyViewModel->Comments) <= 0 ? "display:none;" : "";  ?>">
+                <?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+                
                 <button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Comments!"); ?></button>
             </div>
             
@@ -156,7 +158,10 @@
                         <textarea class="form-control" id="Content" name="Content" placeholder="<?php echo gettext("Enter A Comment"); ?>"> </textarea>
                     </div>
 
-                    <button id="postCommentButton" class="btn btn-default"><?php echo gettext("Post A Comment"); ?></button>
+                    <button style="float:left;" id="postCommentButton" class="btn btn-default"><?php echo gettext("Post A Comment"); ?></button>
+                    <div style="float: left; margin-left:10px" id="AddCommentSpinerDiv">
+                        <?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
+                    </div>
                 </form>
             <?php } ?>
         </div>

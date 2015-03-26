@@ -20,6 +20,12 @@ $(document.body).on('click', "#CommentStoryMoreButton", function(){
 
 				$("#CommentStoryMoreButton").hide();
 			}
+		},
+		beforeSend: function(){
+			$("#CommentStoryMoreButton .spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$("#CommentStoryMoreButton .spinner_large").addClass("hide");
 		}
 	});
 });
@@ -52,6 +58,12 @@ $(document.body).on('click', "#postCommentButton", function(event){
 			{
 				$("#CommentSubmitInfoBarError").show();
 			}
+		},
+		beforeSend: function(){
+			$("#AddCommentSpinerDiv .spinner_small").removeClass("hide");
+		},
+		complete: function(){
+			$("#AddCommentSpinerDiv .spinner_small").addClass("hide");
 		}
 	});
 });
