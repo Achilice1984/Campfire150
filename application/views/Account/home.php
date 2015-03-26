@@ -223,31 +223,32 @@
 					<div class="tab-content" style="padding:20px;">
 						<?php if($isCurrentUser) { ?>
 						    <div role="tabpanel" class="tab-pane active" id="User_NewsFeed">
-						    	<div id="NewFeedContent" class="row">
-							    	<?php 
-							    		if(isset($accountHomeViewModel->newsFeed) && count($accountHomeViewModel->newsFeed) > 0)
-							    		{
-											foreach ($accountHomeViewModel->newsFeed as $feed)
+
+						    	<?php if (isset($accountHomeViewModel->newsFeed) && is_array($accountHomeViewModel->newsFeed) && count($accountHomeViewModel->newsFeed) > 0) { ?>
+
+							    	<div id="NewFeedContent" class="row">
+								    	<?php 
+								    		foreach ($accountHomeViewModel->newsFeed as $feed)
 											{
 												include(APP_DIR . "views/Account/_newsFeed.php");
-											}
-										}			
-									?>  
-								</div>
-								
-								<div class="alert alert-info alert-dismissible" id="NewFeedContentInfoBar" role="alert" style="display:none;">
-							  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
-								</div>
+											}			
+										?>  
+									</div>
+									
+									<div class="alert alert-info alert-dismissible" id="NewFeedContentInfoBar" role="alert" style="display:none;">
+								  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+								  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+									</div>
 
-								<input type="hidden" name="NewFeedContentPage" id="NewFeedContentPage" value="1">
-								<input type="hidden" name="NewFeedContentUrl" id="NewFeedContentUrl" value="<?php echo BASE_URL; ?>account/newsFeed">
+									<input type="hidden" name="NewFeedContentPage" id="NewFeedContentPage" value="1">
+									<input type="hidden" name="NewFeedContentUrl" id="NewFeedContentUrl" value="<?php echo BASE_URL; ?>account/newsFeed">
 
-								<div class="row text-center" id="NewFeedContentMoreButton" style="margin-bottom: 100px;">
-									<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+									<div class="row text-center" id="NewFeedContentMoreButton" style="margin-bottom: 100px;">
+										<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 
-									<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
-								</div>	
+										<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
+									</div>	
+								<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 						    </div>
 						<?php } ?>
 
@@ -256,33 +257,34 @@
 							<?php 
 								if($currentUser->UserId != $accountHomeViewModel->userDetails->UserId)	
 								{
-									echo "<div id='Stories_Content' class='row'>";
-
-									if(isset($accountHomeViewModel->usersStoryList) && count($accountHomeViewModel->usersStoryList) > 0)
+									if (isset($accountHomeViewModel->usersStoryList) && is_array($accountHomeViewModel->usersStoryList) && count($accountHomeViewModel->usersStoryList) > 0)
 									{
+										echo "<div id='Stories_Content' class='row'>";
+
 										foreach ($accountHomeViewModel->usersStoryList as $story)
 										{
 											include(APP_DIR . "views/Account/_myStories.php");
 										}
+
+										echo "</div>";
+
+										?> 
+											<div class="alert alert-info alert-dismissible" id="Stories_ContentInfoBar" role="alert" style="display:none;">
+										  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+										  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+											</div>
+
+											<input type="hidden" name="Stories_ContentPage" id="Stories_ContentPage" value="1">
+											<input type="hidden" name="Stories_ContentUrl" id="Stories_ContentUrl" value="<?php echo BASE_URL; ?>account/userStories">
+
+											<div class="row text-center" id="Stories_ContentMoreButton" style="margin-bottom: 100px;">
+												<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
+												<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
+											</div>									
+										<?php
 									}
-
-									echo "</div>";
-
-									?> 
-										<div class="alert alert-info alert-dismissible" id="Stories_ContentInfoBar" role="alert" style="display:none;">
-									  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-									  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
-										</div>
-
-										<input type="hidden" name="Stories_ContentPage" id="Stories_ContentPage" value="1">
-										<input type="hidden" name="Stories_ContentUrl" id="Stories_ContentUrl" value="<?php echo BASE_URL; ?>account/userStories">
-
-										<div class="row text-center" id="Stories_ContentMoreButton" style="margin-bottom: 100px;">
-											<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
-
-											<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
-										</div>									
-									<?php
+									else { include(APP_DIR . "views/shared/noResults.php"); } 
 								}
 								else
 								{
@@ -294,96 +296,97 @@
 
 					    <div role="tabpanel" class="tab-pane" id="User_MyRecommendations">
 
-					    	<div id="StoryRecommendationContent" class="row">
-								<?php 
-									if(isset($accountHomeViewModel->recommendedStoryList) && count($accountHomeViewModel->recommendedStoryList) > 0)
-									foreach ($accountHomeViewModel->recommendedStoryList as $story)
-									{
-										//debugit($story);
-										include(APP_DIR . "views/Account/_myRecommendations.php");
-									}			
-								?> 
-							</div>
+					    	<?php if (isset($accountHomeViewModel->recommendedStoryList) && is_array($accountHomeViewModel->recommendedStoryList) && count($accountHomeViewModel->recommendedStoryList) > 0) { ?>
 
-							<div class="alert alert-info alert-dismissible" id="StoryRecommendationContentInfoBar" role="alert" style="display:none;">
-						  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
-							</div>
+						    	<div id="StoryRecommendationContent" class="row">
+									<?php 
+										foreach ($accountHomeViewModel->recommendedStoryList as $story)
+										{
+											//debugit($story);
+											include(APP_DIR . "views/Account/_myRecommendations.php");
+										}			
+									?> 
+								</div>
 
-							<input type="hidden" name="StoryRecommendationContentPage" id="StoryRecommendationContentPage" value="1">
-							<input type="hidden" name="StoryRecommendationContentUrl" id="StoryRecommendationContentUrl" value="<?php echo BASE_URL; ?>account/recommendations">
+								<div class="alert alert-info alert-dismissible" id="StoryRecommendationContentInfoBar" role="alert" style="display:none;">
+							  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+								</div>
 
-							<div class="row text-center" id="StoryRecommendationContentMoreButton" style="margin-bottom: 100px;">
-								<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+								<input type="hidden" name="StoryRecommendationContentPage" id="StoryRecommendationContentPage" value="1">
+								<input type="hidden" name="StoryRecommendationContentUrl" id="StoryRecommendationContentUrl" value="<?php echo BASE_URL; ?>account/recommendations">
 
-								<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
-							</div>
+								<div class="row text-center" id="StoryRecommendationContentMoreButton" style="margin-bottom: 100px;">
+									<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
+									<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
+								</div>
+							<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 					    </div> 
 					    <div role="tabpanel" class="tab-pane" id="User_Following">
+							
+							<?php if (isset($accountHomeViewModel->followingList) && is_array($accountHomeViewModel->followingList) && count($accountHomeViewModel->followingList) > 0) { ?>
 
-					    	<div id="UserFollowingContent" class="row">
-								<?php 
-									if(isset($accountHomeViewModel->followingList) && count($accountHomeViewModel->followingList) > 0)
-									{
+						    	<div id="UserFollowingContent" class="row">
+									<?php 
 										foreach ($accountHomeViewModel->followingList as $user)
 										{
 											//debugit($story);
 											include(APP_DIR . "views/Account/_searchPanel.php");
 										}	
-									}	
-								?>
-							</div>
+									?>
+								</div>
 
-							<div class="alert alert-info alert-dismissible" id="UserFollowingContentInfoBar" role="alert" style="display:none;">
-						  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
-							</div>
+								<div class="alert alert-info alert-dismissible" id="UserFollowingContentInfoBar" role="alert" style="display:none;">
+							  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+								</div>
 
-							<input type="hidden" name="UserFollowingContentPage" id="UserFollowingContentPage" value="1">
-							<input type="hidden" name="UserFollowingContentUrl" id="UserFollowingContentUrl" value="<?php echo BASE_URL; ?>account/followinglist">
+								<input type="hidden" name="UserFollowingContentPage" id="UserFollowingContentPage" value="1">
+								<input type="hidden" name="UserFollowingContentUrl" id="UserFollowingContentUrl" value="<?php echo BASE_URL; ?>account/followinglist">
 
-							<div class="row text-center" id="UserFollowingContentMoreButton" style="margin-bottom: 100px;">
-								<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+								<div class="row text-center" id="UserFollowingContentMoreButton" style="margin-bottom: 100px;">
+									<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 
-								<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
-							</div>
+									<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
+								</div>
+							<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 					    </div> 
 					    <div role="tabpanel" class="tab-pane" id="User_Followers">
-
-					    	<div id="UserFollowersContent" class="row">
-								<?php 
-									if(isset($accountHomeViewModel->followerList) && count($accountHomeViewModel->followerList) > 0)
-									{
+							
+							<?php if (isset($accountHomeViewModel->followerList) && is_array($accountHomeViewModel->followerList) && count($accountHomeViewModel->followerList) > 0) { ?>
+						    	<div id="UserFollowersContent" class="row">
+									<?php 
 										//debugit($accountHomeViewModel->followerList);
 										foreach ($accountHomeViewModel->followerList as $user)
 										{
 											//debugit($story);
 											include(APP_DIR . "views/Account/_searchPanel.php");
-										}
-									}			
-								?>
-							</div>
+										}			
+									?>
+								</div>
 
-							<div class="alert alert-info alert-dismissible" id="UserFollowersContentInfoBar" role="alert" style="display:none;">
-						  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
-							</div>
+								<div class="alert alert-info alert-dismissible" id="UserFollowersContentInfoBar" role="alert" style="display:none;">
+							  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+								</div>
 
-							<input type="hidden" name="UserFollowersContentPage" id="UserFollowersContentPage" value="1">
-							<input type="hidden" name="UserFollowersContentUrl" id="UserFollowersContentUrl" value="<?php echo BASE_URL; ?>account/followerslist">
+								<input type="hidden" name="UserFollowersContentPage" id="UserFollowersContentPage" value="1">
+								<input type="hidden" name="UserFollowersContentUrl" id="UserFollowersContentUrl" value="<?php echo BASE_URL; ?>account/followerslist">
 
-							<div class="row text-center" id="UserFollowersContentMoreButton" style="margin-bottom: 100px;">
-								<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
-								
-								<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
-							</div>
+								<div class="row text-center" id="UserFollowersContentMoreButton" style="margin-bottom: 100px;">
+									<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+									
+									<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
+								</div>
+							<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 					    </div> 
 					    <div role="tabpanel" class="tab-pane" id="User_ActionsTaken">
 					    	<div class="row">
 								<?php 
 									echo "<table class='table table-hover' id='ActionsTakenListContainer'>";
 
-									if(isset($accountHomeViewModel->ActionTakenList) && count($accountHomeViewModel->ActionTakenList) > 0)
+									if(isset($accountHomeViewModel->ActionTakenList) && is_array($accountHomeViewModel->ActionTakenList) && count($accountHomeViewModel->ActionTakenList) > 0)
 									{
 										//debugit($accountHomeViewModel->followerList);
 										foreach ($accountHomeViewModel->ActionTakenList as $action)
@@ -391,6 +394,7 @@
 											include(APP_DIR . "views/Account/_actionsTaken.php");
 										}
 									}
+									else { include(APP_DIR . "views/shared/noResults.php"); } 
 
 									echo "</table>";
 

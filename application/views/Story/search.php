@@ -11,28 +11,31 @@
 	
 	<div class="tab-content">
 		<div role="tabpanel" class="tab-pane <?php echo (!$showSearch ? "active" : "" ); ?>" id="Story_Latest">
-			<div id="LatestStoryContainer">
-				<?php 
-					foreach ($latestResults as $story)
-					{
-						include(APP_DIR . "views/Story/_searchPanel.php");
-					}			
-				?>  
-			</div> 
-			
-			<div class="alert alert-info alert-dismissible" id="LatestStoryhInfoBar" role="alert" style="display:none;">
-		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
-			</div>
 
-			<input type="hidden" name="LatestStoryPage" id="LatestStoryPage" value="1">
-			<input type="hidden" name="LatestStoryUrl" id="LatestStoryUrl" value="<?php echo BASE_URL; ?>story/lateststories">
+			<?php if (isset($latestResults) && is_array($latestResults) && count($latestResults) > 0) { ?>
+				<div id="LatestStoryContainer">
+					<?php 
+						foreach ($latestResults as $story)
+						{
+							include(APP_DIR . "views/Story/_searchPanel.php");
+						}			
+					?>  
+				</div> 
+				
+				<div class="alert alert-info alert-dismissible" id="LatestStoryhInfoBar" role="alert" style="display:none;">
+			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+				</div>
 
-			<div id="LatestStoryMoreButton">
-				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+				<input type="hidden" name="LatestStoryPage" id="LatestStoryPage" value="1">
+				<input type="hidden" name="LatestStoryUrl" id="LatestStoryUrl" value="<?php echo BASE_URL; ?>story/lateststories">
 
-				<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
-			</div>
+				<div id="LatestStoryMoreButton">
+					<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+
+					<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
+				</div>
+			<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 		</div>
 
 	
@@ -47,52 +50,57 @@
 		            </div>
 		        </div>						
 			</form>		
-			<div id="StorySearchContainer">
-				<?php 
-					foreach ($searchResults as $story)
-					{
-						include(APP_DIR . "views/Story/_searchPanel.php");
-					}			
-				?>  
-			</div> 
-			
-			<div class="alert alert-info alert-dismissible" id="StorySearchInfoBar" role="alert" style="display:none;">
-		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
-			</div>
 
-			<div id="StorySearchMoreButton" style="<?php echo count($searchResults) <= 0 ? "display:none;" : "" ?>">
-				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+			<?php if (isset($searchResults) && is_array($searchResults) && count($searchResults) > 0) { ?>
+				<div id="StorySearchContainer">
+					<?php 
+						foreach ($searchResults as $story)
+						{
+							include(APP_DIR . "views/Story/_searchPanel.php");
+						}			
+					?>  
+				</div> 
+				
+				<div class="alert alert-info alert-dismissible" id="StorySearchInfoBar" role="alert" style="display:none;">
+			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+				</div>
 
-				<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
-			</div>
+				<div id="StorySearchMoreButton" style="<?php echo count($searchResults) <= 0 ? "display:none;" : "" ?>">
+					<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+
+					<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
+				</div>
+			<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 	    </div>  <!-- <div role="tabpanel" class="tab-pane active" id="Story_Search"> -->
 
 
 	    <div role="tabpanel" class="tab-pane" id="Story_Recommended">
-
-			<div id="RecommendedStoryContainer">
-				<?php 
-					foreach ($mostRecommendedResults as $story)
-					{
-						include(APP_DIR . "views/Story/_searchPanel.php");
-					}			
-				?>  
-			</div> 
 			
-			<div class="alert alert-info alert-dismissible" id="RecommendedStoryInfoBar" role="alert" style="display:none;">
-		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
-			</div>
-			
-			<input type="hidden" name="RecommendedStoryPage" id="RecommendedStoryPage" value="1">
-			<input type="hidden" name="RecommendedStoryUrl" id="RecommendedStoryUrl" value="<?php echo BASE_URL; ?>story/recommendedstories">
+			<?php if (isset($mostRecommendedResults) && is_array($mostRecommendedResults) && count($mostRecommendedResults) > 0) { ?>
+				<div id="RecommendedStoryContainer">
+					<?php 
+						foreach ($mostRecommendedResults as $story)
+						{
+							include(APP_DIR . "views/Story/_searchPanel.php");
+						}			
+					?>  
+				</div> 
+				
+				<div class="alert alert-info alert-dismissible" id="RecommendedStoryInfoBar" role="alert" style="display:none;">
+			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+				</div>
+				
+				<input type="hidden" name="RecommendedStoryPage" id="RecommendedStoryPage" value="1">
+				<input type="hidden" name="RecommendedStoryUrl" id="RecommendedStoryUrl" value="<?php echo BASE_URL; ?>story/recommendedstories">
 
-			<div id="RecommendedStoryMoreButton">
-				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+				<div id="RecommendedStoryMoreButton">
+					<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
 
-				<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
-			</div>
+					<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
+				</div>
+			<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 	    </div>   <!-- <div role="tabpanel" class="tab-pane active" id="Story_Recommended"> --> 
 	</div>  
 </div>

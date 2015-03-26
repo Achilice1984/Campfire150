@@ -899,6 +899,12 @@ $(document.body).on('click', ".commentAction", function(event){
 			else
 			{
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_small").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_small").addClass("hide");
 		}
 	});
 });

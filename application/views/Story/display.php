@@ -112,30 +112,32 @@
         <div style="display:none;" id="commentsContainer">
 
             <h2 style="margin-top: 40px;"><?php echo gettext("Comments"); ?></h2>
-
-            <section id="comment-list">
-                <?php 
-
-                    foreach ($storyViewModel->Comments as $comment)
-                    {
-                        include(APP_DIR . "views/Story/_comments.php");
-                    }           
-                ?>  
-            </section>
-
-            <div class="alert alert-info alert-dismissible" id="CommentInfoBar" role="alert" style="display:none;">
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of the comments."); ?>
-            </div>
             
-            <input type="hidden" name="CommentPage" id="CommentPage" value="1">
-            <input type="hidden" name="CommentUrl" id="CommentUrl" value="<?php echo BASE_URL; ?>story/getStoryComments">
+            <?php if (isset($storyViewModel->Comments) && is_array($storyViewModel->Comments) && count($storyViewModel->Comments) > 0) { ?>
+                <section id="comment-list">
+                    <?php 
 
-            <div class="row text-center" id="CommentStoryMoreButton" style="margin-bottom: 50px; <?php echo count($storyViewModel->Comments) <= 0 ? "display:none;" : "";  ?>">
-                <?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+                        foreach ($storyViewModel->Comments as $comment)
+                        {
+                            include(APP_DIR . "views/Story/_comments.php");
+                        }           
+                    ?>  
+                </section>
+
+                <div class="alert alert-info alert-dismissible" id="CommentInfoBar" role="alert" style="display:none;">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of the comments."); ?>
+                </div>
                 
-                <button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Comments!"); ?></button>
-            </div>
+                <input type="hidden" name="CommentPage" id="CommentPage" value="1">
+                <input type="hidden" name="CommentUrl" id="CommentUrl" value="<?php echo BASE_URL; ?>story/getStoryComments">
+
+                <div class="row text-center" id="CommentStoryMoreButton" style="margin-bottom: 50px; <?php echo count($storyViewModel->Comments) <= 0 ? "display:none;" : "";  ?>">
+                    <?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+                    
+                    <button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Comments!"); ?></button>
+                </div>
+            <?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
             
             <?php if($currentUser->IsAuth) { ?>
                 <form id="AddCommentForm" action="<?php echo BASE_URL; ?>story/addcomment" method="post">

@@ -1955,7 +1955,8 @@ class StoryModel extends Model {
 							WHERE Story_StoryId = :storyID 
 							AND c.Active = TRUE
 							AND c.PublishFlag
-							ORDER BY CommentId 
+							GROUP BY CommentId
+							ORDER BY CommentId 							
 							ASC LIMIT :start, :howmany";
 
 			$start = $this-> getStartValue($howMany, $page);
