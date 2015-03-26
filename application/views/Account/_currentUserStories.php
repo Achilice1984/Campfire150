@@ -9,144 +9,154 @@
 
 	<div class="tab-content" style="padding:20px;">
 		<div role="tabpanel" class="tab-pane active" id="User_Current_Published">
-
-			<div id="CurrentPublishedContent" class="row">
-				<?php 
-					if(isset($accountHomeViewModel->publishedStories) && count($accountHomeViewModel->publishedStories))
-					{
-						foreach ($accountHomeViewModel->publishedStories as $story)
+			
+			<?php if (isset($accountHomeViewModel->publishedStories) && is_array($accountHomeViewModel->publishedStories) && count($accountHomeViewModel->publishedStories) > 0) { ?>
+				<div id="CurrentPublishedContent" class="row">
+					<?php 
+						if(isset($accountHomeViewModel->publishedStories) && count($accountHomeViewModel->publishedStories))
 						{
-							include(APP_DIR . "views/Account/_publishedStories.php");
-						}
-					}			
-				?>
-			</div>	
+							foreach ($accountHomeViewModel->publishedStories as $story)
+							{
+								include(APP_DIR . "views/Account/_publishedStories.php");
+							}
+						}			
+					?>
+				</div>	
 
-			<div class="alert alert-info alert-dismissible" id="CurrentPublishedContentInfoBar" role="alert" style="display:none;">
-		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
-			</div>
+				<div class="alert alert-info alert-dismissible" id="CurrentPublishedContentInfoBar" role="alert" style="display:none;">
+			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+				</div>
 
-			<input type="hidden" name="CurrentPublishedContentPage" id="CurrentPublishedContentPage" value="1">
-			<input type="hidden" name="CurrentPublishedContentUrl" id="CurrentPublishedContentUrl" value="<?php echo BASE_URL; ?>account/publishedList">
+				<input type="hidden" name="CurrentPublishedContentPage" id="CurrentPublishedContentPage" value="1">
+				<input type="hidden" name="CurrentPublishedContentUrl" id="CurrentPublishedContentUrl" value="<?php echo BASE_URL; ?>account/publishedList">
 
-			<div class="row text-center" id="CurrentPublishedContentMoreButton" style="margin-bottom: 100px;">
-				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+				<div class="row text-center" id="CurrentPublishedContentMoreButton" style="margin-bottom: 100px;">
+					<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 
-				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
-			</div>		
+					<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
+				</div>	
+			<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 		</div>
 		<div role="tabpanel" class="tab-pane" id="User_Current_Drafts">
-
-			<div id="CurrentDraftsContent" class="row">
-				<?php 
-					if(isset($accountHomeViewModel->draftStories) && count($accountHomeViewModel->draftStories) > 0)
-					{
-						foreach ($accountHomeViewModel->draftStories as $story)
+			
+			<?php if (isset($accountHomeViewModel->draftStories) && is_array($accountHomeViewModel->draftStories) && count($accountHomeViewModel->draftStories) > 0) { ?>
+				<div id="CurrentDraftsContent" class="row">
+					<?php 
+						if(isset($accountHomeViewModel->draftStories) && count($accountHomeViewModel->draftStories) > 0)
 						{
-							include(APP_DIR . "views/Account/_draftStories.php");
-						}
-					}			
-				?>
-			</div>
+							foreach ($accountHomeViewModel->draftStories as $story)
+							{
+								include(APP_DIR . "views/Account/_draftStories.php");
+							}
+						}			
+					?>
+				</div>
 
-			<div class="alert alert-info alert-dismissible" id="CurrentDraftsContentInfoBar" role="alert" style="display:none;">
-		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
-			</div>
+				<div class="alert alert-info alert-dismissible" id="CurrentDraftsContentInfoBar" role="alert" style="display:none;">
+			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+				</div>
 
-			<input type="hidden" name="CurrentDraftsContentPage" id="CurrentDraftsContentPage" value="1">
-			<input type="hidden" name="CurrentDraftsContentUrl" id="CurrentDraftsContentUrl" value="<?php echo BASE_URL; ?>account/draftsList">
+				<input type="hidden" name="CurrentDraftsContentPage" id="CurrentDraftsContentPage" value="1">
+				<input type="hidden" name="CurrentDraftsContentUrl" id="CurrentDraftsContentUrl" value="<?php echo BASE_URL; ?>account/draftsList">
 
-			<div class="row text-center" id="CurrentDraftsContentMoreButton" style="margin-bottom: 100px;">
-				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+				<div class="row text-center" id="CurrentDraftsContentMoreButton" style="margin-bottom: 100px;">
+					<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 
-				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
-			</div>
+					<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
+				</div>
+			<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 		</div>
 		<div role="tabpanel" class="tab-pane" id="User_Current_Pending">
-
-			<div id="CurrentPendingContent" class="row">
-				<?php 
-					if(isset($accountHomeViewModel->pendingStories) && count($accountHomeViewModel->pendingStories) > 0)
-					{
-						foreach ($accountHomeViewModel->pendingStories as $story)
+			
+			<?php if (isset($accountHomeViewModel->pendingStories) && is_array($accountHomeViewModel->pendingStories) && count($accountHomeViewModel->pendingStories) > 0) { ?>
+				<div id="CurrentPendingContent" class="row">
+					<?php 
+						if(isset($accountHomeViewModel->pendingStories) && count($accountHomeViewModel->pendingStories) > 0)
 						{
-							include(APP_DIR . "views/Account/_pendingStories.php");
-						}
-					}			
-				?>
-			</div>
+							foreach ($accountHomeViewModel->pendingStories as $story)
+							{
+								include(APP_DIR . "views/Account/_pendingStories.php");
+							}
+						}			
+					?>
+				</div>
 
-			<div class="alert alert-info alert-dismissible" id="CurrentPendingContentInfoBar" role="alert" style="display:none;">
-		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
-			</div>
+				<div class="alert alert-info alert-dismissible" id="CurrentPendingContentInfoBar" role="alert" style="display:none;">
+			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+				</div>
 
-			<input type="hidden" name="CurrentPendingContentPage" id="CurrentPendingContentPage" value="1">
-			<input type="hidden" name="CurrentPendingContentUrl" id="CurrentPendingContentUrl" value="<?php echo BASE_URL; ?>account/pendingList">
+				<input type="hidden" name="CurrentPendingContentPage" id="CurrentPendingContentPage" value="1">
+				<input type="hidden" name="CurrentPendingContentUrl" id="CurrentPendingContentUrl" value="<?php echo BASE_URL; ?>account/pendingList">
 
-			<div class="row text-center" id="CurrentPendingContentMoreButton" style="margin-bottom: 100px;">
-				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+				<div class="row text-center" id="CurrentPendingContentMoreButton" style="margin-bottom: 100px;">
+					<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 
-				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
-			</div>
+					<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
+				</div>
+			<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 		</div>
 		<div role="tabpanel" class="tab-pane" id="User_Current_Rejected">
-
-			<div id="CurrentRejectedContent" class="row">
-				<?php 
-					if(isset($accountHomeViewModel->rejectedStories) && count($accountHomeViewModel->rejectedStories) > 0)
-					{
-						foreach ($accountHomeViewModel->rejectedStories as $story)
+			
+			<?php if (isset($accountHomeViewModel->rejectedStories) && is_array($accountHomeViewModel->rejectedStories) && count($accountHomeViewModel->rejectedStories) > 0) { ?>
+				<div id="CurrentRejectedContent" class="row">
+					<?php 
+						if(isset($accountHomeViewModel->rejectedStories) && count($accountHomeViewModel->rejectedStories) > 0)
 						{
-							include(APP_DIR . "views/Account/_rejectedStories.php");
-						}
-					}			
-				?>
-			</div>
+							foreach ($accountHomeViewModel->rejectedStories as $story)
+							{
+								include(APP_DIR . "views/Account/_rejectedStories.php");
+							}
+						}			
+					?>
+				</div>
 
-			<div class="alert alert-info alert-dismissible" id="CurrentRejectedContentInfoBar" role="alert" style="display:none;">
-		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
-			</div>
+				<div class="alert alert-info alert-dismissible" id="CurrentRejectedContentInfoBar" role="alert" style="display:none;">
+			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+				</div>
 
-			<input type="hidden" name="CurrentRejectedContentPage" id="CurrentRejectedContentPage" value="1">
-			<input type="hidden" name="CurrentRejectedContentUrl" id="CurrentRejectedContentUrl" value="<?php echo BASE_URL; ?>account/rejectedList">
+				<input type="hidden" name="CurrentRejectedContentPage" id="CurrentRejectedContentPage" value="1">
+				<input type="hidden" name="CurrentRejectedContentUrl" id="CurrentRejectedContentUrl" value="<?php echo BASE_URL; ?>account/rejectedList">
 
-			<div class="row text-center" id="CurrentRejectedContentMoreButton" style="margin-bottom: 100px;">
-				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+				<div class="row text-center" id="CurrentRejectedContentMoreButton" style="margin-bottom: 100px;">
+					<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 
-				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
-			</div>
+					<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
+				</div>
+			<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 		</div>  
 		<div role="tabpanel" class="tab-pane" id="User_Current_Comments">
-
-			<div id="CurrentCommentContent" class="row">
-				<?php 
-					if(isset($accountHomeViewModel->pendingComments) && count($accountHomeViewModel->pendingComments) > 0)
-					{
-						foreach ($accountHomeViewModel->pendingComments as $comment)
+			
+			<?php if (isset($accountHomeViewModel->pendingComments) && is_array($accountHomeViewModel->pendingComments) && count($accountHomeViewModel->pendingComments) > 0) { ?>
+				<div id="CurrentCommentContent" class="row">
+					<?php 
+						if(isset($accountHomeViewModel->pendingComments) && count($accountHomeViewModel->pendingComments) > 0)
 						{
-							include(APP_DIR . "views/Account/_comments.php");
-						}
-					}			
-				?>
-			</div>
+							foreach ($accountHomeViewModel->pendingComments as $comment)
+							{
+								include(APP_DIR . "views/Account/_comments.php");
+							}
+						}			
+					?>
+				</div>
 
-			<div class="alert alert-info alert-dismissible" id="CurrentCommentsContentInfoBar" role="alert" style="display:none;">
-		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
-			</div>
+				<div class="alert alert-info alert-dismissible" id="CurrentCommentsContentInfoBar" role="alert" style="display:none;">
+			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+				</div>
 
-			<input type="hidden" name="CurrentCommentsContentPage" id="CurrentCommentsContentPage" value="1">
-			<input type="hidden" name="CurrentCommentsContentUrl" id="CurrentCommentsContentUrl" value="<?php echo BASE_URL; ?>account/commentsPendingApprovalList">
+				<input type="hidden" name="CurrentCommentsContentPage" id="CurrentCommentsContentPage" value="1">
+				<input type="hidden" name="CurrentCommentsContentUrl" id="CurrentCommentsContentUrl" value="<?php echo BASE_URL; ?>account/commentsPendingApprovalList">
 
-			<div class="row text-center" id="CurrentCommentsContentMoreButton" style="margin-bottom: 100px;">
-				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
-				
-				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Comments!"); ?></button>
-			</div>
+				<div class="row text-center" id="CurrentCommentsContentMoreButton" style="margin-bottom: 100px;">
+					<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+					
+					<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Comments!"); ?></button>
+				</div>
+			<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 		</div>  		
 	</div>
 

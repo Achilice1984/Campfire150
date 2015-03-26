@@ -876,7 +876,7 @@ class Story extends Controller {
 
 			if(isset($_POST["Comment_StoryId"]))
 			{
-				$commentResults = $storyModel->getCommentsForStory($_POST["Comment_StoryId"], MAX_COMMENTS_LISTS, isset($_POST["CommentPage"]) ? $_POST["CommentPage"] : 1);
+				$commentResults = $storyModel->getCommentsForStory($this->currentUser->UserId, $_POST["Comment_StoryId"], MAX_COMMENTS_LISTS, isset($_POST["CommentPage"]) ? $_POST["CommentPage"] : 1);
 
 				if (isset($commentResults)) {
 					foreach ($commentResults as $comment)
