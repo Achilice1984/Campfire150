@@ -13,7 +13,7 @@ class Admin extends Controller {
 		$model = $this->loadModel('Admin/AdminModel');
 	
 		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
-		$storyQuestionViewModel = $model->getAnswersByQuestionId(1);
+		$storyQuestionViewModel = $model->getQuestionsByAnswerId(1);
 		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
 		//$returnData = $model->getDropdownListItem('gendertype', 1);
 
@@ -846,7 +846,11 @@ class Admin extends Controller {
 		$storyAnswerViewModel = $this->loadViewModel('shared/StoryAnswerViewModel');
 		$storyAnswerViewModel = $model->getAnswerById($answerId);
 
+		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
+		$storyQuestionViewModel = $model->getQuestionsByAnswerId($answerId);
+
 		$view->set('storyAnswerViewModel', $storyAnswerViewModel);
+		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
 
 		//Renders the view. true indicates to load the layout
 		$view->render(true);
@@ -887,6 +891,12 @@ class Admin extends Controller {
 
 		$storyAnswerViewModel = $this->loadViewModel('shared/StoryAnswerViewModel');
 
+		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
+		$storyQuestionViewModel = $model->getQuestionByQuestionId($questionId);
+
+		$view->set('storyAnswerViewModel', $storyAnswerViewModel);
+		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
+
 		$view->set('storyAnswerViewModel', $storyAnswerViewModel);
 
 		//Renders the view. true indicates to load the layout
@@ -903,7 +913,7 @@ class Admin extends Controller {
 			
 			if($storyAnswerViewModel->validate())
 			{
-				$model->addAnswer($storyAnswerViewModel->NameE, $storyAnswerViewModel->NameF);
+				$model->addQuestionAnswer($storyQuestionViewModel->QuestionId, $storyAnswerViewModel->NameE, $storyAnswerViewModel->NameF);
 
 				$this->redirect("admin/index");
 			}
@@ -927,7 +937,7 @@ class Admin extends Controller {
 		$view = $this->loadView('storyquestionedit');
 
 		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
-		$storyQuestionViewModel = $model->getQuestionById($questionId);
+		$storyQuestionViewModel = $model->getQuestionByQuestionId($questionId);	
 
 		$storyAnswerViewModelList = $this->loadViewModel('shared/StoryQuestionViewModel');
 		$storyAnswerViewModelList = $model->getAnswersByQuestionId($questionId);
