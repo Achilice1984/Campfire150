@@ -17,6 +17,6 @@
     
     <input type="hidden" id="base_url" value="<?php echo BASE_URL; ?>">
     <input type="hidden" id="LanguagePreference" value="<?php if($_SESSION['languagePreference'] == "en_CA") { echo "en_US"; } else{ echo "fr_FR"; } ?>">
-
+     
   </body>
 </html>

@@ -19,6 +19,14 @@ $(document.body).on('click', "#latestStoryListButton", function(){
 			{
 
 			}
+		},
+		beforeSend: function(){
+			$("#StoryListContainer").hide();
+			$("#storyListRow .spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$("#StoryListContainer").fadeIn();
+			$("#storyListRow .spinner_large").addClass("hide");
 		}
 	});
 });
@@ -43,6 +51,14 @@ $(document.body).on('click', "#recommendedStoryListButton", function(){
 			{
 
 			}
+		},
+		beforeSend: function(){
+			$("#StoryListContainer").hide();
+			$("#storyListRow .spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$("#StoryListContainer").fadeIn();
+			$("#storyListRow .spinner_large").addClass("hide");
 		}
 	});
 });
@@ -71,6 +87,14 @@ $(document.body).on('click', ".categoryListButton", function(){
 			{
 
 			}
+		},
+		beforeSend: function(){
+			$("#StoryListContainer").hide();
+			$("#storyListRow .spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$("#StoryListContainer").fadeIn();
+			$("#storyListRow .spinner_large").addClass("hide");
 		}
 	});
 });

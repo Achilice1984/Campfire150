@@ -22,10 +22,15 @@
                         </li>
                     </ul>
                 </nav>
-                <div id="StoryListContainer" class="row">
-                   <?php foreach ($homeViewModel->LatestStories as $story): ?>
-                       <?php include(APP_DIR . 'views/shared/_storyList.php') ?>
-                   <?php endforeach ?>
+                
+                <div id="storyListRow" class="row">
+                    <?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
+                    <div id="StoryListContainer">
+                        <?php foreach ($homeViewModel->LatestStories as $story): ?>
+                           <?php include(APP_DIR . 'views/shared/_storyList.php') ?>
+                        <?php endforeach ?>
+                    </div>
                 </div>
                 <p class="clearfix"><a href="<?php echo BASE_URL; ?>story/search" class="btn btn-warning pull-right"><?php echo gettext("View More Stories"); ?></a></p>
             </div>

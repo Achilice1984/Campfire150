@@ -60,7 +60,7 @@
                       <div id="cropImage" class="btn btn-default" style="position: absolute; z-index: 50; bottom:0; float: left; margin: 25px; margin-left: 150px; display: none;"><?php echo gettext("Crop"); ?></div>
                 </div>
 
-                <div class="form-group" style="margin-top: 15px; margin-bottom: -5px;">
+                <div class="form-group" style="margin-top: 15px; margin-bottom: 0px;">
                     <!-- <label for="StoryTitle"><?php echo gettext("Title"); ?></label> -->
                     <input type="text" class="form-control" id="StoryTitle" name="StoryTitle" placeholder="<?php echo gettext("Title"); ?>" value="<?php echo $storyViewModel->StoryTitle; ?>">
                 </div>            
@@ -78,7 +78,7 @@
                  <div class="form-group">
                    <!--  <label for="Tags[]"><?php echo gettext("Story Tags"); ?></label> -->
 
-                    <select id="Tags" class="form-control multiSelectTag" name="Tags[]" multiple placeholder="Tag Your Story!">
+                    <select id="Tags" class="form-control multiSelectTag" name="Tags" multiple placeholder="Tag Your Story!">
                         <option value=""></option>
                         <?php 
                             if(is_array($storyViewModel->Tags) && count($storyViewModel->Tags) > 0)
