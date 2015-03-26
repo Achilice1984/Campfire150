@@ -71,9 +71,32 @@ class StoryModel extends Model {
 		{
 			// create a php timestamp for inserting into the created and updated date fields in the database 
 			//$timestamp = date('Y-m-d G:i:s');
+
+
+			//TAGS
 			$statement = "UPDATE story_has_tag 
 							SET Active=FALSE
 							 WHERE story_has_tag.Story_StoryId = :StoryId";
+ 
+			$parameters = array(":StoryId" => $story->StoryId);
+
+			$this->fetch($statement, $parameters);
+
+			//ADMIN
+			$statement = "UPDATE admin_approve_story 
+							SET Active=FALSE
+							 WHERE Story_StoryId = :StoryId 
+							 AND Active = TRUE";
+ 
+			$parameters = array(":StoryId" => $story->StoryId);
+
+			$this->fetch($statement, $parameters);
+
+			//Questionaire
+			$statement = "UPDATE story_has_answer_for_question 
+							SET Active=FALSE
+							 WHERE Story_StoryId = :StoryId 
+							 AND Active = TRUE";
  
 			$parameters = array(":StoryId" => $story->StoryId);
 
@@ -465,7 +488,7 @@ class StoryModel extends Model {
 		try
 		{
 			$statement = "SELECT
-							s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
+							s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, s.Published,
 
 							urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
@@ -512,7 +535,6 @@ class StoryModel extends Model {
 							WHERE s.StoryId = :StoryId
 							AND u.ProfilePrivacyType_PrivacyTypeId = 1
 							AND s.Active = TRUE							
-							AND s.Published = FALSE
 							GROUP BY s.StoryId
 							";
 							
@@ -850,7 +872,7 @@ class StoryModel extends Model {
 							FROM story s 
 
 							LEFT JOIN admin_approve_story aas
-							ON s.StoryId = aas.Story_StoryId
+							ON s.StoryId = aas.Story_StoryId AND aas.Active = TRUE
 
 							LEFT JOIN story_has_picture shp
 							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)

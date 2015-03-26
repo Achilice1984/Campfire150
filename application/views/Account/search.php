@@ -2,7 +2,7 @@
 	$showSearch = isset($_GET["search"]);
 ?>
 
-<div class="container">
+<div class="container"  style="min-height: 300px;">
 	<ul class="nav nav-tabs marginBottom15">
 		<li role="presentation" <?php echo (!$showSearch ? "class='active'" : "" ); ?>><a href="#User_Latest" aria-controls="User_Latest" role="tab" data-toggle="tab"><?php echo gettext("Latest"); ?></a></li>
 	    <li role="presentation"><a href="#User_MostFollowers" aria-controls="User_MostFollowers" role="tab" data-toggle="tab"><?php echo gettext("Most Followers"); ?></a></li>
@@ -99,7 +99,7 @@
 					
 					<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Users"); ?></button>
 				</div>
-			<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
+			<?php } ?>
 	    </div>  <!-- <div role="tabpanel" class="tab-pane active" id="Story_Search"> -->
 	</div>  
 </div>
