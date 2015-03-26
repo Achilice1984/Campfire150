@@ -12,8 +12,6 @@ $(document.body).on('click', "#EditProfileButton", function(event){
 	event.preventDefault();
 	event.stopPropagation();
 
-	$(".regularContent").hide();
-
 	$.ajax({
 		type: "GET",
 		url: $("#EditProfileButton").attr("href"),
@@ -39,6 +37,14 @@ $(document.body).on('click', "#EditProfileButton", function(event){
 			{
 
 			}
+		},
+		beforeSend: function(){
+			$(".regularContent").hide();
+			$("#profileContentLoader .spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(".profileContent").fadeIn();
+			$("#profileContentLoader .spinner_large").addClass("hide");
 		}
 	});
 
@@ -51,8 +57,6 @@ $(document.body).on('click', "#EditProfileButton", function(event){
 
 	$("#ActionStatementDiv").hide();
 	$("#ActionStatementFormDiv").show();
-
-	$(".profileContent").show();
 });
 
 $(document.body).on('click', "#CancelProfileButton", function(event){
@@ -60,7 +64,7 @@ $(document.body).on('click', "#CancelProfileButton", function(event){
 	event.stopPropagation();
 
 	$(".profileContent").hide();
-	$(".regularContent").show();
+	$(".regularContent").fadeIn();
 
 	$("#AboutFormDiv").hide();
 	$("#AboutDiv").show();
@@ -342,6 +346,12 @@ $(document.body).on('click', "#AboutSubmitButton", function(event){
 			{
 
 			}
+		},
+		beforeSend: function(){
+			$("#AboutSpinerDiv .spinner_small").removeClass("hide");
+		},
+		complete: function(){
+			$("#AboutSpinerDiv .spinner_small").addClass("hide");
 		}
 	});	
 });
@@ -366,6 +376,12 @@ $(document.body).on('click', "#UserActionSubmitButton", function(event){
 			{
 
 			}
+		},
+		beforeSend: function(){
+			$("#ActionStatementSpinerDiv .spinner_small").removeClass("hide");
+		},
+		complete: function(){
+			$("#ActionStatementSpinerDiv .spinner_small").addClass("hide");
 		}
 	});	
 	
@@ -388,6 +404,12 @@ $(document.body).on('click', "#ActionTakenSubmitButton", function(event){
 			{
 
 			}
+		},
+		beforeSend: function(){
+			$("#ActionTakenSpinerDiv .spinner_small").removeClass("hide");
+		},
+		complete: function(){
+			$("#ActionTakenSpinerDiv .spinner_small").addClass("hide");
 		}
 	});	
 });
@@ -409,7 +431,13 @@ $(document.body).on('click', "#ProfileSubmitButton", function(event){
 			{
 
 			}
-		}
+		},
+		beforeSend: function(){
+			$("#ProfileSpinerDiv .spinner_small").removeClass("hide");
+		},
+		complete: function(){
+			$("#ProfileSpinerDiv .spinner_small").addClass("hide");
+		}		
 	});	
 });
 
@@ -430,6 +458,12 @@ $(document.body).on('click', "#PasswordSubmitButton", function(event){
 			{
 
 			}
+		},
+		beforeSend: function(){
+			$("#PasswordSpinerDiv .spinner_small").removeClass("hide");
+		},
+		complete: function(){
+			$("#PasswordSpinerDiv .spinner_small").addClass("hide");
 		}
 	});
 });
@@ -451,6 +485,12 @@ $(document.body).on('click', "#SecurityQuestionSubmitButton", function(event){
 			{
 
 			}
+		},
+		beforeSend: function(){
+			$("#SecurityQuestionSpinerDiv .spinner_small").removeClass("hide");
+		},
+		complete: function(){
+			$("#SecurityQuestionSpinerDiv .spinner_small").addClass("hide");
 		}
 	});
 });

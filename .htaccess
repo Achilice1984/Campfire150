@@ -9,11 +9,11 @@ RewriteRule . index.php [L]
 Options -Indexes
 
 # Error Pages
-ErrorDocument 401 /CampFire150/401.php
-ErrorDocument 403 /CampFire150/403.php
-ErrorDocument 404 /CampFire150/404.php
+ErrorDocument 401 /401.php
+ErrorDocument 403 /403.php
+ErrorDocument 404 /404.php
 
-ErrorDocument 500 /CampFire150/500.php
-ErrorDocument 502 /CampFire150/502.php
-ErrorDocument 504 /CampFire150/504.php
-ErrorDocument 508 /CampFire150/508.php
+ErrorDocument 500 /500.php
+ErrorDocument 502 /502.php
+ErrorDocument 504 /504.php
+ErrorDocument 508 /508.php

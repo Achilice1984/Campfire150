@@ -158,7 +158,10 @@
 			             	<textarea maxlength="150" name="About" id="About" class="form-control" rows="3" placeholder="<?php echo gettext("Tell us a little bit about yourself!"); ?>"><?php echo $accountHomeViewModel->userDetails->About; ?></textarea>
 		             	</div>
 
-			             <button id="AboutSubmitButton" type="submit" class="btn btn-default"><?php echo gettext("Update About"); ?></button>
+			             <button style="float: left;" id="AboutSubmitButton" type="submit" class="btn btn-default"><?php echo gettext("Update About"); ?></button>
+						<div style="float: left; margin-left:10px" id="AboutSpinerDiv">
+		             		<?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
+	             		</div>
 			         </form>	
 				</div>
 			</div>
@@ -183,7 +186,10 @@
 		             	<textarea maxlength="100" name="UserActionStatement" id="UserActionStatement" class="form-control" rows="3" placeholder="<?php echo gettext("How are you making a difference?!"); ?>"><?php echo isset($accountHomeViewModel->userDetails->UserActionStatement) ? $accountHomeViewModel->userDetails->UserActionStatement : ""; ?></textarea>
 	             	</div>
 
-		             <button id="UserActionSubmitButton" type="submit" class="btn btn-default"><?php echo gettext("Update Statement"); ?></button>
+		             <button style="float: left;" id="UserActionSubmitButton" type="submit" class="btn btn-default"><?php echo gettext("Update Statement"); ?></button>
+		             <div style="float: left; margin-left:10px" id="ActionStatementSpinerDiv">
+	             		<?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
+             		</div>
 		         </form>	
 			</div>	
     	</div>
@@ -395,7 +401,10 @@
 									             	<textarea maxlength="250" name="Content" id="Content" class="form-control" rows="3" placeholder="<?php echo gettext("What did you do to take action?!"); ?>"></textarea>
 								             	</div>
 
-									             <button id="ActionTakenSubmitButton" type="submit" class="btn btn-default"><?php echo gettext("Add Action"); ?></button>
+									             <button style="float: left;" id="ActionTakenSubmitButton" type="submit" class="btn btn-default"><?php echo gettext("Add Action"); ?></button>
+									             <div style="float: left; margin-left:10px" id="ActionTakenSpinerDiv">
+								             		<?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
+							             		</div>
 									         </form>
 
 										<?php
@@ -408,9 +417,13 @@
 				</div> 		
 			</div>
 
-			<div id="profileContentContainer" class="profileContent" style="display:none;"> 
-				 
+			<div id="profileContentLoader" style="margin-top: 30px;">
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>						
+			</div>		
+
+			<div id="profileContentContainer" class="profileContent" style="display:none;"> 				 
 			</div>
+			
 
     	</div>
     </div>
