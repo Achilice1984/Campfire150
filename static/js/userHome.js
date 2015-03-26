@@ -503,7 +503,7 @@ $(document.body).on('click', "#SecurityQuestionSubmitButton", function(event){
 *
 ******************************/
 
-$(document.body).on('click', "#NewFeedContentMoreButton", function(){
+$(document.body).on('click', "#NewFeedContentMoreButton", function(event){
 
 	var pageInputName  = "#NewFeedContentPage";
 	var urlInputName   = "#NewFeedContentUrl";
@@ -528,11 +528,17 @@ $(document.body).on('click', "#NewFeedContentMoreButton", function(){
 
 				$(moreButtonName).hide();
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_large").addClass("hide");
 		}
 	});
 });
 
-$(document.body).on('click', "#Stories_ContentMoreButton", function(){
+$(document.body).on('click', "#Stories_ContentMoreButton", function(event){
 
 	var pageInputName  = "#Stories_ContentPage";
 	var urlInputName   = "#Stories_ContentUrl";
@@ -558,11 +564,17 @@ $(document.body).on('click', "#Stories_ContentMoreButton", function(){
 
 				$(moreButtonName).hide();
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_large").addClass("hide");
 		}
 	});
 });
 
-$(document.body).on('click', "#StoryRecommendationContentMoreButton", function(){
+$(document.body).on('click', "#StoryRecommendationContentMoreButton", function(event){
 
 	var pageInputName  = "#StoryRecommendationContentPage";
 	var urlInputName   = "#StoryRecommendationContentUrl";
@@ -588,11 +600,17 @@ $(document.body).on('click', "#StoryRecommendationContentMoreButton", function()
 
 				$(moreButtonName).hide();
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_large").addClass("hide");
 		}
 	});
 });
 
-$(document.body).on('click', "#UserFollowingContentMoreButton", function(){
+$(document.body).on('click', "#UserFollowingContentMoreButton", function(event){
 
 	var pageInputName  = "#UserFollowingContentPage";
 	var urlInputName   = "#UserFollowingContentUrl";
@@ -618,11 +636,17 @@ $(document.body).on('click', "#UserFollowingContentMoreButton", function(){
 
 				$(moreButtonName).hide();
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_large").addClass("hide");
 		}
 	});
 });
 
-$(document.body).on('click', "#UserFollowersContentMoreButton", function(){
+$(document.body).on('click', "#UserFollowersContentMoreButton", function(event){
 
 	var pageInputName  = "#UserFollowersContentPage";
 	var urlInputName   = "#UserFollowersContentUrl";
@@ -648,6 +672,12 @@ $(document.body).on('click', "#UserFollowersContentMoreButton", function(){
 
 				$(moreButtonName).hide();
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_large").addClass("hide");
 		}
 	});
 });
@@ -661,7 +691,7 @@ $(document.body).on('click', "#UserFollowersContentMoreButton", function(){
 *
 ******************************/
 
-$(document.body).on('click', "#CurrentPublishedContentMoreButton", function(){
+$(document.body).on('click', "#CurrentPublishedContentMoreButton", function(event){
 
 	var pageInputName  = "#CurrentPublishedContentPage";
 	var urlInputName   = "#CurrentPublishedContentUrl";
@@ -686,11 +716,17 @@ $(document.body).on('click', "#CurrentPublishedContentMoreButton", function(){
 
 				$(moreButtonName).hide();
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_large").addClass("hide");
 		}
 	});
 });
 
-$(document.body).on('click', "#CurrentDraftsContentMoreButton", function(){
+$(document.body).on('click', "#CurrentDraftsContentMoreButton", function(event){
 
 	var pageInputName  = "#CurrentDraftsContentPage";
 	var urlInputName   = "#CurrentDraftsContentUrl";
@@ -715,11 +751,17 @@ $(document.body).on('click', "#CurrentDraftsContentMoreButton", function(){
 
 				$(moreButtonName).hide();
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_large").addClass("hide");
 		}
 	});
 });
 
-$(document.body).on('click', "#CurrentPendingContentMoreButton", function(){
+$(document.body).on('click', "#CurrentPendingContentMoreButton", function(event){
 
 	var pageInputName  = "#CurrentPendingContentPage";
 	var urlInputName   = "#CurrentPendingContentUrl";
@@ -744,11 +786,17 @@ $(document.body).on('click', "#CurrentPendingContentMoreButton", function(){
 
 				$(moreButtonName).hide();
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_large").addClass("hide");
 		}
 	});
 });
 
-$(document.body).on('click', "#CurrentRejectedContentMoreButton", function(){
+$(document.body).on('click', "#CurrentRejectedContentMoreButton", function(event){
 
 	var pageInputName  = "#CurrentRejectedContentPage";
 	var urlInputName   = "#CurrentRejectedContentUrl";
@@ -773,12 +821,18 @@ $(document.body).on('click', "#CurrentRejectedContentMoreButton", function(){
 
 				$(moreButtonName).hide();
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_large").addClass("hide");
 		}
 	});
 });
 
 
-$(document.body).on('click', "#CurrentCommentsContentMoreButton", function(){
+$(document.body).on('click', "#CurrentCommentsContentMoreButton", function(event){
 
 	var pageInputName  = "#CurrentCommentsContentPage";
 	var urlInputName   = "#CurrentCommentsContentUrl";
@@ -803,6 +857,12 @@ $(document.body).on('click', "#CurrentCommentsContentMoreButton", function(){
 
 				$(moreButtonName).hide();
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_large").addClass("hide");
 		}
 	});
 });

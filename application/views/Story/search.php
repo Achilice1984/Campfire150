@@ -29,7 +29,9 @@
 			<input type="hidden" name="LatestStoryUrl" id="LatestStoryUrl" value="<?php echo BASE_URL; ?>story/lateststories">
 
 			<div id="LatestStoryMoreButton">
-				<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+
+				<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
 			</div>
 		</div>
 
@@ -60,7 +62,9 @@
 			</div>
 
 			<div id="StorySearchMoreButton" style="<?php echo count($searchResults) <= 0 ? "display:none;" : "" ?>">
-				<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+
+				<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
 			</div>
 	    </div>  <!-- <div role="tabpanel" class="tab-pane active" id="Story_Search"> -->
 
@@ -85,7 +89,9 @@
 			<input type="hidden" name="RecommendedStoryUrl" id="RecommendedStoryUrl" value="<?php echo BASE_URL; ?>story/recommendedstories">
 
 			<div id="RecommendedStoryMoreButton">
-				<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+
+				<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
 			</div>
 	    </div>   <!-- <div role="tabpanel" class="tab-pane active" id="Story_Recommended"> --> 
 	</div>  

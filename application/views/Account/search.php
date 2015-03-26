@@ -30,7 +30,9 @@
 			<input type="hidden" name="UsersLatestUrl" id="UsersLatestUrl" value="<?php echo BASE_URL; ?>account/latestUserList">
 
 			<div class="text-center" id="UsersLatestMoreButton">
-				<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Users"); ?></button>
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+
+				<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Users"); ?></button>
 			</div>
 	    </div> 
 
@@ -54,7 +56,9 @@
 			<input type="hidden" name="UserMostFollowersUrl" id="UserMostFollowersUrl" value="<?php echo BASE_URL; ?>account/mostFollowersUserList">
 
 			<div class="text-center" id="UserMostFollowersMoreButton">
-				<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Users"); ?></button>
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+
+				<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Users"); ?></button>
 			</div>
 	    </div>   <!-- <div role="tabpanel" class="tab-pane active" id="Story_Recommended"> -->
 
@@ -84,7 +88,9 @@
 			</div>
 
 			<div class="text-center" id="UserSearchMoreButton" style="<?php echo count($searchResults) <= 0 ? "display:none;" : "" ?>">
-				<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Users"); ?></button>
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+				
+				<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Users"); ?></button>
 			</div>
 	    </div>  <!-- <div role="tabpanel" class="tab-pane active" id="Story_Search"> -->
 	</div>  

@@ -31,6 +31,8 @@
 			<input type="hidden" name="CurrentPublishedContentUrl" id="CurrentPublishedContentUrl" value="<?php echo BASE_URL; ?>account/publishedList">
 
 			<div class="row text-center" id="CurrentPublishedContentMoreButton" style="margin-bottom: 100px;">
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
 				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 			</div>		
 		</div>
@@ -57,6 +59,8 @@
 			<input type="hidden" name="CurrentDraftsContentUrl" id="CurrentDraftsContentUrl" value="<?php echo BASE_URL; ?>account/draftsList">
 
 			<div class="row text-center" id="CurrentDraftsContentMoreButton" style="margin-bottom: 100px;">
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
 				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 			</div>
 		</div>
@@ -83,6 +87,8 @@
 			<input type="hidden" name="CurrentPendingContentUrl" id="CurrentPendingContentUrl" value="<?php echo BASE_URL; ?>account/pendingList">
 
 			<div class="row text-center" id="CurrentPendingContentMoreButton" style="margin-bottom: 100px;">
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
 				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 			</div>
 		</div>
@@ -109,6 +115,8 @@
 			<input type="hidden" name="CurrentRejectedContentUrl" id="CurrentRejectedContentUrl" value="<?php echo BASE_URL; ?>account/rejectedList">
 
 			<div class="row text-center" id="CurrentRejectedContentMoreButton" style="margin-bottom: 100px;">
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
 				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 			</div>
 		</div>  
@@ -135,6 +143,8 @@
 			<input type="hidden" name="CurrentCommentsContentUrl" id="CurrentCommentsContentUrl" value="<?php echo BASE_URL; ?>account/commentsPendingApprovalList">
 
 			<div class="row text-center" id="CurrentCommentsContentMoreButton" style="margin-bottom: 100px;">
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+				
 				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Comments!"); ?></button>
 			</div>
 		</div>  		
