@@ -3,7 +3,7 @@
 	// debugit($storyViewModel);
 	// debugit($userViewModel);
 	// debugit($aprovalViewModel);
-debugit($storyQuestionViewModel);
+//debugit($storyQuestionViewModel);
 ?>
 <div class="container" style="margin-top:100px;">
 

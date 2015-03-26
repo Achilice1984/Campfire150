@@ -128,7 +128,10 @@
 
                             <div class="messageDiv"></div>  
                                                        
-                            <button id="ProfileSubmitButton" style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Update Profile"); ?></button>
+                            <button style="float:left;" id="ProfileSubmitButton" style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Update Profile"); ?></button>
+                            <div style="float: left; margin-left:10px" id="ProfileSpinerDiv">
+                                <?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
+                            </div>
                             <br />
                         </form>
                     </div>
@@ -159,7 +162,10 @@
                                 <input type="password" class="form-control" id="RePassword" name="RePassword" placeholder="<?php echo gettext("Re-Type Password"); ?>">
                             </div>
 
-                            <button id="PasswordSubmitButton" style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Change Password"); ?></button>
+                            <button style="float:left;" id="PasswordSubmitButton" style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Change Password"); ?></button>
+                            <div style="float: left; margin-left:10px" id="PasswordSpinerDiv">
+                                <?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
+                            </div>
                             <br />
                         </form>                       
 
@@ -191,7 +197,10 @@
                                 <input type="text" class="form-control" id="SecurityAnswer" name="SecurityAnswer" placeholder="<?php echo gettext("Enter Your Answer"); ?>" value="">
                             </div>
 
-                            <button id="SecurityQuestionSubmitButton" style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Change Answer"); ?></button>
+                            <button style="float:left;" id="SecurityQuestionSubmitButton" style="margin-top:10px;" type="submit" class="btn btn-default"><?php echo gettext("Change Answer"); ?></button>
+                            <div style="float: left; margin-left:10px" id="SecurityQuestionSpinerDiv">
+                                <?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
+                            </div>
                             <br />
                         </form>
                     </div>

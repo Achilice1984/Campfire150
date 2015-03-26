@@ -18,7 +18,7 @@ class ActiveViewModel extends ViewModel
 					'Properties' => array()
 				)
 		);		
-		$errors["UserId"] = array(
+		$errors["Id"] = array(
 			'required' =>
 				array(
 					'Message' => gettext('The UserId field is required!'),

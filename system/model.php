@@ -14,7 +14,6 @@ class Model {
 	private static $connection;
 
 	const PAGE = 0;
-	const HOWMANY = 10;
 	
 	public function __construct()
 	{
@@ -28,7 +27,7 @@ class Model {
 		    	self::$connection = new PDO($config['db_dsn'], $config['db_username'], $config['db_password'],
 		    								array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8", PDO::MYSQL_ATTR_INIT_COMMAND => "SET CHARACTER SET utf8"));
 
-		    	if($config["debugMode"] == true)
+		    	if(IS_DEBUG == true)
 				{
 		    		self::$connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	    		}
@@ -38,18 +37,25 @@ class Model {
 		} 
 		catch (PDOException $e) 
 		{
-		    echo 'Connection failed: ' . $e->getMessage();
+			if(IS_DEBUG)
+			{
+		    	echo 'Connection failed: ' . $e->getMessage();
+	    	}
 		}
 	}
 
-	private function bindParams($pdo, $params)
+	private function sanitizeIt($params)
 	{
+		$sanitizer = new HTML_Sanitizer;
+
 		if(isset($params))
 		{
 			foreach ($params as $key => $value) {
-			 	$pdo->bindParam($key, $value, !is_numeric($value) ? PDO::PARAM_STR : PDO::PARAM_INT);
+			 	$params[$key] = $sanitizer->sanitize($value);
 			 }
 		 }
+
+		 return $params;
 	}
 
 	public function quote($string)
@@ -78,11 +84,11 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
+			$params = $this->sanitizeIt($params);
+
 			require_once(APP_DIR .'viewmodels/' . $className .'.php');			 
 
 			 $pdo = self::$connection->prepare($qry);
-
-			 $this->bindParams($pdo, $params);
 
 			 //$pdo->execute();
 			 $pdo->execute($params);
@@ -99,7 +105,14 @@ class Model {
 		}
 		catch(PDOException $e) 
 		{
-			return $e->getMessage();
+			if(IS_DEBUG)
+			{
+				return $e->getMessage();
+			}
+			else
+			{
+				throw $e;
+			}
 		}
 	}
 
@@ -110,8 +123,9 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
+			$params = $this->sanitizeIt($params);
+
 			$pdo = self::$connection->prepare($qry);
-			$this->bindParams($pdo, $params);
 
 		 	//$pdo->execute();
 		 	$pdo->execute($params);
@@ -121,7 +135,14 @@ class Model {
 		}
 		catch(PDOException $e) 
 		{
-			return $e->getMessage();
+			if(IS_DEBUG)
+			{
+				return $e->getMessage();
+			}
+			else
+			{
+				throw $e;
+			}
 		}
 	}
 
@@ -134,8 +155,9 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
+			$params = $this->sanitizeIt($params);
+
 			$pdo = self::$connection->prepare($qry);
-			$this->bindParams($pdo, $params);
 
 		 	//$pdo->execute();
 		 	$pdo->execute($params);
@@ -144,7 +166,14 @@ class Model {
 		}
 		catch(PDOException $e) 
 		{
-			return $e->getMessage();
+			if(IS_DEBUG)
+			{
+				return $e->getMessage();
+			}
+			else
+			{
+				throw $e;
+			}
 		}
 	}
 
@@ -154,8 +183,9 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
+			$params = $this->sanitizeIt($params);
+
 			$pdo = self::$connection->prepare($qry);
-			$this->bindParams($pdo, $params);
 
 		 	//$pdo->execute();
 		 	$pdo->execute($params);
@@ -164,7 +194,14 @@ class Model {
 		}
 		catch(PDOException $e) 
 		{
-			return $e->getMessage();
+			if(IS_DEBUG)
+			{
+				return $e->getMessage();
+			}
+			else
+			{
+				throw $e;
+			}
 		}
 	}
 
@@ -178,8 +215,9 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
+			$params = $this->sanitizeIt($params);
+
 			$pdo = self::$connection->prepare($qry);
-			$this->bindParams($pdo, $params);
 
 		 	//$pdo->execute();
 		 	$pdo->execute($params);
@@ -196,7 +234,14 @@ class Model {
 		}
 		catch(PDOException $e) 
 		{
-			return $e->getMessage();
+			if(IS_DEBUG)
+			{
+				return $e->getMessage();
+			}
+			else
+			{
+				throw $e;
+			}
 		}
 	}
 
@@ -206,8 +251,9 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
+			$params = $this->sanitizeIt($params);
+
 			$pdo = self::$connection->prepare($qry);
-			$this->bindParams($pdo, $params);
 
 		 	//$pdo->execute();
 		 	$pdo->execute($params);
@@ -224,7 +270,14 @@ class Model {
 		}
 		catch(PDOException $e) 
 		{
-			return $e->getMessage();
+			if(IS_DEBUG)
+			{
+				return $e->getMessage();
+			}
+			else
+			{
+				throw $e;
+			}
 		}
 	}
 
@@ -234,13 +287,22 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
+			$params = $this->sanitizeIt($params);
+
 			$pdo = self::$connection->prepare($qry);		
 
 			return $pdo->execute($params);
 		}
 		catch(PDOException $e) 
 		{
-			return $e->getMessage();
+			if(IS_DEBUG)
+			{
+				return $e->getMessage();
+			}
+			else
+			{
+				throw $e;
+			}
 		}
 	}
 

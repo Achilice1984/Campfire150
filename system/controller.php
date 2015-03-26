@@ -159,7 +159,7 @@ class Controller {
 	
 	//By placing a location (example, home/index) you can redirect to another url.
 	public function redirect($loc, $param = array())
-	{		
+	{				
 		$url = BASE_URL . $loc;
 
 		if(count($param) > 0)
@@ -169,6 +169,7 @@ class Controller {
 			}
 		}
 
+		ob_start();
 		header('Location: ' . $url);
 		exit;
 	}

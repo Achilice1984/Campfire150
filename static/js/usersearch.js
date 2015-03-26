@@ -1,5 +1,5 @@
 
-$(document.body).on('click', "#UserSearchMoreButton", function(){
+$(document.body).on('click', "#UserSearchMoreButton", function(event){
 
 	$("#UserSearchPage").val(parseInt($("#UserSearchPage").val()) + 1);
 
@@ -18,11 +18,17 @@ $(document.body).on('click', "#UserSearchMoreButton", function(){
 
 				$("#UserSearchMoreButton").hide();
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_large").addClass("hide");
 		}
 	});
 });
 
-$(document.body).on('click', "#UserMostFollowersMoreButton", function(){
+$(document.body).on('click', "#UserMostFollowersMoreButton", function(event){
 
 	$("#UserMostFollowersPage").val(parseInt($("#UserMostFollowersPage").val()) + 1);
 
@@ -41,11 +47,17 @@ $(document.body).on('click', "#UserMostFollowersMoreButton", function(){
 
 				$("#UserMostFollowersMoreButton").hide();
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_large").addClass("hide");
 		}
 	});
 });
 
-$(document.body).on('click', "#UsersLatestMoreButton", function(){
+$(document.body).on('click', "#UsersLatestMoreButton", function(event){
 
 	$("#UsersLatestPage").val(parseInt($("#UsersLatestPage").val()) + 1);
 
@@ -64,6 +76,12 @@ $(document.body).on('click', "#UsersLatestMoreButton", function(){
 
 				$("#UsersLatestMoreButton").hide();
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_large").addClass("hide");
 		}
 	});
 });

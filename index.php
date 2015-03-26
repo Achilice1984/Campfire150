@@ -15,8 +15,10 @@ session_start();
 require_once('./application/plugins/gettext/gettext.inc');
 require_once('./application/plugins/akismet/akismet.class.php');
 require_once('./application/plugins/mailchimp/Mailchimp.php');
+require_once('./application/plugins/html_sanitizer/html_sanitizer.php');
 require_once('./application/plugins/alphaid/alphaID.php');
 require_once('./application/plugins/mobile-detect/Mobile_Detect.php');
+
 //Need this if php version less than 5.5
 require_once('./application/plugins/password/password.php');
 
@@ -32,6 +34,7 @@ define('APP_DIR', ROOT_DIR .'application/');
 define('IMG_LARGE', 'large');
 define('IMG_MEDIUM', 'medium');
 define('IMG_SMALL', 'small');
+define('IMG_XSMALL', 'xsmall');
 
 define('IMG_PROFILE', 1);
 define('IMG_BACKGROUND', 2);
@@ -53,10 +56,28 @@ require(ROOT_DIR .'system/pip.php');
 require(ROOT_DIR .'system/validator.php');
 require(ROOT_DIR .'system/authentication.php');
 require(ROOT_DIR .'system/sessionmanager.php');
-//require(ROOT_DIR .'system/Html.php');
+
+$detect = new Mobile_Detect;
 
 // Define base URL
 global $config;
+
+/*****************
+*
+*	Results returns
+*
+******************/
+define('IS_MOBILE', ($detect->isMobile() && !$detect->isTablet()));
+
+define('IS_DEBUG', $config['debugMode']);
+
+define('MAX_HOME_STORIES', (IS_MOBILE ? $config["MAX_HOME_STORIES_MOBILE"] : $config["MAX_HOME_STORIES"]));
+define('MAX_STORIES_LISTS', (IS_MOBILE ? $config["MAX_STORIES_LISTS_MOBILE"] : $config["MAX_STORIES_LISTS"]));
+define('MAX_RELATED_STORIES', (IS_MOBILE ? $config["MAX_RELATED_STORIES_MOBILE"] : $config["MAX_RELATED_STORIES"]));
+define('MAX_USERS_LISTS', (IS_MOBILE ? $config["MAX_USERS"] : $config["MAX_USERS_MOBILE"]));
+define('MAX_COMMENTS_LISTS', (IS_MOBILE ? $config["MAX_COMMENTS"] : $config["MAX_COMMENTS_MOBILE"]));
+define('MAX_ADMIN_LISTS', (IS_MOBILE ? $config["MAX_ADMIN_LISTS"] : $config["MAX_ADMIN_LISTS_MOBILE"]));
+define('MAX_HOME_CATEGORIES', $config['MAX_HOME_CATEGORIES']);
 
 $request_url = sprintf(
 					    "%s://%s:8084/",
@@ -75,10 +96,8 @@ else
 	define('BASE_URL', $config['base_url'][0]);
 }
 
-//define('FULL_URL', (BASE_URL . (isset($_SERVER['REQUEST_URI'])) ? parse_url(strtolower($_SERVER['REQUEST_URI']))['path'] : ''));
-
 define('FULL_URL', 'http'.(empty($_SERVER['HTTPS'])?'':'s').'://'.$_SERVER['SERVER_NAME'] . ($config["debugMode"] == true ? ":8084" : "") . $_SERVER['REQUEST_URI']);
-
+//define('FULL_URL', 'http'.(empty($_SERVER['HTTPS'])?'':'s').'://'.$_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
 // Language Setup
 $sessionManager = new SessionManager();
 $language = $sessionManager->setLanguagePrefernece();
@@ -108,7 +127,10 @@ else
 	error_reporting(0);
 }
 
+require_once(APP_DIR . 'helpers/image_get_path.php');
+
 set_error_handler("exception_error_handler");
+set_exception_handler("exception_handler");
 
 pip();
 
@@ -127,15 +149,28 @@ pip();
 	}	
 
 	function exception_error_handler($errno, $errstr, $errfile, $errline ) {
-
-		global $config;
+		
 
 		$_SESSION["errno"] = $errno;
 		$_SESSION["errstr"] = $errstr;
 		$_SESSION["errfile"] = $errfile;
 		$_SESSION["errline"] = $errline;
-
+		ob_start();
 		header('Location: '. BASE_URL . "error/generic");
 		exit;
+	}
+
+	function exception_handler($ex) {
+		
+
+		$_SESSION["exception"] = $ex;
+		ob_start();
+		header('Location: '. BASE_URL . "error/generic");
+		exit;
+	}
+
+	function getSubText($text)
+	{
+		return strip_tags(substr(substr($text, 0, 500), 0, 255) . " ...");
 	}	
 ?>
