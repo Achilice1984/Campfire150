@@ -1572,6 +1572,27 @@ class AccountModel extends Model {
 		}
 	}
 
+	public function removeAction($userID, $actionID)
+	{
+		try
+		{
+			$statement = "UPDATE actions_taken SET Active = FALSE
+							WHERE ActionsTakenId = :ActionsTakenId
+							AND user_UserId = :user_UserId";
+
+			$parameters = array( 
+				":ActionsTakenId" => $actionID,
+				":user_UserId" => $userID
+			);
+
+			return $this->fetch($statement, $parameters);
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
+	}
+
 	public function getActionTakenList($userId)
 	{
 		try
@@ -1596,6 +1617,8 @@ class AccountModel extends Model {
 			throw $ex;
 		}
 	}
+
+
 }
 
 ?>

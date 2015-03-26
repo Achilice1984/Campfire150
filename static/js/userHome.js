@@ -935,6 +935,37 @@ $(document.body).on('change', ".storyPrivacyDropDown", function(event){
 });
 
 
+$(document.body).on('click', ".removeAction", function(event){
+	event.preventDefault();
+	event.stopPropagation();
+
+	var actionID  = $(this).attr("data-action-id");
+	var action = $(this).attr("data-action");
+	var thisAction = $(this);
+
+	$.ajax({
+		type: "POST",
+		url: action,
+		data: { ActionID: actionID },
+		success: function(data){
+			if(data)
+			{
+				thisAction.closest(".actionTakenTd").remove();
+			}
+			else
+			{
+			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_small").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_small").addClass("hide");
+		}
+	});
+});
+
+
 // $(document.body).on('click', "#MoreButton", function(){
 
 // 	var pageInputName  = "#Page";
