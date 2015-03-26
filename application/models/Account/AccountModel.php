@@ -163,7 +163,7 @@ class AccountModel extends Model {
 						</head>
 						<body style="padding:0; margin:0;">
 							<div style="background-color: #f8f8f8; padding: 40px;">
-								<h1 style="text-align: center; color: #333; font-weight: bolder; font-size: 4em;">Campfire 150! <small style="font-size: .4em; color:#808080;"><br />Gathering Canadians through story.</small></h1>
+								<h1 style="text-align: center; color: #333; font-weight: bolder; font-size: 4em;">Campfire 150! <small style="font-size: .4em; color:#808080;"><br />Share your story. Shape our future.</small></h1>
 							</div>
 							<div style="padding: 10%; padding-right: 0px; color: #333;">
 								<h1>Your almost done!</h1>
