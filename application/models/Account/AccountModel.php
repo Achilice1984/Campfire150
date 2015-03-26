@@ -8,6 +8,25 @@ class AccountModel extends Model {
 	*
 	******************************************************************************************************************/
 
+	public function getAllUserDetails($userID)
+	{
+		$statement = "SELECT * FROM user WHERE UserId = :UserId";
+
+		//Get user that matches email address
+		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/UserViewModel");
+
+		if(isset($user[0]))
+		{
+			$user = $user[0];
+		}
+		else
+		{
+			$user = null;
+		}
+
+		return $user;
+	}
+
 	public function login($loginViewModel)
 	{	
 		try
@@ -170,10 +189,10 @@ class AccountModel extends Model {
 
 								<p>Thank you so much for registering with Campfire 150!</p>
 								<p>Your profile is almost set up, just click the link below to activate your account.</p>
-								<a style="background-color: #eea236; padding: 10px; color:white; text-decoration: none; width:250px;" href="' . BASE_URL . 'account/verifyemail/' . $email . '/' . $hashedEmailVerification . '">Active Now!</a>
+								<a style="background-color: #eea236; padding: 10px; color:white; text-decoration: none; width:250px; min-height: 300px; padding: 50px;" href="' . BASE_URL . 'account/verifyemail/' . $email . '/' . $hashedEmailVerification . '">Active Now!</a>
 							</div>
-							<div style="background-color: #2e6da4; color:white; min-width:450px;">
-								<article style="display:block; padding: 100px; padding-bottom: 200px;">
+							<div style="background-color: #2e6da4; color:white; min-width:460px;">
+								<article style="display:block; min-height: 250px; padding-top: 30px; padding-left: 10%">
 									<h1 style="font-size: 2.4em;">Trending</h1>
 									<div style="width:50px;	height:50px; border-radius:50%;	font-size:10px; color:#fff; line-height:50px; text-align:center; background:#eea236; margin: 10px; float: left;">Canada</div>
 									<div style="width:50px;	height:50px; border-radius:50%;	font-size:10px; color:#fff; line-height:50px; text-align:center; background:#eea236; margin: 10px; float: left;">Art</div>

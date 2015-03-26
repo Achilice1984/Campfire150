@@ -517,20 +517,23 @@ class Story extends Controller {
 	{
 		try
 		{
-			foreach ($_POST["Tags"] as $tagID) {
-				
-				if(!is_numeric($tagID))
-				{
-					if($storyModel->addNewTag($tagID))
+			if(isset($_POST["Tags"]))
+			{
+				foreach ($_POST["Tags"] as $tagID) {
+					
+					if(!is_numeric($tagID))
 					{
-						$tagID = $storyModel->lastInsertId();
-					}
-				}	
+						if($storyModel->addNewTag($tagID))
+						{
+							$tagID = $storyModel->lastInsertId();
+						}
+					}	
 
-				if(is_numeric($tagID))
-				{
-					$storyModel->addTagToStory($storyID, $tagID);						
-				}		
+					if(is_numeric($tagID))
+					{
+						$storyModel->addTagToStory($storyID, $tagID);						
+					}		
+				}
 			}
 		}
 		catch(Exception $ex)

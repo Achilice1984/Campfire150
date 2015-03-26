@@ -173,7 +173,7 @@ function init_validation()
                     }
                 }
             },
-            Tags: {
+            'Tags[]': {
                 validators: {
                     notEmpty: {
                     }

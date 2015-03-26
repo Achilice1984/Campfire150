@@ -53,7 +53,14 @@
             if( $picturetypeid == 1)
             {
                 //default pic
-                $url = BASE_URL . 'static/images/default-user-image.png';
+                if($size == "xsmall")
+                {
+                    $url = BASE_URL . 'static/images/default-user-image-small.png';
+                }
+                else
+                {
+                    $url = BASE_URL . 'static/images/default-user-image.png';
+                }
 
                 $type = 'profile';
             }

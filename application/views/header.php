@@ -74,8 +74,11 @@
                                   <ul class="dropdown-menu" role="menu" aria-labelledby="loginMenu">
                                     <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/home"><?php echo gettext("Profile"); ?></a></li>
                                     <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/logout"><?php echo gettext("Logout") ?></a></li>                              
-                                    <li class="divider"></li>
-                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>admin/"><?php echo gettext("Admin Panel") ?></a></li>
+                                    
+                                    <?php if ($currentUser->IsAdmin): ?>
+                                        <li class="divider"></li>
+                                        <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>admin/"><?php echo gettext("Admin Panel") ?></a></li>
+                                    <?php endif ?>                                    
                                   </ul>
                                 </li>
                       <?php } ?>
