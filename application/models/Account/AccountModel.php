@@ -199,7 +199,7 @@ class AccountModel extends Model {
 						</body>
 					</html>'; 
 			   
-		   	$to      = 'josh.dvrs@gmail.com';
+		   	$to      = $email;
 			$subject = 'Welcome to Campfire 150';
 			$headers = 'From: admin@campfire150.com' . "\r\n" .
 			    'Reply-To: admin@campfire150.com' . "\r\n" .
