@@ -613,13 +613,7 @@ class Story extends Controller {
 				$storyViewModel = $storyViewModel[0];
 				$storyViewModel->Tags = $model->getTagsForStory($storyID);
 				$storyViewModel->QuestionAnswers = $model->getQuestionAnswersForStory($storyID);			
-				$storyViewModel->Comments = $model->getCommentsForStory($storyID);
-
-				$storyViewModel->Images = $model->getPicturesForStory($storyID);
-				$storyViewModel->Images["PictureUrl"] = image_get_path_basic($storyViewModel->UserId, 
-																		isset($storyViewModel->Images[0]) ? $storyViewModel->Images[0]->PictureId : 0, 
-																		isset($storyViewModel->Images[0]) ? $storyViewModel->Images[0]->Picturetype_PictureTypeId : IMG_STORY, 
-																		IMG_LARGE);
+				$storyViewModel->Comments = $model->getCommentsForStory($this->currentUser->UserId, $storyID);
 
 				$accountModel = $this->loadModel('Account/AccountModel');
 				$storyViewModel->UserProfile = $accountModel->getProfileByID($storyViewModel->UserId);
@@ -889,6 +883,36 @@ class Story extends Controller {
 					{
 						include(APP_DIR . "views/Story/_comments.php");
 					}
+				}
+			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
+	}
+
+	function flagCommentInappropriate($commentID, $flag)
+	{
+		try
+		{
+			//Check if users is authenticated for this request
+			//Will kick out if not authenticated
+			if($this->isAuth())
+			{			
+				$result;
+
+				//Load the AccountModel to access account functions
+				$storyModel = $this->loadModel('StoryModel');
+
+				$result = $storyModel->flagCommentAsInapropriate($commentID, $this->currentUser->UserId, $flag);
+
+				if ($this->isAjax()) {
+					return $result;			
+				}
+				else
+				{
+					$this->redirect("account/home");
 				}
 			}
 		}
