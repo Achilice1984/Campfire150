@@ -238,6 +238,8 @@
 								<input type="hidden" name="NewFeedContentUrl" id="NewFeedContentUrl" value="<?php echo BASE_URL; ?>account/newsFeed">
 
 								<div class="row text-center" id="NewFeedContentMoreButton" style="margin-bottom: 100px;">
+									<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
 									<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 								</div>	
 						    </div>
@@ -270,6 +272,8 @@
 										<input type="hidden" name="Stories_ContentUrl" id="Stories_ContentUrl" value="<?php echo BASE_URL; ?>account/userStories">
 
 										<div class="row text-center" id="Stories_ContentMoreButton" style="margin-bottom: 100px;">
+											<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
 											<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 										</div>									
 									<?php
@@ -304,6 +308,8 @@
 							<input type="hidden" name="StoryRecommendationContentUrl" id="StoryRecommendationContentUrl" value="<?php echo BASE_URL; ?>account/recommendations">
 
 							<div class="row text-center" id="StoryRecommendationContentMoreButton" style="margin-bottom: 100px;">
+								<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
 								<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 							</div>
 					    </div> 
@@ -331,6 +337,8 @@
 							<input type="hidden" name="UserFollowingContentUrl" id="UserFollowingContentUrl" value="<?php echo BASE_URL; ?>account/followinglist">
 
 							<div class="row text-center" id="UserFollowingContentMoreButton" style="margin-bottom: 100px;">
+								<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
 								<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 							</div>
 					    </div> 
@@ -359,6 +367,8 @@
 							<input type="hidden" name="UserFollowersContentUrl" id="UserFollowersContentUrl" value="<?php echo BASE_URL; ?>account/followerslist">
 
 							<div class="row text-center" id="UserFollowersContentMoreButton" style="margin-bottom: 100px;">
+								<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+								
 								<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 							</div>
 					    </div> 
