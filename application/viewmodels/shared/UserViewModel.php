@@ -50,14 +50,14 @@ class UserViewModel extends ViewModel
 
 	function __construct()
 	{
-		$validate = array();
-
 		/**********************************
 		*
 		*	Add validation to this viewmodel
 		*
 		*************************************/
-		$validate["Email"] = array(
+		
+
+		$errors["Email"] = array(
 			'email' =>
 				array(
 					'Message' => gettext('Invalid Email Address.'),
@@ -66,20 +66,6 @@ class UserViewModel extends ViewModel
 			'required' =>
 				array(
 					'Message' => gettext('The Email field is required!'),
-					'Properties' => array()
-				)
-		);
-		$errors["FirstName"] = array(
-			'required' =>
-				array(
-					'Message' => gettext('The First Name field is required!'),
-					'Properties' => array()
-				)
-		);
-		$errors["LastName"] = array(
-			'required' =>
-				array(
-					'Message' => gettext('The Last Name is required!'),
 					'Properties' => array()
 				)
 		);
@@ -102,17 +88,17 @@ class UserViewModel extends ViewModel
 					'Properties' => array()
 				)
 		);
-		$errors["PostalCode"] = array(
+		$errors["SecurityQuestionId"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Postal Code field is required!'),
+					'Message' => gettext('The Security Question Answer field is required!'),
 					'Properties' => array()
 				)
 		);
-		$errors["LanguageType_LanguageId"] = array(
+		$errors["SecurityAnswer"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Language field is required!'),
+					'Message' => gettext('The Security Question Answer field is required!'),
 					'Properties' => array()
 				)
 		);
@@ -123,7 +109,20 @@ class UserViewModel extends ViewModel
 					'Properties' => array()
 				)
 		);
-
+		$errors["LanguageType_LanguageId"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The Language field is required!'),
+					'Properties' => array()
+				)
+		);
+		$errors["Gender_GenderId"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The gender field is required!'),
+					'Properties' => array()
+				)
+		);
 		$errors["Birthday"] = array(
 			'required' =>
 				array(
@@ -136,21 +135,40 @@ class UserViewModel extends ViewModel
 					'Properties' => array()
 				)
 		);
-
-		$errors["Gender_GenderId"] = array(
+		$errors["YearsInCanada"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The gender field is required!'),
+					'Message' => gettext('The Years Living in Canada field is required!'),
 					'Properties' => array()
 				)
 		);
-		// $errors["ActionStatement"] = array(
-		// 	'required' =>
-		// 		array(
-		// 			'Message' => gettext('The user action statement field is required!'),
-		// 			'Properties' => array()
-		// 		)
-		// );
+
+		$errors["FirstName"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The First Name field is required!'),
+					'Properties' => array()
+				)
+		);
+		$errors["LastName"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The Last Name is required!'),
+					'Properties' => array()
+				)
+		);		
+		$errors["PostalCode"] = array(
+			'required' =>
+				array(
+					'Message' => gettext('The Postal Code field is required!'),
+					'Properties' => array()
+				),
+			'postalCode' =>
+				array(
+					'Message' => gettext('Must be a valid Postal Code!'),
+					'Properties' => array()
+				)
+		);
 
 		//Pass validation to the View Model
 		parent::__construct($errors);

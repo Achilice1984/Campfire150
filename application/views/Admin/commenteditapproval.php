@@ -10,7 +10,7 @@
     <div class="row">
   		<div class="col-md-3">
   			<div class="thumbnail">
-      			<img class="img-rounded" src="../../static/images/default-user-image.png" alt="">
+      			<img class="img-rounded" alt="../../static/images/default-user-image.png" alt="">
   				<h2><?php echo gettext("Owner Information"); ?></h2>
   				<ul>
   					<li><?php echo $userViewModel->FirstName ?></li>
@@ -28,7 +28,7 @@
   					<div class="thumbnail">
   						<p><?php echo $storyViewModel->Content ?></p>
 						<h3><?php echo gettext("Comment"); ?></h3>
-  						<p><?php echo $storyViewModel->Content ?></p>
+  						<p><?php echo $commentViewModel->Content ?></p>
   					</div>
   			</div>
   		</div>

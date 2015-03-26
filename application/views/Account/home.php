@@ -41,6 +41,9 @@
 	              </div>
 
 	              <div id="cropImage_header" class="btn btn-primary" style="display:none;"><?php echo gettext("Save"); ?></div>
+	              <div style="float: right; margin-left:10px" id="CropBackgroundSpinerDiv">
+	             		<?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
+	     			</div>
 	         </form>
           </div>          
       </div>
@@ -77,7 +80,10 @@
 	                    <input style="font-size: 20px; cursor: pointer; opacity: 0; filter: alpha(opacity=0);" type="file" id="ProfileImage" name="ProfileImage" class="upload" placeholder="<?php echo gettext("Choose A Photo"); ?>" value="">
 	              </div>
 
-	              <div id="cropImage_profile" class="btn btn-primary" style="display:none;"><?php echo gettext("Save"); ?></div>
+	              	<div id="cropImage_profile" class="btn btn-primary" style="display:none;"><?php echo gettext("Save"); ?></div>
+	              	<div style="float: right; margin-left:10px" id="CropProfileSpinerDiv">
+	             		<?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
+	     			</div>
 	         </form>
           </div>          
       </div>
@@ -92,7 +98,7 @@
 		<span style="top: 50%; bottom:50%; font-size: 5em;" class="glyphicon glyphicon-camera text-primary"></span>
 	</div>
 	<!-- <div style="min-height: 450px;"></div> -->
-	<img id="backgroundImage" style="" class="img-responsive" src="<?php echo isset($accountHomeViewModel->backgroundImage) ? $accountHomeViewModel->backgroundImage->PictureUrl : ""; ?>" alt="">
+	<img id="backgroundImage" style="" class="img-responsive" src="<?php echo isset($accountHomeViewModel->backgroundPictureURL) ? $accountHomeViewModel->backgroundPictureURL : ""; ?>" alt="">
 </div>
 
 <div class="container" style="padding-top: 50px; padding-bottom: 50px;">
@@ -103,7 +109,7 @@
 	    			<span style="top: 50%; bottom:50%; font-size: 2em;" class="glyphicon glyphicon-camera text-primary"></span>	  				
 				</div>
 
-				<img id="profilePicture" style="max-height: 270px;" class="img-responsive img-thumbnail" src="<?php echo isset($accountHomeViewModel->profileImage) ? $accountHomeViewModel->profileImage->PictureUrl : BASE_URL . "static/images/default-user-image.png"; ?>" alt="<?php echo gettext("Profile Picture"); ?>">
+				<img id="profilePicture" style="max-height: 270px;" class="img-responsive img-thumbnail" src="<?php echo isset($accountHomeViewModel->profilePictureURL) ? $accountHomeViewModel->profilePictureURL : BASE_URL . "static/images/default-user-image.png"; ?>" alt="<?php echo gettext("Profile Picture"); ?>">
 			</div>
 			<div class="row">
 				<h2>
@@ -112,23 +118,27 @@
 			</div>
 			<div style="margin-bottom: 10px;" class="row">
 				<?php
-					if(isset($accountHomeViewModel->userDetails->UserId) && $accountHomeViewModel->userDetails->UserId != $currentUser->UserId && $currentUser->IsAuth)
-		            {
-		                if(isset($accountHomeViewModel->userDetails->FollowingUser) && $accountHomeViewModel->userDetails->FollowingUser == TRUE)
-		                {
-		                    echo '<button style="display:block; width: 100%; margin-top: 5px;" data-userId="' . $accountHomeViewModel->userDetails->UserId . '" data-additional-text="' . gettext("Follow") . '" data-ajaxurl="' . BASE_URL . 'account/follow" class="FollowButton btn btn-primary btn-sm"><span class="glyphicon glyphicon-user"></span> ' . gettext("Following") . '</button>';
-		                }
-		                else
-		                {
-		                    echo '<button style="display:block; width: 100%; margin-top: 5px;" data-userId="' . $accountHomeViewModel->userDetails->UserId . '" data-additional-text="' . gettext("Following") . '" data-ajaxurl="' . BASE_URL . 'account/follow" class="FollowButton btn btn-default btn-sm"><span class="glyphicon glyphicon-user"></span> ' . gettext("Follow") . '</button>';
-		                }
-		            }
-		            else
-		            {
-		            	?> 
-		            		<a id="EditProfileButton" class="btn btn-default btn-sm" style="display:block; width: 100%; margin-top: 5px;" href="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><?php echo gettext("Edit Profile"); ?></a> 
-		            		<a id="CancelProfileButton" class="btn btn-primary btn-sm" style="display:none; width: 100%; margin-top: 5px;" href="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><?php echo gettext("Finish Editing"); ?></a> 
-	            		<?php
+
+					if($currentUser->IsAuth)
+					{
+						if(isset($accountHomeViewModel->userDetails->UserId) && $accountHomeViewModel->userDetails->UserId != $currentUser->UserId && $currentUser->IsAuth)
+			            {
+			                if(isset($accountHomeViewModel->userDetails->FollowingUser) && $accountHomeViewModel->userDetails->FollowingUser == TRUE)
+			                {
+			                    echo '<button style="display:block; width: 100%; margin-top: 5px;" data-userId="' . $accountHomeViewModel->userDetails->UserId . '" data-additional-text="' . gettext("Follow") . '" data-ajaxurl="' . BASE_URL . 'account/follow" class="FollowButton btn btn-primary btn-sm"><span class="glyphicon glyphicon-user"></span> ' . gettext("Following") . '</button>';
+			                }
+			                else
+			                {
+			                    echo '<button style="display:block; width: 100%; margin-top: 5px;" data-userId="' . $accountHomeViewModel->userDetails->UserId . '" data-additional-text="' . gettext("Following") . '" data-ajaxurl="' . BASE_URL . 'account/follow" class="FollowButton btn btn-default btn-sm"><span class="glyphicon glyphicon-user"></span> ' . gettext("Follow") . '</button>';
+			                }
+			            }
+			            else
+			            {
+			            	?> 
+			            		<a id="EditProfileButton" class="btn btn-default btn-sm" style="display:block; width: 100%; margin-top: 5px;" href="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><?php echo gettext("Edit Profile"); ?></a> 
+			            		<a id="CancelProfileButton" class="btn btn-primary btn-sm" style="display:none; width: 100%; margin-top: 5px;" href="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><?php echo gettext("Finish Editing"); ?></a> 
+		            		<?php
+			            }
 		            }
 				?>
     		</div> 
@@ -154,7 +164,10 @@
 			             	<textarea maxlength="150" name="About" id="About" class="form-control" rows="3" placeholder="<?php echo gettext("Tell us a little bit about yourself!"); ?>"><?php echo $accountHomeViewModel->userDetails->About; ?></textarea>
 		             	</div>
 
-			             <button id="AboutSubmitButton" type="submit" class="btn btn-default"><?php echo gettext("Update About"); ?></button>
+			             <button style="float: left;" id="AboutSubmitButton" type="submit" class="btn btn-default"><?php echo gettext("Update About"); ?></button>
+						<div style="float: left; margin-left:10px" id="AboutSpinerDiv">
+		             		<?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
+	             		</div>
 			         </form>	
 				</div>
 			</div>
@@ -179,7 +192,10 @@
 		             	<textarea maxlength="100" name="UserActionStatement" id="UserActionStatement" class="form-control" rows="3" placeholder="<?php echo gettext("How are you making a difference?!"); ?>"><?php echo isset($accountHomeViewModel->userDetails->UserActionStatement) ? $accountHomeViewModel->userDetails->UserActionStatement : ""; ?></textarea>
 	             	</div>
 
-		             <button id="UserActionSubmitButton" type="submit" class="btn btn-default"><?php echo gettext("Update Statement"); ?></button>
+		             <button style="float: left;" id="UserActionSubmitButton" type="submit" class="btn btn-default"><?php echo gettext("Update Statement"); ?></button>
+		             <div style="float: left; margin-left:10px" id="ActionStatementSpinerDiv">
+	             		<?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
+             		</div>
 		         </form>	
 			</div>	
     	</div>
@@ -207,9 +223,9 @@
 					<div class="tab-content" style="padding:20px;">
 						<?php if($isCurrentUser) { ?>
 						    <div role="tabpanel" class="tab-pane active" id="User_NewsFeed">
-						    	<div id="NewFeedContent">
+						    	<div id="NewFeedContent" class="row">
 							    	<?php 
-							    		if(isset($accountHomeViewModel->newsFeed))
+							    		if(isset($accountHomeViewModel->newsFeed) && count($accountHomeViewModel->newsFeed) > 0)
 							    		{
 											foreach ($accountHomeViewModel->newsFeed as $feed)
 											{
@@ -228,6 +244,8 @@
 								<input type="hidden" name="NewFeedContentUrl" id="NewFeedContentUrl" value="<?php echo BASE_URL; ?>account/newsFeed">
 
 								<div class="row text-center" id="NewFeedContentMoreButton" style="margin-bottom: 100px;">
+									<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
 									<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 								</div>	
 						    </div>
@@ -238,11 +256,14 @@
 							<?php 
 								if($currentUser->UserId != $accountHomeViewModel->userDetails->UserId)	
 								{
-									echo "<div id='Stories_Content'>";
+									echo "<div id='Stories_Content' class='row'>";
 
-									foreach ($accountHomeViewModel->usersStoryList as $story)
+									if(isset($accountHomeViewModel->usersStoryList) && count($accountHomeViewModel->usersStoryList) > 0)
 									{
-										include(APP_DIR . "views/Account/_myStories.php");
+										foreach ($accountHomeViewModel->usersStoryList as $story)
+										{
+											include(APP_DIR . "views/Account/_myStories.php");
+										}
 									}
 
 									echo "</div>";
@@ -257,6 +278,8 @@
 										<input type="hidden" name="Stories_ContentUrl" id="Stories_ContentUrl" value="<?php echo BASE_URL; ?>account/userStories">
 
 										<div class="row text-center" id="Stories_ContentMoreButton" style="margin-bottom: 100px;">
+											<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
 											<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 										</div>									
 									<?php
@@ -271,8 +294,9 @@
 
 					    <div role="tabpanel" class="tab-pane" id="User_MyRecommendations">
 
-					    	<div id="StoryRecommendationContent">
+					    	<div id="StoryRecommendationContent" class="row">
 								<?php 
+									if(isset($accountHomeViewModel->recommendedStoryList) && count($accountHomeViewModel->recommendedStoryList) > 0)
 									foreach ($accountHomeViewModel->recommendedStoryList as $story)
 									{
 										//debugit($story);
@@ -290,12 +314,14 @@
 							<input type="hidden" name="StoryRecommendationContentUrl" id="StoryRecommendationContentUrl" value="<?php echo BASE_URL; ?>account/recommendations">
 
 							<div class="row text-center" id="StoryRecommendationContentMoreButton" style="margin-bottom: 100px;">
+								<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
 								<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 							</div>
 					    </div> 
 					    <div role="tabpanel" class="tab-pane" id="User_Following">
 
-					    	<div id="UserFollowingContent">
+					    	<div id="UserFollowingContent" class="row">
 								<?php 
 									if(isset($accountHomeViewModel->followingList) && count($accountHomeViewModel->followingList) > 0)
 									{
@@ -317,14 +343,16 @@
 							<input type="hidden" name="UserFollowingContentUrl" id="UserFollowingContentUrl" value="<?php echo BASE_URL; ?>account/followinglist">
 
 							<div class="row text-center" id="UserFollowingContentMoreButton" style="margin-bottom: 100px;">
+								<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
 								<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 							</div>
 					    </div> 
 					    <div role="tabpanel" class="tab-pane" id="User_Followers">
 
-					    	<div id="UserFollowersContent">
+					    	<div id="UserFollowersContent" class="row">
 								<?php 
-									if(isset($accountHomeViewModel->followerList) && count($accountHomeViewModel->followerList))
+									if(isset($accountHomeViewModel->followerList) && count($accountHomeViewModel->followerList) > 0)
 									{
 										//debugit($accountHomeViewModel->followerList);
 										foreach ($accountHomeViewModel->followerList as $user)
@@ -345,6 +373,8 @@
 							<input type="hidden" name="UserFollowersContentUrl" id="UserFollowersContentUrl" value="<?php echo BASE_URL; ?>account/followerslist">
 
 							<div class="row text-center" id="UserFollowersContentMoreButton" style="margin-bottom: 100px;">
+								<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+								
 								<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 							</div>
 					    </div> 
@@ -353,7 +383,7 @@
 								<?php 
 									echo "<table class='table table-hover' id='ActionsTakenListContainer'>";
 
-									if(isset($accountHomeViewModel->ActionTakenList) && count($accountHomeViewModel->ActionTakenList))
+									if(isset($accountHomeViewModel->ActionTakenList) && count($accountHomeViewModel->ActionTakenList) > 0)
 									{
 										//debugit($accountHomeViewModel->followerList);
 										foreach ($accountHomeViewModel->ActionTakenList as $action)
@@ -387,7 +417,10 @@
 									             	<textarea maxlength="250" name="Content" id="Content" class="form-control" rows="3" placeholder="<?php echo gettext("What did you do to take action?!"); ?>"></textarea>
 								             	</div>
 
-									             <button id="ActionTakenSubmitButton" type="submit" class="btn btn-default"><?php echo gettext("Add Action"); ?></button>
+									             <button style="float: left;" id="ActionTakenSubmitButton" type="submit" class="btn btn-default"><?php echo gettext("Add Action"); ?></button>
+									             <div style="float: left; margin-left:10px" id="ActionTakenSpinerDiv">
+								             		<?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
+							             		</div>
 									         </form>
 
 										<?php
@@ -400,9 +433,13 @@
 				</div> 		
 			</div>
 
-			<div id="profileContentContainer" class="profileContent" style="display:none;"> 
-				 
+			<div id="profileContentLoader" style="margin-top: 30px;">
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>						
+			</div>		
+
+			<div id="profileContentContainer" class="profileContent" style="display:none;"> 				 
 			</div>
+			
 
     	</div>
     </div>

@@ -30,7 +30,15 @@ $(function(){
 				};
 			},
 			cache: true
-		}
+		},
+		// createTag:function(term, data) {
+		// 	alert(term.toSource());
+		//   if ($(data).filter(function() {
+		//     return this.text.localeCompare(term)===0;
+		//   }).length===0) {
+		//     return {id:term, text:term};
+		//   }
+		// },
 	});
 
 	$('.multiSelect5').select2({
@@ -39,3 +47,12 @@ $(function(){
 		maximumSelectionLength: 5
 	});
 });  
+
+
+$(document.body).on('select2:select', function (event) {
+	$('form').formValidation('revalidateField', $(event.target).parent("div").find(".form-control").attr("name"));
+});
+
+$(document.body).on('change', '[data-fv-field]', function (event) {
+	$('form').formValidation('revalidateField', $(this).attr("name"));
+});

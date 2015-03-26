@@ -1,9 +1,15 @@
 //http://formvalidation.io/getting-started/
 $(document).ready(function() {
-    $('form').not("#loginForm").not("#AboutForm").not("#ActionStatementForm").not("#ActionTakenForm").formValidation({
-    	locale: $("#LanguagePreference").val(),
+    init_validation();
+});
+
+function init_validation()
+{
+    $('form').not("#AboutForm").not("#ActionStatementForm").not("#ActionTakenForm").formValidation({
+        locale: $("#LanguagePreference").val(),
         framework: 'bootstrap',
         trigger: 'blur',
+        excluded: [':hidden:not(select)'],
         //err: { container: "#errorMessageSection"},
         icon: {
             valid: 'glyphicon glyphicon-ok',
@@ -33,7 +39,7 @@ $(document).ready(function() {
             },
             Password: {
                 validators: {
-                	stringLength: {
+                    stringLength: {
                         min: 6,
                     },
                     notEmpty: {
@@ -42,11 +48,11 @@ $(document).ready(function() {
             },
             RePassword: {
                 validators: {
-                	stringLength: {
-	                    min: 6,
-	                },
-	                notEmpty: {
-	                }
+                    stringLength: {
+                        min: 6,
+                    },
+                    notEmpty: {
+                    }
                 }                
             },
             PostalCode: {
@@ -63,8 +69,8 @@ $(document).ready(function() {
             PhoneNumber: {
                 validators: {
                     phone: {
-					    country: "CA",
-					}
+                        country: "CA",
+                    }
                 }
             },            
             ProfilePrivacyType_PrivacyTypeId: {
@@ -107,6 +113,12 @@ $(document).ready(function() {
                 }
             },
             //Story Add
+            'QuestionAnswers[1][]': {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
             'QuestionAnswers[2][]': {
                 validators: {
                     notEmpty: {
@@ -143,18 +155,30 @@ $(document).ready(function() {
                     }
                 }
             },
-            // StoryTitle: {
-            //     validators: {
-            //         notEmpty: {
-            //         }
-            //     }
-            // },
-            // StoryPrivacyType_StoryPrivacyTypeId: {
-            //     validators: {
-            //         notEmpty: {
-            //         }
-            //     }
-            // },
+            'QuestionAnswers[8][]': {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            StoryTitle: {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            StoryPrivacyType_StoryPrivacyTypeId: {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            'Tags[]': {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
         }
     });
-});
+}

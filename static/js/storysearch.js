@@ -1,4 +1,4 @@
-$(document.body).on('click', "#StorySearchMoreButton", function(){
+$(document.body).on('click', "#StorySearchMoreButton", function(event){
 
 	$("#StorySearchPage").val(parseInt($("#StorySearchPage").val()) + 1);
 
@@ -17,11 +17,17 @@ $(document.body).on('click', "#StorySearchMoreButton", function(){
 
 				$("#StorySearchMoreButton").hide();
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_large").addClass("hide");
 		}
 	});
 });
 
-$(document.body).on('click', "#RecommendedStoryMoreButton", function(){
+$(document.body).on('click', "#RecommendedStoryMoreButton", function(event){
 
 	$("#RecommendedStoryPage").val(parseInt($("#RecommendedStoryPage").val()) + 1);
 
@@ -40,11 +46,17 @@ $(document.body).on('click', "#RecommendedStoryMoreButton", function(){
 
 				$("#RecommendedStoryMoreButton").hide();
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_large").addClass("hide");
 		}
 	});
 });
 
-$(document.body).on('click', "#LatestStoryMoreButton", function(){
+$(document.body).on('click', "#LatestStoryMoreButton", function(event){
 
 	$("#LatestStoryPage").val(parseInt($("#LatestStoryPage").val()) + 1);
 
@@ -63,6 +75,12 @@ $(document.body).on('click', "#LatestStoryMoreButton", function(){
 
 				$("#LatestStoryMoreButton").hide();
 			}
+		},
+		beforeSend: function(){
+			$(event.target).parent().find(".spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$(event.target).parent().find(".spinner_large").addClass("hide");
 		}
 	});
 });

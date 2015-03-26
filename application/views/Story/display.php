@@ -29,7 +29,7 @@
     <div class="col-md-12"> 
         
 
-        <img style="width: 1200px;" class="img-responsive img-rounded" src="<?php echo $storyViewModel->Images["PictureUrl"]; ?>" alt="<?php echo gettext("Story Picture"); ?>" />
+        <img style="width: 1200px;" class="img-responsive img-rounded" src="<?php echo image_get_path_basic($storyViewModel->UserId, $storyViewModel->PictureId, IMG_STORY, (IS_MOBILE ? IMG_MEDIUM : IMG_LARGE)); ?>" alt="<?php echo gettext("Story Picture"); ?>" />
 
         <div style="padding-top: 5px;"></div>
         <div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
@@ -69,11 +69,12 @@
                 <div class="col-md-2 col-sm-2 hidden-xs">
                     <figure class="thumbnail">
                         <a href="<?php echo BASE_URL . "account/home/" . $storyViewModel->UserId; ?>">
-                            <img class="img-responsive" style="height: 150px;" src="<?php echo image_get_path_basic($storyViewModel->UserId, 0, 1, IMG_SMALL); ?>" />
+                            <img class="img-responsive" style="height: 150px;" src="<?php echo image_get_path_basic($storyViewModel->UserId, $storyViewModel->UserProfilePicureId, IMG_PROFILE, IMG_XSMALL); ?>" />
                         </a>
                     </figure>
                 </div>
                 <div style="padding-top: 25px; font-size: 1.2em;" class="col-md-8 col-sm-8">
+                    
                     <div class="row">
                         <?php echo gettext("Posted On:") . " " . $storyViewModel->DatePosted; ?>
                     </div>
@@ -114,6 +115,7 @@
 
             <section id="comment-list">
                 <?php 
+
                     foreach ($storyViewModel->Comments as $comment)
                     {
                         include(APP_DIR . "views/Story/_comments.php");
@@ -167,14 +169,31 @@
     
 </div>
 
-<?php if(count($relatedStories) > 0) { ?>
+<?php if(count($relatedStories) > 0 && !(count($relatedStories) == 1) && $relatedStories[0]->StoryId != $storyViewModel->StoryId) { ?>
     <div class="bg-grey padding-xl">
         <div class="container">
             <h2 style="font-size: 3em;"><?php echo gettext("Related Stories"); ?><small> <?php echo gettext("keep on reading!"); ?></small></h2>
             <div id="StoryListContainer" class="row">
-               <?php foreach ($relatedStories as $story): ?>
-                   <?php if($story->StoryId != $storyViewModel->StoryId) { include(APP_DIR . 'views/shared/_storyList.php'); } ?>
-               <?php endforeach ?>
+               <?php 
+                    $totalRelatedStories = 0; 
+
+                    foreach ($relatedStories as $story) {
+                        
+                        if($totalRelatedStories != MAX_RELATED_STORIES)
+                        {
+                            if($story->StoryId != $storyViewModel->StoryId) 
+                            { 
+                                include(APP_DIR . 'views/shared/_storyList.php'); 
+
+                                $totalRelatedStories++;
+                            }
+                        }
+                        else
+                        {
+                            break;
+                        }                    
+                    } 
+               ?>
             </div>
         </div>
     </div>

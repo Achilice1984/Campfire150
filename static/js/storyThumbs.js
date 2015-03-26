@@ -15,6 +15,4 @@ function initThumbs()
 	        $(this).find('.caption').fadeOut(); //.fadeOut(205)
 	    }
 	);
-
-	jQuery(".responsive_content").fitText(1.2, { minFontSize: '11px', maxFontSize: '40px' });
 } 

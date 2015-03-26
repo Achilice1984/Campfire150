@@ -1,7 +1,5 @@
 <?php
 
-require_once(APP_DIR . 'helpers/image_get_path.php');
-
     //You have access to the shared/StoryViewModel.php
     
     //You can access everything from this variable:
@@ -11,7 +9,7 @@ require_once(APP_DIR . 'helpers/image_get_path.php');
     //$privacyDropdownValues
     //$storyQuestions
 
-    //debugit($storyQuestions);
+    //debugit($storyViewModel);
 ?>
 
 
@@ -20,7 +18,10 @@ require_once(APP_DIR . 'helpers/image_get_path.php');
     <div class="row">
         <div class="col-md-12">            
         
-            <form action="<?php echo (isset($storyViewModel->StoryId) ? BASE_URL . "story/edit/" . $storyViewModel->StoryId : BASE_URL . "story/add" ) ?>" method="post" enctype="multipart/form-data">
+            <form action="<?php echo ((isset($storyViewModel->StoryId) && $storyViewModel->StoryId > 0) ? BASE_URL . "story/edit/" . $storyViewModel->StoryId : BASE_URL . "story/add" ) ?>" method="post" enctype="multipart/form-data">
+                
+                <input type="hidden" name="StoryId" id="StoryId" value="<?php echo $storyViewModel->StoryId; ?>">
+                <input type="hidden" name="PictureId" id="PictureId" value="<?php echo $storyViewModel->PictureId; ?>">
 
                 <?php include(APP_DIR . 'views/shared/messages.php'); ?>         
                 
@@ -32,11 +33,11 @@ require_once(APP_DIR . 'helpers/image_get_path.php');
                 <div id="addImageDiv" class="img-rounded center-block" style="border-radius: 10px !important; position: relative; min-height:200px; border: 1px solid #E8E8E8; overflow: hidden; padding: 0; margin: 0;">
                     
                     <?php
-
-                        if(isset($storyViewModel->PictureId))
+                        //This checks to see if a picture exists for a story saved as a draft
+                        if(isset($storyViewModel->PictureId) && $storyViewModel->PictureId > 0)
                         {
                             ?>
-                                <img id="imgPreviewer" src="<?php echo image_get_path_basic($storyViewModel->StoryUserID, $storyViewModel->PictureId, IMG_STORY, IMG_LARGE); ?>" class="img-rounded img-responsive center-block" alt="" style="width:1200px; z-index: 10; " />
+                                <img id="imgPreviewer" src="<?php echo image_get_path_basic($storyViewModel->UserId, $storyViewModel->PictureId, IMG_STORY, (IS_MOBILE ? IMG_MEDIUM : IMG_LARGE)); ?>" class="img-rounded img-responsive center-block" alt="" style="width:1200px; z-index: 10; " />
                             <?php
                         }
                         else
@@ -46,10 +47,6 @@ require_once(APP_DIR . 'helpers/image_get_path.php');
                             <?php
                         }
                     ?>
-
-                     
-                    
-
 
                       <div class="form-group" style="position: absolute; z-index: 50; bottom:0; float: left;">   
 
@@ -63,7 +60,7 @@ require_once(APP_DIR . 'helpers/image_get_path.php');
                       <div id="cropImage" class="btn btn-default" style="position: absolute; z-index: 50; bottom:0; float: left; margin: 25px; margin-left: 150px; display: none;"><?php echo gettext("Crop"); ?></div>
                 </div>
 
-                <div class="form-group" style="margin-top: 15px; margin-bottom: -5px;">
+                <div class="form-group" style="margin-top: 15px; margin-bottom: 0px;">
                     <!-- <label for="StoryTitle"><?php echo gettext("Title"); ?></label> -->
                     <input type="text" class="form-control" id="StoryTitle" name="StoryTitle" placeholder="<?php echo gettext("Title"); ?>" value="<?php echo $storyViewModel->StoryTitle; ?>">
                 </div>            

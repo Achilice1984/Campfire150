@@ -1,7 +1,7 @@
 <?php
 	// debugit($storyViewModel);
-	 debugit($userViewModel);
-	 debugit($activeViewModel);
+	 // debugit($userViewModel);
+	 // debugit($activeViewModel);
 ?>
 <div class="container">
 	

@@ -1,12 +1,16 @@
+<?php
+	$showSearch = isset($_GET["search"]);
+?>
+
 <div class="container">
 	<ul class="nav nav-tabs marginBottom15">
-		<li role="presentation" class="active"><a href="#Story_Latest" aria-controls="Story_Latest" role="tab" data-toggle="tab"><?php echo gettext("Latest"); ?></a></li>
+		<li role="presentation" <?php echo (!$showSearch ? "class='active'" : "" ); ?>><a href="#Story_Latest" aria-controls="Story_Latest" role="tab" data-toggle="tab"><?php echo gettext("Latest"); ?></a></li>
 	    <li role="presentation"><a href="#Story_Recommended" aria-controls="Story_Recommended" role="tab" data-toggle="tab"><?php echo gettext("Most Recommended"); ?></a></li>
-	    <li role="presentation"><a href="#Story_Search" aria-controls="Story_Search" role="tab" data-toggle="tab"><?php echo gettext("Search"); ?></a></li>
+	    <li role="presentation" <?php echo ($showSearch ? "class='active'" : "" ); ?>><a href="#Story_Search" aria-controls="Story_Search" role="tab" data-toggle="tab"><?php echo gettext("Search"); ?></a></li>
 	</ul>
 	
 	<div class="tab-content">
-		<div role="tabpanel" class="tab-pane active" id="Story_Latest">
+		<div role="tabpanel" class="tab-pane <?php echo (!$showSearch ? "active" : "" ); ?>" id="Story_Latest">
 			<div id="LatestStoryContainer">
 				<?php 
 					foreach ($latestResults as $story)
@@ -25,12 +29,14 @@
 			<input type="hidden" name="LatestStoryUrl" id="LatestStoryUrl" value="<?php echo BASE_URL; ?>story/lateststories">
 
 			<div id="LatestStoryMoreButton">
-				<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+
+				<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
 			</div>
 		</div>
 
 	
-	    <div role="tabpanel" class="tab-pane" id="Story_Search">
+	    <div role="tabpanel" class="tab-pane <?php echo ($showSearch ? "active" : "" ); ?>" id="Story_Search">
 			<form action="<?php echo BASE_URL; ?>story/search" data-ajax-action="<?php echo BASE_URL; ?>story/ajaxSearch" id="StorySearchForm" method="post">
 				<input type="hidden" name="StorySearchPage" id="StorySearchPage" value="1">
 
@@ -56,7 +62,9 @@
 			</div>
 
 			<div id="StorySearchMoreButton" style="<?php echo count($searchResults) <= 0 ? "display:none;" : "" ?>">
-				<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+
+				<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
 			</div>
 	    </div>  <!-- <div role="tabpanel" class="tab-pane active" id="Story_Search"> -->
 
@@ -81,7 +89,9 @@
 			<input type="hidden" name="RecommendedStoryUrl" id="RecommendedStoryUrl" value="<?php echo BASE_URL; ?>story/recommendedstories">
 
 			<div id="RecommendedStoryMoreButton">
-				<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+
+				<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
 			</div>
 	    </div>   <!-- <div role="tabpanel" class="tab-pane active" id="Story_Recommended"> --> 
 	</div>  

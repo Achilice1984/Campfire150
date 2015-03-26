@@ -40,7 +40,7 @@
 
         return $url;
     }
-    function image_get_path_basic($userid, $pictureid, $picturetypeid, $size){
+    function image_get_path_basic($userid, $pictureid, $picturetypeid, $size, $noDefault = FALSE){
         
         $hashUserid = md5($userid);
         $hashPictureid = md5($pictureid);
@@ -53,7 +53,14 @@
             if( $picturetypeid == 1)
             {
                 //default pic
-                $url = BASE_URL . 'static/images/default-user-image.png';
+                if($size == "xsmall")
+                {
+                    $url = BASE_URL . 'static/images/default-user-image-small.png';
+                }
+                else
+                {
+                    $url = BASE_URL . 'static/images/default-user-image.png';
+                }
 
                 $type = 'profile';
             }
@@ -78,6 +85,10 @@
         if(file_exists(ROOT_DIR . $staticPath))
         {
             $url = BASE_URL . $staticPath;
+        }
+        else if($noDefault)
+        {
+            $url = null;
         }
 
         return $url;

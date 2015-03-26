@@ -459,7 +459,9 @@ class AdminModel extends Model {
 		$statement = "SELECT * FROM user
 						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
 						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
-						WHERE user.UserId = :UserId";
+						LEFT JOIN picture ON user.UserId = picture.User_UserId
+						WHERE user.UserId = :UserId
+						AND picture.Picturetype_PictureTypeId = 1";
 
 		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/UserViewModel");
 
@@ -590,7 +592,7 @@ class AdminModel extends Model {
 		try
 		{
 			$statement = "SELECT * ,
-								(SELECT COUNT(*) FROM user WHERE Active = 0) AS totalUsers
+								(SELECT COUNT(*) FROM user WHERE Active = 1) AS totalUsers
 							FROM user 
 							WHERE Active = 1 
 							ORDER BY UserId ASC 
@@ -645,8 +647,7 @@ class AdminModel extends Model {
 			return $e->getMessage();
 		}
 	}
-
-////////////////////////////////////////confuse about how to calculate the number of flags////////////////////
+ 
 	public function getListUsersOderedByMostInappropriateFlags($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts how many, page
@@ -656,27 +657,62 @@ class AdminModel extends Model {
 
 		try
 		{
-			// $statement = "SELECT *, (table1.totalInappropriateOnStory + table2.totalInappropriateOnComment) AS TotalInappropriate FROM 
-	
-			// 				(SELECT u.UserId, COUNT( * ) AS totalInappropriateOnStory
-			// 				FROM user AS u
-			// 				LEFT JOIN story AS s ON u.UserId = s.User_UserId
-			// 				LEFT JOIN user_recommend_story AS urs ON urs.Story_StoryId = s.StoryId
-			// 				WHERE urs.Opinion = FALSE 
-			// 				GROUP BY UserId
-			// 				) AS table1
+			//SELECT * FROM
+			// (
+			//     SELECT table1.UserId, IF(total1 IS NULL, 0, total1) as field1, 
+			//     IF(total2 IS NULL, 0, total2) as field2
+			//     FROM
+			//     (SELECT u.UserId, COUNT( * ) AS total1
+			//     FROM user AS u
+			//     LEFT JOIN story AS s ON u.UserId = s.User_UserId
+			//     LEFT JOIN user_recommend_story AS urs ON urs.Story_StoryId = s.StoryId
+			//     WHERE urs.Opinion =
+			//     FALSE
+			//     GROUP BY UserId) table1
+			    
+			//     LEFT JOIN
+			    
+			//     (
+			//         SELECT u.UserId , COUNT( * ) AS total2
+			//         FROM user AS u
+			//         LEFT JOIN COMMENT AS c ON u.UserId = c.User_UserId
+			//         LEFT JOIN user_inappropriateflag_comment AS uic ON uic.Comment_CommentId = c.CommentId
+			//         WHERE uic.Active = TRUE
+			//         GROUP BY UserId
+			//     ) table2
+			    
+			//     ON table1.UserId = table2.UserId
+			// )tmp1
 
-			// 				FULL JOIN
+			// UNION DISTINCT
 
-			// 				(SELECT u2.UserId, COUNT( uic2.User_UserId ) AS totalInappropriateOnComment 
-			// 				FROM user AS u2
-			// 				LEFT JOIN COMMENT AS c2 ON u2.UserId = c2.User_UserId
-			// 				LEFT JOIN user_inappropriateflag_comment uic2 ON uic2.Comment_CommentId = c2.CommentId
-			// 				WHERE uic2.Active = TRUE 
-			// 				GROUP BY u2.UserId
-			// 				) AS table2
+			// SELECT * FROM
 
-			// 				ON table1.UserId = table2.UserId
+			// (
+			//    SELECT table2.UserId, IF(total1 IS NULL, 0, total1) as field1, 
+			//     IF(total2 IS NULL, 0, total2) as field2
+			// 	FROM (
+
+			// 	SELECT u.UserId, COUNT( * ) AS total1
+			// 	FROM user AS u
+			// 	LEFT JOIN story AS s ON u.UserId = s.User_UserId
+			// 	LEFT JOIN user_recommend_story AS urs ON urs.Story_StoryId = s.StoryId
+			// 	WHERE urs.Opinion =
+			// 	FALSE
+			// 	GROUP BY UserId
+			// 	)table1
+			// 	RIGHT JOIN (
+
+			// 	SELECT u.UserId, COUNT( * ) AS total2
+			// 	FROM user AS u
+			// 	LEFT JOIN COMMENT AS c ON u.UserId = c.User_UserId
+			// 	LEFT JOIN user_inappropriateflag_comment AS uic ON uic.Comment_CommentId = c.CommentId
+			// 	WHERE uic.Active =
+			// 	TRUE
+			// 	GROUP BY UserId
+			// 	)table2 ON table1.UserId = table2.UserId
+
+			// )tmp2
 
 			// 				LIMIT :Start, :HowMany";
 
@@ -719,7 +755,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getListQuestionaireQuestions()
+	public function getListQuestionaireQuestions($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Gets a list of all the current questionaire questions
 		//This will include a list of possible answers
@@ -729,20 +765,21 @@ class AdminModel extends Model {
 			$statement = "SELECT * , (
 								SELECT COUNT(*) FROM question
 							) AS TotalQuestions
-							FROM question";
+							FROM question
+							LIMIT :Start, :HowMany";
 
-			// $statement = "SELECT * , (
-			// 					SELECT COUNT(*) FROM question
-			// 				) AS TotalQuestions
-			// 				FROM question 
-			// 				LEFT JOIN answer_for_question 
-			// 				ON question.QuestionId=answer_for_question.Question_QuestionId";
+			$start = $this-> getStartValue($howMany, $page);
+			
+			$parameters = array( 
+					":Start" => $start,
+					":HowMany" => $howMany
+				);
 
-			$userList = $this->fetchIntoObject($statement, array());
+			$questionList = $this->fetchIntoObject($statement, $parameters);
 
-			if(isset($userList))
+			if(isset($questionList))
 			{
-				return $userList;
+				return $questionList;
 			}
 
 			return null;
@@ -753,7 +790,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getListQuestionaireAnswers()
+	public function getListQuestionaireAnswers($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Gets a list of all the current questionaire questions
 		//This will include a list of possible answers
@@ -774,9 +811,17 @@ class AdminModel extends Model {
 							ON a.AnswerId = afq.Answer_AnswerId
 							LEFT JOIN question q
 							ON q.QuestionId = afq.Question_QuestionId
-							ORDER BY afq.Question_QuestionId";
+							ORDER BY afq.Question_QuestionId
+							LIMIT :Start, :HowMany";
 
-			$answerList = $this->fetchIntoObject($statement, array());
+			$start = $this-> getStartValue($howMany, $page);
+			
+			$parameters = array( 
+					":Start" => $start,
+					":HowMany" => $howMany
+				);
+
+			$answerList = $this->fetchIntoObject($statement, $parameters);
 
 			if(isset($answerList))
 			{
@@ -803,6 +848,29 @@ class AdminModel extends Model {
 			$answers = $this->fetchIntoClass($statement, array(":AnswerId" => $answerId), "shared/StoryAnswerViewModel");
 
 			return $answers[0];
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function getAnswersByQuestionId($questionId)
+	{
+		//Accepts a answer id
+		//returns answer detail of that id
+
+		try
+		{
+			$statement = "SELECT * 
+							FROM answer_for_question AS afq
+							LEFT JOIN answer
+							ON afq.Answer_AnswerId = answer.AnswerId
+							WHERE afq.Question_QuestionId = :QuestionId";
+
+			$answerList = $this->fetchIntoClass($statement, array(":QuestionId" => $questionId), "shared/StoryAnswerViewModel");
+
+			return $answerList;
 		}
 		catch(PDOException $e)
 		{
@@ -866,8 +934,8 @@ class AdminModel extends Model {
 		try
 		{
 			return $this->fetch(
-				"INSERT INTO answer_for_question (Question_QuestionId, Answer_AnswerId) VALUES(:QeustionID, :AnswerID)",
-			 	array(":QeustionID" => $questionID, ":AnswerID" => $answerID)
+				"INSERT INTO answer_for_question (Question_QuestionId, Answer_AnswerId) VALUES(:QuestionID, :AnswerID)",
+			 	array(":QuestionID" => $questionID, ":AnswerID" => $answerID)
 			 	);
 		}
 		catch(PDOException $e)
@@ -907,7 +975,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getQuestionById($questionId)
+	public function getQuestionByQuestionId($questionId)
 	{
 		//Accepts a answer id
 		//returns answer detail of that id
@@ -919,6 +987,28 @@ class AdminModel extends Model {
 			$questions = $this->fetchIntoClass($statement, array(":QuestionId" => $questionId), "shared/StoryQuestionViewModel");
 
 			return $questions[0];
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function getQuestionsByAnswerId($answerId)
+	{
+		//Accepts a answer id
+		//returns answer detail of that id
+
+		try
+		{
+			$statement = "SELECT * FROM question
+								LEFT JOIN answer_for_question AS afq
+								ON question.QuestionId = afq.Question_QuestionId
+								WHERE afq.Answer_AnswerId = :AnswerId";
+
+			$questions = $this->fetchIntoClass($statement, array(":AnswerId" => $answerId), "shared/StoryQuestionViewModel");
+
+			return $questions;
 		}
 		catch(PDOException $e)
 		{
@@ -1016,7 +1106,7 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getListDropdowns($tableName)
+	public function getListDropdowns($tableName, $howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Accepts admin id
 		//returns list of dropdowns and their values
@@ -1050,9 +1140,18 @@ class AdminModel extends Model {
 					break;
 				default:
 					return $tableName." is not a proper table name";
-			}			
+			}	
 
-			return $this->fetchIntoClass($statement, array(), "shared/DropdownItemViewModel");
+			$statement .= " LIMIT :Start, :HowMany";
+
+			$start = $this-> getStartValue($howMany, $page);
+			
+			$parameters = array( 
+					":Start" => $start,
+					":HowMany" => $howMany
+				);		
+
+			return $this->fetchIntoClass($statement, $parameters, "shared/DropdownItemViewModel");
 		}
 		catch(PDOException $e)
 		{

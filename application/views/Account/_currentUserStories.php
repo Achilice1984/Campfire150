@@ -1,4 +1,4 @@
-<div>
+
 	<ul style="border-bottom: 1px solid #eee" id="User_Current_Tabs" class="nav nav-pills">
 	    <li role="presentation" class="active"><a href="#User_Current_Published" aria-controls="User_Current_Published" role="tab" data-toggle="tab"><?php echo gettext("Published"); ?></a></li>
 	    <li role="presentation"><a href="#User_Current_Drafts" aria-controls="User_Current_Drafts" role="tab" data-toggle="tab"><?php echo gettext("Drafts"); ?></a></li>
@@ -10,7 +10,7 @@
 	<div class="tab-content" style="padding:20px;">
 		<div role="tabpanel" class="tab-pane active" id="User_Current_Published">
 
-			<div id="CurrentPublishedContent">
+			<div id="CurrentPublishedContent" class="row">
 				<?php 
 					if(isset($accountHomeViewModel->publishedStories) && count($accountHomeViewModel->publishedStories))
 					{
@@ -31,14 +31,16 @@
 			<input type="hidden" name="CurrentPublishedContentUrl" id="CurrentPublishedContentUrl" value="<?php echo BASE_URL; ?>account/publishedList">
 
 			<div class="row text-center" id="CurrentPublishedContentMoreButton" style="margin-bottom: 100px;">
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
 				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 			</div>		
 		</div>
 		<div role="tabpanel" class="tab-pane" id="User_Current_Drafts">
 
-			<div id="CurrentDraftsContent">
+			<div id="CurrentDraftsContent" class="row">
 				<?php 
-					if(isset($accountHomeViewModel->draftStories) && count($accountHomeViewModel->draftStories))
+					if(isset($accountHomeViewModel->draftStories) && count($accountHomeViewModel->draftStories) > 0)
 					{
 						foreach ($accountHomeViewModel->draftStories as $story)
 						{
@@ -57,14 +59,16 @@
 			<input type="hidden" name="CurrentDraftsContentUrl" id="CurrentDraftsContentUrl" value="<?php echo BASE_URL; ?>account/draftsList">
 
 			<div class="row text-center" id="CurrentDraftsContentMoreButton" style="margin-bottom: 100px;">
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
 				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 			</div>
 		</div>
 		<div role="tabpanel" class="tab-pane" id="User_Current_Pending">
 
-			<div id="CurrentPendingContent">
+			<div id="CurrentPendingContent" class="row">
 				<?php 
-					if(isset($accountHomeViewModel->pendingStories) && count($accountHomeViewModel->pendingStories))
+					if(isset($accountHomeViewModel->pendingStories) && count($accountHomeViewModel->pendingStories) > 0)
 					{
 						foreach ($accountHomeViewModel->pendingStories as $story)
 						{
@@ -83,14 +87,16 @@
 			<input type="hidden" name="CurrentPendingContentUrl" id="CurrentPendingContentUrl" value="<?php echo BASE_URL; ?>account/pendingList">
 
 			<div class="row text-center" id="CurrentPendingContentMoreButton" style="margin-bottom: 100px;">
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
 				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 			</div>
 		</div>
 		<div role="tabpanel" class="tab-pane" id="User_Current_Rejected">
 
-			<div id="CurrentRejectedContent">
+			<div id="CurrentRejectedContent" class="row">
 				<?php 
-					if(isset($accountHomeViewModel->rejectedStories) && count($accountHomeViewModel->rejectedStories))
+					if(isset($accountHomeViewModel->rejectedStories) && count($accountHomeViewModel->rejectedStories) > 0)
 					{
 						foreach ($accountHomeViewModel->rejectedStories as $story)
 						{
@@ -109,14 +115,16 @@
 			<input type="hidden" name="CurrentRejectedContentUrl" id="CurrentRejectedContentUrl" value="<?php echo BASE_URL; ?>account/rejectedList">
 
 			<div class="row text-center" id="CurrentRejectedContentMoreButton" style="margin-bottom: 100px;">
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+
 				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Stories!"); ?></button>
 			</div>
 		</div>  
 		<div role="tabpanel" class="tab-pane" id="User_Current_Comments">
 
-			<div id="CurrentCommentContent">
+			<div id="CurrentCommentContent" class="row">
 				<?php 
-					if(isset($accountHomeViewModel->pendingComments) && count($accountHomeViewModel->pendingComments))
+					if(isset($accountHomeViewModel->pendingComments) && count($accountHomeViewModel->pendingComments) > 0)
 					{
 						foreach ($accountHomeViewModel->pendingComments as $comment)
 						{
@@ -135,8 +143,10 @@
 			<input type="hidden" name="CurrentCommentsContentUrl" id="CurrentCommentsContentUrl" value="<?php echo BASE_URL; ?>account/commentsPendingApprovalList">
 
 			<div class="row text-center" id="CurrentCommentsContentMoreButton" style="margin-bottom: 100px;">
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
+				
 				<button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Comments!"); ?></button>
 			</div>
 		</div>  		
 	</div>
-</div>
+

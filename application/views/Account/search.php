@@ -1,12 +1,16 @@
+<?php
+	$showSearch = isset($_GET["search"]);
+?>
+
 <div class="container">
 	<ul class="nav nav-tabs marginBottom15">
-		<li role="presentation" class="active"><a href="#User_Latest" aria-controls="User_Latest" role="tab" data-toggle="tab"><?php echo gettext("Latest"); ?></a></li>
+		<li role="presentation" <?php echo (!$showSearch ? "class='active'" : "" ); ?>><a href="#User_Latest" aria-controls="User_Latest" role="tab" data-toggle="tab"><?php echo gettext("Latest"); ?></a></li>
 	    <li role="presentation"><a href="#User_MostFollowers" aria-controls="User_MostFollowers" role="tab" data-toggle="tab"><?php echo gettext("Most Followers"); ?></a></li>
-	    <li role="presentation"><a href="#User_Search" aria-controls="User_Search" role="tab" data-toggle="tab"><?php echo gettext("Search"); ?></a></li>
+	    <li role="presentation" <?php echo ($showSearch ? "class='active'" : "" ); ?>><a href="#User_Search" aria-controls="User_Search" role="tab" data-toggle="tab"><?php echo gettext("Search"); ?></a></li>
 	</ul>   
 
 	<div class="tab-content">
-		<div role="tabpanel" class="tab-pane active" id="User_Latest">
+		<div role="tabpanel" class="tab-pane <?php echo (!$showSearch ? "active" : "" ); ?>" id="User_Latest">
 			
 			<div id="UsersLatestContainer" class="row">
 				<?php 
@@ -26,7 +30,9 @@
 			<input type="hidden" name="UsersLatestUrl" id="UsersLatestUrl" value="<?php echo BASE_URL; ?>account/latestUserList">
 
 			<div class="text-center" id="UsersLatestMoreButton">
-				<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Users"); ?></button>
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+
+				<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Users"); ?></button>
 			</div>
 	    </div> 
 
@@ -50,11 +56,13 @@
 			<input type="hidden" name="UserMostFollowersUrl" id="UserMostFollowersUrl" value="<?php echo BASE_URL; ?>account/mostFollowersUserList">
 
 			<div class="text-center" id="UserMostFollowersMoreButton">
-				<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Users"); ?></button>
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+
+				<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Users"); ?></button>
 			</div>
 	    </div>   <!-- <div role="tabpanel" class="tab-pane active" id="Story_Recommended"> -->
 
-	    <div role="tabpanel" class="tab-pane" id="User_Search">
+	    <div role="tabpanel" class="tab-pane <?php echo ($showSearch ? "active" : "" ); ?>" id="User_Search" >
 			<form action="<?php echo BASE_URL; ?>account/search" data-ajax-action="<?php echo BASE_URL; ?>account/ajaxSearch" id="UserSearchForm" method="post">
 				<input type="hidden" name="UserSearchPage" id="UserSearchPage" value="1">
 
@@ -80,7 +88,9 @@
 			</div>
 
 			<div class="text-center" id="UserSearchMoreButton" style="<?php echo count($searchResults) <= 0 ? "display:none;" : "" ?>">
-				<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Users"); ?></button>
+				<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>	
+				
+				<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Users"); ?></button>
 			</div>
 	    </div>  <!-- <div role="tabpanel" class="tab-pane active" id="Story_Search"> -->
 	</div>  
