@@ -15,6 +15,7 @@ session_start();
 require_once('./application/plugins/gettext/gettext.inc');
 require_once('./application/plugins/akismet/akismet.class.php');
 require_once('./application/plugins/mailchimp/Mailchimp.php');
+require_once('./application/plugins/html_sanitizer/html_sanitizer.php');
 require_once('./application/plugins/alphaid/alphaID.php');
 require_once('./application/plugins/mobile-detect/Mobile_Detect.php');
 

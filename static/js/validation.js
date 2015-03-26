@@ -1,7 +1,12 @@
 //http://formvalidation.io/getting-started/
 $(document).ready(function() {
+    init_validation();
+});
+
+function init_validation()
+{
     $('form').not("#AboutForm").not("#ActionStatementForm").not("#ActionTakenForm").formValidation({
-    	locale: $("#LanguagePreference").val(),
+        locale: $("#LanguagePreference").val(),
         framework: 'bootstrap',
         trigger: 'blur',
         //err: { container: "#errorMessageSection"},
@@ -33,7 +38,7 @@ $(document).ready(function() {
             },
             Password: {
                 validators: {
-                	stringLength: {
+                    stringLength: {
                         min: 6,
                     },
                     notEmpty: {
@@ -42,11 +47,11 @@ $(document).ready(function() {
             },
             RePassword: {
                 validators: {
-                	stringLength: {
-	                    min: 6,
-	                },
-	                notEmpty: {
-	                }
+                    stringLength: {
+                        min: 6,
+                    },
+                    notEmpty: {
+                    }
                 }                
             },
             PostalCode: {
@@ -63,8 +68,8 @@ $(document).ready(function() {
             PhoneNumber: {
                 validators: {
                     phone: {
-					    country: "CA",
-					}
+                        country: "CA",
+                    }
                 }
             },            
             ProfilePrivacyType_PrivacyTypeId: {
@@ -157,4 +162,4 @@ $(document).ready(function() {
             // },
         }
     });
-});
+}

@@ -30,7 +30,7 @@
                 <p class="clearfix"><a href="<?php echo BASE_URL; ?>story/search" class="btn btn-warning pull-right"><?php echo gettext("View More Stories"); ?></a></p>
             </div>
         </section>
-        <section class="bg-grey text-center jumbotron">
+        <section class="bg-grey text-center jumbotron marginBottom-15">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-3 col-xs-6">

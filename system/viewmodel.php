@@ -12,8 +12,15 @@ class ViewModel
 		$this->validationDecorators = $validationDecorators;
 	}
 
-	public function validate($persistCount = 0)
+	public function validate($persistCount = 0, $exceptions = array())
 	{
+		foreach ($exceptions as $exception) {
+			if(array_key_exists($exception, $this->validationDecorators))
+			{
+				unset($this->validationDecorators[$exception]);
+			}
+		}
+
 		$sessionManager = new SessionManager();
 		$validator = new Validator();
 

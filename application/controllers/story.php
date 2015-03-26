@@ -283,17 +283,16 @@ class Story extends Controller {
 					//Map post values to the loginViewModel
 					$storyViewModel = AutoMapper::mapPost($storyViewModel);					
 
-					if($storyViewModel->validate())
+					if($storyViewModel->validate(0, isset($storyViewModel->PictureId) ? array("Images") : array() ))
 					{
 						$storyViewModel->Published = FALSE;
 
 						//UPDATE STORY
 						$storyModel->updateDraft($storyViewModel, $this->currentUser->UserId);
-						
 
 						//$this->saveQuestionAnswers($storyModel, $storyId);
 						$this->saveTags($storyModel, $storyViewModel->StoryId);
-
+						
 						$imageId = 0;
 
 						if(isset($storyViewModel->Images) && $storyViewModel->Images["size"] > 0)
@@ -326,8 +325,8 @@ class Story extends Controller {
 
 					if(isset($storyViewModelOld[0]))
 					{
-						$storyViewModel->PictureId = $storyViewModelOld[0]->PictureId;
-						$storyViewModel->StoryUserID = $storyViewModelOld[0]->StoryUserID;
+						$storyViewModel->PictureId 	= $storyViewModelOld[0]->PictureId;
+						$storyViewModel->UserId 	= $storyViewModelOld[0]->UserId;
 					}
 				}	
 				else
@@ -519,6 +518,7 @@ class Story extends Controller {
 		try
 		{
 			foreach ($_POST["Tags"] as $tagID) {
+				
 				if(!is_numeric($tagID))
 				{
 					if($storyModel->addNewTag($tagID))

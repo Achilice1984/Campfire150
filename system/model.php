@@ -44,14 +44,18 @@ class Model {
 		}
 	}
 
-	private function bindParams($pdo, $params)
+	private function sanitizeIt($params)
 	{
+		$sanitizer = new HTML_Sanitizer;
+
 		if(isset($params))
 		{
 			foreach ($params as $key => $value) {
-			 	$pdo->bindParam($key, $value, !is_numeric($value) ? PDO::PARAM_STR : PDO::PARAM_INT);
+			 	$params[$key] = $sanitizer->sanitize($value);
 			 }
 		 }
+
+		 return $params;
 	}
 
 	public function quote($string)
@@ -80,11 +84,11 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
+			$params = $this->sanitizeIt($params);
+
 			require_once(APP_DIR .'viewmodels/' . $className .'.php');			 
 
 			 $pdo = self::$connection->prepare($qry);
-
-			 $this->bindParams($pdo, $params);
 
 			 //$pdo->execute();
 			 $pdo->execute($params);
@@ -119,8 +123,9 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
+			$params = $this->sanitizeIt($params);
+
 			$pdo = self::$connection->prepare($qry);
-			$this->bindParams($pdo, $params);
 
 		 	//$pdo->execute();
 		 	$pdo->execute($params);
@@ -150,8 +155,9 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
+			$params = $this->sanitizeIt($params);
+
 			$pdo = self::$connection->prepare($qry);
-			$this->bindParams($pdo, $params);
 
 		 	//$pdo->execute();
 		 	$pdo->execute($params);
@@ -177,8 +183,9 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
+			$params = $this->sanitizeIt($params);
+
 			$pdo = self::$connection->prepare($qry);
-			$this->bindParams($pdo, $params);
 
 		 	//$pdo->execute();
 		 	$pdo->execute($params);
@@ -208,8 +215,9 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
+			$params = $this->sanitizeIt($params);
+
 			$pdo = self::$connection->prepare($qry);
-			$this->bindParams($pdo, $params);
 
 		 	//$pdo->execute();
 		 	$pdo->execute($params);
@@ -243,8 +251,9 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
+			$params = $this->sanitizeIt($params);
+
 			$pdo = self::$connection->prepare($qry);
-			$this->bindParams($pdo, $params);
 
 		 	//$pdo->execute();
 		 	$pdo->execute($params);
@@ -278,6 +287,8 @@ class Model {
 		//Or by order array($calories, $colour)
 		try 
 		{
+			$params = $this->sanitizeIt($params);
+
 			$pdo = self::$connection->prepare($qry);		
 
 			return $pdo->execute($params);

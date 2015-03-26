@@ -163,7 +163,8 @@ class StoryModel extends Model {
 			// create a php timestamp for inserting into the created and updated date fields in the database 
 			//$timestamp = date('Y-m-d G:i:s');
 			$statement = "INSERT INTO story_has_tag (Story_StoryId, Tag_TagId, DateCreated)
-						  VALUES(:StoryId, :Tag_TagId, :DateCreated)";
+						  VALUES(:StoryId, :Tag_TagId, :DateCreated)
+						  ON DUPLICATE KEY UPDATE Active=TRUE";
  
 			$parameters = array(":StoryId" => $storyId, 
 								":Tag_TagId" => $tagId, 

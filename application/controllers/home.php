@@ -97,26 +97,11 @@ class Home extends Controller {
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);
 	}
-	function team()
-	{
-		//Load the profile view
-		$view = $this->loadView('team');
 
-		//Render the profile view. true indicates to load the layout pages as well
-		$view->render(true);
-	}
 	function partners()
 	{
 		//Load the profile view
 		$view = $this->loadView('partners');
-
-		//Render the profile view. true indicates to load the layout pages as well
-		$view->render(true);
-	}
-	function research()
-	{
-		//Load the profile view
-		$view = $this->loadView('research');
 
 		//Render the profile view. true indicates to load the layout pages as well
 		$view->render(true);
