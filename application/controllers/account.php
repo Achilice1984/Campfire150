@@ -1369,6 +1369,30 @@ class Account extends Controller {
 			throw $ex;
 		}
 	}
+	function removeAction()
+	{
+		try
+		{
+			if($this->isAuth() && $this->isAjax())
+			{
+				$model = $this->loadModel("Account/AccountModel");
+
+				if(isset($_POST["ActionID"]))
+				{
+					$result = $model->removeAction($this->currentUser->UserId, $_POST["ActionID"]);
+
+					if($result)
+					{
+						echo $result;
+					}
+				}
+			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
+	}
 
 	function changeStoryPrivacy()
 	{
