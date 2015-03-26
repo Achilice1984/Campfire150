@@ -281,6 +281,14 @@ header, footer, nav {
 	filter: alpha(opacity=0);
 }
 
+#UserSearchContainer {
+	margin-top: 15px;
+	min-height: 200px;
+}
+#StorySearchContainer {
+	min-height: 200px;
+}
+
 
 /*****************************************************
 *

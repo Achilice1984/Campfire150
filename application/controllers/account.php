@@ -186,9 +186,6 @@ class Account extends Controller {
 	{			
 		try
 		{
-			//Load the userViewModel
-			$userViewModel = $this->loadViewModel('shared/UserViewModel');
-
 			//Load the loginViewModel
 			$loginViewModel = $this->loadViewModel('LoginViewModel');
 
@@ -218,7 +215,9 @@ class Account extends Controller {
 						// Add an error message because login failed 
 						addErrorMessage("dbError", gettext("Opps, it looks like your attempt to login faild."));
 					}				
-				}			
+				}	
+
+				$model->logout();
 			}
 
 			//Load the login view
@@ -247,6 +246,10 @@ class Account extends Controller {
 		}
 		catch(Exception $ex)
 		{
+			//Load the AccountModel to access account functions
+			$model = $this->loadModel('AccountModel');
+			$model->logout();
+			
 			throw $ex;
 		}
 	}
@@ -313,8 +316,7 @@ class Account extends Controller {
 	function register()
 	{	
 		try
-		{
-			//Load the userViewModel
+		{			//Load the userViewModel
 			$userViewModel = $this->loadViewModel('shared/UserViewModel');
 
 			//Execute code if a post back
@@ -325,7 +327,7 @@ class Account extends Controller {
 
 				//Load the AccountModel to access account functions
 				$model = $this->loadModel('AccountModel');
-				
+
 				//Validate data that was posted to the server
 				//This will also set the temp errors to be shown in the view
 				if($userViewModel->validate())
@@ -333,7 +335,7 @@ class Account extends Controller {
 					//Attempt to register the user with our website				
 					if($model->registerUserProfile($userViewModel))
 					{
-						addSuccessMessage("dbSuccess", gettext("Your Registered! Verify your email and log in!"));
+						addSuccessMessage("dbSuccess", gettext("Your Registered! Verify your email and log in!"), 1);
 
 						//If success, send user to the login page
 						$this->redirect("account/login");	
@@ -681,6 +683,8 @@ class Account extends Controller {
 					{
 						$sessionManger = new SessionManager();
 						$sessionManger->setLanguageSession($profileViewModel->LanguageType_LanguageId);
+
+						$sessionManger->setUserSessions($model->getAllUserDetails($this->currentUser->UserId));
 
 						$IsSuccess = TRUE;	
 					}				

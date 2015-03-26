@@ -41,6 +41,9 @@
 	              </div>
 
 	              <div id="cropImage_header" class="btn btn-primary" style="display:none;"><?php echo gettext("Save"); ?></div>
+	              <div style="float: right; margin-left:10px" id="CropBackgroundSpinerDiv">
+	             		<?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
+	     			</div>
 	         </form>
           </div>          
       </div>
@@ -77,7 +80,10 @@
 	                    <input style="font-size: 20px; cursor: pointer; opacity: 0; filter: alpha(opacity=0);" type="file" id="ProfileImage" name="ProfileImage" class="upload" placeholder="<?php echo gettext("Choose A Photo"); ?>" value="">
 	              </div>
 
-	              <div id="cropImage_profile" class="btn btn-primary" style="display:none;"><?php echo gettext("Save"); ?></div>
+	              	<div id="cropImage_profile" class="btn btn-primary" style="display:none;"><?php echo gettext("Save"); ?></div>
+	              	<div style="float: right; margin-left:10px" id="CropProfileSpinerDiv">
+	             		<?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
+	     			</div>
 	         </form>
           </div>          
       </div>

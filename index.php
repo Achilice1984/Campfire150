@@ -149,22 +149,22 @@ pip();
 	}	
 
 	function exception_error_handler($errno, $errstr, $errfile, $errline ) {
-		ob_start();
+		
 
 		$_SESSION["errno"] = $errno;
 		$_SESSION["errstr"] = $errstr;
 		$_SESSION["errfile"] = $errfile;
 		$_SESSION["errline"] = $errline;
-
+		ob_start();
 		header('Location: '. BASE_URL . "error/generic");
 		exit;
 	}
 
 	function exception_handler($ex) {
-		ob_start();
+		
 
 		$_SESSION["exception"] = $ex;
-		
+		ob_start();
 		header('Location: '. BASE_URL . "error/generic");
 		exit;
 	}

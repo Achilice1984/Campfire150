@@ -74,15 +74,18 @@
                                   <ul class="dropdown-menu" role="menu" aria-labelledby="loginMenu">
                                     <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/home"><?php echo gettext("Profile"); ?></a></li>
                                     <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/logout"><?php echo gettext("Logout") ?></a></li>                              
-                                    <li class="divider"></li>
-                                    <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>admin/"><?php echo gettext("Admin Panel") ?></a></li>
+                                    
+                                    <?php if ($currentUser->IsAdmin): ?>
+                                        <li class="divider"></li>
+                                        <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>admin/"><?php echo gettext("Admin Panel") ?></a></li>
+                                    <?php endif ?>                                    
                                   </ul>
                                 </li>
                       <?php } ?>
                   </ul>
               </div>
             </nav>
-            <p class="h4 hidden-sm hidden-xs text-warning text-right motto"><?php echo gettext("Gathering Canadians through story."); ?></p>
+            <p class="h4 hidden-sm hidden-xs text-warning text-right motto"><?php echo gettext("Share your story. Shape our future."); ?></p>
             <nav role ="navigation" class="navbar navbar-default nav-primary">
               <div class="navbar-header">
                   <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#c150-navbar-collapse">

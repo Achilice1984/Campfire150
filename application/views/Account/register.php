@@ -111,7 +111,7 @@
                                 <label for="YearsInCanada"><?php echo gettext("Years Living In Canada"); ?></label>
                                 <select class="form-control" name="YearsInCanada">
                                     <?php 
-                                        for ($i=0; $i <= 100; $i++) { 
+                                        for ($i=1; $i <= 100; $i++) { 
                                             echo "<option " . ($userViewModel->YearsInCanada == $i ? 'selected=selected' : "") . " value='" . $i . "'>"; 
                                                 echo $i;
                                             echo "</option>";

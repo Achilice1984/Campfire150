@@ -164,6 +164,12 @@ $(document.body).on('click', "#cropImage_header", function(){
 			}
 
 			$('#imgPreviewer_header').cropper('destroy');
+		},
+		beforeSend: function(){
+			$("#CropBackgroundSpinerDiv .spinner_small").removeClass("hide");
+		},
+		complete: function(){
+			$("#CropBackgroundSpinerDiv .spinner_small").addClass("hide");
 		}
 	});	
 
@@ -264,6 +270,12 @@ $(document.body).on('click', "#cropImage_profile", function(){
 			}
 
 			$('#imgPreviewer_profile').cropper('destroy');
+		},
+		beforeSend: function(){
+			$("#CropProfileSpinerDiv .spinner_small").removeClass("hide");
+		},
+		complete: function(){
+			$("#CropProfileSpinerDiv .spinner_small").addClass("hide");
 		}
 	});	
 

@@ -78,7 +78,7 @@
                  <div class="form-group">
                    <!--  <label for="Tags[]"><?php echo gettext("Story Tags"); ?></label> -->
 
-                    <select id="Tags" class="form-control multiSelectTag" name="Tags" multiple placeholder="Tag Your Story!">
+                    <select id="Tags" class="form-control multiSelectTag" name="Tags[]" multiple placeholder="Tag Your Story!">
                         <option value=""></option>
                         <?php 
                             if(is_array($storyViewModel->Tags) && count($storyViewModel->Tags) > 0)

@@ -138,7 +138,7 @@ class UserViewModel extends ViewModel
 		$errors["YearsInCanada"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The First Name field is required!'),
+					'Message' => gettext('The Years Living in Canada field is required!'),
 					'Properties' => array()
 				)
 		);
