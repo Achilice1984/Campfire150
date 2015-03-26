@@ -7,35 +7,17 @@ class Account extends Controller {
 		parent::__construct();
 	}
 
-	//The home view will be where a user can view all of their account information
-	// function home()
-	// {	
-	// 	try
-	// 	{
-	// 		//Check if users is authenticated for this request
-	// 		//Will kick out if not authenticated
-	// 		$this->AuthRequest();
-
-	// 		//Load the accountHomeViewModel
-	// 		$accountHomeViewModel = $this->loadViewModel('AccountHomeViewModel');
-
-	// 		//Load the AccountModel to access account functions
-	// 		$model = $this->loadModel('AccountModel');
-
-	// 		//Load the home view
-	// 		$view = $this->loadView('home');
-
-	// 		//Add a variable with data so that it can be accessed in the view
-	// 		$view->set('accountHomeViewModel', $accountHomeViewModel);
-
-	// 		//Render the home view. true indicates to load the layout pages as well
-	// 		$view->render(true);
-	// 	}
-	// 	catch(Exception $ex)
-	// 	{
-
-	// 	}
-	// }	
+	function index()
+	{
+		try
+		{
+			$this->redirect("account/search");
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
+	}	
 
 	function home($userID = null)
 	{

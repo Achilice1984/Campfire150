@@ -1068,6 +1068,16 @@ class Admin extends Controller {
 		}
 	}
 
+	function errorLogs()
+	{
+		include ROOT_DIR . "static/errorlogs/errors.html";
+	}
+
+	function exceptionLogs()
+	{
+		include ROOT_DIR . "static/errorlogs/exceptions.html";
+	}
+
 }
 
 ?>

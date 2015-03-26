@@ -48,6 +48,56 @@ class Error extends Controller {
 	{
 		if(isset($_SESSION["errno"]) || isset($_SESSION["exception"]))
 		{
+			$file;
+			$errorString;
+
+			if(isset($_SESSION["errno"]))
+			{
+				$file = ROOT_DIR . "static/errorlogs/errors.html";
+
+				//$fileContents = file_get_contents($file);
+
+				$errorString = '<div class="error">
+	<div class="errorType">
+		<h2>Date</h2>
+		<div class="errorDateContent">' . date("Y-m-d H:i:s") . '</div>
+		<h2>Type</h2>
+		<div class="errorTypeContent">' . $_SESSION["errstr"] . '</div>
+	</div>
+	<div class="errorType">
+		<h2>Number</h2>
+		<div class="errorTypeContent">' . $_SESSION["errno"] . '</div>
+	</div>
+	<div class="errorType">
+		<h2>Location</h2>
+		<div class="errorTypeContent">' . $_SESSION["errfile"] . '</div>
+	</div>
+	<div class="errorType">
+		<h2>Line</h2>
+		<div class="errorTypeContent">' . $_SESSION["errline"] . '</div>
+	</div>	
+	<hr />
+</div>';
+
+				file_put_contents($file, $errorString, FILE_APPEND | LOCK_EX);
+			}
+			else
+			{
+				$ex = $_SESSION["exception"];
+
+				$file = ROOT_DIR . "static/errorlogs/exceptions.html";
+
+				//$fileContents = file_get_contents($file);
+
+				$errorString = '<div class="error">
+	<div class="exceptionDiv">
+		<h2>Exception Print ' . date("Y-m-d H:i:s") . '</h2>
+		<div class="exceptionContent"><pre>' . print_r($ex, true) . '</pre></div>
+	</div>	
+	<hr />
+</div>';
+				file_put_contents($file, $errorString, FILE_APPEND | LOCK_EX);
+			}
 			//Load the register view
 			$view = $this->loadView('generic');
 			
