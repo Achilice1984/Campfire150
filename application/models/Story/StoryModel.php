@@ -1798,7 +1798,7 @@ class StoryModel extends Model {
 		//inserts a new comment with the published flag set to false
 		//returns bool if the comment was saved succesfully
 
-		$statement = "INSERT INTO Comment (Story_StoryId, User_UserId, Content, DateCreated) 
+		$statement = "INSERT INTO comment (Story_StoryId, User_UserId, Content, DateCreated) 
 						VALUES(:storyID, :userID, :comment, :DateCreated)";
 
 		$parameters = array(":storyID" => $storyID, ":userID" => $userID, ":comment" => $comment, ":DateCreated" => $this->getDateNow());
