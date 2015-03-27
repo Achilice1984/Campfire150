@@ -105,7 +105,9 @@ class AdminModel extends Model {
 							INNER JOIN user u
 							ON s.User_UserId = u.UserId
 							WHERE storyID 
-							NOT IN (SELECT Story_StoryId FROM admin_approve_story) 
+							NOT IN (SELECT Story_StoryId 
+									FROM admin_approve_story aas
+									WHERE aas.Active = TRUE) 
 							LIMIT :Start, :HowMany";
 
 			$start = $this->getStartValue($howMany, $page);

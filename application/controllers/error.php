@@ -98,18 +98,26 @@ class Error extends Controller {
 </div>';
 				file_put_contents($file, $errorString, FILE_APPEND | LOCK_EX);
 			}
-			//Load the register view
-			$view = $this->loadView('generic');
-			
-			//Render the register view. true indicates to load the layout pages as well
-			$view->render(true);	
 
-			$this->unsetErrors();		
+			if(!$this->isAjax())
+			{
+				//Load the register view
+				$view = $this->loadView('generic');
+				
+				//Render the register view. true indicates to load the layout pages as well
+				$view->render(true);	
+
+				$this->unsetErrors();	
+			}	
 		}	
 		else
 		{
 			$this->unsetErrors();
-			$this->redirect("");
+
+			if(!$this->isAjax())
+			{
+				$this->redirect("");
+			}
 		}		
 	}
 

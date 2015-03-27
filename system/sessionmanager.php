@@ -28,8 +28,45 @@ class SessionManager
 		}
 	}
 
-	public function setUserSessions($user)
+	public function IsTimedOut()
 	{
+		if(isset($_SESSION['timeout']))
+		{
+			if ($_SESSION['timeout'] < time()) {
+				//Timed out, kick them out.
+		     	session_destroy();
+
+		     	ob_start();
+				header('Location: '. BASE_URL . "account/login");
+				exit;
+		  	} 
+		  	else {
+			     // session ok
+
+		  		if(!isset($_SESSION['remember']) || $_SESSION['remember'] != TRUE)
+		  		{
+		  			$_SESSION['timeout'] = time() + (SESSION_EXP_MINUTES * 60);
+		  		}
+
+		  		return TRUE;
+		  	}
+	  	}
+	}
+
+	public function setUserSessions($user, $rememberMe)
+	{
+		$_SESSION['lastAccess'] = time();
+
+		if(isset($rememberMe))
+		{
+			$_SESSION['timeout'] = time()+ (24*60*60 * REMEMBER_ME_DAYS);
+			$_SESSION['remember'] = TRUE;
+		}
+		else
+		{
+			$_SESSION['timeout'] = time() + (SESSION_EXP_MINUTES * 60);
+		}
+
 		//Authentication
 		$_SESSION["isAuth"]  	= true;
 		$_SESSION["isAdmin"] 	= $user->IsAdmin;

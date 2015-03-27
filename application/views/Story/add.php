@@ -23,6 +23,13 @@
                 <input type="hidden" name="StoryId" id="StoryId" value="<?php echo $storyViewModel->StoryId; ?>">
                 <input type="hidden" name="PictureId" id="PictureId" value="<?php echo $storyViewModel->PictureId; ?>">
 
+                <?php if (isset($storyViewModel->Published) && $storyViewModel->Published == TRUE): ?>
+                    <div class="alert alert-info alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("Editing a published story sets it's status back to pending approval."); ?>
+                    </div>
+                <?php endif ?>
+
                 <?php include(APP_DIR . 'views/shared/messages.php'); ?>         
                 
                 
