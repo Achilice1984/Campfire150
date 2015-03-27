@@ -69,7 +69,7 @@ class SessionManager
 
 		//Authentication
 		$_SESSION["isAuth"]  	= true;
-		$_SESSION["isAdmin"] 	= $user->IsAdmin;
+		$_SESSION["isAdmin"] 	= $user->AdminFlag;
 
 		//User Details
 		$_SESSION["UserId"] 	= $user->UserId;
