@@ -668,7 +668,7 @@ class Account extends Controller {
 						$sessionManger = new SessionManager();
 						$sessionManger->setLanguageSession($profileViewModel->LanguageType_LanguageId);
 
-						$sessionManger->setUserSessions($model->getAllUserDetails($this->currentUser->UserId));
+						$sessionManger->setUserSessions($model->getAllUserDetails($this->currentUser->UserId), isset($_SESSION['remember']) ? $_SESSION['remember'] : null);
 
 						$IsSuccess = TRUE;	
 					}				
@@ -1460,8 +1460,9 @@ class Account extends Controller {
 				{
 					if($_POST["Password"] == $_POST["RePassword"])
 					{
-						
-						$result = $accountModel->searchForUser($_POST["Email"], $_POST["Password"], $_POST["Hash"]);
+						$accountModel = $this->loadModel("Account/AccountModel");
+
+						$result = $accountModel->resetPassword($_POST["Email"], $_POST["Password"], $_POST["Hash"]);
 
 						if($result)
 						{
