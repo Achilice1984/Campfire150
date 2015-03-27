@@ -57,23 +57,30 @@
                 </div>
             </div>
         </section>
-        <section class="bg-blue marginBottom-15">
+        
+        <section style="padding-top: 20px; padding-bottom: 20px;" class="bg-blue marginBottom-15">
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">
                         <canvas id="wordCloudCanvas" height="400" width="500"></canvas> 
                     </div>
-                    <div class="col-md-6">
+                    <div style="" class="col-md-6">
                         <h1><?php echo gettext("How the Campfire Works"); ?></h1>
-                        <ol>
+                        <ol style="font-size: 1.4em; padding-bottom: 25px;">
                             <li><?php echo gettext("Submit a story"); ?></li>
                             <li><?php echo gettext("Answer some simple questions"); ?></li>
                             <li><?php echo gettext("We all create a national story"); ?></li>
                             <li><?php echo gettext("Repeat"); ?></li>
                         </ol>
-                        <p><a href="<?php echo BASE_URL; ?>story/add" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Share a Story"); ?></a></p>
+                        <p style=""><a href="<?php echo BASE_URL; ?>story/add" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Share a Story"); ?></a></p>
                     </div>
                 </div>
             </div>
+        </section>
+        <section class="hidden-xs">
+            <input type="hidden" id="END_DATE" value="<?php echo strtotime(COUNTDOWN_END); ?>">
+            <input type="hidden" id="NOW_DATE" value="<?php echo strtotime("now"); ?>">
+
+            <?php include(APP_DIR . 'views/Home/_countdown.php') ?>
         </section>
     

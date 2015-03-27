@@ -85,4 +85,12 @@ $config['MAX_LOGIN_ATTEMPTS'] 			= 10;
 
 $config['ACCOUNT_LOCKOUT_TIME_MIN']		= 10;
 
+
+/*********************************************
+*
+*				COUNTDOWN
+*
+**********************************************/
+$config['COUNTDOWN_END']				= "1 April 2016";
+
 ?>
