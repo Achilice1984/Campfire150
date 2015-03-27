@@ -88,6 +88,7 @@ define('ACCOUNT_LOCKOUT_TIME_MIN', $config['ACCOUNT_LOCKOUT_TIME_MIN']);
 define('base_url_https', $config['base_url_https']);
 
 define('SITE_EMAIL', $config['SITE_EMAIL']);
+define('COUNTDOWN_END', $config['COUNTDOWN_END']);
 
 $request_url = sprintf(
 					    "%s://%s:8084/",
