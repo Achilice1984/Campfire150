@@ -12,11 +12,11 @@ $config["debugMode"] = true;
 *				BASE URLS (KNOWN URLS)
 *
 **********************************************/
-//$config['base_url'] = array("http://localhost:8084/CampFire150/"); // Base URL including trailing slash (e.g. http://localhost/)
-//$config['base_url_https'] = "http://localhost:8084/CampFire150/";
+$config['base_url'] = array("http://localhost:8084/CampFire150/"); // Base URL including trailing slash (e.g. http://localhost/)
+$config['base_url_https'] = "http://localhost:8084/CampFire150/";
 
-$config['base_url'] = array("http://www.campfire150.com/", "http://campfire150.com/", "https://www.campfire150.com/", "https://campfire150.com/"); // Base URL including trailing slash (e.g. http://localhost/)
-$config['base_url_https'] ="http://www.campfire150.com/";
+//$config['base_url'] = array("http://www.campfire150.com/", "http://campfire150.com/", "https://www.campfire150.com/", "https://campfire150.com/"); // Base URL including trailing slash (e.g. http://localhost/)
+//$config['base_url_https'] ="http://www.campfire150.com/";
 
 /*********************************************
 *
@@ -36,6 +36,13 @@ $config['db_dsn'] = 'mysql:dbname=wwwcoiox_campfire;localhost';
 $config['db_username'] = 'wwwcoiox_campfir'; // Database username
 $config['db_password'] = 'Ep8qNRvHWUV4NXSu'; // Database password
 
+
+/*********************************************
+*
+*				SITE EMAIL
+*
+**********************************************/
+$config["SITE_EMAIL"] = "admin@campfire150.com";
 
 
 /*********************************************

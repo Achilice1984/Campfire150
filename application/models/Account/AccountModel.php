@@ -253,8 +253,8 @@ class AccountModel extends Model {
 	{
 		try
 		{
-			$headers = 'From: admin@campfire150.com' . "\r\n" .
-			    'Reply-To: admin@campfire150.com' . "\r\n" .
+			$headers = 'From: ' . SITE_EMAIL . '' . "\r\n" .
+			    'Reply-To: ' . SITE_EMAIL . '' . "\r\n" .
 			    'Content-Type: text/html; charset=ISO-8859-1' . "\r\n" .
 			    'X-Mailer: PHP/' . phpversion();
 
