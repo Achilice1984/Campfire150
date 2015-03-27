@@ -44,7 +44,7 @@
           <div class="col-md-4">
             <header role="banner">
               <a href="<?php echo BASE_URL; ?>">
-                <img src="<?php echo BASE_URL; ?>/static/c150/c150.png" id="c150-logo" alt="Campfire 150" />
+                <img class="img-responsive" src="<?php echo BASE_URL; ?>/static/c150/c150.png" id="c150-logo" alt="Campfire 150" />
               </a>
             </header>
           </div>
