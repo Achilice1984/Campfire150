@@ -199,7 +199,8 @@ class Account extends Controller {
 					}				
 				}	
 
-				$model->logout();
+				//This was causing weir redirect issues
+				//$model->logout();echo "string";exit;
 			}
 
 			//Load the login view

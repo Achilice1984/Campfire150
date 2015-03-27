@@ -9,6 +9,7 @@ header('Content-Type:text/html; charset=UTF-8');
 //Start the Session
 session_start(); 
 
+
 /*
 *	Load plugins
 */
@@ -79,6 +80,11 @@ define('MAX_COMMENTS_LISTS', (IS_MOBILE ? $config["MAX_COMMENTS"] : $config["MAX
 define('MAX_ADMIN_LISTS', (IS_MOBILE ? $config["MAX_ADMIN_LISTS"] : $config["MAX_ADMIN_LISTS_MOBILE"]));
 define('MAX_HOME_CATEGORIES', $config['MAX_HOME_CATEGORIES']);
 
+define('REMEMBER_ME_DAYS', $config['REMEMBER_ME_DAYS']);
+define('SESSION_EXP_MINUTES', $config['SESSION_EXP_MINUTES']);
+define('MAX_LOGIN_ATTEMPTS', $config['MAX_LOGIN_ATTEMPTS']);
+define('ACCOUNT_LOCKOUT_TIME_MIN', $config['ACCOUNT_LOCKOUT_TIME_MIN']);
+
 $request_url = sprintf(
 					    "%s://%s:8084/",
 					    isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
@@ -99,7 +105,9 @@ else
 define('FULL_URL', 'http'.(empty($_SERVER['HTTPS'])?'':'s').'://'.$_SERVER['SERVER_NAME'] . ($config["debugMode"] == true ? ":8084" : "") . $_SERVER['REQUEST_URI']);
 //define('FULL_URL', 'http'.(empty($_SERVER['HTTPS'])?'':'s').'://'.$_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
 // Language Setup
-$sessionManager = new SessionManager();
+
+$sessionManager = new SessionManager;
+$sessionManager->IsTimedOut();
 $language = $sessionManager->setLanguagePrefernece();
 
 putenv("LC_ALL={$language}");

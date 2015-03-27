@@ -45,11 +45,10 @@ class AccountModel extends Model {
 				//Eliminate array 
 				$user = $user[0];
 
-				//echo "<br /><br /><br /><br /><br /><br />". strtotime($user->LockoutTimes) . "<br />" . strtotime('2 minutes') . "<br />" . (strtotime('-1 minutes') > strtotime($user->LockoutTimes));
-				if(!isset($user->LockoutTimes) || strtotime('+10 minutes') > strtotime($user->LockoutTimes)) //Is user locked out?
+				if(!isset($user->LockoutTimes) || strtotime($user->LockoutTimes) < (time() - (60 * ACCOUNT_LOCKOUT_TIME_MIN))) //Is user locked out?
 				{
 					//check to see if user is properly authenticated
-					if($authentication->authenticate($loginViewModel->Password, $user)) //Is user peoperly authenticated?
+					if($authentication->authenticate($loginViewModel, $user)) //Is user peoperly authenticated?
 					{
 						//Set login and lockouts back to starting point
 						$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt, LockoutTimes = :LockoutTimes";
@@ -71,8 +70,8 @@ class AccountModel extends Model {
 					else //User exists BUT Login failed, update failed attempts
 					{
 						//to many failed login attempts, lockout user
-						if($user->FailedLoginAttempt >= 10)
-						{		
+						if($user->FailedLoginAttempt >= MAX_LOGIN_ATTEMPTS)
+						{	
 							//add a failed login attempt and set the lockout time
 							$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt, LockoutTimes = :LockoutTimes";
 							$statement .= " WHERE UserId = :UserId";
@@ -83,16 +82,6 @@ class AccountModel extends Model {
 								":UserId" => $user->UserId
 							);
 
-							//If this is already set, we need to remove the current values as login attempts are reset
-							if(isset($user->LockoutTimes))	
-							{
-								$parameters = array( 
-									":FailedLoginAttempt" => 1, 
-									":LockoutTimes" => NULL,
-									":UserId" => $user->UserId
-								);
-							}
-							
 							$this->fetch($statement, $parameters);
 						}
 						else
@@ -125,6 +114,8 @@ class AccountModel extends Model {
 		try
 		{
 			session_destroy();
+
+			return true;
 		}
 		catch(Exception $ex)
 		{

@@ -18,15 +18,16 @@ class Authentication
 		return $sessionManger->isAdmin();
 	}
 
-	public function authenticate($loginPassword, $user)
+	public function authenticate($loginViewModel, $user)
 	{
-		$isAuthenticated = $this->verifyPassword($loginPassword, $user->Password);
+		$isAuthenticated = $this->verifyPassword($loginViewModel->Password, $user->Password);
+		
 		//If you are authenticated setup session variable
 		if($isAuthenticated)
 		{
 			$sessionManger = new SessionManager();
 
-			$sessionManger->setUserSessions($user);
+			$sessionManger->setUserSessions($user, $loginViewModel->RememberMe);
 		}
 
 		return $isAuthenticated;
