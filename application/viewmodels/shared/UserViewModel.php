@@ -60,7 +60,7 @@ class UserViewModel extends ViewModel
 		$errors["Email"] = array(
 			'email' =>
 				array(
-					'Message' => gettext('Invalid Email Address.'),
+					'Message' => gettext('Invalid email address.'),
 					'Properties' => array()
 				),
 			'required' =>
@@ -105,7 +105,7 @@ class UserViewModel extends ViewModel
 		$errors["ProfilePrivacyType_PrivacyTypeId"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The privacy field is required!'),
+					'Message' => gettext('The Privacy field is required!'),
 					'Properties' => array()
 				)
 		);
@@ -119,19 +119,19 @@ class UserViewModel extends ViewModel
 		$errors["Gender_GenderId"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The gender field is required!'),
+					'Message' => gettext('The Gender field is required!'),
 					'Properties' => array()
 				)
 		);
 		$errors["Birthday"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The birthday field is required!'),
+					'Message' => gettext('The Birthday field is required!'),
 					'Properties' => array()
 				),
 			'date' =>
 				array(
-					'Message' => gettext('The birthday field is not a valid date!'),
+					'Message' => gettext('The Birthday field is not a valid date!'),
 					'Properties' => array()
 				)
 		);
@@ -165,7 +165,7 @@ class UserViewModel extends ViewModel
 				),
 			'postalCode' =>
 				array(
-					'Message' => gettext('Must be a valid Postal Code!'),
+					'Message' => gettext('The postal code is invalid!'),
 					'Properties' => array()
 				)
 		);

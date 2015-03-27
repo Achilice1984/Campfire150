@@ -13,14 +13,14 @@ class SecurityAnswerViewModel extends ViewModel
 		$errors["SecurityQuestionId"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The security question field is required!'),
+					'Message' => gettext('The Security Question field is required!'),
 					'Properties' => array()
 				)
 		);
 		$errors["SecurityAnswer"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The security question answer field is required!'),
+					'Message' => gettext('The Security Question Answer field is required!'),
 					'Properties' => array()
 				)
 		);
