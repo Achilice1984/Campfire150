@@ -28,7 +28,7 @@ class ActiveViewModel extends ViewModel
 		$errors["Active"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Active Name field is required!'),
+					'Message' => gettext('The Active field is required!'),
 					'Properties' => array()
 				)
 		);
@@ -36,7 +36,7 @@ class ActiveViewModel extends ViewModel
 		$errors["Reason"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Reason name field is required!'),
+					'Message' => gettext('The Reason field is required!'),
 					'Properties' => array()
 				)
 		);

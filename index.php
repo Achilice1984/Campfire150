@@ -90,6 +90,11 @@ $request_url = sprintf(
 					    isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
 					    $_SERVER['SERVER_NAME']
 					  );
+// $request_url = sprintf(
+// 					    "%s://%s/",
+// 					    isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
+// 					    $_SERVER['SERVER_NAME']
+// 					  );
 
 //Check if the requested url is included in the array of valid urls
 //and asign the proper url
