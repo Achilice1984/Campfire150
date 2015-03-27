@@ -85,6 +85,10 @@ define('SESSION_EXP_MINUTES', $config['SESSION_EXP_MINUTES']);
 define('MAX_LOGIN_ATTEMPTS', $config['MAX_LOGIN_ATTEMPTS']);
 define('ACCOUNT_LOCKOUT_TIME_MIN', $config['ACCOUNT_LOCKOUT_TIME_MIN']);
 
+define('base_url_https', $config['base_url_https']);
+
+define('SITE_EMAIL', $config['SITE_EMAIL']);
+
 $request_url = sprintf(
 					    "%s://%s:8084/",
 					    isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',

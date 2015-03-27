@@ -216,7 +216,8 @@ class Account extends Controller {
 				array("static/plugins/select2/js/select2.min.js", "intern"),
 				array("static/plugins/validation/js/language/en_US.js", "intern"),
 				array("static/plugins/validation/js/language/fr_FR.js", "intern"),
-				array("static/js/validation.js", "intern")
+				array("static/js/validation.js", "intern"),
+				array("static/js/login.js", "intern")
 			));
 
 			$view->setCSS(array(
@@ -667,7 +668,7 @@ class Account extends Controller {
 						$sessionManger = new SessionManager();
 						$sessionManger->setLanguageSession($profileViewModel->LanguageType_LanguageId);
 
-						$sessionManger->setUserSessions($model->getAllUserDetails($this->currentUser->UserId));
+						$sessionManger->setUserSessions($model->getAllUserDetails($this->currentUser->UserId), isset($_SESSION['remember']) ? $_SESSION['remember'] : null);
 
 						$IsSuccess = TRUE;	
 					}				
@@ -1413,6 +1414,91 @@ class Account extends Controller {
 					}
 				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
+	}
+
+	function sendPasswordReset()
+	{
+		$model = $this->loadModel("Account/AccountModel");
+
+		if(isset($_POST["ResetEmail"]))
+		{
+			$result = $model->sendResetPassword($_POST["ResetEmail"]);
+
+			if($this->isAjax())
+			{
+				if($result)
+				{
+					echo $result;
+				}
+			}
+			else
+			{
+				if($result)
+				{
+					addSuccessMessage("dbSuccess", gettext("Reset email was sent!"), 1);
+					$this->redirect("");
+				}
+			}
+		}
+	}
+
+	function resetPassword($email = null, $hash = null)
+	{
+		try
+		{
+			if($this->isPost())
+			{
+				$email = $_POST["Email"];
+				$hash = $_POST["Hash"];
+
+				if(isset($_POST["Email"]) && isset($_POST["Hash"]) && isset($_POST["Password"]) && isset($_POST["RePassword"]))
+				{
+					if($_POST["Password"] == $_POST["RePassword"])
+					{
+						$accountModel = $this->loadModel("Account/AccountModel");
+
+						$result = $accountModel->resetPassword($_POST["Email"], $_POST["Password"], $_POST["Hash"]);
+
+						if($result)
+						{
+							addSuccessMessage("dbSuccess", gettext("Password was reset, please login using your new password!"), 1);
+
+							$this->redirect("account/login");
+						}
+					}
+				}
+
+				addErrorMessage("dbError", gettext("Oops, something went wrong while resetting your password."));
+			}		
+
+			//Load the profile view
+			$view = $this->loadView('reset');
+
+			$view->set('email', $email);
+			$view->set('hash', $hash);
+
+			//Load up some js files
+			$view->setJS(array(
+				array("static/plugins/validation/js/formValidation.min.js", "intern"),
+				array("static/plugins/validation/js/framework/bootstrap.min.js", "intern"),
+				array("static/plugins/select2/js/select2.min.js", "intern"),
+				array("static/plugins/validation/js/language/en_US.js", "intern"),
+				array("static/plugins/validation/js/language/fr_FR.js", "intern"),
+				array("static/js/validation.js", "intern")
+			));
+
+			$view->setCSS(array(
+				array("static/plugins/validation/css/formValidation.min.css", "intern"),
+				array("static/plugins/select2/css/select2.min.css", "intern")
+			));
+
+			//Render the profile view. true indicates to load the layout pages as well
+			$view->render(true);
 		}
 		catch(Exception $ex)
 		{
