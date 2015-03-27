@@ -83,6 +83,8 @@ class Controller {
 
 			if(!$auth->isAdmin())
 			{
+				addErrorMessage("dbError", gettext("You are not authorized to view this page!"), 1);
+
 				$this->redirect("");
 			}
 		}

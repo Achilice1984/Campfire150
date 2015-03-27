@@ -5,6 +5,8 @@ class Admin extends Controller {
 	function __construct()
 	{
 		parent::__construct();
+
+		$this->AdminRequest();
 	}
 	
 	function testAdmin()
