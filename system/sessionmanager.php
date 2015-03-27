@@ -133,12 +133,12 @@ class SessionManager
 				$user->MidName    = $_SESSION["MidName"];
 				$user->Address    = $_SESSION["Address"];
 				$user->PostalCode = $_SESSION["PostalCode"];
-
-				$user->LanguagePreference = $_SESSION["languagePreference"];
-
 				$user->IsAdmin = $_SESSION["isAdmin"];
 				$user->IsAuth = $_SESSION["isAuth"];
 			}
+
+			//This must be accessible even if user is not logged in
+			$user->LanguagePreference = $_SESSION["languagePreference"];
 		}
 		catch (Exception $e)
 		{

@@ -1,7 +1,6 @@
 <script type="text/javascript">
     var WordCloudWords = <?php echo $homeViewModel->WordCloud; ?>
 </script>
-
         <section>
             <div class="container">
 
