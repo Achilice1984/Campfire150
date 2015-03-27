@@ -497,9 +497,14 @@ class Story extends Controller {
 					
 					if(!is_numeric($tagID))
 					{
-						if($storyModel->addNewTag($tagID))
+						$tagID = $storyModel->checkTagExists($tagID);
+						
+						if(!is_numeric($tagID))
 						{
-							$tagID = $storyModel->lastInsertId();
+							if($storyModel->addNewTag($tagID))
+							{
+								$tagID = $storyModel->lastInsertId();
+							}
 						}
 					}	
 

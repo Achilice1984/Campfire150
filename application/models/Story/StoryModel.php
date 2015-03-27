@@ -2178,6 +2178,30 @@ class StoryModel extends Model {
 		}
 	}
 
+	public function checkTagExists($tag)
+	{
+		try
+		{
+			$statement = "SELECT t.TagId
+							FROM tag t 
+							WHERE t.Tag = :Tag
+							LIMIT 1";
+
+			$result = $this->fetchIntoObject($statement, array(":Tag" => $tag));
+			
+			if(isset($result[0]))
+			{
+				$tag = $result[0]->TagId;
+			}
+
+			return $tag;
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
+	}
+
 	public function getTagByID($tagId)
 	{
 		try
