@@ -18,7 +18,7 @@
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" role="tablist">
             <li role="presentation" class="active"><a href="#update_profile" aria-controls="update_profile" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Profile"); ?></a></li>
-            <li role="presentation"><a href="#dangerZone" aria-controls="dangerZone" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-console"></span> <?php echo gettext("Danger Zone"); ?></a></li>
+            <li role="presentation"><a href="#dangerZone" aria-controls="dangerZone" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-console"></span> <?php echo gettext("Change Password"); ?></a></li>
         </ul>
 
         <!-- Tab panes -->
@@ -169,7 +169,7 @@
                             <br />
                         </form>                       
 
-                        <form id="ChangeSecurityQuestionForm" action="<?php echo BASE_URL; ?>Account/changesecurityquestion" method="post">
+                        <!-- <form id="ChangeSecurityQuestionForm" action="<?php echo BASE_URL; ?>Account/changesecurityquestion" method="post">
 
                             <h2><?php echo gettext("Security Question"); ?></h2>
 
@@ -202,7 +202,7 @@
                                 <?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
                             </div>
                             <br />
-                        </form>
+                        </form> -->
                     </div>
                 </div>
             </div>

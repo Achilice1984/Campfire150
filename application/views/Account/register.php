@@ -39,7 +39,7 @@
                                 <input type="password" class="form-control" id="RePassword" name="RePassword" placeholder="<?php echo gettext("Re-Type Password"); ?>"><p class="help-block"></p>
                             </div>
 
-                            <div class="form-group">
+                            <!-- <div class="form-group">
                                 <label for="SecurityQuestionId"><?php echo gettext("Security Question"); ?></label>
                                 <select class="form-control" name="SecurityQuestionId">
                                     <?php 
@@ -54,7 +54,7 @@
                             <div class="form-group">
                                 <label for="SecurityAnswer"><?php echo gettext("Security Question Answer"); ?></label>
                                 <input type="text" class="form-control" id="SecurityAnswer" name="SecurityAnswer" placeholder="<?php echo gettext("Enter Your Answer"); ?>" value="<?php echo $userViewModel->SecurityAnswer; ?>">
-                            </div>
+                            </div> -->
 
                             <!-- <div class="form-group">
                                 <label for="ActionStatement"><?php echo gettext("User Action Statement"); ?></label>

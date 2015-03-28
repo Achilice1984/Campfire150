@@ -76,7 +76,7 @@
                 </div>
             </div>
         </section>
-        <section class="hidden-xs">
+        <section>
             <input type="hidden" id="END_DATE" value="<?php echo strtotime(COUNTDOWN_END); ?>">
             <input type="hidden" id="NOW_DATE" value="<?php echo strtotime("now"); ?>">
 

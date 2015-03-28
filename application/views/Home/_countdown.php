@@ -2,7 +2,7 @@
 
 .clock {
 	margin-top: 100px;
-	padding-bottom: 100px;
+	margin-bottom: 100px;
 }
 .clock-item .inner {
 	height: 0px;
