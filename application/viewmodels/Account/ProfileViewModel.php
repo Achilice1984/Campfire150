@@ -44,7 +44,7 @@ class ProfileViewModel extends ViewModel
 		$validate["Email"] = array(
 			'email' =>
 				array(
-					'Message' => gettext('Invalid Email Address.'),
+					'Message' => gettext('Invalid email address.'),
 					'Properties' => array()
 				),
 			'required' =>
@@ -63,7 +63,7 @@ class ProfileViewModel extends ViewModel
 		$errors["LastName"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Last Name is required!'),
+					'Message' => gettext('The Last Name field is required!'),
 					'Properties' => array()
 				)
 		);
@@ -97,19 +97,19 @@ class ProfileViewModel extends ViewModel
 		$errors["ProfilePrivacyType_PrivacyTypeId"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The privacy field is required!'),
+					'Message' => gettext('The Privacy field is required!'),
 					'Properties' => array()
 				)
 		);
 		$errors["Birthday"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The birthday field is required!'),
+					'Message' => gettext('The Birthday field is required!'),
 					'Properties' => array()
 				),
 			'date' =>
 				array(
-					'Message' => gettext('The birthday field is not a valid date!'),
+					'Message' => gettext('The Birthday field is not a valid date!'),
 					'Properties' => array()
 				)
 		);
@@ -117,7 +117,7 @@ class ProfileViewModel extends ViewModel
 		$errors["Gender_GenderId"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The gender field is required!'),
+					'Message' => gettext('The Gender field is required!'),
 					'Properties' => array()
 				)
 		);

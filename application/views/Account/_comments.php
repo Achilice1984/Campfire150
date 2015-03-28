@@ -25,8 +25,11 @@
 	    			<?php echo $comment->Content; ?>
 
 	    			<div style="padding-top: 5px;">
-						<a class="btn btn-primary approveComment commentAction" data-action="<?php echo BASE_URL . "account/approveComment/"; ?>" data-comment-id="<?php echo $comment->CommentId; ?>" href="#"><?php echo gettext("Approve"); ?></a>
-						<a class="btn btn-danger rejectComment commentAction" data-action="<?php echo BASE_URL . "account/rejectComment/"; ?>" data-comment-id="<?php echo $comment->CommentId; ?>" href="#"><?php echo gettext("Reject"); ?></a>
+						<a style="float: left;" class="btn btn-primary approveComment commentAction" data-action="<?php echo BASE_URL . "account/approveComment/"; ?>" data-comment-id="<?php echo $comment->CommentId; ?>" href="#"><?php echo gettext("Approve"); ?></a>
+						<a style="float: left;" class="btn btn-danger rejectComment commentAction" data-action="<?php echo BASE_URL . "account/rejectComment/"; ?>" data-comment-id="<?php echo $comment->CommentId; ?>" href="#"><?php echo gettext("Reject"); ?></a>
+						<div style="float: left; margin-left:10px" id="ApproveCommentSpinerDiv">
+		             		<?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
+	             		</div>
 					</div>
 	  			</div>		
 			</div>

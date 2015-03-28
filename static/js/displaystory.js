@@ -20,6 +20,12 @@ $(document.body).on('click', "#CommentStoryMoreButton", function(){
 
 				$("#CommentStoryMoreButton").hide();
 			}
+		},
+		beforeSend: function(){
+			$("#CommentStoryMoreButton .spinner_large").removeClass("hide");
+		},
+		complete: function(){
+			$("#CommentStoryMoreButton .spinner_large").addClass("hide");
 		}
 	});
 });
@@ -52,6 +58,12 @@ $(document.body).on('click', "#postCommentButton", function(event){
 			{
 				$("#CommentSubmitInfoBarError").show();
 			}
+		},
+		beforeSend: function(){
+			$("#AddCommentSpinerDiv .spinner_small").removeClass("hide");
+		},
+		complete: function(){
+			$("#AddCommentSpinerDiv .spinner_small").addClass("hide");
 		}
 	});
 });
@@ -149,6 +161,41 @@ $(document.body).on('click', ".StoryFlagButton", function(event){
 
 						$(".StoryRecommendButton").attr("data-request-type", "1");
 					}
+				}
+			}
+		}
+	});
+});
+
+$(document.body).on('click', ".CommentFlagButton", function(event){
+	event.preventDefault();
+
+	var thisFlag = $(this);
+	// var flagSpan = thisFlag.closest("h4").find(".totalFlagsSpan");
+	// var recommendButton = thisFlag.closest(".StoryRowSection").find(".StoryRecommendButton");
+	// var recommendSpan = thisFlag.closest(".StoryRowSection").find(".totalRecommendsSpan");
+
+	var reqType = thisFlag.attr("data-request-type");
+
+	var url = $(this).attr("href");
+	url = url.substring(0, url.length - 1) + reqType;
+
+	$.ajax({
+		type: "GET",
+		url: url,
+		success: function(data){
+
+			if(data)
+			{
+				thisFlag.attr("data-request-type", (reqType == 1 ? "0" : "1"));
+
+				if(thisFlag.hasClass("text-danger"))
+				{
+					thisFlag.removeClass("text-danger").addClass("StoryActionButtons");
+				}
+				else
+				{
+					thisFlag.removeClass("StoryActionButtons").addClass("text-danger");
 				}
 			}
 		}

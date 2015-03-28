@@ -5,7 +5,7 @@ $(document).ready(function() {
 
 function init_validation()
 {
-    $('form').not("#AboutForm").not("#ActionStatementForm").not("#ActionTakenForm").formValidation({
+    $('form').not("#AboutForm").not("#ActionStatementForm").not("#ActionTakenForm").not("#forgotPasswordForm").formValidation({
         locale: $("#LanguagePreference").val(),
         framework: 'bootstrap',
         trigger: 'blur',
@@ -162,6 +162,12 @@ function init_validation()
                 }
             },
             StoryTitle: {
+                validators: {
+                    notEmpty: {
+                    }
+                }
+            },
+            YearsInCanada: {
                 validators: {
                     notEmpty: {
                     }

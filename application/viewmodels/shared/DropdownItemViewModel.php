@@ -16,14 +16,14 @@ class DropdownItemViewModel extends ViewModel
 		$errors["TableName"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The table field is required!'),
+					'Message' => gettext('The Table field is required!'),
 					'Properties' => array()
 				)
 		);
 		$errors["NameE"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The english Name field is required!'),
+					'Message' => gettext('The English Name field is required!'),
 					'Properties' => array()
 				)
 		);
@@ -31,7 +31,7 @@ class DropdownItemViewModel extends ViewModel
 		$errors["NameF"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The french name field is required!'),
+					'Message' => gettext('The French Name field is required!'),
 					'Properties' => array()
 				)
 		);

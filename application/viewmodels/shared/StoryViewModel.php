@@ -40,7 +40,7 @@ class StoryViewModel extends ViewModel
 		$errors["StoryPrivacyType_StoryPrivacyTypeId"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The privacy field is required!'),
+					'Message' => gettext('The Privacy field is required!'),
 					'Properties' => array()
 				)
 		);
@@ -48,7 +48,7 @@ class StoryViewModel extends ViewModel
 		$errors["StoryTitle"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The title field is required!'),
+					'Message' => gettext('The Title field is required!'),
 					'Properties' => array()
 				)
 		);
@@ -56,7 +56,7 @@ class StoryViewModel extends ViewModel
 		$errors["Tags"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The tags field is required!'),
+					'Message' => gettext('The Tags field is required!'),
 					'Properties' => array()
 				)
 		);
@@ -64,7 +64,7 @@ class StoryViewModel extends ViewModel
 		$errors["Content"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The content field is required!'),
+					'Message' => gettext('The Story Content field is required!'),
 					'Properties' => array()
 				)
 		);

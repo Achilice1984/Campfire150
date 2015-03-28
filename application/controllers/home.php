@@ -75,7 +75,9 @@ class Home extends Controller {
 				array("static/plugins/wordcloud/wordcloud2.js", "intern"),
 				array("static/js/wordcloud.js", "intern"),
 				array("static/js/home.js", "intern"),
-				array("static/js/storyThumbs.js", "intern")
+				array("static/js/storyThumbs.js", "intern"),
+				array("static/plugins/coutdown/jquery.final-countdown.min.js", "intern"),
+				array("static/plugins/coutdown/kinetic.js", "intern")
 			));
 
 

@@ -21,9 +21,9 @@ class StoryModel extends Model {
 			return $story;
 
 		}
-		catch(PDOException $e)
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -55,9 +55,9 @@ class StoryModel extends Model {
 
 			return $this->fetch($statement, $parameters);
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -71,9 +71,32 @@ class StoryModel extends Model {
 		{
 			// create a php timestamp for inserting into the created and updated date fields in the database 
 			//$timestamp = date('Y-m-d G:i:s');
+
+
+			//TAGS
 			$statement = "UPDATE story_has_tag 
 							SET Active=FALSE
 							 WHERE story_has_tag.Story_StoryId = :StoryId";
+ 
+			$parameters = array(":StoryId" => $story->StoryId);
+
+			$this->fetch($statement, $parameters);
+
+			//ADMIN
+			$statement = "UPDATE admin_approve_story 
+							SET Active=FALSE
+							 WHERE Story_StoryId = :StoryId 
+							 AND Active = TRUE";
+ 
+			$parameters = array(":StoryId" => $story->StoryId);
+
+			$this->fetch($statement, $parameters);
+
+			//Questionaire
+			$statement = "UPDATE story_has_answer_for_question 
+							SET Active=FALSE
+							 WHERE Story_StoryId = :StoryId 
+							 AND Active = TRUE";
  
 			$parameters = array(":StoryId" => $story->StoryId);
 
@@ -96,9 +119,9 @@ class StoryModel extends Model {
 
 			return $this->fetch($statement, $parameters);
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -119,9 +142,9 @@ class StoryModel extends Model {
 
 			return $this->fetch($statement, $parameters);		
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -146,9 +169,9 @@ class StoryModel extends Model {
 
 			return $this->fetch($statement, $parameters);
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -173,9 +196,9 @@ class StoryModel extends Model {
 
 			return $this->fetch($statement, $parameters);
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -183,45 +206,52 @@ class StoryModel extends Model {
 	{
 		// 3 = story picture
 
-		//The returned id of the new picture
-		$pictureId = 0;
-
-		$statement = "INSERT INTO picture (FileName, Active, InppropriateFlag, User_UserId, picturetype_PictureTypeId, PictureExtension, DateCreated)
-						VALUES (:FileName, :Active, :InppropriateFlag, :User_UserId, :picturetype_PictureTypeId, :PictureExtension, NOW())";
-
-
-		$parameters = array( 
-			":FileName" => pathinfo($image["name"], PATHINFO_FILENAME), 
-			":Active" => true, 
-			":InppropriateFlag" => false, 
-			":User_UserId" => $userId, 
-			":picturetype_PictureTypeId" => 3, 
-			":PictureExtension" => pathinfo($image["name"], PATHINFO_EXTENSION)
-		);
-
-		if($this->fetch($statement, $parameters))
+		try
 		{
-			$pictureId = $this->lastInsertId();
+			//The returned id of the new picture
+			$pictureId = 0;
 
-			$statement = "UPDATE story_has_picture SET Active = FALSE
-							WHERE story_has_picture.Story_StoryId = :Story_StoryId";
+			$statement = "INSERT INTO picture (FileName, Active, InppropriateFlag, User_UserId, picturetype_PictureTypeId, PictureExtension, DateCreated)
+							VALUES (:FileName, :Active, :InppropriateFlag, :User_UserId, :picturetype_PictureTypeId, :PictureExtension, NOW())";
+
+
 			$parameters = array( 
-				":Story_StoryId" => $storyId
+				":FileName" => pathinfo($image["name"], PATHINFO_FILENAME), 
+				":Active" => true, 
+				":InppropriateFlag" => false, 
+				":User_UserId" => $userId, 
+				":picturetype_PictureTypeId" => 3, 
+				":PictureExtension" => pathinfo($image["name"], PATHINFO_EXTENSION)
 			);
 
-			$this->fetch($statement, $parameters);
+			if($this->fetch($statement, $parameters))
+			{
+				$pictureId = $this->lastInsertId();
 
-			$statement = "INSERT INTO story_has_picture(Story_StoryId, PictureId, DateCreated)
-						VALUES(:Story_StoryId, :PictureId, NOW())";
-			$parameters = array( 
-				":PictureId" => $pictureId, 
-				":Story_StoryId" => $storyId
-			);
+				$statement = "UPDATE story_has_picture SET Active = FALSE
+								WHERE story_has_picture.Story_StoryId = :Story_StoryId";
+				$parameters = array( 
+					":Story_StoryId" => $storyId
+				);
 
-			$this->fetch($statement, $parameters);
+				$this->fetch($statement, $parameters);
+
+				$statement = "INSERT INTO story_has_picture(Story_StoryId, PictureId, DateCreated)
+							VALUES(:Story_StoryId, :PictureId, NOW())";
+				$parameters = array( 
+					":PictureId" => $pictureId, 
+					":Story_StoryId" => $storyId
+				);
+
+				$this->fetch($statement, $parameters);
+			}
+
+			return $pictureId;
 		}
-
-		return $pictureId;
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
 	}
 
  	//tested
@@ -253,9 +283,9 @@ class StoryModel extends Model {
 
 			return $this->fetch($statement, $parameters);
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -278,9 +308,9 @@ class StoryModel extends Model {
 
 			return $this->fetch($statement, $parameters);		
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -301,9 +331,9 @@ class StoryModel extends Model {
 
 			return $this->fetch($statement, $parameters);		
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -326,9 +356,9 @@ class StoryModel extends Model {
 
 			return $this->fetch($statement, $parameters);		
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -350,9 +380,9 @@ class StoryModel extends Model {
 
 			return $this->fetch($statement, $parameters);		
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}	
 
@@ -440,11 +470,10 @@ class StoryModel extends Model {
 
 			return $story;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
-
 	}
 
 	// tested getStory(2,11)
@@ -459,7 +488,7 @@ class StoryModel extends Model {
 		try
 		{
 			$statement = "SELECT
-							s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
+							s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, s.Published,
 
 							urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
@@ -506,7 +535,6 @@ class StoryModel extends Model {
 							WHERE s.StoryId = :StoryId
 							AND u.ProfilePrivacyType_PrivacyTypeId = 1
 							AND s.Active = TRUE							
-							AND s.Published = FALSE
 							GROUP BY s.StoryId
 							";
 							
@@ -517,11 +545,10 @@ class StoryModel extends Model {
 
 			return $story;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
-
 	}
 
 	//Tested getStoryListByTag("Art", 5, 1);
@@ -614,13 +641,11 @@ class StoryModel extends Model {
 			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $story;
-
 		}
-		catch(PDOException $e)
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
-		}
-		
+			throw $ex;
+		}		
 	}
 
 	//Tested getStoryListByIssueID(1,6,1); it works but we need to know the exact issueID
@@ -632,8 +657,7 @@ class StoryModel extends Model {
 		//Checks if user has makrked story as inappropriate and if user has recommended story (add these to story viewmodel class)
 		//returns an array of Story class related to a category
 		try 
-		{
-			
+		{			
 			$statement = "SELECT s.*, saq.answer_for_question_answer_answerId
 						  FROM story s 
 						  INNER JOIN story_has_answer_for_question saq
@@ -654,13 +678,11 @@ class StoryModel extends Model {
 			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $story;
-
 		}
-		catch(PDOException $e)
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
-		}
-		
+			throw $ex;
+		}		
 	}
 	// it works but we need to know the exact challengesID
 	public function getStoryListByChallengesID($userId, $challengesID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
@@ -746,13 +768,11 @@ class StoryModel extends Model {
 			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
 
 			return $story;
-
 		}
-		catch(PDOException $e)
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
-		}
-		
+			throw $ex;
+		}		
 	}
 
 	//it works but we need to know the exact genreID
@@ -852,7 +872,7 @@ class StoryModel extends Model {
 							FROM story s 
 
 							LEFT JOIN admin_approve_story aas
-							ON s.StoryId = aas.Story_StoryId
+							ON s.StoryId = aas.Story_StoryId AND aas.Active = TRUE
 
 							LEFT JOIN story_has_picture shp
 							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
@@ -873,9 +893,9 @@ class StoryModel extends Model {
 
 			return $storyList;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}		
 	}
 
@@ -915,9 +935,9 @@ class StoryModel extends Model {
 
 			return $story;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -962,9 +982,9 @@ class StoryModel extends Model {
 
 			return $story;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -995,394 +1015,559 @@ class StoryModel extends Model {
 
 			return $story;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
 	public function getTotalRecommendations($userID)
 	{
-		//Accepts an user id
-		//Gets the total stories written by the user who owns this email address
-		//Returns the total
-		$statement = "SELECT count(*)
-						FROM story 
+		try
+		{
+			//Accepts an user id
+			//Gets the total stories written by the user who owns this email address
+			//Returns the total
+			$statement = "SELECT count(*)
+							FROM story 
 
-						LEFT JOIN user_recommend_story urs
-						ON (urs.Story_StoryId = story.StoryId) AND (urs.Active = TRUE) AND (urs.User_UserId = :UserId)
-						LEFT JOIN admin_approve_story 
-						ON (story.StoryId = admin_approve_story.Story_StoryId) AND (admin_approve_story.Active = TRUE)
-						INNER JOIN user u
-						ON (u.UserId = story.User_UserId) AND (u.Active = TRUE)
+							LEFT JOIN user_recommend_story urs
+							ON (urs.Story_StoryId = story.StoryId) AND (urs.Active = TRUE) AND (urs.User_UserId = :UserId)
+							LEFT JOIN admin_approve_story 
+							ON (story.StoryId = admin_approve_story.Story_StoryId) AND (admin_approve_story.Active = TRUE)
+							INNER JOIN user u
+							ON (u.UserId = story.User_UserId) AND (u.Active = TRUE)
 
-						WHERE story.Published = TRUE 
-						AND StoryPrivacyType_StoryPrivacyTypeId = 1
-						AND admin_approve_story.Approved = TRUE
-						AND admin_approve_story.Active = TRUE
-						AND urs.Active = TRUE
-						AND urs.Opinion = TRUE
-						AND story.Published = TRUE
-						AND u.Active = TRUE
-						AND u.ProfilePrivacyType_PrivacyTypeId = 1	
-						";
+							WHERE story.Published = TRUE 
+							AND StoryPrivacyType_StoryPrivacyTypeId = 1
+							AND admin_approve_story.Approved = TRUE
+							AND admin_approve_story.Active = TRUE
+							AND urs.Active = TRUE
+							AND urs.Opinion = TRUE
+							AND story.Published = TRUE
+							AND u.Active = TRUE
+							AND u.ProfilePrivacyType_PrivacyTypeId = 1	
+							";
 
-		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
+			$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
 
-		return $totalStories;
+			return $totalStories;
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
 	}
 
 	// Tested getStoryListRecommendedByFriends(2,5,1)
 	public function getTotalStoriesApproved($userID)
 	{
-		//Accepts an user id
-		//Gets the total stories written by the user who owns this email address
-		//Returns the total
-		$statement = "SELECT count(*)
-						FROM story 
+		try
+		{
+			//Accepts an user id
+			//Gets the total stories written by the user who owns this email address
+			//Returns the total
+			$statement = "SELECT count(*)
+							FROM story 
 
-						LEFT JOIN admin_approve_story 
-						ON (story.StoryId = admin_approve_story.Story_StoryId) AND (admin_approve_story.Active = TRUE)
+							LEFT JOIN admin_approve_story 
+							ON (story.StoryId = admin_approve_story.Story_StoryId) AND (admin_approve_story.Active = TRUE)
 
-						WHERE story.User_UserId = :UserId 
-						AND story.Published = TRUE 
-						AND StoryPrivacyType_StoryPrivacyTypeId = 1
-						AND admin_approve_story.Approved = TRUE
-						AND admin_approve_story.Active = TRUE";
+							WHERE story.User_UserId = :UserId 
+							AND story.Published = TRUE 
+							AND StoryPrivacyType_StoryPrivacyTypeId = 1
+							AND admin_approve_story.Approved = TRUE
+							AND admin_approve_story.Active = TRUE";
 
-		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
+			$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
 
-		return $totalStories;
+			return $totalStories;
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
 	}
 	public function getTotalStoriesPending($userID)
 	{
-		//Accepts an user id
-		//Gets the total stories written by the user who owns this email address
-		//Returns the total
-		$statement = "SELECT count(*)
-						FROM story 
-						LEFT JOIN admin_approve_story 
-						ON story.StoryId = admin_approve_story.Story_StoryId
-						WHERE (s.User_UserId = :User_UserId AND aas.Pending IS NULL )
-                          OR (s.User_UserId = :User_UserId2 AND aas.Approved = FALSE AND aas.Pending = TRUE)";
+		try
+		{
+			//Accepts an user id
+			//Gets the total stories written by the user who owns this email address
+			//Returns the total
+			$statement = "SELECT count(*)
+							FROM story 
+							LEFT JOIN admin_approve_story 
+							ON story.StoryId = admin_approve_story.Story_StoryId
+							WHERE (s.User_UserId = :User_UserId AND aas.Pending IS NULL )
+	                          OR (s.User_UserId = :User_UserId2 AND aas.Approved = FALSE AND aas.Pending = TRUE)";
 
-		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID, ":User_UserId2" => $userID));
+			$totalStories = $this->fetchNum($statement, array(":UserId" => $userID, ":User_UserId2" => $userID));
 
-		return $totalStories;
+			return $totalStories;
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
 	}
 	public function getTotalStoriesDenied($userID)
 	{
-		//Accepts an user id
-		//Gets the total stories written by the user who owns this email address
-		//Returns the total
-		$statement = "SELECT count(*)
-						FROM story 
-						LEFT JOIN admin_approve_story 
-						ON story.StoryId = admin_approve_story.Story_StoryId
-						WHERE story.User_UserId = :UserId 
-						AND admin_approve_story.Approved = FALSE";
+		try
+		{
+			//Accepts an user id
+			//Gets the total stories written by the user who owns this email address
+			//Returns the total
+			$statement = "SELECT count(*)
+							FROM story 
+							LEFT JOIN admin_approve_story 
+							ON story.StoryId = admin_approve_story.Story_StoryId
+							WHERE story.User_UserId = :UserId 
+							AND admin_approve_story.Approved = FALSE";
 
-		$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
+			$totalStories = $this->fetchNum($statement, array(":UserId" => $userID));
 
-		return $totalStories;
+			return $totalStories;
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
 	}
 
 	public function getStoriesWrittenByCurrentUser($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
-		//Accepts a user id
-		//Gets an array of stories written by the owner of this user id
-		//Returns an array of Story class
+		try
+		{
+			//Accepts a user id
+			//Gets an array of stories written by the owner of this user id
+			//Returns an array of Story class
 
-		$statement = "SELECT
-					s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
+			$statement = "SELECT
+						s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
-					urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
+						urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
-					f.Active AS FollowingUser,
+						f.Active AS FollowingUser,
 
-					up.PictureId as UserProfilePicureId,
+						up.PictureId as UserProfilePicureId,
 
-					(
-						SELECT COUNT(1)
-						FROM user_recommend_story 
-						WHERE user_recommend_story.Story_StoryId = s.StoryId
-					    AND user_recommend_story.Active = TRUE
-					    AND user_recommend_story.Opinion = FALSE
-					) AS totalFlags,
-					(
-						SELECT COUNT(1)
-						FROM user_recommend_story 
+						(
+							SELECT COUNT(1)
+							FROM user_recommend_story 
+							WHERE user_recommend_story.Story_StoryId = s.StoryId
+						    AND user_recommend_story.Active = TRUE
+						    AND user_recommend_story.Opinion = FALSE
+						) AS totalFlags,
+						(
+							SELECT COUNT(1)
+							FROM user_recommend_story 
 
-						INNER JOIN user
-						ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+							INNER JOIN user
+							ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
 
-						WHERE user_recommend_story.Story_StoryId = s.StoryId
-					    AND user_recommend_story.Active = TRUE
-					    AND user_recommend_story.Opinion = TRUE
-					) AS totalRecommends,
+							WHERE user_recommend_story.Story_StoryId = s.StoryId
+						    AND user_recommend_story.Active = TRUE
+						    AND user_recommend_story.Opinion = TRUE
+						) AS totalRecommends,
 
-					(
-						SELECT COUNT(1)
-						FROM comment c
-						WHERE c.Story_StoryId = s.StoryId
-					    AND c.Active = TRUE
-					    AND c.PublishFlag = TRUE
-					) AS totalComments
-					 
-					FROM story s
+						(
+							SELECT COUNT(1)
+							FROM comment c
+							WHERE c.Story_StoryId = s.StoryId
+						    AND c.Active = TRUE
+						    AND c.PublishFlag = TRUE
+						) AS totalComments
+						 
+						FROM story s
 
-					INNER JOIN user u
-					ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
-					LEFT JOIN admin_approve_story aps
-					ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
+						INNER JOIN user u
+						ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+						LEFT JOIN admin_approve_story aps
+						ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
 
-					LEFT JOIN user_recommend_story urs
-					ON (urs.Story_StoryId = s.StoryId) AND (urs.Active = TRUE)
+						LEFT JOIN user_recommend_story urs
+						ON (urs.Story_StoryId = s.StoryId) AND (urs.Active = TRUE)
 
-					LEFT JOIN story_has_picture shp
-					ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
-					LEFT JOIN picture p
-					ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+						LEFT JOIN story_has_picture shp
+						ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+						LEFT JOIN picture p
+						ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
 
-					LEFT JOIN following f
-					ON (f.User_FollowerId = s.User_UserId) AND (f.User_UserId = :UserId2) AND (f.Active = TRUE)
+						LEFT JOIN following f
+						ON (f.User_FollowerId = s.User_UserId) AND (f.User_UserId = :UserId2) AND (f.Active = TRUE)
 
-					LEFT JOIN picture up
-					ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
+						LEFT JOIN picture up
+						ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
 
-					WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
-					AND s.Active = TRUE
-					AND aps.Active = TRUE
-					AND aps.Approved = TRUE
-					AND u.Active = TRUE
-					AND s.Published = TRUE
-					AND s.User_UserId = :UserId 
-					AND u.ProfilePrivacyType_PrivacyTypeId = 1	
-					GROUP BY s.StoryId	
-					ORDER BY totalRecommends DESC
-					LIMIT :start,:howmany";
+						WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
+						AND s.Active = TRUE
+						AND aps.Active = TRUE
+						AND aps.Approved = TRUE
+						AND u.Active = TRUE
+						AND s.Published = TRUE
+						AND s.User_UserId = :UserId 
+						AND u.ProfilePrivacyType_PrivacyTypeId = 1	
+						GROUP BY s.StoryId	
+						ORDER BY totalRecommends DESC
+						LIMIT :start,:howmany";
 
-		$start = $this-> getStartValue($howMany, $page);			
+			$start = $this-> getStartValue($howMany, $page);			
 
-		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":UserId2" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
+			$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":UserId2" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
 
-		return $stories;
+			return $stories;
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
 	}
 
 	public function getStoriesPublished_Public_Private($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
-		//Accepts a user id
-		//Gets an array of stories written by the owner of this user id
-		//Returns an array of Story class
+		try
+		{
+			//Accepts a user id
+			//Gets an array of stories written by the owner of this user id
+			//Returns an array of Story class
 
-		$statement = "SELECT
-					s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
+			$statement = "SELECT
+						s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
-					urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
+						urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
-					f.Active AS FollowingUser,
+						f.Active AS FollowingUser,
 
-					up.PictureId as UserProfilePicureId,
+						up.PictureId as UserProfilePicureId,
 
-					(
-						SELECT COUNT(1)
-						FROM user_recommend_story 
-						WHERE user_recommend_story.Story_StoryId = s.StoryId
-					    AND user_recommend_story.Active = TRUE
-					    AND user_recommend_story.Opinion = FALSE
-					) AS totalFlags,
-					(
-						SELECT COUNT(1)
-						FROM user_recommend_story 
+						(
+							SELECT COUNT(1)
+							FROM user_recommend_story 
+							WHERE user_recommend_story.Story_StoryId = s.StoryId
+						    AND user_recommend_story.Active = TRUE
+						    AND user_recommend_story.Opinion = FALSE
+						) AS totalFlags,
+						(
+							SELECT COUNT(1)
+							FROM user_recommend_story 
 
-						INNER JOIN user
-						ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+							INNER JOIN user
+							ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
 
-						WHERE user_recommend_story.Story_StoryId = s.StoryId
-					    AND user_recommend_story.Active = TRUE
-					    AND user_recommend_story.Opinion = TRUE
-					) AS totalRecommends,
+							WHERE user_recommend_story.Story_StoryId = s.StoryId
+						    AND user_recommend_story.Active = TRUE
+						    AND user_recommend_story.Opinion = TRUE
+						) AS totalRecommends,
 
-					(
-						SELECT COUNT(1)
-						FROM comment c
-						WHERE c.Story_StoryId = s.StoryId
-					    AND c.Active = TRUE
-					    AND c.PublishFlag = TRUE
-					) AS totalComments
-					 
-					FROM story s
+						(
+							SELECT COUNT(1)
+							FROM comment c
+							WHERE c.Story_StoryId = s.StoryId
+						    AND c.Active = TRUE
+						    AND c.PublishFlag = TRUE
+						) AS totalComments
+						 
+						FROM story s
 
-					INNER JOIN user u
-					ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
-					LEFT JOIN admin_approve_story aps
-					ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
+						INNER JOIN user u
+						ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+						LEFT JOIN admin_approve_story aps
+						ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
 
-					LEFT JOIN user_recommend_story urs
-					ON (urs.Story_StoryId = s.StoryId) AND (urs.Active = TRUE)
+						LEFT JOIN user_recommend_story urs
+						ON (urs.Story_StoryId = s.StoryId) AND (urs.Active = TRUE)
 
-					LEFT JOIN story_has_picture shp
-					ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
-					LEFT JOIN picture p
-					ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+						LEFT JOIN story_has_picture shp
+						ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+						LEFT JOIN picture p
+						ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
 
-					LEFT JOIN following f
-					ON (f.User_FollowerId = s.User_UserId) AND (f.User_UserId = :UserId2) AND (f.Active = TRUE)
+						LEFT JOIN following f
+						ON (f.User_FollowerId = s.User_UserId) AND (f.User_UserId = :UserId2) AND (f.Active = TRUE)
 
-					LEFT JOIN picture up
-					ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
+						LEFT JOIN picture up
+						ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
 
-					WHERE s.Active = TRUE
-					AND aps.Active = TRUE
-					AND aps.Approved = TRUE
-					AND u.Active = TRUE
-					AND s.Published = TRUE
-					AND s.User_UserId = :UserId 	
-					GROUP BY s.StoryId	
-					ORDER BY totalRecommends DESC
-					LIMIT :start,:howmany";
+						WHERE s.Active = TRUE
+						AND aps.Active = TRUE
+						AND aps.Approved = TRUE
+						AND u.Active = TRUE
+						AND s.Published = TRUE
+						AND s.User_UserId = :UserId 	
+						GROUP BY s.StoryId	
+						ORDER BY totalRecommends DESC
+						LIMIT :start,:howmany";
 
-		$start = $this-> getStartValue($howMany, $page);			
+			$start = $this-> getStartValue($howMany, $page);			
 
-		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":UserId2" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
+			$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":UserId2" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
 
-		return $stories;
+			return $stories;
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
 	}
 
 	public function getStoriesRecommendedByFriends_MostPopular($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
-		//Accepts a user id
-		//Gets an array of stories that were recommended to the owner of this user id
-		//Returns an array of Story class
+		try
+		{
+			//Accepts a user id
+			//Gets an array of stories that were recommended to the owner of this user id
+			//Returns an array of Story class
 
-		$statement = "SELECT story.*, COUNT(user_recommend_story.Opinion) AS recommendation_count
-		FROM story LEFT JOIN user_recommend_story
-		ON story.StoryId = user_recommend_story.Story_StoryId
-		WHERE story.User_UserId IN
-		(SELECT DISTINCT following.User_FollowerId
-		FROM following
-		WHERE following.User_UserId = :UserId AND following.Active = TRUE)
-		AND user_recommend_story.Opinion = TRUE
-		AND story.Published = TRUE
-		AND StoryPrivacyType_StoryPrivacyTypeId = 1
-		GROUP BY story.StoryId
-		ORDER BY recommendation_count DESC
-		LIMIT :start, :howmany";
+			$statement = "SELECT story.*, COUNT(user_recommend_story.Opinion) AS recommendation_count
+			FROM story LEFT JOIN user_recommend_story
+			ON story.StoryId = user_recommend_story.Story_StoryId
+			WHERE story.User_UserId IN
+			(SELECT DISTINCT following.User_FollowerId
+			FROM following
+			WHERE following.User_UserId = :UserId AND following.Active = TRUE)
+			AND user_recommend_story.Opinion = TRUE
+			AND story.Published = TRUE
+			AND StoryPrivacyType_StoryPrivacyTypeId = 1
+			GROUP BY story.StoryId
+			ORDER BY recommendation_count DESC
+			LIMIT :start, :howmany";
 
-		$start = $this-> getStartValue($howMany, $page);
+			$start = $this-> getStartValue($howMany, $page);
 
-		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
+			$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
 
-		return $stories;
+			return $stories;
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
 	}
 
 	public function getStoriesRecommendedByFriends_Latest($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
-		//Accepts a user id
-		//Gets an array of stories that were recommended to the owner of this user id
-		//Returns an array of Story class
-		
-		$statement = "SELECT
-						s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
+		try
+		{
+			//Accepts a user id
+			//Gets an array of stories that were recommended to the owner of this user id
+			//Returns an array of Story class
+			
+			$statement = "SELECT
+							s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
-						urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
+							urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
-						f.Active AS FollowingUser,
+							f.Active AS FollowingUser,
 
-						up.PictureId as UserProfilePicureId,
+							up.PictureId as UserProfilePicureId,
 
-						(
-							SELECT COUNT(1)
-							FROM user_recommend_story 
-							WHERE user_recommend_story.Story_StoryId = s.StoryId
-						    AND user_recommend_story.Active = TRUE
-						    AND user_recommend_story.Opinion = FALSE
-						) AS totalFlags,
-						(
-							SELECT COUNT(1)
-							FROM user_recommend_story 
+							(
+								SELECT COUNT(1)
+								FROM user_recommend_story 
+								WHERE user_recommend_story.Story_StoryId = s.StoryId
+							    AND user_recommend_story.Active = TRUE
+							    AND user_recommend_story.Opinion = FALSE
+							) AS totalFlags,
+							(
+								SELECT COUNT(1)
+								FROM user_recommend_story 
 
-							INNER JOIN user
-							ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+								INNER JOIN user
+								ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
 
-							WHERE user_recommend_story.Story_StoryId = s.StoryId
-						    AND user_recommend_story.Active = TRUE
-						    AND user_recommend_story.Opinion = TRUE
-						) AS totalRecommends,
+								WHERE user_recommend_story.Story_StoryId = s.StoryId
+							    AND user_recommend_story.Active = TRUE
+							    AND user_recommend_story.Opinion = TRUE
+							) AS totalRecommends,
 
-						(
-							SELECT COUNT(1)
-							FROM comment c
-							WHERE c.Story_StoryId = s.StoryId
-						    AND c.Active = TRUE
-						    AND c.PublishFlag = TRUE
-						) AS totalComments
-						
-
-						FROM story s
-
-						INNER JOIN user u
-						ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
-						LEFT JOIN admin_approve_story aps
-						ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
-
-						LEFT JOIN user_recommend_story urs
-						ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :UserId) AND (urs.Active = TRUE)
-
-						LEFT JOIN story_has_picture shp
-						ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
-						LEFT JOIN picture p
-						ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
-
-						LEFT JOIN following f
-						ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
-
-						LEFT JOIN picture up
-						ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
-
-						WHERE
-						(
-							SELECT DISTINCT user_recommend_story.Opinion 
-							FROM user_recommend_story 
+							(
+								SELECT COUNT(1)
+								FROM comment c
+								WHERE c.Story_StoryId = s.StoryId
+							    AND c.Active = TRUE
+							    AND c.PublishFlag = TRUE
+							) AS totalComments
 							
-							INNER JOIN user
-							ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
 
-							INNER JOIN following
-							ON (following.User_FollowerId = user_recommend_story.User_UserId) AND (following.User_UserId = :UserId2) AND (following.Active = TRUE)
+							FROM story s
 
-							WHERE user_recommend_story.Story_StoryId = s.StoryId 
-							AND user_recommend_story.Opinion = TRUE
-							AND user_recommend_story.Active = TRUE
-						)
+							INNER JOIN user u
+							ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+							LEFT JOIN admin_approve_story aps
+							ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
 
-						
-						AND StoryPrivacyType_StoryPrivacyTypeId = 1
-						AND s.Active = TRUE
-						AND aps.Active = TRUE
-						AND aps.Approved = TRUE
-						AND u.Active = TRUE
-						AND s.Published = TRUE						
-						
-						AND u.ProfilePrivacyType_PrivacyTypeId = 1	
-						GROUP BY s.StoryId
-						
-						LIMIT :start, :howmany";
+							LEFT JOIN user_recommend_story urs
+							ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :UserId) AND (urs.Active = TRUE)
 
-		$start = $this-> getStartValue($howMany, $page);
+							LEFT JOIN story_has_picture shp
+							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+							LEFT JOIN picture p
+							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
 
-		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":UserId2" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
+							LEFT JOIN following f
+							ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
 
-		return $stories;
+							LEFT JOIN picture up
+							ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
+
+							WHERE
+							(
+								SELECT DISTINCT user_recommend_story.Opinion 
+								FROM user_recommend_story 
+								
+								INNER JOIN user
+								ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
+								INNER JOIN following
+								ON (following.User_FollowerId = user_recommend_story.User_UserId) AND (following.User_UserId = :UserId2) AND (following.Active = TRUE)
+
+								WHERE user_recommend_story.Story_StoryId = s.StoryId 
+								AND user_recommend_story.Opinion = TRUE
+								AND user_recommend_story.Active = TRUE
+							)
+
+							
+							AND StoryPrivacyType_StoryPrivacyTypeId = 1
+							AND s.Active = TRUE
+							AND aps.Active = TRUE
+							AND aps.Approved = TRUE
+							AND u.Active = TRUE
+							AND s.Published = TRUE						
+							
+							AND u.ProfilePrivacyType_PrivacyTypeId = 1	
+							GROUP BY s.StoryId
+							
+							LIMIT :start, :howmany";
+
+			$start = $this-> getStartValue($howMany, $page);
+
+			$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":UserId2" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
+
+			return $stories;
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
 	}
 
 	public function getNewsFeed($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
-		//Accepts a user id
-		//Gets an array of stories that were recommended to the owner of this user id
-		//Returns an array of Story class
-		
-		$statement = "SELECT
+		try
+		{
+			//Accepts a user id
+			//Gets an array of stories that were recommended to the owner of this user id
+			//Returns an array of Story class
+			
+			$statement = "SELECT
+							s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
+
+							urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
+
+							f.Active AS FollowingUser,
+
+							up.PictureId as UserProfilePicureId,
+
+							(
+								SELECT COUNT(1)
+								FROM user_recommend_story 
+								WHERE user_recommend_story.Story_StoryId = s.StoryId
+							    AND user_recommend_story.Active = TRUE
+							    AND user_recommend_story.Opinion = FALSE
+							) AS totalFlags,
+							(
+								SELECT COUNT(1)
+								FROM user_recommend_story 
+
+								INNER JOIN user
+								ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
+								WHERE user_recommend_story.Story_StoryId = s.StoryId
+							    AND user_recommend_story.Active = TRUE
+							    AND user_recommend_story.Opinion = TRUE
+							) AS totalRecommends,
+
+							(
+								SELECT COUNT(1)
+								FROM comment c
+								WHERE c.Story_StoryId = s.StoryId
+							    AND c.Active = TRUE
+							    AND c.PublishFlag = TRUE
+							) AS totalComments
+							
+
+							FROM story s
+
+							INNER JOIN user u
+							ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+							LEFT JOIN admin_approve_story aps
+							ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
+
+							LEFT JOIN user_recommend_story urs
+							ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :UserId) AND (urs.Active = TRUE)
+
+							LEFT JOIN story_has_picture shp
+							ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+							LEFT JOIN picture p
+							ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+
+							LEFT JOIN following f
+							ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
+
+							LEFT JOIN picture up
+							ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
+
+							WHERE
+							(
+								SELECT DISTINCT user_recommend_story.Opinion 
+								FROM user_recommend_story 
+								
+								INNER JOIN user
+								ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+
+								INNER JOIN following
+								ON (following.User_FollowerId = user_recommend_story.User_UserId) AND (following.User_UserId = :UserId2) AND (following.Active = TRUE)
+
+								WHERE user_recommend_story.Story_StoryId = s.StoryId 
+								AND user_recommend_story.Opinion = TRUE
+								AND user_recommend_story.Active = TRUE
+							)
+
+							
+							AND StoryPrivacyType_StoryPrivacyTypeId = 1
+							AND s.Active = TRUE
+							AND aps.Active = TRUE
+							AND aps.Approved = TRUE
+							AND u.Active = TRUE
+							AND s.Published = TRUE						
+							
+							AND u.ProfilePrivacyType_PrivacyTypeId = 1	
+							GROUP BY s.StoryId
+							
+							LIMIT :start, :howmany";
+
+			$start = $this-> getStartValue($howMany, $page);
+
+			$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":UserId2" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
+
+			return $stories;
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
+	}
+
+	public function getStoriesRecommendedByCurrentUser($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
+	{
+		try
+		{
+			//Accepts a user id
+			//Gets an array of stories that were recommended to the owner of this user id
+			//Returns an array of Story class
+
+			$statement = "SELECT
 						s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
 						urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
@@ -1417,8 +1602,7 @@ class StoryModel extends Model {
 						    AND c.Active = TRUE
 						    AND c.PublishFlag = TRUE
 						) AS totalComments
-						
-
+						 
 						FROM story s
 
 						INNER JOIN user u
@@ -1427,7 +1611,7 @@ class StoryModel extends Model {
 						ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
 
 						LEFT JOIN user_recommend_story urs
-						ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :UserId) AND (urs.Active = TRUE)
+						ON (urs.Story_StoryId = s.StoryId) AND (urs.Active = TRUE) AND (urs.User_UserId = :UserId)
 
 						LEFT JOIN story_has_picture shp
 						ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
@@ -1440,123 +1624,29 @@ class StoryModel extends Model {
 						LEFT JOIN picture up
 						ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
 
-						WHERE
-						(
-							SELECT DISTINCT user_recommend_story.Opinion 
-							FROM user_recommend_story 
-							
-							INNER JOIN user
-							ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
-
-							INNER JOIN following
-							ON (following.User_FollowerId = user_recommend_story.User_UserId) AND (following.User_UserId = :UserId2) AND (following.Active = TRUE)
-
-							WHERE user_recommend_story.Story_StoryId = s.StoryId 
-							AND user_recommend_story.Opinion = TRUE
-							AND user_recommend_story.Active = TRUE
-						)
-
-						
-						AND StoryPrivacyType_StoryPrivacyTypeId = 1
+						WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
 						AND s.Active = TRUE
 						AND aps.Active = TRUE
 						AND aps.Approved = TRUE
 						AND u.Active = TRUE
-						AND s.Published = TRUE						
-						
-						AND u.ProfilePrivacyType_PrivacyTypeId = 1	
+						AND s.Published = TRUE
+						AND urs.Opinion = TRUE
+						AND urs.Active = TRUE
+						AND u.ProfilePrivacyType_PrivacyTypeId = 1		
 						GROUP BY s.StoryId
-						
-						LIMIT :start, :howmany";
+						ORDER BY totalRecommends DESC
+						LIMIT :start,:howmany";
 
-		$start = $this-> getStartValue($howMany, $page);
+			$start = $this-> getStartValue($howMany, $page);
 
-		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":UserId2" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
+			$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
 
-		return $stories;
-	}
-
-	public function getStoriesRecommendedByCurrentUser($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
-	{
-		//Accepts a user id
-		//Gets an array of stories that were recommended to the owner of this user id
-		//Returns an array of Story class
-
-		$statement = "SELECT
-					s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
-
-					urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
-
-					f.Active AS FollowingUser,
-
-					up.PictureId as UserProfilePicureId,
-
-					(
-						SELECT COUNT(1)
-						FROM user_recommend_story 
-						WHERE user_recommend_story.Story_StoryId = s.StoryId
-					    AND user_recommend_story.Active = TRUE
-					    AND user_recommend_story.Opinion = FALSE
-					) AS totalFlags,
-					(
-						SELECT COUNT(1)
-						FROM user_recommend_story 
-
-						INNER JOIN user
-						ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
-
-						WHERE user_recommend_story.Story_StoryId = s.StoryId
-					    AND user_recommend_story.Active = TRUE
-					    AND user_recommend_story.Opinion = TRUE
-					) AS totalRecommends,
-
-					(
-						SELECT COUNT(1)
-						FROM comment c
-						WHERE c.Story_StoryId = s.StoryId
-					    AND c.Active = TRUE
-					    AND c.PublishFlag = TRUE
-					) AS totalComments
-					 
-					FROM story s
-
-					INNER JOIN user u
-					ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
-					LEFT JOIN admin_approve_story aps
-					ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
-
-					LEFT JOIN user_recommend_story urs
-					ON (urs.Story_StoryId = s.StoryId) AND (urs.Active = TRUE) AND (urs.User_UserId = :UserId)
-
-					LEFT JOIN story_has_picture shp
-					ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
-					LEFT JOIN picture p
-					ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
-
-					LEFT JOIN following f
-					ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
-
-					LEFT JOIN picture up
-					ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
-
-					WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
-					AND s.Active = TRUE
-					AND aps.Active = TRUE
-					AND aps.Approved = TRUE
-					AND u.Active = TRUE
-					AND s.Published = TRUE
-					AND urs.Opinion = TRUE
-					AND urs.Active = TRUE
-					AND u.ProfilePrivacyType_PrivacyTypeId = 1		
-					GROUP BY s.StoryId
-					ORDER BY totalRecommends DESC
-					LIMIT :start,:howmany";
-
-		$start = $this-> getStartValue($howMany, $page);
-
-		$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
-
-		return $stories;
+			return $stories;
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
 	}
 
 	// Tested getStoryListMostRecommended(6,1)
@@ -1584,81 +1674,87 @@ class StoryModel extends Model {
 		// 				ORDER BY recommendation_count DESC
 		// 				LIMIT :start, :howmany";
 
+		try
+		{
+			$statement = "SELECT
+						s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
 
-		$statement = "SELECT
-					s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, 
+						urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
 
-					urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
+						f.Active AS FollowingUser,
 
-					f.Active AS FollowingUser,
+						up.PictureId as UserProfilePicureId,
 
-					up.PictureId as UserProfilePicureId,
+						(
+							SELECT COUNT(1)
+							FROM user_recommend_story 
 
-					(
-						SELECT COUNT(1)
-						FROM user_recommend_story 
+							INNER JOIN user
+							ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
 
-						INNER JOIN user
-						ON (user.UserId = user_recommend_story.User_UserId) AND (user.Active = TRUE) AND (user.ProfilePrivacyType_PrivacyTypeId = 1)
+							WHERE user_recommend_story.Story_StoryId = s.StoryId
+						    AND user_recommend_story.Active = TRUE
+						    AND user_recommend_story.Opinion = FALSE
+						) AS totalFlags,
+						(
+							SELECT COUNT(1)
+							FROM user_recommend_story 
+							WHERE user_recommend_story.Story_StoryId = s.StoryId
+						    AND user_recommend_story.Active = TRUE
+						    AND user_recommend_story.Opinion = TRUE
+						) AS totalRecommends,
 
-						WHERE user_recommend_story.Story_StoryId = s.StoryId
-					    AND user_recommend_story.Active = TRUE
-					    AND user_recommend_story.Opinion = FALSE
-					) AS totalFlags,
-					(
-						SELECT COUNT(1)
-						FROM user_recommend_story 
-						WHERE user_recommend_story.Story_StoryId = s.StoryId
-					    AND user_recommend_story.Active = TRUE
-					    AND user_recommend_story.Opinion = TRUE
-					) AS totalRecommends,
+						(
+							SELECT COUNT(1)
+							FROM comment c
+							WHERE c.Story_StoryId = s.StoryId
+						    AND c.Active = TRUE
+						    AND c.PublishFlag = TRUE
+						) AS totalComments
+						 
+						FROM story s
 
-					(
-						SELECT COUNT(1)
-						FROM comment c
-						WHERE c.Story_StoryId = s.StoryId
-					    AND c.Active = TRUE
-					    AND c.PublishFlag = TRUE
-					) AS totalComments
-					 
-					FROM story s
+						INNER JOIN user u
+						ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
+						LEFT JOIN admin_approve_story aps
+						ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
 
-					INNER JOIN user u
-					ON (u.UserId = s.User_UserId) AND (u.Active = TRUE)
-					LEFT JOIN admin_approve_story aps
-					ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
+						LEFT JOIN user_recommend_story urs
+						ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :userid) AND (urs.Active = TRUE)
 
-					LEFT JOIN user_recommend_story urs
-					ON (urs.Story_StoryId = s.StoryId) AND (urs.User_UserId = :userid) AND (urs.Active = TRUE)
+						LEFT JOIN story_has_picture shp
+						ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
+						LEFT JOIN picture p
+						ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
 
-					LEFT JOIN story_has_picture shp
-					ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
-					LEFT JOIN picture p
-					ON (p.PictureId = shp.PictureId) AND (p.Active = TRUE)
+						LEFT JOIN following f
+						ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
 
-					LEFT JOIN following f
-					ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
+						LEFT JOIN picture up
+						ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
 
-					LEFT JOIN picture up
-					ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
-
-					WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
-					AND s.Active = TRUE
-					AND aps.Active = TRUE
-					AND aps.Approved = TRUE
-					AND u.Active = TRUE
-					AND s.Published = TRUE
-					AND u.ProfilePrivacyType_PrivacyTypeId = 1	
-					GROUP BY s.StoryId	
-					ORDER BY totalRecommends DESC
-					LIMIT :start,:howmany";
+						WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
+						AND s.Active = TRUE
+						AND aps.Active = TRUE
+						AND aps.Approved = TRUE
+						AND u.Active = TRUE
+						AND s.Published = TRUE
+						AND u.ProfilePrivacyType_PrivacyTypeId = 1	
+						GROUP BY s.StoryId	
+						ORDER BY totalRecommends DESC
+						LIMIT :start,:howmany";
 
 
-		$start = $this-> getStartValue($howMany, $page);
+			$start = $this-> getStartValue($howMany, $page);
 
-		$stories = $this->fetchIntoClass($statement, array(":start" => $start, ":howmany" => $howMany, ":userid" => $userid), "shared/StoryViewModel");
+			$stories = $this->fetchIntoClass($statement, array(":start" => $start, ":howmany" => $howMany, ":userid" => $userid), "shared/StoryViewModel");
 
-		return $stories;
+			return $stories;
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
 	}
 
 	//Tested getStoryListNewest(1,5,1)
@@ -1758,37 +1854,49 @@ class StoryModel extends Model {
 
 			return $story;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
-
 	}
 
 
 	public function getTotalCommentsApproved($userID)
 	{
+		try
+		{
+			$statement = "SELECT count(*)
+							FROM comment c 
+							WHERE c.User_UserId = :UserId
+							AND c.PublishFlag = TRUE";
 
-		$statement = "SELECT count(*)
-						FROM comment c 
-						WHERE c.User_UserId = :UserId
-						AND c.PublishFlag = TRUE";
+			$totalComments = $this->fetchNum($statement, array(":UserId" => $userID));
 
-		$totalComments = $this->fetchNum($statement, array(":UserId" => $userID));
-
-		return $totalComments;
+			return $totalComments;
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
 	}
 
 	public function getTotalCommentsPending($userID)
 	{
-		$statement = "SELECT count(*)
-						FROM comment c 
-						WHERE c.User_UserId = :UserId
-						AND c.PublishFlag = FALSE";
+		try
+		{
+			$statement = "SELECT count(*)
+							FROM comment c 
+							WHERE c.User_UserId = :UserId
+							AND c.PublishFlag = FALSE";
 
-		$totalComments = $this->fetchNum($statement, array(":UserId" => $userID));
+			$totalComments = $this->fetchNum($statement, array(":UserId" => $userID));
 
-		return $totalComments;
+			return $totalComments;
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
 	}
 
 	//This doesn't work related the story FK
@@ -1797,16 +1905,44 @@ class StoryModel extends Model {
 		//Accepts a comment class
 		//inserts a new comment with the published flag set to false
 		//returns bool if the comment was saved succesfully
+		try
+		{
+			$statement = "INSERT INTO comment (Story_StoryId, User_UserId, Content, DateCreated) 
+							VALUES(:storyID, :userID, :comment, :DateCreated)";
 
-		$statement = "INSERT INTO Comment (Story_StoryId, User_UserId, Content, DateCreated) 
-						VALUES(:storyID, :userID, :comment, :DateCreated)";
+			$parameters = array(":storyID" => $storyID, ":userID" => $userID, ":comment" => $comment, ":DateCreated" => $this->getDateNow());
 
-		$parameters = array(":storyID" => $storyID, ":userID" => $userID, ":comment" => $comment, ":DateCreated" => $this->getDateNow());
-
-		return $this->fetch($statement, $parameters);
+			return $this->fetch($statement, $parameters);
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
 	}
 
-	public function getCommentsForStory($storyID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
+	public function flagCommentAsInapropriate($commentID, $userID, $flag)
+	{
+		//Accepts a commentID, a userID, and a bool for if it was thought to be inapropriate
+		//checks to see if user already marked it as inapropriate
+		//returns bool if saved correctly
+		try
+		{
+			$statement = "INSERT INTO user_inappropriateflag_comment (User_UserId, Comment_CommentId, DateCreated) 
+						  VALUES(:UserId, :CommentID, :DateCreated)
+						  ON DUPLICATE KEY
+						  	UPDATE Active = :Active";
+
+			$parameters = array(":UserId" => $userID, ":CommentID" => $commentID, ":DateCreated" => $this->getDateNow(), ":Active" => $flag);
+
+			return $this->fetch($statement, $parameters);	
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
+		}
+	}
+
+	public function getCommentsForStory($userID, $storyID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		//Accepts a story id, how many results to return, what page of results your on
 		//for example, if how many = 10 and page = 2, you would take results 11 to 20
@@ -1821,7 +1957,8 @@ class StoryModel extends Model {
 
 							u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId, u.Active as IsUserActive,
 							arc.Rejected as IsAdminRejected,
-							p.PictureId
+							p.PictureId,
+							uic.Active as IsFlagged
 
 							FROM comment c
 
@@ -1834,21 +1971,25 @@ class StoryModel extends Model {
 							LEFT JOIN admin_reject_comment arc
 							ON arc.Comment_CommentId = c.CommentId AND arc.Active = TRUE
 
+							LEFT JOIN user_inappropriateflag_comment uic
+							ON uic.Comment_CommentId = c.CommentId AND uic.User_UserId = :UserId AND uic.Active = TRUE
+
 							WHERE Story_StoryId = :storyID 
 							AND c.Active = TRUE
 							AND c.PublishFlag
-							ORDER BY CommentId 
+							GROUP BY CommentId
+							ORDER BY CommentId 							
 							ASC LIMIT :start, :howmany";
 
 			$start = $this-> getStartValue($howMany, $page);
 
-			$comment = $this->fetchIntoClass($statement, array(":storyID" => $storyID, ":start" => $start, ":howmany" => $howMany), "shared/CommentViewModel");
+			$comments = $this->fetchIntoClass($statement, array(":storyID" => $storyID, ":start" => $start, ":howmany" => $howMany, ":UserId" => $userID), "shared/CommentViewModel");
 
-			return $comment;
+			return $comments;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -1873,9 +2014,9 @@ class StoryModel extends Model {
 
 			return $comment;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -1930,31 +2071,9 @@ class StoryModel extends Model {
 
 			return $comment;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
-		}
-	}
-
-	public function flagCommentAsInapropriate($commentID, $userID)
-	{
-		//Accepts a commentID, a userID, and a bool for if it was thought to be inapropriate
-		//checks to see if user already marked it as inapropriate
-		//returns bool if saved correctly
-		try
-		{
-			$statement = "INSERT INTO user_inappropriateflag_comment (User_UserId, Comment_CommentId, DateCreated) 
-						  VALUES(:UserId, :CommentID, :DateCreated)
-						  ON DUPLICATE KEY
-						  	UPDATE Active = TRUE";
-
-			$parameters = array(":UserId" => $userID, ":CommentID" => $commentID, ":DateCreated" => $this->getDateNow());
-
-			return $this->fetch($statement, $parameters);	
-		}
-		catch(PDOException $e) 
-		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -1979,9 +2098,9 @@ class StoryModel extends Model {
 
 			return $this->fetch($statement, $parameters);	
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -2003,9 +2122,9 @@ class StoryModel extends Model {
 
 			return $this->fetch($statement, $parameters);	
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -2031,9 +2150,9 @@ class StoryModel extends Model {
 
 			return $this->fetch($statement, $parameters);	
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -2053,9 +2172,33 @@ class StoryModel extends Model {
 
 			return $tags;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
+		}
+	}
+
+	public function checkTagExists($tag)
+	{
+		try
+		{
+			$statement = "SELECT t.TagId
+							FROM tag t 
+							WHERE t.Tag = :Tag
+							LIMIT 1";
+
+			$result = $this->fetchIntoObject($statement, array(":Tag" => $tag));
+			
+			if(isset($result[0]))
+			{
+				$tag = $result[0]->TagId;
+			}
+
+			return $tag;
+		}
+		catch(Exception $e) 
+		{
+			throw $ex;
 		}
 	}
 
@@ -2071,9 +2214,9 @@ class StoryModel extends Model {
 
 			return $tags;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -2090,9 +2233,9 @@ class StoryModel extends Model {
 
 			return $count > 0;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -2108,9 +2251,9 @@ class StoryModel extends Model {
 
 			return $count;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -2125,9 +2268,9 @@ class StoryModel extends Model {
 
 			return $this->fetch($statement, $parameters);	
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -2150,9 +2293,9 @@ class StoryModel extends Model {
 
 			return $result;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -2192,9 +2335,9 @@ class StoryModel extends Model {
 
 			return $jsonFormat;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -2212,9 +2355,9 @@ class StoryModel extends Model {
 
 			return $result;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -2234,9 +2377,9 @@ class StoryModel extends Model {
 
 			return $result;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 
@@ -2276,9 +2419,9 @@ class StoryModel extends Model {
 
 			return $result;
 		}
-		catch(PDOException $e) 
+		catch(Exception $e) 
 		{
-			return $e->getMessage();
+			throw $ex;
 		}
 	}
 

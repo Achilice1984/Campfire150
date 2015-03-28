@@ -18,7 +18,7 @@ class LoginViewModel extends ViewModel
 				),
 			'email' =>
 				array(
-					'Message' => gettext('Invalid Email Address.'),
+					'Message' => gettext('Invalid email address.'),
 					'Properties' => array()
 				)			
 		);

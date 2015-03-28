@@ -7,33 +7,7 @@ class Story extends Controller {
 	{
 		try
 		{
-			//Loads a model from corresponding model folder
-			$model = $this->loadModel('SomeModel');
-
-			//Loads a view model from corresponding viewmodel folder
-			$viewModel = $this->loadModel('SomeViewModel');
-
-			//Loads a view from corresponding view folder
-			$template = $this->loadView('index');
-			//Adds a variable or object to that can be accessed in the view
-			$template->set('viewModel', $viewModel);
-			//Renders the view. true indicates to load the layout
-			$template->render(true);
-
-			//Execute code if a post back
-			if($this->isPost())
-			{
-				//Can be used to redirect to another controller
-				//Can add query values ?id=1
-				//$this->redirect("controller/action");
-
-				//Check if request is ajax
-				//$this->isAjax()
-			}
-			else
-			{
-				//Execute this code if NOT a post back
-			}
+			$this->redirect("story/search");
 		}
 		catch(Exception $ex)
 		{
@@ -523,9 +497,14 @@ class Story extends Controller {
 					
 					if(!is_numeric($tagID))
 					{
-						if($storyModel->addNewTag($tagID))
+						$tagID = $storyModel->checkTagExists($tagID);
+						
+						if(!is_numeric($tagID))
 						{
-							$tagID = $storyModel->lastInsertId();
+							if($storyModel->addNewTag($tagID))
+							{
+								$tagID = $storyModel->lastInsertId();
+							}
 						}
 					}	
 
@@ -639,13 +618,7 @@ class Story extends Controller {
 				$storyViewModel = $storyViewModel[0];
 				$storyViewModel->Tags = $model->getTagsForStory($storyID);
 				$storyViewModel->QuestionAnswers = $model->getQuestionAnswersForStory($storyID);			
-				$storyViewModel->Comments = $model->getCommentsForStory($storyID);
-
-				$storyViewModel->Images = $model->getPicturesForStory($storyID);
-				$storyViewModel->Images["PictureUrl"] = image_get_path_basic($storyViewModel->UserId, 
-																		isset($storyViewModel->Images[0]) ? $storyViewModel->Images[0]->PictureId : 0, 
-																		isset($storyViewModel->Images[0]) ? $storyViewModel->Images[0]->Picturetype_PictureTypeId : IMG_STORY, 
-																		IMG_LARGE);
+				$storyViewModel->Comments = $model->getCommentsForStory($this->currentUser->UserId, $storyID);
 
 				$accountModel = $this->loadModel('Account/AccountModel');
 				$storyViewModel->UserProfile = $accountModel->getProfileByID($storyViewModel->UserId);
@@ -908,13 +881,43 @@ class Story extends Controller {
 
 			if(isset($_POST["Comment_StoryId"]))
 			{
-				$commentResults = $storyModel->getCommentsForStory($_POST["Comment_StoryId"], MAX_COMMENTS_LISTS, isset($_POST["CommentPage"]) ? $_POST["CommentPage"] : 1);
+				$commentResults = $storyModel->getCommentsForStory($this->currentUser->UserId, $_POST["Comment_StoryId"], MAX_COMMENTS_LISTS, isset($_POST["CommentPage"]) ? $_POST["CommentPage"] : 1);
 
 				if (isset($commentResults)) {
 					foreach ($commentResults as $comment)
 					{
 						include(APP_DIR . "views/Story/_comments.php");
 					}
+				}
+			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
+	}
+
+	function flagCommentInappropriate($commentID, $flag)
+	{
+		try
+		{
+			//Check if users is authenticated for this request
+			//Will kick out if not authenticated
+			if($this->isAuth())
+			{			
+				$result;
+
+				//Load the AccountModel to access account functions
+				$storyModel = $this->loadModel('StoryModel');
+
+				$result = $storyModel->flagCommentAsInapropriate($commentID, $this->currentUser->UserId, $flag);
+
+				if ($this->isAjax()) {
+					return $result;			
+				}
+				else
+				{
+					$this->redirect("account/home");
 				}
 			}
 		}

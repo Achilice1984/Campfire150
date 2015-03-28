@@ -45,11 +45,10 @@ class AccountModel extends Model {
 				//Eliminate array 
 				$user = $user[0];
 
-				//echo "<br /><br /><br /><br /><br /><br />". strtotime($user->LockoutTimes) . "<br />" . strtotime('2 minutes') . "<br />" . (strtotime('-1 minutes') > strtotime($user->LockoutTimes));
-				if(!isset($user->LockoutTimes) || strtotime('+10 minutes') > strtotime($user->LockoutTimes)) //Is user locked out?
+				if(!isset($user->LockoutTimes) || strtotime($user->LockoutTimes) < (time() - (60 * ACCOUNT_LOCKOUT_TIME_MIN))) //Is user locked out?
 				{
 					//check to see if user is properly authenticated
-					if($authentication->authenticate($loginViewModel->Password, $user)) //Is user peoperly authenticated?
+					if($authentication->authenticate($loginViewModel, $user)) //Is user peoperly authenticated?
 					{
 						//Set login and lockouts back to starting point
 						$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt, LockoutTimes = :LockoutTimes";
@@ -71,8 +70,8 @@ class AccountModel extends Model {
 					else //User exists BUT Login failed, update failed attempts
 					{
 						//to many failed login attempts, lockout user
-						if($user->FailedLoginAttempt >= 10)
-						{		
+						if($user->FailedLoginAttempt >= MAX_LOGIN_ATTEMPTS)
+						{	
 							//add a failed login attempt and set the lockout time
 							$statement = "UPDATE user SET FailedLoginAttempt = :FailedLoginAttempt, LockoutTimes = :LockoutTimes";
 							$statement .= " WHERE UserId = :UserId";
@@ -83,16 +82,6 @@ class AccountModel extends Model {
 								":UserId" => $user->UserId
 							);
 
-							//If this is already set, we need to remove the current values as login attempts are reset
-							if(isset($user->LockoutTimes))	
-							{
-								$parameters = array( 
-									":FailedLoginAttempt" => 1, 
-									":LockoutTimes" => NULL,
-									":UserId" => $user->UserId
-								);
-							}
-							
 							$this->fetch($statement, $parameters);
 						}
 						else
@@ -125,6 +114,8 @@ class AccountModel extends Model {
 		try
 		{
 			session_destroy();
+
+			return true;
 		}
 		catch(Exception $ex)
 		{
@@ -172,6 +163,111 @@ class AccountModel extends Model {
 		}
 	}
 
+	public function sendResetPassword($email)
+	{
+		try
+		{
+			$statement = "UPDATE user SET VerificationCode=:RestHash";
+			$statement .= " WHERE Email = :Email";
+
+			$hashedEmailVerification = md5(uniqid());
+
+			$parameters = array( 
+				":RestHash" => $hashedEmailVerification,
+				":Email" => $email
+			);
+
+			$result = $this->fetch($statement, $parameters);
+
+			if($result == TRUE)
+			{
+				$subject = gettext('Reset Password');
+
+				$message = '<html stlye="font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;">
+								<head>
+									<title>Campfire 150</title>
+								</head>
+								<body style="padding:0; margin:0;">
+									<div style="background-color: #f8f8f8; padding: 20px;">
+										<h1 style="text-align: center; color: #333; font-weight: bolder; font-size: 4em;">Campfire 150! <small style="font-size: .4em; color:#808080;"><br />Share your story. Shape our future.</small></h1>
+									</div>
+									<div style="padding: 20px; color: #333;">
+										<h1>Your almost done!</h1>
+
+										<p>Click the button bellow to reset your password!</p>
+										<a style="background-color: #eea236; padding: 10px; color:white; text-decoration: none; width:250px;" href="' . base_url_https . 'account/resetPassword/' . $email . '/' . $hashedEmailVerification . '">Reset Now!</a>
+									</div>
+								</body>
+							</html>';
+
+				$this->sendEmail($email, $subject, $message);
+			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
+	}
+
+	public function resetPassword($email, $password, $hash)
+	{
+		try
+		{
+			$statement = "SELECT * FROM user WHERE Email = :Email AND VerificationCode = :HashCode";
+
+			$user = $this->fetchIntoClass($statement, array(":Email" => $email, ":HashCode" => $hash), "shared/UserViewModel");
+
+			$result = false;
+			
+			$hashedPassword;
+
+			//Does everything match?
+			if(isset($user[0]))
+			{			
+				$authentication = new Authentication();
+				$hashedPassword = $authentication->hashPassword($password);
+
+				$updateStatement = "UPDATE user SET VerificationCode=NULL, Password=:Password
+									WHERE Email=:Email";
+
+				$this->fetch($updateStatement, array(":Email" => $email, ":Password" => $hashedPassword));
+			}
+
+			$statement = "SELECT * FROM user WHERE Email = :Email";
+
+			$user = $this->fetchIntoClass($statement, array(":Email" => $email), "shared/UserViewModel");
+			if(isset($user[0]) && isset($hashedPassword) && $user[0]->Password == $hashedPassword)
+			{
+				$result = TRUE;
+			}
+
+			return $result;
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
+	}
+
+	public function sendEmail($to, $subject, $message)
+	{
+		try
+		{
+			$headers = 'From: ' . SITE_EMAIL . '' . "\r\n" .
+			    'Reply-To: ' . SITE_EMAIL . '' . "\r\n" .
+			    'Content-Type: text/html; charset=ISO-8859-1' . "\r\n" .
+			    'X-Mailer: PHP/' . phpversion();
+
+			mail($to, $subject, $message, $headers);
+
+			return true;
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
+	}
+
 	public function sendEmailVerification($email, $hashedEmailVerification)
 	{
 		try
@@ -189,7 +285,7 @@ class AccountModel extends Model {
 
 								<p>Thank you so much for registering with Campfire 150!</p>
 								<p>Your profile is almost set up, just click the link below to activate your account.</p>
-								<a style="background-color: #eea236; padding: 10px; color:white; text-decoration: none; width:250px; min-height: 300px; padding: 50px;" href="' . BASE_URL . 'account/verifyemail/' . $email . '/' . $hashedEmailVerification . '">Active Now!</a>
+								<a style="background-color: #eea236; padding: 10px; color:white; text-decoration: none; width:250px; min-height: 300px; padding: 50px;" href="' . base_url_https . 'account/verifyemail/' . $email . '/' . $hashedEmailVerification . '">Active Now!</a>
 							</div>
 							<div style="background-color: #2e6da4; color:white; min-width:460px;">
 								<article style="display:block; min-height: 250px; padding-top: 30px; padding-left: 10%">
@@ -218,20 +314,15 @@ class AccountModel extends Model {
 						</body>
 					</html>'; 
 			   
-		   	$to      = $email;
-			$subject = 'Welcome to Campfire 150';
-			$headers = 'From: admin@campfire150.com' . "\r\n" .
-			    'Reply-To: admin@campfire150.com' . "\r\n" .
-			    'Content-Type: text/html; charset=ISO-8859-1' . "\r\n" .
-			    'X-Mailer: PHP/' . phpversion();
+			$subject = gettext('Welcome to Campfire 150');
 
-			mail($to, $subject, $message, $headers);
+			$this->sendEmail($email, $subject, $message);
 		}
 		catch(Exception $ex)
 		{
 			throw $ex;
 		}
-	}
+	}	
 
 	public function verifiyEmail($email, $hashedValue)
 	{
@@ -251,7 +342,7 @@ class AccountModel extends Model {
 			//Does everything match?
 			if(isset($user[0]))
 			{			
-				$updateStatement = "UPDATE user SET VerifiedEmail = TRUE
+				$updateStatement = "UPDATE user SET VerifiedEmail = TRUE, VerificationCode=NULL
 									WHERE user.UserId = :UserId";
 
 				$this->fetch($updateStatement, array(":UserId" => $user[0]->UserId));
@@ -1572,6 +1663,27 @@ class AccountModel extends Model {
 		}
 	}
 
+	public function removeAction($userID, $actionID)
+	{
+		try
+		{
+			$statement = "UPDATE actions_taken SET Active = FALSE
+							WHERE ActionsTakenId = :ActionsTakenId
+							AND user_UserId = :user_UserId";
+
+			$parameters = array( 
+				":ActionsTakenId" => $actionID,
+				":user_UserId" => $userID
+			);
+
+			return $this->fetch($statement, $parameters);
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
+	}
+
 	public function getActionTakenList($userId)
 	{
 		try
@@ -1596,6 +1708,8 @@ class AccountModel extends Model {
 			throw $ex;
 		}
 	}
+
+
 }
 
 ?>

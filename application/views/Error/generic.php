@@ -1,8 +1,7 @@
 
-<div class="container">
-	<?php if (IS_DEBUG) { ?>
-		
+<?php if (IS_DEBUG) { ?>
 	
+	<div class="container">
 		<?php if (error_reporting()) { ?>
 			
 			<?php if (isset($_SESSION["errno"])): ?>			
@@ -56,19 +55,22 @@
 			</div>
 
 		<?php } ?>
+	</div>
 
-	<?php } else { ?>
-		
+<?php } else { ?>
+	
+	<div class="container" style="min-height: 400px;">
+		<img class="img-responsive" style="display: table; margin: 0 auto; max-height: 300px;" src="<?php echo BASE_URL . "static/c150/campfire-logo-large.png"; ?>">
+		<div style="display: table; margin: 0 auto;">
+			<h1 class="text-danger" style="font-size: 3em;"><?php echo gettext("Oops, something went wrong"); ?></h1>
+		</div>		
+	</div>
 
-		<div class="panel panel-default" style="margin-top: 40px; margin-bottom: 40px;">
-	  		<div class="panel-heading">Oops, It looks like something went wrong.</div>
-	  		<div class="panel-body">
-	    		Don't worry though, a report is already on its way to us!
-	    		<br />
-	    		<br />
-	    		We will work hard to make sure this doesn't happen again.
-	  		</div>
-		</div>
+	<div class="jumbotron" style="">
+		<div class="container" style="padding-top: 40px; padding-bottom: 40px;">
+			<p style="display: table; margin: 0 auto; padding-bottom: 10px; font-size: 3em;"><?php echo gettext("Don't worry though, a report is already on its way to us!"); ?></p>
+	    	<p style="display: table; margin: 0 auto; font-size: 2em;"><?php echo gettext("We are working hard to make sure this doesn't happen again."); ?></p>
+    	</div>
+	</div>
 
-	<?php } ?>
-</div>
+<?php } ?>

@@ -7,35 +7,17 @@ class Account extends Controller {
 		parent::__construct();
 	}
 
-	//The home view will be where a user can view all of their account information
-	// function home()
-	// {	
-	// 	try
-	// 	{
-	// 		//Check if users is authenticated for this request
-	// 		//Will kick out if not authenticated
-	// 		$this->AuthRequest();
-
-	// 		//Load the accountHomeViewModel
-	// 		$accountHomeViewModel = $this->loadViewModel('AccountHomeViewModel');
-
-	// 		//Load the AccountModel to access account functions
-	// 		$model = $this->loadModel('AccountModel');
-
-	// 		//Load the home view
-	// 		$view = $this->loadView('home');
-
-	// 		//Add a variable with data so that it can be accessed in the view
-	// 		$view->set('accountHomeViewModel', $accountHomeViewModel);
-
-	// 		//Render the home view. true indicates to load the layout pages as well
-	// 		$view->render(true);
-	// 	}
-	// 	catch(Exception $ex)
-	// 	{
-
-	// 	}
-	// }	
+	function index()
+	{
+		try
+		{
+			$this->redirect("account/search");
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
+	}	
 
 	function home($userID = null)
 	{
@@ -217,7 +199,8 @@ class Account extends Controller {
 					}				
 				}	
 
-				$model->logout();
+				//This was causing weir redirect issues
+				//$model->logout();echo "string";exit;
 			}
 
 			//Load the login view
@@ -233,7 +216,8 @@ class Account extends Controller {
 				array("static/plugins/select2/js/select2.min.js", "intern"),
 				array("static/plugins/validation/js/language/en_US.js", "intern"),
 				array("static/plugins/validation/js/language/fr_FR.js", "intern"),
-				array("static/js/validation.js", "intern")
+				array("static/js/validation.js", "intern"),
+				array("static/js/login.js", "intern")
 			));
 
 			$view->setCSS(array(
@@ -684,7 +668,7 @@ class Account extends Controller {
 						$sessionManger = new SessionManager();
 						$sessionManger->setLanguageSession($profileViewModel->LanguageType_LanguageId);
 
-						$sessionManger->setUserSessions($model->getAllUserDetails($this->currentUser->UserId));
+						$sessionManger->setUserSessions($model->getAllUserDetails($this->currentUser->UserId), isset($_SESSION['remember']) ? $_SESSION['remember'] : null);
 
 						$IsSuccess = TRUE;	
 					}				
@@ -1387,6 +1371,30 @@ class Account extends Controller {
 			throw $ex;
 		}
 	}
+	function removeAction()
+	{
+		try
+		{
+			if($this->isAuth() && $this->isAjax())
+			{
+				$model = $this->loadModel("Account/AccountModel");
+
+				if(isset($_POST["ActionID"]))
+				{
+					$result = $model->removeAction($this->currentUser->UserId, $_POST["ActionID"]);
+
+					if($result)
+					{
+						echo $result;
+					}
+				}
+			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
+	}
 
 	function changeStoryPrivacy()
 	{
@@ -1406,6 +1414,91 @@ class Account extends Controller {
 					}
 				}
 			}
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
+	}
+
+	function sendPasswordReset()
+	{
+		$model = $this->loadModel("Account/AccountModel");
+
+		if(isset($_POST["ResetEmail"]))
+		{
+			$result = $model->sendResetPassword($_POST["ResetEmail"]);
+
+			if($this->isAjax())
+			{
+				if($result)
+				{
+					echo $result;
+				}
+			}
+			else
+			{
+				if($result)
+				{
+					addSuccessMessage("dbSuccess", gettext("Reset email was sent!"), 1);
+					$this->redirect("");
+				}
+			}
+		}
+	}
+
+	function resetPassword($email = null, $hash = null)
+	{
+		try
+		{
+			if($this->isPost())
+			{
+				$email = $_POST["Email"];
+				$hash = $_POST["Hash"];
+
+				if(isset($_POST["Email"]) && isset($_POST["Hash"]) && isset($_POST["Password"]) && isset($_POST["RePassword"]))
+				{
+					if($_POST["Password"] == $_POST["RePassword"])
+					{
+						$accountModel = $this->loadModel("Account/AccountModel");
+
+						$result = $accountModel->resetPassword($_POST["Email"], $_POST["Password"], $_POST["Hash"]);
+
+						if($result)
+						{
+							addSuccessMessage("dbSuccess", gettext("Password was reset, please login using your new password!"), 1);
+
+							$this->redirect("account/login");
+						}
+					}
+				}
+
+				addErrorMessage("dbError", gettext("Oops, something went wrong while resetting your password."));
+			}		
+
+			//Load the profile view
+			$view = $this->loadView('reset');
+
+			$view->set('email', $email);
+			$view->set('hash', $hash);
+
+			//Load up some js files
+			$view->setJS(array(
+				array("static/plugins/validation/js/formValidation.min.js", "intern"),
+				array("static/plugins/validation/js/framework/bootstrap.min.js", "intern"),
+				array("static/plugins/select2/js/select2.min.js", "intern"),
+				array("static/plugins/validation/js/language/en_US.js", "intern"),
+				array("static/plugins/validation/js/language/fr_FR.js", "intern"),
+				array("static/js/validation.js", "intern")
+			));
+
+			$view->setCSS(array(
+				array("static/plugins/validation/css/formValidation.min.css", "intern"),
+				array("static/plugins/select2/css/select2.min.css", "intern")
+			));
+
+			//Render the profile view. true indicates to load the layout pages as well
+			$view->render(true);
 		}
 		catch(Exception $ex)
 		{

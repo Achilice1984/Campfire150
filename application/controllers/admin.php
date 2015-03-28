@@ -5,6 +5,8 @@ class Admin extends Controller {
 	function __construct()
 	{
 		parent::__construct();
+
+		$this->AdminRequest();
 	}
 	
 	function testAdmin()
@@ -1066,6 +1068,16 @@ class Admin extends Controller {
 		{
 			//Execute this code if NOT a post back
 		}
+	}
+
+	function errorLogs()
+	{
+		include ROOT_DIR . "static/errorlogs/errors.html";
+	}
+
+	function exceptionLogs()
+	{
+		include ROOT_DIR . "static/errorlogs/exceptions.html";
 	}
 
 }
