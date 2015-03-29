@@ -195,7 +195,7 @@ class Account extends Controller {
 					else //Failed login
 					{
 						// Add an error message because login failed 
-						addErrorMessage("dbError", gettext("Opps, it looks like your attempt to login faild."));
+						addErrorMessage("dbError", gettext("Oops, it looks like your attempt to login failed."));
 					}				
 				}	
 
@@ -319,14 +319,14 @@ class Account extends Controller {
 					//Attempt to register the user with our website				
 					if($model->registerUserProfile($userViewModel))
 					{
-						addSuccessMessage("dbSuccess", gettext("Your Registered! Verify your email and log in!"), 1);
+						addSuccessMessage("dbSuccess", gettext("You are Registered! Verify your email and log in!"), 1);
 
 						//If success, send user to the login page
 						$this->redirect("account/login");	
 					}
 					else
 					{
-						addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to register your profile."));
+						addErrorMessage("dbError", gettext("Oops, it looks like something went wrong while trying to register your profile."));
 					}					
 				}			
 			}		
@@ -379,7 +379,7 @@ class Account extends Controller {
 
 			if($model->verifiyEmail($email, $hashedEmailVerification))
 			{
-				addSuccessMessage("dbError", gettext("Your email has been successfuly verified! Login to start using your account!"), 1);
+				addSuccessMessage("dbError", gettext("Your email has been successfully verified! Login to start using your account!"), 1);
 
 				$this->redirect("account/login");
 			}
@@ -474,7 +474,7 @@ class Account extends Controller {
 					{
 						if(!$this->isAjax())
 						{
-							addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your password."), 1);
+							addErrorMessage("dbError", gettext("Oops, it looks like something went wrong while trying to update your password."), 1);
 						}
 					}
 				}
@@ -482,7 +482,7 @@ class Account extends Controller {
 				{
 					if(!$this->isAjax())
 					{
-						addErrorMessage("dbError", gettext("Opps, it looks like your passwords don't match."), 1);
+						addErrorMessage("dbError", gettext("Oops, it looks like your passwords don't match."), 1);
 					}
 				}
 			}
@@ -691,7 +691,7 @@ class Account extends Controller {
 				{
 					if(!$IsSuccess)
 					{
-						addErrorMessage("dbError", gettext("Opps, it looks like something went wrong while trying to update your profile."), 1);
+						addErrorMessage("dbError", gettext("Oops, it looks like something went wrong while trying to update your profile."), 1);
 					}	
 
 					//If success, send user to the home page
@@ -1440,7 +1440,7 @@ class Account extends Controller {
 			{
 				if($result)
 				{
-					addSuccessMessage("dbSuccess", gettext("Reset email was sent!"), 1);
+					addSuccessMessage("dbSuccess", gettext("An email was sent to help reset your password!"), 1);
 					$this->redirect("");
 				}
 			}

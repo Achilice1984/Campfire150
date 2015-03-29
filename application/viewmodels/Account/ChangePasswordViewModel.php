@@ -14,7 +14,7 @@ class ChangePasswordViewModel extends ViewModel
 		$errors["OldPassword"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The The Old Password field is required!'),
+					'Message' => gettext('The Old Password field is required!'),
 					'Properties' => array()
 				)
 		);
@@ -33,7 +33,7 @@ class ChangePasswordViewModel extends ViewModel
 		$errors["RePassword"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The The Re-Type Password field is required!'),
+					'Message' => gettext('The Re-Type Password field is required!'),
 					'Properties' => array()
 				)
 		);
