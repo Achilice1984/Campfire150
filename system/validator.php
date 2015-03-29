@@ -195,7 +195,7 @@ class Validator
       }
       else
       {
-        return gettext('error not a youtube embed tag');
+        return gettext('Not a proper YouTube embed tag.');
       }        
   }
   function get_string_between($string, $start, $end){

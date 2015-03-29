@@ -5,9 +5,15 @@
 		<div class="row">
 
 			<div class="col-md-4 storyStatsDiv">
-			    <a href="<?php echo BASE_URL . "story/display/" . $story->StoryId; ?>">
-			      	<img style="width: 250px;" class="img-responsive" src="<?php echo image_get_path_basic($story->UserId, $story->PictureId, IMG_STORY, IMG_SMALL); ?>" alt="...">
-			    </a>
+
+				<?php if (isset($story->ProfilePrivacyType_PrivacyTypeId) && $story->ProfilePrivacyType_PrivacyTypeId == 1 && $story->StoryPrivacyType_StoryPrivacyTypeId == 1) { ?>
+					
+				    <a href="<?php echo BASE_URL . "story/display/" . $story->StoryId; ?>">
+				      	<img style="width: 250px;" class="img-responsive" src="<?php echo image_get_path_basic($story->UserId, $story->PictureId, IMG_STORY, IMG_SMALL); ?>" alt="...">
+				    </a>
+			    <?php } else { ?>
+					<img style="width: 250px;" class="img-responsive" src="<?php echo image_get_path_basic($story->UserId, $story->PictureId, IMG_STORY, IMG_SMALL); ?>" alt="...">
+			    <?php } ?>
 			    
 				<div style="clear: both;"></div>
 			</div>
@@ -28,7 +34,7 @@
 	                    ?>
 	                </select>
 
-	                <a style="width: 100%; margin-left: -15px; margin-top: 10px;" class="btn btn-warning" href="<?php echo BASE_URL . "story/edit/" . $story->StoryId; ?>"><?php echo gettext("Edit"); ?></a>
+	                <a style="width: 100%; margin-left: -15px; margin-top: 10px;" class="btn btn-warning" href="<?php echo BASE_URL . "story/edit/" . $story->StoryId; ?>"><?php echo gettext("Edit Story"); ?></a>
                 </div>
   			</div>
 	

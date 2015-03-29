@@ -189,9 +189,9 @@
                Can’t meet outside?  Check out this virtual Campfire!
             </span>
             <br />
-             <iframe width="700" height="450"
+            <!--  <iframe width="700" height="450"
                 src="http://www.youtube.com/embed/xmjvMXO4AGA">
-            </iframe> 
+            </iframe>  -->
         </p>
 	</div>
 </section>

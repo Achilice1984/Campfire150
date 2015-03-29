@@ -88,20 +88,20 @@ class UserViewModel extends ViewModel
 					'Properties' => array()
 				)
 		);
-		$errors["SecurityQuestionId"] = array(
-			'required' =>
-				array(
-					'Message' => gettext('The Security Question Answer field is required!'),
-					'Properties' => array()
-				)
-		);
-		$errors["SecurityAnswer"] = array(
-			'required' =>
-				array(
-					'Message' => gettext('The Security Question Answer field is required!'),
-					'Properties' => array()
-				)
-		);
+		// $errors["SecurityQuestionId"] = array(
+		// 	'required' =>
+		// 		array(
+		// 			'Message' => gettext('The Security Question field is required!'),
+		// 			'Properties' => array()
+		// 		)
+		// );
+		// $errors["SecurityAnswer"] = array(
+		// 	'required' =>
+		// 		array(
+		// 			'Message' => gettext('The Security Question Answer field is required!'),
+		// 			'Properties' => array()
+		// 		)
+		// );
 		$errors["ProfilePrivacyType_PrivacyTypeId"] = array(
 			'required' =>
 				array(
@@ -153,7 +153,7 @@ class UserViewModel extends ViewModel
 		$errors["LastName"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Last Name is required!'),
+					'Message' => gettext('The Last Name field is required!'),
 					'Properties' => array()
 				)
 		);		

@@ -13,15 +13,3 @@ msgstr ""
 "X-Poedit-Basepath: C:\\xampp\\htdocs\\CampFire150\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Poedit-SearchPath-0: .\n"
-
-#: application/views/Home/home_view.php:3
-msgid "welcome to the site"
-msgstr "welcome to the site CAasfdasfasd"
-
-#: application/views/Home/home_view.php:4
-msgid "welcometothesite"
-msgstr "welcometothesite CA"
-
-#: application/views/Home/home_view.php:8
-msgid "testkey"
-msgstr "Hello World"

@@ -15,14 +15,3 @@ msgstr ""
 "X-Poedit-SourceCharset: UTF-8\n"
 "X-Poedit-SearchPath-0: .\n"
 
-#: application/views/Home/home_view.php:3
-msgid "welcome to the site"
-msgstr "F-welcome to the site"
-
-#: application/views/Home/home_view.php:4
-msgid "welcometothesite"
-msgstr "F-welcometothesite"
-
-#: application/views/Home/home_view.php:8
-msgid "testkey"
-msgstr "Bonjour World"
