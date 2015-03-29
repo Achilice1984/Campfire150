@@ -28,7 +28,7 @@
 	                    ?>
 	                </select>
 
-	                <a style="width: 100%; margin-left: -15px; margin-top: 10px;" class="btn btn-warning" href="<?php echo BASE_URL . "story/edit/" . $story->StoryId; ?>"><?php echo gettext("Edit"); ?></a>
+	                <a style="width: 100%; margin-left: -15px; margin-top: 10px;" class="btn btn-warning" href="<?php echo BASE_URL . "story/edit/" . $story->StoryId; ?>"><?php echo gettext("Edit Story"); ?></a>
                 </div>
   			</div>
 	

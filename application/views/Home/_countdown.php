@@ -11,7 +11,6 @@
 	width: 100%;
 }
 .clock-canvas {
-	background-color: rgba(255, 255, 255, .1);
 	border-radius: 50%;
 	height: 0px;
 	padding-bottom: 100%;
