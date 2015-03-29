@@ -77,7 +77,7 @@
                         
                         <div class="row">
                             <div class="col-md-2">
-                                <button style="margin-bottom: 5px;" type="submit" class="btn btn-default"><?php echo gettext("Submit"); ?></button>
+                                <button style="margin-bottom: 5px;" type="submit" class="btn btn-default"><?php echo gettext("Login"); ?></button>
                             </div>
                             <div class="col-md-6">
                                 <a class="btn btn-warning" href="#"  data-toggle="modal" data-target="#forgotPasswordModal"><?php echo gettext("Forgot your password?"); ?></a>
