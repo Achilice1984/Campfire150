@@ -339,6 +339,26 @@ animation-direction:normal;
 #circularG_1{
 left:0;
 top:50px;
+-moz-animation-delay:0.13s;
+-webkit-animation-delay:0.13s;
+-ms-animation-delay:0.13s;
+-o-animation-delay:0.13s;
+animation-delay:0.13s;
+}
+
+#circularG_2{
+left:14px;
+top:14px;
+-moz-animation-delay:0.26s;
+-webkit-animation-delay:0.26s;
+-ms-animation-delay:0.26s;
+-o-animation-delay:0.26s;
+animation-delay:0.26s;
+}
+
+#circularG_3{
+top:0;
+left:50px;
 -moz-animation-delay:0.39s;
 -webkit-animation-delay:0.39s;
 -ms-animation-delay:0.39s;
@@ -346,8 +366,8 @@ top:50px;
 animation-delay:0.39s;
 }
 
-#circularG_2{
-left:14px;
+#circularG_4{
+right:14px;
 top:14px;
 -moz-animation-delay:0.52s;
 -webkit-animation-delay:0.52s;
@@ -356,9 +376,9 @@ top:14px;
 animation-delay:0.52s;
 }
 
-#circularG_3{
-top:0;
-left:50px;
+#circularG_5{
+right:0;
+top:50px;
 -moz-animation-delay:0.65s;
 -webkit-animation-delay:0.65s;
 -ms-animation-delay:0.65s;
@@ -366,9 +386,9 @@ left:50px;
 animation-delay:0.65s;
 }
 
-#circularG_4{
+#circularG_6{
 right:14px;
-top:14px;
+bottom:14px;
 -moz-animation-delay:0.78s;
 -webkit-animation-delay:0.78s;
 -ms-animation-delay:0.78s;
@@ -376,9 +396,9 @@ top:14px;
 animation-delay:0.78s;
 }
 
-#circularG_5{
-right:0;
-top:50px;
+#circularG_7{
+left:50px;
+bottom:0;
 -moz-animation-delay:0.91s;
 -webkit-animation-delay:0.91s;
 -ms-animation-delay:0.91s;
@@ -386,34 +406,14 @@ top:50px;
 animation-delay:0.91s;
 }
 
-#circularG_6{
-right:14px;
+#circularG_8{
+left:14px;
 bottom:14px;
 -moz-animation-delay:1.04s;
 -webkit-animation-delay:1.04s;
 -ms-animation-delay:1.04s;
 -o-animation-delay:1.04s;
 animation-delay:1.04s;
-}
-
-#circularG_7{
-left:50px;
-bottom:0;
--moz-animation-delay:1.17s;
--webkit-animation-delay:1.17s;
--ms-animation-delay:1.17s;
--o-animation-delay:1.17s;
-animation-delay:1.17s;
-}
-
-#circularG_8{
-left:14px;
-bottom:14px;
--moz-animation-delay:1.3s;
--webkit-animation-delay:1.3s;
--ms-animation-delay:1.3s;
--o-animation-delay:1.3s;
-animation-delay:1.3s;
 }
 
 @-moz-keyframes bounce_circularG{
@@ -505,6 +505,26 @@ animation-direction:normal;
 #circularG_S_1{
 left:0;
 top:16px;
+-moz-animation-delay:0.13s;
+-webkit-animation-delay:0.13s;
+-ms-animation-delay:0.13s;
+-o-animation-delay:0.13s;
+animation-delay:0.13s;
+}
+
+#circularG_S_2{
+left:4px;
+top:4px;
+-moz-animation-delay:0.26s;
+-webkit-animation-delay:0.26s;
+-ms-animation-delay:0.26s;
+-o-animation-delay:0.26s;
+animation-delay:0.26s;
+}
+
+#circularG_S_3{
+top:0;
+left:16px;
 -moz-animation-delay:0.39s;
 -webkit-animation-delay:0.39s;
 -ms-animation-delay:0.39s;
@@ -512,8 +532,8 @@ top:16px;
 animation-delay:0.39s;
 }
 
-#circularG_S_2{
-left:4px;
+#circularG_S_4{
+right:4px;
 top:4px;
 -moz-animation-delay:0.52s;
 -webkit-animation-delay:0.52s;
@@ -522,9 +542,9 @@ top:4px;
 animation-delay:0.52s;
 }
 
-#circularG_S_3{
-top:0;
-left:16px;
+#circularG_S_5{
+right:0;
+top:16px;
 -moz-animation-delay:0.65s;
 -webkit-animation-delay:0.65s;
 -ms-animation-delay:0.65s;
@@ -532,9 +552,9 @@ left:16px;
 animation-delay:0.65s;
 }
 
-#circularG_S_4{
+#circularG_S_6{
 right:4px;
-top:4px;
+bottom:4px;
 -moz-animation-delay:0.78s;
 -webkit-animation-delay:0.78s;
 -ms-animation-delay:0.78s;
@@ -542,9 +562,9 @@ top:4px;
 animation-delay:0.78s;
 }
 
-#circularG_S_5{
-right:0;
-top:16px;
+#circularG_S_7{
+left:16px;
+bottom:0;
 -moz-animation-delay:0.91s;
 -webkit-animation-delay:0.91s;
 -ms-animation-delay:0.91s;
@@ -552,34 +572,14 @@ top:16px;
 animation-delay:0.91s;
 }
 
-#circularG_S_6{
-right:4px;
+#circularG_S_8{
+left:4px;
 bottom:4px;
 -moz-animation-delay:1.04s;
 -webkit-animation-delay:1.04s;
 -ms-animation-delay:1.04s;
 -o-animation-delay:1.04s;
 animation-delay:1.04s;
-}
-
-#circularG_S_7{
-left:16px;
-bottom:0;
--moz-animation-delay:1.17s;
--webkit-animation-delay:1.17s;
--ms-animation-delay:1.17s;
--o-animation-delay:1.17s;
-animation-delay:1.17s;
-}
-
-#circularG_S_8{
-left:4px;
-bottom:4px;
--moz-animation-delay:1.3s;
--webkit-animation-delay:1.3s;
--ms-animation-delay:1.3s;
--o-animation-delay:1.3s;
-animation-delay:1.3s;
 }
 
 @-moz-keyframes bounce_circularG_S{
