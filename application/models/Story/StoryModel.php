@@ -1235,7 +1235,7 @@ class StoryModel extends Model {
 			$statement = "SELECT
 						s.StoryId, s.User_UserId AS UserId, s.StoryTitle, s.Content, s.DatePosted, s.StoryPrivacyType_StoryPrivacyTypeId,
 
-						urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName,
+						urs.Opinion, shp.PictureId, p.PictureId, u.Active, u.FirstName, u.LastName, u.ProfilePrivacyType_PrivacyTypeId,
 
 						f.Active AS FollowingUser,
 
