@@ -14,7 +14,7 @@ class ActiveViewModel extends ViewModel
 		$errors["TableName"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The TableName field is required!'),
+					'Message' => gettext('The Table Name field is required!'),
 					'Properties' => array()
 				)
 		);		

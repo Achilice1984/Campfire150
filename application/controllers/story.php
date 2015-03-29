@@ -538,13 +538,13 @@ class Story extends Controller {
 				{
 					if(count($answers) > 5)
 					{
-						addErrorMessage("dbError", gettext("Some fields contain to many answers."));
+						addErrorMessage("dbError", gettext("Some fields contain too many answers."));
 
 						return FALSE;
 					}
 				}
 				elseif (count($answers) > 1) {
-					addErrorMessage("dbError", gettext("Some fields contain to many answers."));
+					addErrorMessage("dbError", gettext("Some fields contain too many answers."));
 
 					return FALSE;
 				}

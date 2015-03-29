@@ -62,7 +62,7 @@
 	{
 		return '<div class="alert alert-success alert-dismissible" id="UserSearchInfoBar" role="alert">
 		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		  		<strong>' . gettext("Success!") . '</strong> ' . gettext("Your data was saved successfuly!") . '
+		  		<strong>' . gettext("Success!") . '</strong> ' . gettext("Your data was saved successfully!") . '
 			</div>';
 	}
 	function getErrorMessage()
