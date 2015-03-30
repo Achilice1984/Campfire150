@@ -7,7 +7,9 @@ $(document).ready( function () {
         	"ajax": {
 	            "url": $(this).attr("data-table-url"),
 	            "type": "POST"
-	        }
+	        },
+	        searching: false,
+	        ordering: false
 		});
 	}).show("slow");		    
 } );    

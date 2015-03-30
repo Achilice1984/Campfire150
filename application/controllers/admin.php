@@ -15,11 +15,32 @@ class Admin extends Controller {
 		$model = $this->loadModel('Admin/AdminModel');
 	
 		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
-		$storyQuestionViewModel = $model->getQuestionsByAnswerId(1);
+		$storyQuestionViewModel = image_get_path_basic(200, 56, IMG_STORY, (IS_MOBILE ? IMG_MEDIUM : IMG_LARGE));
+
+		$hashUserid     = md5(200);
+ 
+
+        $url = "";
+
+    
+            $hashPictureid = md5(470);
+
+                $type = 'story';
+                debugit(ROOT_DIR);
+     
+
+        $staticPath =  $hashUserid . "/" . $hashPictureid ;        
+
+
+            $url = $staticPath;
+ 
+   echo $storyQuestionViewModel;
+
+
 		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
 		//$returnData = $model->getDropdownListItem('gendertype', 1);
 
-		debugit($storyQuestionViewModel);
+	//	debugit($storyQuestionViewModel);
 
 		
 	}
@@ -586,6 +607,18 @@ class Admin extends Controller {
 		$userViewModel = $this->loadViewModel('shared/UserViewModel');	
 
 		$userViewModel = $model->getUserByID($storyViewModel->UserId);
+
+		if(isset($userViewModel->BackgroundPictureId))
+		{
+			$userViewModel->backgroundPictureURL = 
+				image_get_path_basic($userViewModel->UserId, $userViewModel->BackgroundPictureId, IMG_BACKGROUND, (IS_MOBILE ? IMG_MEDIUM : IMG_LARGE));
+		}
+
+		if(isset($userViewModel->ProfilePictureId))
+		{
+			$userViewModel->profilePictureURL = 
+				image_get_path_basic($userViewModel->UserId, $userViewModel->ProfilePictureId, IMG_PROFILE, (IS_MOBILE ? IMG_XSMALL : IMG_SMALL));
+		}
 	
 		//Load the approval view model
 		$approvalViewModel = $this->loadViewModel('ApprovalViewModel');
@@ -647,7 +680,20 @@ class Admin extends Controller {
 		$commentViewModel = $model->getCommentById($commentId);
 
 		$storyViewModel = $model->getStoryById($commentViewModel->Story_StoryId);
+
 		$userViewModel = $model->getUserByID($commentViewModel->User_UserId);
+
+		if(isset($userViewModel->BackgroundPictureId))
+		{
+			$userViewModel->backgroundPictureURL = 
+				image_get_path_basic($userViewModel->UserId, $userViewModel->BackgroundPictureId, IMG_BACKGROUND, (IS_MOBILE ? IMG_MEDIUM : IMG_LARGE));
+		}
+
+		if(isset($userViewModel->ProfilePictureId))
+		{
+			$userViewModel->profilePictureURL = 
+				image_get_path_basic($userViewModel->UserId, $userViewModel->ProfilePictureId, IMG_PROFILE, (IS_MOBILE ? IMG_XSMALL : IMG_SMALL));
+		}
 
 		$view->set('approvalViewModel', $approvalViewModel);
 
