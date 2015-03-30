@@ -87,7 +87,7 @@ header, footer, nav {
 		margin-top: 100px !important;
 	}
 	#c150-logo {
-		width: 100px;
+		width: 50%;
 	}
 }
 
@@ -290,6 +290,13 @@ header, footer, nav {
 }
 #StorySearchContainer {
 	min-height: 200px;
+}
+
+.clock-canvas {
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 }
 
 
