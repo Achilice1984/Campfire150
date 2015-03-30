@@ -625,21 +625,10 @@ class Admin extends Controller {
 
 		$approvalViewModel->Id = $storyId;
 
-		//Add a variable with old login data so that it can be accessed in the view
-		$view->set('approvalViewModel', $approvalViewModel);
-
-		//Add a variable with old login data so that it can be accessed in the view
-		$view->set('storyViewModel', $storyViewModel);
-
-		//Add a variable with old login data so that it can be accessed in the view
-		$view->set('userViewModel', $userViewModel);
-		//Renders the view. true indicates to load the layout
-		$view->render(true);
-
 		//Execute code if a post back
 		if($this->isPost())
 		{
-			$approvalViewModel->Approval = $_POST["Approval"];
+			//$approvalViewModel->Approval = $_POST["Approval"];
 
 			//Map post values to the loginViewModel
 			$approvalViewModel  = AutoMapper::mapPost($approvalViewModel );
@@ -653,13 +642,26 @@ class Admin extends Controller {
 				elseif($approvalViewModel->Approval == 'FALSE')
 					$result = $model->rejectStory($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
 
-				$this->redirect("admin/index");
+				$this->redirect("admin/");
 			}
 			else
 			{
+				//addErrorMessage("dbError", gettext("Something went wrong while editing story approval."));
 				//$this->redirect("");
 			}
 		}
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('approvalViewModel', $approvalViewModel);
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('storyViewModel', $storyViewModel);
+
+		//Add a variable with old login data so that it can be accessed in the view
+		$view->set('userViewModel', $userViewModel);
+		//Renders the view. true indicates to load the layout
+		$view->render(true);
+		
 	}
 
 	function commenteditapproval($commentId)
@@ -669,6 +671,36 @@ class Admin extends Controller {
 
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			$approvalViewModel->Approval = $_POST["Approval"];
+
+			//Map post values to the loginViewModel
+			$approvalViewModel  = AutoMapper::mapPost($approvalViewModel );
+
+			if($approvalViewModel->validate())
+			{
+				// Save data
+				if($approvalViewModel->Approval == 'TRUE')
+					$model->approveCommentAsAdmin($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
+
+				elseif($approvalViewModel->Approval == 'FALSE')
+					$model->rejectCommentAsAdmin($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
+
+				$this->redirect("admin/index");
+			}
+			else
+			{
+				echo "Failed to save the change";
+			}
+		}
+		else
+		{
+			//Execute this code if NOT a post back
+		}
+
 		$commentViewModel = $this->loadViewModel('shared/CommentViewModel');
 		$userViewModel = $this->loadViewModel('shared/UserViewModel');
 		$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
@@ -705,35 +737,6 @@ class Admin extends Controller {
 
 		//Renders the view. true indicates to load the layout
 		$view->render(true);
-
-		//Execute code if a post back
-		if($this->isPost())
-		{
-			$approvalViewModel->Approval = $_POST["Approval"];
-
-			//Map post values to the loginViewModel
-			$approvalViewModel  = AutoMapper::mapPost($approvalViewModel );
-
-			if($approvalViewModel->validate())
-			{
-				// Save data
-				if($approvalViewModel->Approval == 'TRUE')
-					$model->approveCommentAsAdmin($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
-
-				elseif($approvalViewModel->Approval == 'FALSE')
-					$model->rejectCommentAsAdmin($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
-
-				$this->redirect("admin/index");
-			}
-			else
-			{
-				echo "Failed to save the change";
-			}
-		}
-		else
-		{
-			//Execute this code if NOT a post back
-		}
 	}
 
 	function userstatusedit($userId)
@@ -743,22 +746,6 @@ class Admin extends Controller {
 
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
-
-		//Loads view models
-		$activeViewModel = $this->loadViewModel('ActiveViewModel');
-		$activeViewModel->Id = $userId;
-		$activeViewModel->TableName = "user"; //This function is working on 'user' table.
-
-
-		$userViewModel = $this->loadViewModel('shared/UserViewModel');
-		$userViewModel = $model->getUserByID($userId);
-
-		$view->set('activeViewModel', $activeViewModel);
-
-		$view->set('userViewModel', $userViewModel);
-
-		//Renders the view. true indicates to load the layout
-		$view->render(true);
 
 		//Execute code if a post back
 		if($this->isPost())
@@ -791,29 +778,28 @@ class Admin extends Controller {
 		{
 			//Execute this code if NOT a post back
 		}
+
+		//Loads view models
+		$activeViewModel = $this->loadViewModel('ActiveViewModel');
+		$activeViewModel->Id = $userId;
+		$activeViewModel->TableName = "user"; //This function is working on 'user' table.
+
+
+		$userViewModel = $this->loadViewModel('shared/UserViewModel');
+		$userViewModel = $model->getUserByID($userId);
+
+		$view->set('activeViewModel', $activeViewModel);
+
+		$view->set('userViewModel', $userViewModel);
+
+		//Renders the view. true indicates to load the layout
+		$view->render(true);
 	}
 
 	function dropdownitemedit($tableName, $Id)
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
-
-		//Loads a view from corresponding view folder
-		$view = $this->loadView('dropdownitemedit');
-
-		$dropdownListItemViewModel = $this->loadViewModel('shared/DropdownItemViewModel');
-
-		//Load the approval view model
-
-		//Adds variables or objects to that can be accessed in the view
-		$dropdownListItemViewModel = $model->getDropdownListItem($tableName, $Id);
-		$dropdownListItemViewModel->TableName = $tableName;
-
-		$view->set('dropdownListItemViewModel', $dropdownListItemViewModel);
-
-
-		//Renders the view. true indicates to load the layout
-		$view->render(true);
 
 		//Execute code if a post back
 		if($this->isPost())
@@ -840,23 +826,29 @@ class Admin extends Controller {
 		{
 			//Execute this code if NOT a post back
 		}
+
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('dropdownitemedit');
+
+		$dropdownListItemViewModel = $this->loadViewModel('shared/DropdownItemViewModel');
+
+		//Load the approval view model
+
+		//Adds variables or objects to that can be accessed in the view
+		$dropdownListItemViewModel = $model->getDropdownListItem($tableName, $Id);
+		$dropdownListItemViewModel->TableName = $tableName;
+
+		$view->set('dropdownListItemViewModel', $dropdownListItemViewModel);
+
+
+		//Renders the view. true indicates to load the layout
+		$view->render(true);		
 	}
 
 	function dropdownitemadd($tableName)
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
-
-		//Loads a view from corresponding view folder
-		$view = $this->loadView('dropdownitemadd');
-
-		$dropdownListItemViewModel = $this->loadViewModel('shared/DropdownItemViewModel');
-		$dropdownListItemViewModel->TableName = $tableName;
-
-		$view->set('dropdownListItemViewModel', $dropdownListItemViewModel);
-
-		//Renders the view. true indicates to load the layout
-		$view->render(true);
 
 		//Execute code if a post back
 		if($this->isPost())
@@ -881,27 +873,23 @@ class Admin extends Controller {
 		{
 			//Execute this code if NOT a post back
 		}
+
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('dropdownitemadd');
+
+		$dropdownListItemViewModel = $this->loadViewModel('shared/DropdownItemViewModel');
+		$dropdownListItemViewModel->TableName = $tableName;
+
+		$view->set('dropdownListItemViewModel', $dropdownListItemViewModel);
+
+		//Renders the view. true indicates to load the layout
+		$view->render(true);		
 	}
 
 	function storyansweredit($answerId)
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
-
-		//Loads a view from corresponding view folder
-		$view = $this->loadView('storyansweredit');
-
-		$storyAnswerViewModel = $this->loadViewModel('shared/StoryAnswerViewModel');
-		$storyAnswerViewModel = $model->getAnswerById($answerId);
-
-		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
-		$storyQuestionViewModel = $model->getQuestionsByAnswerId($answerId);
-
-		$view->set('storyAnswerViewModel', $storyAnswerViewModel);
-		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
-
-		//Renders the view. true indicates to load the layout
-		$view->render(true);
 
 		//Execute code if a post back
 		if($this->isPost())
@@ -927,28 +915,27 @@ class Admin extends Controller {
 		{
 			//Execute this code if NOT a post back
 		}
+
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('storyansweredit');
+
+		$storyAnswerViewModel = $this->loadViewModel('shared/StoryAnswerViewModel');
+		$storyAnswerViewModel = $model->getAnswerById($answerId);
+
+		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
+		$storyQuestionViewModel = $model->getQuestionsByAnswerId($answerId);
+
+		$view->set('storyAnswerViewModel', $storyAnswerViewModel);
+		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
+
+		//Renders the view. true indicates to load the layout
+		$view->render(true);		
 	}
 
 	function storyansweradd($questionId)
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
-
-		//Loads a view from corresponding view folder
-		$view = $this->loadView('storyansweradd');
-
-		$storyAnswerViewModel = $this->loadViewModel('shared/StoryAnswerViewModel');
-
-		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
-		$storyQuestionViewModel = $model->getQuestionByQuestionId($questionId);
-
-		$view->set('storyAnswerViewModel', $storyAnswerViewModel);
-		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
-
-		$view->set('storyAnswerViewModel', $storyAnswerViewModel);
-
-		//Renders the view. true indicates to load the layout
-		$view->render(true);
 
 		//Execute code if a post back
 		if($this->isPost())
@@ -974,6 +961,22 @@ class Admin extends Controller {
 		{
 			//Execute this code if NOT a post back
 		}
+
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('storyansweradd');
+
+		$storyAnswerViewModel = $this->loadViewModel('shared/StoryAnswerViewModel');
+
+		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
+		$storyQuestionViewModel = $model->getQuestionByQuestionId($questionId);
+
+		$view->set('storyAnswerViewModel', $storyAnswerViewModel);
+		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
+
+		$view->set('storyAnswerViewModel', $storyAnswerViewModel);
+
+		//Renders the view. true indicates to load the layout
+		$view->render(true);		
 	}
  
 	function storyquestionedit($questionId)
@@ -983,19 +986,6 @@ class Admin extends Controller {
 
 		//Loads a view from corresponding view folder
 		$view = $this->loadView('storyquestionedit');
-
-		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
-		$storyQuestionViewModel = $model->getQuestionByQuestionId($questionId);	
-
-		$storyAnswerViewModelList = $this->loadViewModel('shared/StoryQuestionViewModel');
-		$storyAnswerViewModelList = $model->getAnswersByQuestionId($questionId);
-
-
-		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
-		$view->set('storyAnswerViewModelList', $storyAnswerViewModelList);
-
-		//Renders the view. true indicates to load the layout
-		$view->render(true);
 
 		//Execute code if a post back
 		if($this->isPost())
@@ -1022,6 +1012,19 @@ class Admin extends Controller {
 		{
 			//Execute this code if NOT a post back
 		}
+
+		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
+		$storyQuestionViewModel = $model->getQuestionByQuestionId($questionId);	
+
+		$storyAnswerViewModelList = $this->loadViewModel('shared/StoryQuestionViewModel');
+		$storyAnswerViewModelList = $model->getAnswersByQuestionId($questionId);
+
+
+		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
+		$view->set('storyAnswerViewModelList', $storyAnswerViewModelList);
+
+		//Renders the view. true indicates to load the layout
+		$view->render(true);		
 	}
 
 	function storyquestionadd()
@@ -1033,11 +1036,6 @@ class Admin extends Controller {
 		$view = $this->loadView('storyquestionadd');
 
 		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
-
-		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
-
-		//Renders the view. true indicates to load the layout
-		$view->render(true);
 
 		//Execute code if a post back
 		if($this->isPost())
@@ -1064,6 +1062,11 @@ class Admin extends Controller {
 		{
 			//Execute this code if NOT a post back
 		}
+
+		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
+
+		//Renders the view. true indicates to load the layout
+		$view->render(true);		
 	}
 
 	/**********************
