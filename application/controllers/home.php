@@ -120,17 +120,27 @@ class Home extends Controller {
 
 	function contact()
 	{
-		// if($this->isPost())
-		// {
-		// 	$headers = 'From: ' . SITE_EMAIL . '' . "\r\n" .
-		// 	    'Reply-To: ' . SITE_EMAIL . '' . "\r\n" .
-		// 	    'Content-Type: text/html; charset=ISO-8859-1' . "\r\n" .
-		// 	    'X-Mailer: PHP/' . phpversion();
+		if($this->isPost())
+		{
+			if(isset($_POST["Email"]) && isset($_POST["Subject"]) && isset($_POST["Message"])
+				&& $_POST["Email"] != "" && $_POST["Subject"] != "" && $_POST["Message"] != ""
+				&& filter_var($_POST["Email"], FILTER_VALIDATE_EMAIL))
+			{
+				$headers = "From: <" . $_POST['Email'] . ">\r\nReturn-path: " . $_POST['Email'] . "" .
+				   // 'Reply-To: ' . $_POST["Email"] . '' . "\r\n" .
+				    'Content-Type: text/html; charset=ISO-8859-1' . "\r\n" .
+				    'X-Mailer: PHP/' . phpversion();
 
-		// 	mail("josh.dvrs@gmail.com", $subject, $message, $headers);
+				mail(CONTACT_EMAIL, $_POST["Subject"], $_POST["Message"], $headers);
 
-		// 	addSuccessMessage("dbSuccess", gettext("Your message has been seent!"));
-		// }
+				addSuccessMessage("dbSuccess", gettext("Your message has been seent!"));
+			}
+			else
+			{
+				addErrorMessage("dbError", gettext("Something went wrong while sending your message."));
+			}
+		}
+
 		//Load the profile view
 		$view = $this->loadView('contact');
 

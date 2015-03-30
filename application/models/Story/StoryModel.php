@@ -1838,6 +1838,7 @@ class StoryModel extends Model {
 
 					WHERE StoryPrivacyType_StoryPrivacyTypeId = 1
 					AND s.Active = TRUE
+					AND s.Published = TRUE
 					AND u.ProfilePrivacyType_PrivacyTypeId = 1
 					AND aps.Active = TRUE
 					AND aps.Approved = TRUE
