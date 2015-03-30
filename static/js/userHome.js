@@ -1,5 +1,11 @@
 $(function(){
 
+	$("#penndingStoryModal").modal('show');
+	$("#draftStoryModal").modal('show');
+});
+
+$(function(){
+
 	if($('textarea#Content').length)
 	{
 		$('textarea#Content').maxlength({

@@ -190,6 +190,7 @@ class Story extends Controller {
 
 						$storyModel->setPublishFlag($storyId, $this->currentUser->UserId, true);
 
+						$_SESSION["Story_Pending"] = TRUE;
 						$this->redirect("account/home");
 					}
 				}
@@ -289,6 +290,7 @@ class Story extends Controller {
 						}
 						else
 						{
+							$_SESSION["Story_Draft"] = TRUE;
 							$this->redirect("account/home");
 						}
 					}
@@ -417,6 +419,7 @@ class Story extends Controller {
 						}
 						else
 						{
+							$_SESSION["Story_Draft"] = TRUE;
 							$this->redirect("account/home");
 						}
 					}
