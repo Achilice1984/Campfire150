@@ -14,9 +14,9 @@
 	    		<h4><?php echo $story->StoryTitle; ?></h4>
     			<?php echo getSubText($story->Content); ?>
 
-    			<div style="padding-top: 5px;" class="row">
-					<a class="btn btn-primary" href="<?php echo BASE_URL . "story/publish/" . $story->StoryId; ?>"><?php echo gettext("Publish"); ?></a>
-					<a class="btn btn-warning" href="<?php echo BASE_URL . "story/edit/" . $story->StoryId; ?>"><?php echo gettext("Edit"); ?></a>
+    			<div style="padding-top: 10px;" class="row">
+					<a style="float: left;" class="btn btn-primary" href="<?php echo BASE_URL . "story/publish/" . $story->StoryId; ?>"><?php echo gettext("Publish"); ?></a>
+					<a style="float: left;" class="btn btn-warning" href="<?php echo BASE_URL . "story/edit/" . $story->StoryId; ?>"><?php echo gettext("Edit Story"); ?></a>
 				</div>
   			</div>
 	
