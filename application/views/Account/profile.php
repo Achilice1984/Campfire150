@@ -114,10 +114,11 @@
 
                         <div class="messageDiv"></div>  
                                                    
-                        <button id="ProfileSubmitButton" type="submit" class="btn btn-primary btn-block"><?php echo gettext("Update Profile"); ?></button>
-                        <div style="float: left; margin-left:10px" id="ProfileSpinerDiv">
+                        <div style="margin-left:10px" id="ProfileSpinerDiv">
                             <?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
                         </div>
+                        <button id="ProfileSubmitButton" type="submit" class="btn btn-primary btn-block"><?php echo gettext("Update Profile"); ?></button>
+                        
                     </form>
                 </div>
 
@@ -146,11 +147,12 @@
                             <label for="RePassword"><?php echo gettext("Re-Type Password"); ?></label>
                             <input type="password" class="form-control" id="RePassword" name="RePassword" placeholder="<?php echo gettext("Re-Type Password"); ?>">
                         </div>
-
-                        <button id="PasswordSubmitButton" type="submit" class="btn btn-primary btn-block"><?php echo gettext("Change Password"); ?></button>
-                        <div style="float: left; margin-left:10px" id="PasswordSpinerDiv">
+                        
+                        <div style=" margin-left:10px" id="PasswordSpinerDiv">
                             <?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
                         </div>
+                        <button id="PasswordSubmitButton" type="submit" class="btn btn-primary btn-block"><?php echo gettext("Change Password"); ?></button>
+                        
                         <br />
                 </div>
             </div>

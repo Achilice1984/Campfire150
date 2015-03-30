@@ -418,10 +418,10 @@ $(document.body).on('click', "#ActionTakenSubmitButton", function(event){
 			}
 		},
 		beforeSend: function(){
-			$("#ActionTakenSpinerDiv .spinner_small").removeClass("hide");
+			$("#ActionTakenForm .spinner_small").removeClass("hide");
 		},
 		complete: function(){
-			$("#ActionTakenSpinerDiv .spinner_small").addClass("hide");
+			$("#ActionTakenForm .spinner_small").addClass("hide");
 		}
 	});	
 });
