@@ -306,7 +306,7 @@ class AdminModel extends Model {
 								) tmptable
 							) AS TotalComments
 							FROM user_inappropriateflag_comment uic
-							INNER JOIN COMMENT c ON c.CommentId = uic.Comment_CommentId
+							INNER JOIN comment c ON c.CommentId = uic.Comment_CommentId
 							INNER JOIN story s ON s.StoryId = c.Story_StoryId
 							GROUP BY uic.Comment_CommentId
 							ORDER BY TotalFlagNumber DESC 
