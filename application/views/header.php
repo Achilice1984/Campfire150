@@ -108,6 +108,9 @@
                           <li><a href="<?php echo BASE_URL; ?>home/mission"><?php echo gettext("Mission / Vision"); ?></a></li>                          
                           
                           <li><a href="<?php echo BASE_URL; ?>home/partners"><?php echo gettext("Our Partners"); ?></a></li>
+                          
+                          <li class="divider"></li>
+                          <li><a href="<?php echo BASE_URL; ?>home/contact"><?php echo gettext("Contact Us"); ?></a></li>
                       </ul>
                     </li>
                     <!-- <li class="dropdown">

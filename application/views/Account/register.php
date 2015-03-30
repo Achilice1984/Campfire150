@@ -8,6 +8,21 @@
 
 ?>   
 
+<div id="termsModal" class="modal fade">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <form id="forgotPasswordForm" action="<?php echo BASE_URL; ?>account/sendPasswordReset" method="post">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title"><?php echo gettext("Terms of Use"); ?></h4>
+              </div>
+              <div class="modal-body">
+                    <?php include(APP_DIR . "views/Home/terms.php"); ?>
+              </div>
+        </form>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
 
 <div class="container" style="padding-top: 50px; padding-bottom: 50px;">
     <div class="row">
@@ -159,7 +174,7 @@
                             <br />
                         </form>
                         <div style="padding-top:15px;"> 
-                            <?php echo gettext("By clicking on 'Register', you confirm that you accept the Terms of Use."); ?> <a href="<?php echo BASE_URL; ?>home/terms"><?php echo gettext("Terms of Use"); ?></a>
+                            <?php echo gettext("By clicking on 'Register', you confirm that you accept the Terms of Use."); ?> <a  data-toggle="modal" data-target="#termsModal" href="#"><?php echo gettext("Terms of Use"); ?></a>
                         </div>
                     </div>
             </div>

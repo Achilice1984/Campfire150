@@ -118,6 +118,26 @@ class Home extends Controller {
 		$view->render(true);
 	}
 
+	function contact()
+	{
+		// if($this->isPost())
+		// {
+		// 	$headers = 'From: ' . SITE_EMAIL . '' . "\r\n" .
+		// 	    'Reply-To: ' . SITE_EMAIL . '' . "\r\n" .
+		// 	    'Content-Type: text/html; charset=ISO-8859-1' . "\r\n" .
+		// 	    'X-Mailer: PHP/' . phpversion();
+
+		// 	mail("josh.dvrs@gmail.com", $subject, $message, $headers);
+
+		// 	addSuccessMessage("dbSuccess", gettext("Your message has been seent!"));
+		// }
+		//Load the profile view
+		$view = $this->loadView('contact');
+
+		//Render the profile view. true indicates to load the layout pages as well
+		$view->render(true);
+	}
+
 	function terms()
 	{
 		$template = $this->loadView('terms');
