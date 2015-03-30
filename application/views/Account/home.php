@@ -51,7 +51,6 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-
 <div id="profileImgModal" class="modal fade">
   <div class="modal-dialog">
     <div class="modal-content">
@@ -89,6 +88,47 @@
     </div><!-- /.modal-content -->
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<?php if (isset($_SESSION["Story_Pending"])): ?>
+	<?php unset($_SESSION["Story_Pending"]); ?>
+
+	<div id="penndingStoryModal" class="modal fade">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title"><?php echo gettext("Story Pending Approval"); ?></h4>
+	      </div>
+	      <div class="modal-body">
+	      	
+	        <p><?php echo gettext("Your story is pending approval and will be published within the next 48 hours."); ?></p>
+	       
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+<?php endif ?>
+
+<?php if (isset($_SESSION["Story_Draft"])): ?>
+	<?php unset($_SESSION["Story_Draft"]); ?>
+
+	<div id="draftStoryModal" class="modal fade">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title"><?php echo gettext("Story Saved as Draft"); ?></h4>
+	      </div>
+	      <div class="modal-body">
+	      	
+	        <p><?php echo gettext("Your story has been saved as a draft."); ?></p>
+	        <p><?php echo gettext("You can access this story in your drafts list below."); ?></p>
+	       
+	      </div>
+	    </div><!-- /.modal-content -->
+	  </div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+<?php endif ?>
 
 
 <div style="margin-top: -15px;"></div>
@@ -173,11 +213,13 @@
 				<div class="panel panel-default marginTop15">
 					<div class="panel-heading"><span class="glyphicon glyphicon-bullhorn"></span></div>
 					<div class="panel-body">
-						<?php if(isset($accountHomeViewModel->userDetails->UserActionStatement) && trim($accountHomeViewModel->userDetails->UserActionStatement) != "") { ?>
-							<div id="ActionStatementDivText">
+						<div id="ActionStatementDivText">
+							<?php if(isset($accountHomeViewModel->userDetails->UserActionStatement) && trim($accountHomeViewModel->userDetails->UserActionStatement) != "") { ?>
+								
 								<?php echo $accountHomeViewModel->userDetails->UserActionStatement; ?>
-							</div>
-						<?php } ?>	
+								
+							<?php } ?>	
+						</div>
 					</div>
 				</div>			
 			</div>		
@@ -189,14 +231,14 @@
 				<form id="ActionStatementForm" action="<?php echo BASE_URL; ?>account/updateActionStatement" method="post">									    														
 						
 					<div class="form-group">
-		             	<textarea maxlength="100" name="UserActionStatement" id="UserActionStatement" class="form-control" rows="3" placeholder="<?php echo gettext("How are you making a difference?!"); ?>"><?php echo isset($accountHomeViewModel->userDetails->UserActionStatement) ? $accountHomeViewModel->userDetails->UserActionStatement : ""; ?></textarea>
+		             	<textarea maxlength="100" name="UserActionStatement" id="UserActionStatement" class="form-control" rows="3" placeholder="<?php echo gettext("What do you pledge to do to make your story about Canada’s future a reality?"); ?>"><?php echo isset($accountHomeViewModel->userDetails->UserActionStatement) ? $accountHomeViewModel->userDetails->UserActionStatement : ""; ?></textarea>
 	             	</div>
 
 		             <p>
 						<div style="margin-left:10px" id="ActionStatementSpinerDiv">
 		             		<?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
 	             		</div>
-		             	<button id="UserActionSubmitButton" type="submit" class="btn btn-default btn-block"><?php echo gettext("Update Statement"); ?></button></p>
+		             	<button id="UserActionSubmitButton" type="submit" class="btn btn-default btn-block"><?php echo gettext("Update My Pledge"); ?></button></p>
 		             
 		         </form>	
 			</div>	
