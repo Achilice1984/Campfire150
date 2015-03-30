@@ -93,11 +93,11 @@
 
 
 <div class="bg-primary row" style="position: relative; margin-top: -15px; min-height: 225px;">
-	<div id="headerImageChange" class="profileContent">
+	<div stlye="margin-top: -15px;" id="headerImageChange" class="profileContent">
 		<span class="glyphicon glyphicon-camera text-primary"></span>
 	</div>
 	<!-- <div style="min-height: 450px;"></div> -->
-	<img id="backgroundImage" style="" class="img-responsive" src="<?php echo isset($accountHomeViewModel->backgroundPictureURL) ? $accountHomeViewModel->backgroundPictureURL : ""; ?>" alt="">
+	<img id="backgroundImage" style="margin-top: -20px;" class="img-responsive" src="<?php echo isset($accountHomeViewModel->backgroundPictureURL) ? $accountHomeViewModel->backgroundPictureURL : ""; ?>" alt="">
 </div>
 
 <div class="container">
