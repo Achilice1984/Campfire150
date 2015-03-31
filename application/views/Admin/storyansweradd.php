@@ -1,9 +1,3 @@
-
-<?php
-	 //debugit($storysQuestionViewModel);
-	// debugit($userViewModel);
-	// debugit($storyAnswerViewModel);
-?>
 <div class="container" style="margin-top:100px;">
 
 	<h2><?php echo gettext("Add a Story Answer"); ?></h2>
