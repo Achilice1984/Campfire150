@@ -449,7 +449,7 @@ class StoryModel extends Model {
 							ON (uas.User_UserId = s.User_UserId) AND (uas.Active = TRUE)
 
 							LEFT JOIN following f
-							ON (f.User_FollowerId = s.User_UserId) AND (f.User_UserId = :User_UserId2) AND (f.Active = TRUE)
+							ON (f.User_FollowerId = s.User_UserId) AND (f.Active = TRUE)
 
 							LEFT JOIN picture up
 							ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)
@@ -463,8 +463,7 @@ class StoryModel extends Model {
 							AND aps.Approved = TRUE
 							";
 							
-			$parameters = array(":User_UserId" => $userID,
-								":User_UserId2" => $userID, 
+			$parameters = array(":User_UserId" => $userID, 
 								":StoryId" => $storyID);
 
 			$story = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
@@ -534,6 +533,7 @@ class StoryModel extends Model {
 							ON (up.User_UserId = s.User_UserId) AND (up.Active = TRUE) AND (up.Picturetype_PictureTypeId = 1)							
 
 							WHERE s.StoryId = :StoryId
+							AND u.ProfilePrivacyType_PrivacyTypeId = 1
 							AND s.Active = TRUE							
 							GROUP BY s.StoryId
 							";
@@ -2313,7 +2313,7 @@ class StoryModel extends Model {
 							) AS count
 							FROM tag t
 							ORDER BY count DESC
-							LIMIT 0,100";
+							LIMIT 0,50";
 
 			$result = $this->fetchIntoObject($statement, array());
 

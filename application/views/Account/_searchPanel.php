@@ -11,19 +11,19 @@
 		<div class="col-sm-7">
 			<h2 class="storyTitle"><?php echo $user->FirstName . " " . $user->LastName; ?></h2>
 			<div class="storyStats marginTop15 clearfix">
-			    <div>
+			    <div data-toggle="tooltip" title="<?php echo gettext("Total Followers"); ?>">
 			        <span class="glyphicon glyphicon-user"></span> 
 					<?php echo $user->totalFollowers; ?>
 			    </div>
-			    <div>
+			    <div data-toggle="tooltip" title="<?php echo gettext("Total Published Stories"); ?>">
 			        <span class="glyphicon glyphicon-book"></span> 
 					<?php echo $user->totalPublishedStories; ?>
 			    </div>
-			    <div>
+			    <div data-toggle="tooltip" title="<?php echo gettext("Total Published Comments"); ?>">
 			        <span class="glyphicon glyphicon-comment"></span> 
 					<?php echo $user->totalPublishedComments; ?>
 			    </div>
-			    <div>
+			    <div data-toggle="tooltip" title="<?php echo gettext("Total Recommends"); ?>">
 			        <span class="glyphicon glyphicon-thumbs-up"></span>
 					<?php echo $user->totalRecommends; ?>
 			    </div>		

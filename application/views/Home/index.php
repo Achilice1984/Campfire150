@@ -8,7 +8,7 @@
                 <nav role="navigation">
                     <ul class="nav nav-tabs">
                         <li class="active"><a data-request-url="<?php echo BASE_URL; ?>home/latestStoryHome" id="latestStoryListButton" href="#"><?php echo gettext("Latest"); ?></a></li>
-                        <li><a data-request-url="<?php echo BASE_URL; ?>home/recommendedStoryHome" id="recommendedStoryListButton" href="#"><?php echo gettext("Recomended"); ?></a></li>
+                        <li><a data-request-url="<?php echo BASE_URL; ?>home/recommendedStoryHome" id="recommendedStoryListButton" href="#"><?php echo gettext("Recommended"); ?></a></li>
                         <li role="presentation" class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
                                 <?php echo gettext("By Category"); ?> <span class="caret"></span>
@@ -34,7 +34,7 @@
                 <p class="clearfix"><a href="<?php echo BASE_URL; ?>story/search" class="btn btn-warning pull-right"><?php echo gettext("View More Stories"); ?></a></p>
             </div>
         </section>
-        <section class="bg-grey text-center jumbotron marginBottom-15">
+        <section style="padding-top: 15px;" class="bg-grey text-center jumbotron marginBottom-15">
             <div class="container">
                 <div class="row">
                     <div class="col-sm-3 col-xs-6">
@@ -51,27 +51,109 @@
                     </div>
                     <div class="col-sm-3 col-xs-6">
                         <p class="h1"><?php echo $homeViewModel->totalRecommendations; ?></p>
-                        <p><?php echo gettext("Recommendations"); ?></p>
+                        <p><?php echo gettext("Recommends"); ?></p>
                     </div>
                 </div>
             </div>
         </section>
-        
-        <section style="padding-top: 20px; padding-bottom: 20px;" class="bg-blue marginBottom-15">
+        <style type="text/css">
+            .circles {
+                width:50px; 
+                height:50px; 
+                border-radius:50% !important;
+                font-size:20px; 
+                color:#fff; 
+                line-height:50px; 
+                text-align:center; 
+                background:#eea236; 
+                margin: 10px; 
+                float: left;
+            }
+            .circles_text {
+                float: left; 
+                padding-top: 20px;
+            }
+            
+        </style>
+        <section class="bg-blue marginBottom-15">
             <div class="container">
+                <h2>&nbsp</h2>
                 <div class="row">
-                    <div class="col-md-6">
-                        <canvas id="wordCloudCanvas" height="400" width="500"></canvas> 
+                    <div class="col-md-12">
+                        <canvas id="wordCloudCanvas" height="600" width="1000"></canvas> 
                     </div>
-                    <div style="" class="col-md-6">
-                        <h1><?php echo gettext("How the Campfire Works"); ?></h1>
-                        <ol style="font-size: 1.4em; padding-bottom: 25px;">
-                            <li><?php echo gettext("Submit a story"); ?></li>
-                            <li><?php echo gettext("Answer some simple questions"); ?></li>
-                            <li><?php echo gettext("We all create a national story"); ?></li>
-                            <li><?php echo gettext("Repeat"); ?></li>
-                        </ol>
-                        <p style=""><a href="<?php echo BASE_URL; ?>story/add" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Share a Story"); ?></a></p>
+                   
+                </div>
+                <div class="row">
+                     <div style="" class="col-md-12">
+                        
+                        <p style="padding: 25px;"><a href="<?php echo BASE_URL; ?>story/add" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Share a Story"); ?></a></p>
+                    
+                        
+                        <div style="padding: 25px;">
+                            <h1><?php echo gettext("How the Campfire Works"); ?></h1>
+                            <ol style="font-size: 1.4em; list-style: none;">
+                                <li>
+                                    <div class="circles_div">
+                                        <div class="circles">
+                                            <span class="glyphicon glyphicon-user"></span>
+                                        </div>
+                                    </div>
+                                    <div class="circles_text">
+                                        <?php echo gettext("Register"); ?>
+                                    </div>
+                                    <div style="clear:both;"></div>
+                                </li>
+                                <li>
+                                    <div class="circles_div">
+                                        <div class="circles">
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                        </div>
+                                    </div>
+                                    <div class="circles_text">
+                                        <?php echo gettext("Submit a story"); ?>
+                                    </div>
+                                    <div style="clear:both;"></div>
+                                    
+                                </li>
+                                <li>
+                                    <div class="circles_div">
+                                        <div class="circles">
+                                            <span class="glyphicon glyphicon-question-sign"></span>
+                                        </div>
+                                    </div>
+                                    <div class="circles_text">
+                                        <?php echo gettext("Answer some simple questions"); ?>
+                                    </div>
+                                    <div style="clear:both;"></div>
+                                    
+                                </li>
+                                <li>
+                                    <div class="circles_div">
+                                        <div class="circles">
+                                            <span class="glyphicon glyphicon-book"></span>
+                                        </div>
+                                    </div>
+                                    <div class="circles_text">
+                                        <?php echo gettext("Contribute to our national story"); ?>
+                                    </div>
+                                    <div style="clear:both;"></div>
+                                    
+                                </li>
+                                <li>
+                                    <div class="circles_div">
+                                        <div class="circles">
+                                            <span class="glyphicon glyphicon-repeat"></span>
+                                        </div>
+                                    </div>
+                                    <div class="circles_text">
+                                        <?php echo gettext("Repeat"); ?>
+                                    </div>
+                                    <div style="clear:both;"></div>
+                                    
+                                </li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
             </div>

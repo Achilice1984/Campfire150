@@ -2,7 +2,7 @@
 
 /* -------------------- General -------------------- */
 
-*:not(.circularG):not(.circularG_S) {
+*:not(.circularG):not(.circularG_S):not(.circles) {
 	border-radius: 0 !important;
 }
 body {

@@ -4,6 +4,15 @@ $(function(){
 	$("#draftStoryModal").modal('show');
 });
 
+
+$(document.body).on("keyup", "#About", function(){
+	$("#AboutSubmitButton").fadeIn();
+});
+
+$(document.body).on("keyup", "#UserActionStatement", function(){
+	$("#UserActionSubmitButton").fadeIn();
+});
+
 $(function(){
 
 	if($('textarea#Content').length)
@@ -23,7 +32,7 @@ $(document.body).on('click', "#EditProfileButton", function(event){
 		url: $("#EditProfileButton").attr("href"),
 		success: function(data){
 			if(data)
-			{
+			{	
 				$("#profileContentContainer").html(data);
 
 				$('#Birthday').datepicker({
@@ -38,6 +47,7 @@ $(document.body).on('click', "#EditProfileButton", function(event){
 		        });
 
 		        init_validation();
+		        init_tooltip();
 			}
 			else
 			{
@@ -56,16 +66,18 @@ $(document.body).on('click', "#EditProfileButton", function(event){
 
 
 	$("#EditProfileButton").hide();
-	$("#CancelProfileButton").show();
+	$(".CancelProfileButton").show();
 
 	$("#AboutDiv").hide();
 	$("#AboutFormDiv").show();
 
 	$("#ActionStatementDiv").hide();
 	$("#ActionStatementFormDiv").show();
+
+	$("#ShareStoryButtonProfile").hide();
 });
 
-$(document.body).on('click', "#CancelProfileButton", function(event){
+$(document.body).on('click', ".CancelProfileButton", function(event){
 	event.preventDefault();
 	event.stopPropagation();
 
@@ -78,8 +90,12 @@ $(document.body).on('click', "#CancelProfileButton", function(event){
 	$("#ActionStatementFormDiv").hide();
 	$("#ActionStatementDiv").show();
 
-	$("#CancelProfileButton").hide();
-	$("#EditProfileButton").show();		
+	$(".CancelProfileButton").hide();
+	$("#EditProfileButton").show();	
+
+	$("#ShareStoryButtonProfile").show();	
+
+	$(".messageDiv .alert").remove();
 });
 
 
@@ -359,6 +375,8 @@ $(document.body).on('click', "#AboutSubmitButton", function(event){
 			{
 				$("#AboutFormDiv").find(".messageDiv").html(data);
 				$("#AboutDivText").text($("#About").val());
+
+				$("#AboutSubmitButton").fadeOut();
 			}
 			else
 			{
@@ -389,6 +407,8 @@ $(document.body).on('click', "#UserActionSubmitButton", function(event){
 
 				$("#ActionStatementFormDiv").find(".messageDiv").html(data);
 				$("#ActionStatementDivText").text($("#UserActionStatement").val());
+
+				$("#UserActionSubmitButton").fadeOut();
 			}
 			else
 			{

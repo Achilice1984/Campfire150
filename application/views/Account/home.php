@@ -170,8 +170,9 @@
 			            else
 			            {
 			            	?> 
-			            		<p><a id="EditProfileButton" class="btn btn-default btn-block" href="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><span class="glyphicon glyphicon-pencil"></span> <?php echo gettext("Edit Profile"); ?></a></p>
-			            		<p><a id="CancelProfileButton" class="btn btn-primary btn-block marginBottom15" style="display: none;"  href="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><?php echo gettext("Finish Editing"); ?></a></p>
+			            		<p><a id="EditProfileButton" class="btn btn-default btn-block" href="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Edit Profile"); ?></a></p>
+			            		<p><a class="CancelProfileButton btn btn-primary btn-block" style="display: none;"  href="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Finish Editing"); ?></a></p>
+			            		<p><a id="ShareStoryButtonProfile" class="btn btn-primary btn-block marginBottom15" href="<?php echo BASE_URL . "story/add/" ?>"><span class="glyphicon glyphicon-pencil"></span> <?php echo gettext("Share A Story"); ?></a></p>
 		            		<?php
 			            }
 		            }
@@ -180,7 +181,7 @@
 			<div id="AboutDiv">
 			
 				<div class="panel panel-default marginTop15">
-					<div class="panel-heading"><span class="glyphicon glyphicon-user"></span> </div>
+					<div class="panel-heading"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("About"); ?></div>
 					<div class="panel-body">
 						<div id="AboutDivText">
 							<?php if(isset($accountHomeViewModel->userDetails->About) && trim($accountHomeViewModel->userDetails->About) != "") { ?>
@@ -197,21 +198,21 @@
 				<form id="AboutForm" action="<?php echo BASE_URL; ?>account/updateAbout" method="post">									    														
 						
 					<div class="form-group">
-		             	<textarea maxlength="150" name="About" id="About" class="form-control" rows="3" placeholder="<?php echo gettext("Tell us a little bit about yourself!"); ?>"><?php echo $accountHomeViewModel->userDetails->About; ?></textarea>
+		             	<textarea  data-toggle="tooltip" title="<?php echo gettext("Tell us a little bit about yourself!"); ?>" maxlength="150" name="About" id="About" class="form-control" rows="3" placeholder="<?php echo gettext("Tell us a little bit about yourself!"); ?>"><?php echo $accountHomeViewModel->userDetails->About; ?></textarea>
 	             	</div>
 
 		             <p>
 						<div style="margin-left:10px" id="AboutSpinerDiv">
 		             		<?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
 	             		</div>
-		             	<button id="AboutSubmitButton" type="submit" class="btn btn-default btn-block"><?php echo gettext("Update About"); ?></button></p>
+		             	<button style="display:none;" id="AboutSubmitButton" type="submit" class="btn btn-default btn-block"><?php echo gettext("Update About"); ?></button></p>
 					
 		         </form>	
 			</div>
 			<div id="ActionStatementDiv">				
 				
 				<div class="panel panel-default marginTop15">
-					<div class="panel-heading"><span class="glyphicon glyphicon-bullhorn"></span></div>
+					<div class="panel-heading"><span class="glyphicon glyphicon-bullhorn"></span> <?php echo gettext("My Pledge"); ?></div>
 					<div class="panel-body">
 						<div id="ActionStatementDivText">
 							<?php if(isset($accountHomeViewModel->userDetails->UserActionStatement) && trim($accountHomeViewModel->userDetails->UserActionStatement) != "") { ?>
@@ -231,14 +232,14 @@
 				<form id="ActionStatementForm" action="<?php echo BASE_URL; ?>account/updateActionStatement" method="post">									    														
 						
 					<div class="form-group">
-		             	<textarea maxlength="100" name="UserActionStatement" id="UserActionStatement" class="form-control" rows="3" placeholder="<?php echo gettext("What do you pledge to do to make your story about Canada’s future a reality?"); ?>"><?php echo isset($accountHomeViewModel->userDetails->UserActionStatement) ? $accountHomeViewModel->userDetails->UserActionStatement : ""; ?></textarea>
+		             	<textarea data-toggle="tooltip" title="<?php echo gettext("What do you pledge to do to make your story about Canada’s future a reality?"); ?>" maxlength="100" name="UserActionStatement" id="UserActionStatement" class="form-control" rows="3" placeholder="<?php echo gettext("What do you pledge to do to make your story about Canada’s future a reality?"); ?>"><?php echo isset($accountHomeViewModel->userDetails->UserActionStatement) ? $accountHomeViewModel->userDetails->UserActionStatement : ""; ?></textarea>
 	             	</div>
 
 		             <p>
 						<div style="margin-left:10px" id="ActionStatementSpinerDiv">
 		             		<?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
 	             		</div>
-		             	<button id="UserActionSubmitButton" type="submit" class="btn btn-default btn-block"><?php echo gettext("Update My Pledge"); ?></button></p>
+		             	<button style="display:none;" id="UserActionSubmitButton" type="submit" class="btn btn-default btn-block"><?php echo gettext("Update My Pledge"); ?></button></p>
 		             
 		         </form>	
 			</div>	
