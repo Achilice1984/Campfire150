@@ -1,10 +1,3 @@
-
-<?php
-	// debugit($storyViewModel);
-	// debugit($userViewModel);
-	// debugit($aprovalViewModel);
-//debugit($storyQuestionViewModel);
-?>
 <div class="container" style="margin-top:100px;">
 
 	<h2>Add a Story Question</h2>

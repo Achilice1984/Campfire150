@@ -15,32 +15,12 @@ class Admin extends Controller {
 		$model = $this->loadModel('Admin/AdminModel');
 	
 		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
-		$storyQuestionViewModel = image_get_path_basic(200, 56, IMG_STORY, (IS_MOBILE ? IMG_MEDIUM : IMG_LARGE));
-
-		$hashUserid     = md5(200);
- 
-
-        $url = "";
-
-    
-            $hashPictureid = md5(470);
-
-                $type = 'story';
-                debugit(ROOT_DIR);
-     
-
-        $staticPath =  $hashUserid . "/" . $hashPictureid ;        
-
-
-            $url = $staticPath;
- 
-   echo $storyQuestionViewModel;
-
+		$storyQuestionViewModel = $model->getCommentListRejected(100, 1);
 
 		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
 		//$returnData = $model->getDropdownListItem('gendertype', 1);
 
-	//	debugit($storyQuestionViewModel);
+		debugit($storyQuestionViewModel);
 
 		
 	}
@@ -628,7 +608,7 @@ class Admin extends Controller {
 		//Execute code if a post back
 		if($this->isPost())
 		{
-			//$approvalViewModel->Approval = $_POST["Approval"];
+//			$approvalViewModel->Approval = isset($_POST["Approval"]) ? $_POST["Approval"] : "";
 
 			//Map post values to the loginViewModel
 			$approvalViewModel  = AutoMapper::mapPost($approvalViewModel );
@@ -672,35 +652,6 @@ class Admin extends Controller {
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
 
-		//Execute code if a post back
-		if($this->isPost())
-		{
-			$approvalViewModel->Approval = $_POST["Approval"];
-
-			//Map post values to the loginViewModel
-			$approvalViewModel  = AutoMapper::mapPost($approvalViewModel );
-
-			if($approvalViewModel->validate())
-			{
-				// Save data
-				if($approvalViewModel->Approval == 'TRUE')
-					$model->approveCommentAsAdmin($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
-
-				elseif($approvalViewModel->Approval == 'FALSE')
-					$model->rejectCommentAsAdmin($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
-
-				$this->redirect("admin/index");
-			}
-			else
-			{
-				echo "Failed to save the change";
-			}
-		}
-		else
-		{
-			//Execute this code if NOT a post back
-		}
-
 		$commentViewModel = $this->loadViewModel('shared/CommentViewModel');
 		$userViewModel = $this->loadViewModel('shared/UserViewModel');
 		$storyViewModel = $this->loadViewModel('shared/StoryViewModel');
@@ -714,6 +665,35 @@ class Admin extends Controller {
 		$storyViewModel = $model->getStoryById($commentViewModel->Story_StoryId);
 
 		$userViewModel = $model->getUserByID($commentViewModel->User_UserId);
+
+		//Execute code if a post back
+		if($this->isPost())
+		{
+			// $approvalViewModel->Approval = $_POST["Approval"];
+
+			//Map post values to the loginViewModel
+			$approvalViewModel  = AutoMapper::mapPost($approvalViewModel );
+
+			if($approvalViewModel->validate())
+			{
+				// Save data
+				if($approvalViewModel->Approval == 'TRUE')
+					$model->approveCommentAsAdmin($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
+
+				elseif($approvalViewModel->Approval == 'FALSE')
+					$model->rejectCommentAsAdmin($this->currentUser->UserId, $approvalViewModel->Id, $approvalViewModel->Content);
+
+				$this->redirect("admin/");
+			}
+			else
+			{
+				// echo "Failed to save the change";
+			}
+		}
+		else
+		{
+			//Execute this code if NOT a post back
+		}
 
 		if(isset($userViewModel->BackgroundPictureId))
 		{
@@ -747,6 +727,15 @@ class Admin extends Controller {
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
 
+		//Loads view models
+		$activeViewModel = $this->loadViewModel('ActiveViewModel');
+		$activeViewModel->Id = $userId;
+		$activeViewModel->TableName = "user"; //This function is working on 'user' table.
+
+
+		$userViewModel = $this->loadViewModel('shared/UserViewModel');
+		$userViewModel = $model->getUserByID($userId);
+
 		//Execute code if a post back
 		if($this->isPost())
 		{
@@ -767,26 +756,17 @@ class Admin extends Controller {
 				elseif($activeViewModel->Active == 'FALSE')
 					$model->deActivateUser($this->currentUser->UserId, $activeViewModel->Id, $activeViewModel->Reason);
 
-				$this->redirect("admin/index");
+				$this->redirect("admin/");
 			}
 			else
 			{
-				echo "Failed to save the change";
+				// echo "Failed to save the change";
 			}
 		}
 		else
 		{
 			//Execute this code if NOT a post back
 		}
-
-		//Loads view models
-		$activeViewModel = $this->loadViewModel('ActiveViewModel');
-		$activeViewModel->Id = $userId;
-		$activeViewModel->TableName = "user"; //This function is working on 'user' table.
-
-
-		$userViewModel = $this->loadViewModel('shared/UserViewModel');
-		$userViewModel = $model->getUserByID($userId);
 
 		$view->set('activeViewModel', $activeViewModel);
 
@@ -800,6 +780,16 @@ class Admin extends Controller {
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('dropdownitemedit');
+
+		$dropdownListItemViewModel = $this->loadViewModel('shared/DropdownItemViewModel');
+
+		//Load the approval view model
+
+		//Adds variables or objects to that can be accessed in the view
+		$dropdownListItemViewModel = $model->getDropdownListItem($tableName, $Id);
+		$dropdownListItemViewModel->TableName = $tableName;
 
 		//Execute code if a post back
 		if($this->isPost())
@@ -815,28 +805,17 @@ class Admin extends Controller {
 				// Save data
 				$model->updateDropdownValue($dropdownListItemViewModel->TableName, $dropdownListItemViewModel->Id, $dropdownListItemViewModel->NameE, $dropdownListItemViewModel->NameF);
 
-				$this->redirect("admin/index");
+				$this->redirect("admin/");
 			}
 			else
 			{
-				echo "Failed to save the change";
+				// echo "Failed to save the change";
 			}
 		}
 		else
 		{
 			//Execute this code if NOT a post back
 		}
-
-		//Loads a view from corresponding view folder
-		$view = $this->loadView('dropdownitemedit');
-
-		$dropdownListItemViewModel = $this->loadViewModel('shared/DropdownItemViewModel');
-
-		//Load the approval view model
-
-		//Adds variables or objects to that can be accessed in the view
-		$dropdownListItemViewModel = $model->getDropdownListItem($tableName, $Id);
-		$dropdownListItemViewModel->TableName = $tableName;
 
 		$view->set('dropdownListItemViewModel', $dropdownListItemViewModel);
 
@@ -850,6 +829,12 @@ class Admin extends Controller {
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
 
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('dropdownitemadd');
+
+		$dropdownListItemViewModel = $this->loadViewModel('shared/DropdownItemViewModel');
+		$dropdownListItemViewModel->TableName = $tableName;
+
 		//Execute code if a post back
 		if($this->isPost())
 		{
@@ -862,23 +847,17 @@ class Admin extends Controller {
 				$model->addDropdownItem($dropdownListItemViewModel->TableName,
 				$dropdownListItemViewModel->NameE, $dropdownListItemViewModel->NameF);
 
-				$this->redirect("admin/index");
+				$this->redirect("admin/");
 			}
 			else
 			{
-				echo "Failed to save the change";
+				// echo "Failed to save the change";
 			}
 		}
 		else
 		{
 			//Execute this code if NOT a post back
 		}
-
-		//Loads a view from corresponding view folder
-		$view = $this->loadView('dropdownitemadd');
-
-		$dropdownListItemViewModel = $this->loadViewModel('shared/DropdownItemViewModel');
-		$dropdownListItemViewModel->TableName = $tableName;
 
 		$view->set('dropdownListItemViewModel', $dropdownListItemViewModel);
 
@@ -890,6 +869,15 @@ class Admin extends Controller {
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
+
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('storyansweredit');
+
+		$storyAnswerViewModel = $this->loadViewModel('shared/StoryAnswerViewModel');
+		$storyAnswerViewModel = $model->getAnswerById($answerId);
+
+		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
+		$storyQuestionViewModel = $model->getQuestionsByAnswerId($answerId);
 
 		//Execute code if a post back
 		if($this->isPost())
@@ -904,26 +892,17 @@ class Admin extends Controller {
 			{
 				$model->updateAnswer($storyAnswerViewModel->AnswerId, $storyAnswerViewModel->NameE, $storyAnswerViewModel->NameF);
 
-				$this->redirect("admin/index");
+				$this->redirect("admin/");
 			}
 			else
 			{
-				echo "Failed to save the change";
+				// echo "Failed to save the change";
 			}
 		}
 		else
 		{
 			//Execute this code if NOT a post back
 		}
-
-		//Loads a view from corresponding view folder
-		$view = $this->loadView('storyansweredit');
-
-		$storyAnswerViewModel = $this->loadViewModel('shared/StoryAnswerViewModel');
-		$storyAnswerViewModel = $model->getAnswerById($answerId);
-
-		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
-		$storyQuestionViewModel = $model->getQuestionsByAnswerId($answerId);
 
 		$view->set('storyAnswerViewModel', $storyAnswerViewModel);
 		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
@@ -936,6 +915,14 @@ class Admin extends Controller {
 	{
 		//Loads a model from corresponding model folder
 		$model = $this->loadModel('AdminModel');
+
+		//Loads a view from corresponding view folder
+		$view = $this->loadView('storyansweradd');
+
+		$storyAnswerViewModel = $this->loadViewModel('shared/StoryAnswerViewModel');
+
+		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
+		$storyQuestionViewModel = $model->getQuestionByQuestionId($questionId);
 
 		//Execute code if a post back
 		if($this->isPost())
@@ -950,25 +937,17 @@ class Admin extends Controller {
 			{
 				$model->addQuestionAnswer($storyQuestionViewModel->QuestionId, $storyAnswerViewModel->NameE, $storyAnswerViewModel->NameF);
 
-				$this->redirect("admin/index");
+				$this->redirect("admin/");
 			}
 			else
 			{
-				echo "Failed to save the change";
+				// echo "Failed to save the change";
 			}
 		}
 		else
 		{
 			//Execute this code if NOT a post back
 		}
-
-		//Loads a view from corresponding view folder
-		$view = $this->loadView('storyansweradd');
-
-		$storyAnswerViewModel = $this->loadViewModel('shared/StoryAnswerViewModel');
-
-		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
-		$storyQuestionViewModel = $model->getQuestionByQuestionId($questionId);
 
 		$view->set('storyAnswerViewModel', $storyAnswerViewModel);
 		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
@@ -987,6 +966,12 @@ class Admin extends Controller {
 		//Loads a view from corresponding view folder
 		$view = $this->loadView('storyquestionedit');
 
+		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
+		$storyQuestionViewModel = $model->getQuestionByQuestionId($questionId);	
+
+		$storyAnswerViewModelList = $this->loadViewModel('shared/StoryQuestionViewModel');
+		$storyAnswerViewModelList = $model->getAnswersByQuestionId($questionId);
+
 		//Execute code if a post back
 		if($this->isPost())
 		{
@@ -1001,23 +986,17 @@ class Admin extends Controller {
 				$model->updateQuestion($storyQuestionViewModel->QuestionId,
 				$storyQuestionViewModel->NameE, $storyQuestionViewModel->NameF);
 
-				$this->redirect("admin/index");
+				$this->redirect("admin/");
 			}
 			else
 			{
-				echo "Failed to save the change";
+				// echo "Failed to save the change";
 			}
 		}
 		else
 		{
 			//Execute this code if NOT a post back
 		}
-
-		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
-		$storyQuestionViewModel = $model->getQuestionByQuestionId($questionId);	
-
-		$storyAnswerViewModelList = $this->loadViewModel('shared/StoryQuestionViewModel');
-		$storyAnswerViewModelList = $model->getAnswersByQuestionId($questionId);
 
 
 		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
@@ -1040,9 +1019,8 @@ class Admin extends Controller {
 		//Execute code if a post back
 		if($this->isPost())
 		{
-			$storyQuestionViewModel->NameE = $_POST["NameE"];
-			$storyQuestionViewModel->NameF = $_POST["NameF"];
-			debugit($storyQuestionViewModel);
+			// $storyQuestionViewModel->NameE = $_POST["NameE"];
+			// $storyQuestionViewModel->NameF = $_POST["NameF"];
 
 			//Map post values to the loginViewModel
 			$storyQuestionViewModel  = AutoMapper::mapPost($storyQuestionViewModel );
@@ -1051,11 +1029,11 @@ class Admin extends Controller {
 			{
 				$model->addQuestion($storyQuestionViewModel->NameE, $storyQuestionViewModel->NameF);
 
-				$this->redirect("admin/index");
+				$this->redirect("admin/");
 			}
 			else
 			{
-				echo "Failed to save the change";
+				// echo "Failed to save the change";
 			}
 		}
 		else
@@ -1067,56 +1045,6 @@ class Admin extends Controller {
 
 		//Renders the view. true indicates to load the layout
 		$view->render(true);		
-	}
-
-	/**********************
-	* Test Form 
-	***********************/
-	function testForm()
-	{
-		//Loads a model from corresponding model folder
-		$model = $this->loadModel('AdminModel');
-
-		//Loads a view model from corresponding viewmodel folder
-		//$viewModel = $this->loadModel('SomeViewModel');
-
-		//Loads a view from corresponding view folder
-		$template = $this->loadView('testform');
-
-		//  $template->setCSS(array(
-		// 	array("static/css/style.css", "intern")
-		// 	array("http://www.example.com/default.css", "extern")
-		// ));
-		$template->setJS(array(
-			//array("static/plugins/tinymce/tinymce.min.js", "intern"),
-			array("static/plugins/datatables/media/js/jquery.dataTables.js", "intern"),
-			array("static/js/adminDataTables.js", "intern")//,
-			//array("static/js/tinymce.js", "intern")
-			//array("http://www.example.com/static.js", "extern")
-		));
-		 $template->setCSS(array(
-			array("static/plugins/datatables/media/css/jquery.dataTables.min.css", "intern")
-		));
-		//Adds a variable or object to that can be accessed in the view
-		//$template->set('viewModel', $viewModel);
-
-		//Renders the view. true indicates to load the layout
-		$template->render(true);
-
-		//Execute code if a post back
-		if($this->isPost())
-		{
-			//Can be used to redirect to another controller
-			//Can add query values ?id=1
-			//$this->redirect("controller/action");
-
-			//Check if request is ajax
-			//$this->isAjax()
-		}
-		else
-		{
-			//Execute this code if NOT a post back
-		}
 	}
 
 	function errorLogs()

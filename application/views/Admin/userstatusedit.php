@@ -1,8 +1,3 @@
-<?php
-	// debugit($storyViewModel);
-	 // debugit($userViewModel);
-	 // debugit($activeViewModel);
-?>
 <div class="container">
 	
 	<h1><?php echo gettext("Edit pending approval story"); ?></h1>

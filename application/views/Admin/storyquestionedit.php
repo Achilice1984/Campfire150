@@ -1,9 +1,3 @@
-
-<?php
-	// debugit($storyQuestionViewModel);
-	// debugit($userViewModel);
-	// debugit($aprovalViewModel);
-?>
 <div class="container" style="margin-top:20px; margin-left: 20px; margin-right: 20px;">
 
 	<h2>Edit a Story Question or Answer</h2>
