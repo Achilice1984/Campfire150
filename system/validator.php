@@ -127,12 +127,12 @@ class Validator
     return preg_match('/^[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1} *\d{1}[A-Z]{1}\d{1}$/', $match);
  }
  function badWord($string){
-    $string =strtolower($string);
-    $badWords = array("fuck","shit","asshole","bitch","whore","cunt");
-    $matches = array();
-    $matchFound = preg_match_all("/\b(" . implode($badWords,"|") . ")\b/i",$string,$matches);
+  require_once('./application/plugins/censor/CensorWords.php');
+  
+    $censor = new CensorWords;
+    $newString = $censor->censorString($string);
 
-    return $matchFound;
+    return $string != $newString;
   }
 
   function validFileType($file)
