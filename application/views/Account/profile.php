@@ -118,6 +118,8 @@
                             <?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
                         </div>
                         <button id="ProfileSubmitButton" type="submit" class="btn btn-primary btn-block"><?php echo gettext("Update Profile"); ?></button>
+
+                        <button class="CancelProfileButton btn btn-primary btn-block" style="margin-top: 10px;"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Finish Editing"); ?></button>
                         
                     </form>
                 </div>

@@ -72,6 +72,10 @@
 					<button type="button" class="ShowMoreButton btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
 				</div>
 			<?php } ?>
+			<?php if (count($searchResults) <= 0 && strtoupper($_SERVER['REQUEST_METHOD']) == 'POST'): ?>
+				<div style="margin-top: 10px;"></div>
+				<?php include(APP_DIR . "views/shared/noResults.php"); ?>
+			<?php endif ?>
 	    </div>  <!-- <div role="tabpanel" class="tab-pane active" id="Story_Search"> -->
 
 

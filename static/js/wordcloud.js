@@ -4,7 +4,7 @@ $(function(){
 			{ list: WordCloudWords,
 			
 			  gridSize: Math.round(16 * $('#wordCloudCanvas').width() / $('#wordCloudCanvas').height()),
-			  weightFactor: 8,
+			  weightFactor: 12,
 			  rotateRatio: 0,
 			  fontFamily: '"Helvetica Neue",Helvetica,Arial,sans-serif',
 			  color: '#fff',

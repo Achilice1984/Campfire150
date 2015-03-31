@@ -14,6 +14,17 @@
         foreach (@$this->js as $js) { ?>
             <script src="<?php echo $js;?>"></script>
     <?php } ?>
+
+    <script type="text/javascript">
+        function init_tooltip()
+        {
+            $('[data-toggle="tooltip"]').tooltip();
+        }
+
+        $(function(){
+            init_tooltip();
+        });
+    </script>
     
     <input type="hidden" id="base_url" value="<?php echo BASE_URL; ?>">
     <input type="hidden" id="LanguagePreference" value="<?php if($_SESSION['languagePreference'] == "en_CA") { echo "en_US"; } else{ echo "fr_FR"; } ?>">

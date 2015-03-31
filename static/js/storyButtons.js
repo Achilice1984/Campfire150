@@ -16,27 +16,30 @@ $(document.body).on('click', ".StoryRecommendButton", function(event){
 		url: url,
 		success: function(data){
 
-			thisRecom.attr("data-request-type", (reqType == 1 ? "0" : "1"));
-
-			if(thisRecom.hasClass("text-default"))
+			if(data)
 			{
-				thisRecom.removeClass("text-default").addClass("StoryActionButtons");
+				thisRecom.attr("data-request-type", (reqType == 1 ? "0" : "1"));
 
-				recomSpan.html(parseInt(recomSpan.text()) - 1);
-			}
-			else
-			{
-				thisRecom.removeClass("StoryActionButtons").addClass("text-default");
-
-				recomSpan.html(parseInt(recomSpan.text()) + 1);
-
-				if(flagButton.hasClass("text-danger"))
+				if(thisRecom.hasClass("text-default"))
 				{
-					flagButton.removeClass("text-danger").addClass("StoryActionButtons");
+					thisRecom.removeClass("text-default").addClass("StoryActionButtons");
 
-					flagSpan.html(parseInt(flagSpan.text()) - 1);
+					recomSpan.html(parseInt(recomSpan.text()) - 1);
+				}
+				else
+				{
+					thisRecom.removeClass("StoryActionButtons").addClass("text-default");
 
-					flagButton.attr("data-request-type", "1");
+					recomSpan.html(parseInt(recomSpan.text()) + 1);
+
+					if(flagButton.hasClass("text-danger"))
+					{
+						flagButton.removeClass("text-danger").addClass("StoryActionButtons");
+
+						flagSpan.html(parseInt(flagSpan.text()) - 1);
+
+						flagButton.attr("data-request-type", "1");
+					}
 				}
 			}
 		}
@@ -63,27 +66,30 @@ $(document.body).on('click', ".StoryFlagButton", function(event){
 		url: url,
 		success: function(data){
 
-			thisFlag.attr("data-request-type", (reqType == 1 ? "0" : "1"));
-
-			if(thisFlag.hasClass("text-danger"))
+			if(data)
 			{
-				thisFlag.removeClass("text-danger").addClass("StoryActionButtons");
+				thisFlag.attr("data-request-type", (reqType == 1 ? "0" : "1"));
 
-				flagSpan.html(parseInt(flagSpan.text()) - 1);
-			}
-			else
-			{
-				thisFlag.removeClass("StoryActionButtons").addClass("text-danger");
-
-				flagSpan.html(parseInt(flagSpan.text()) + 1);
-
-				if(recommendButton.hasClass("text-default"))
+				if(thisFlag.hasClass("text-danger"))
 				{
-					recommendButton.removeClass("text-default").addClass("StoryActionButtons");
+					thisFlag.removeClass("text-danger").addClass("StoryActionButtons");
 
-					recommendSpan.html(parseInt(recommendSpan.text()) - 1);
+					flagSpan.html(parseInt(flagSpan.text()) - 1);
+				}
+				else
+				{
+					thisFlag.removeClass("StoryActionButtons").addClass("text-danger");
 
-					recommendButton.attr("data-request-type", "1");
+					flagSpan.html(parseInt(flagSpan.text()) + 1);
+
+					if(recommendButton.hasClass("text-default"))
+					{
+						recommendButton.removeClass("text-default").addClass("StoryActionButtons");
+
+						recommendSpan.html(parseInt(recommendSpan.text()) - 1);
+
+						recommendButton.attr("data-request-type", "1");
+					}
 				}
 			}
 		}
