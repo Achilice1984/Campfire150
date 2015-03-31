@@ -118,6 +118,36 @@ class Home extends Controller {
 		$view->render(true);
 	}
 
+	function contact()
+	{
+		if($this->isPost())
+		{
+			if(isset($_POST["Email"]) && isset($_POST["Subject"]) && isset($_POST["Message"])
+				&& $_POST["Email"] != "" && $_POST["Subject"] != "" && $_POST["Message"] != ""
+				&& filter_var($_POST["Email"], FILTER_VALIDATE_EMAIL))
+			{
+				$headers = "From: <" . $_POST['Email'] . ">\r\nReturn-path: " . $_POST['Email'] . "" .
+				   // 'Reply-To: ' . $_POST["Email"] . '' . "\r\n" .
+				    'Content-Type: text/html; charset=ISO-8859-1' . "\r\n" .
+				    'X-Mailer: PHP/' . phpversion();
+
+				mail(CONTACT_EMAIL, $_POST["Subject"], $_POST["Message"], $headers);
+
+				addSuccessMessage("dbSuccess", gettext("Your message has been seent!"));
+			}
+			else
+			{
+				addErrorMessage("dbError", gettext("Something went wrong while sending your message."));
+			}
+		}
+
+		//Load the profile view
+		$view = $this->loadView('contact');
+
+		//Render the profile view. true indicates to load the layout pages as well
+		$view->render(true);
+	}
+
 	function terms()
 	{
 		$template = $this->loadView('terms');

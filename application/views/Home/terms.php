@@ -1,8 +1,5 @@
 
-<div class="container" style="padding-bottom: 50px; padding-top: 50px;">
 
-    <div class="row">
-        <div class="col-md-12"> 
 			<h1>Terms of Service ("Terms")</h1>
 			<p>Last updated: February 10, 2015</p>
 
@@ -57,6 +54,3 @@
 			<p><strong>Contact Us</strong></p>
 
 			<p>If you have any questions about these Terms, please contact us.</p>
-		</div>
-	</div>
-</div>

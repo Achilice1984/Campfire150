@@ -71,7 +71,11 @@ class AdminModel extends Model {
 			$statement = "SELECT *
 							FROM story s
 							LEFT JOIN user u
-							ON s.User_UserId = u.UserId
+							ON s.User_UserId = u.UserId							
+							LEFT JOIN story_has_picture shp
+							ON shp.Story_StoryId = s.StoryId
+							LEFT JOIN picture p
+							ON p.PictureId = shp.PictureId
 							WHERE StoryId = :StoryId";
 
 			$parameters = array(":StoryId" => $storyId);
@@ -302,7 +306,7 @@ class AdminModel extends Model {
 								) tmptable
 							) AS TotalComments
 							FROM user_inappropriateflag_comment uic
-							INNER JOIN COMMENT c ON c.CommentId = uic.Comment_CommentId
+							INNER JOIN comment c ON c.CommentId = uic.Comment_CommentId
 							INNER JOIN story s ON s.StoryId = c.Story_StoryId
 							GROUP BY uic.Comment_CommentId
 							ORDER BY TotalFlagNumber DESC 
@@ -458,21 +462,42 @@ class AdminModel extends Model {
 
 	public function getUserByID($userID)
 	{
-		$statement = "SELECT * FROM user
-						LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId
-						LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
-						LEFT JOIN picture ON user.UserId = picture.User_UserId
-						WHERE user.UserId = :UserId
-						AND picture.Picturetype_PictureTypeId = 1";
-
-		$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/UserViewModel");
-
-		if(isset($user[0]))
+		try
 		{
-			return $user[0];
-		}
+			$statement = "SELECT user.UserId, user.FirstName, user.LastName, user.DateCreated, user.About, user.ProfilePrivacyType_PrivacyTypeId, user.Active,
+							
+							pp.PictureId as ProfilePictureId,
 
-		return null;
+							bp.PictureId as BackgroundPictureId,
+							
+							u.ActionStatement as UserActionStatement
+
+							FROM user
+
+							LEFT JOIN useractionstatement u    ON user.UserId = u.user_UserId AND u.Active = TRUE
+							LEFT JOIN securityquestionanswer s ON user.UserId = s.user_UserId
+
+							LEFT JOIN picture pp 
+							ON user.UserId = pp.User_UserId AND (pp.Picturetype_PictureTypeId = 1) AND (pp.Active = TRUE)
+
+							LEFT JOIN picture bp 
+							ON user.UserId = bp.User_UserId AND (bp.Picturetype_PictureTypeId = 2) AND (bp.Active = TRUE)
+
+							WHERE user.UserId = :UserId";
+
+			$user = $this->fetchIntoClass($statement, array(":UserId" => $userID), "shared/UserViewModel");
+
+			if(isset($user[0]))
+			{
+				return $user[0];
+			}
+
+			return null;
+		}
+		catch(Exception $ex)
+		{
+			throw $ex;
+		}
 	}
 
 	public function getListUsers($howMany = self::HOWMANY, $page = self::PAGE)

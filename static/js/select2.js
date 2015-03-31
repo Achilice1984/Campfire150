@@ -6,7 +6,7 @@ $(function(){
 
 	$('#Tags').select2({
 		tags: true,
-		tokenSeparators: [',', ' '],
+		tokenSeparators: [','],
 		minimumInputLength: 1,	
 		placeholder: $('#Tags').attr("placeholder"),
 		createSearchChoice: function(term) {

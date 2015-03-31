@@ -1,4 +1,4 @@
-<div class="spinner_small hide" id="circularG_S">
+<div style="display:table; margin: 0 auto;" class="spinner_small hide" id="circularG_S">
 	<div id="circularG_S_1" class="circularG_S">
 	</div>
 	<div id="circularG_S_2" class="circularG_S">
