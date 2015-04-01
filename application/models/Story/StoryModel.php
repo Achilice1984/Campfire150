@@ -1135,7 +1135,7 @@ class StoryModel extends Model {
 		}
 	}
 
-	public function getStoriesWrittenByCurrentUser($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
+	public function getStoriesWrittenByCurrentUser($currentUserId, $userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		try
 		{
@@ -1187,7 +1187,7 @@ class StoryModel extends Model {
 						ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
 
 						LEFT JOIN user_recommend_story urs
-						ON (urs.Story_StoryId = s.StoryId) AND (urs.Active = TRUE)
+						ON (urs.Story_StoryId = s.StoryId) AND (urs.Active = TRUE) AND (urs.User_UserId = :CurrentUserId)
 
 						LEFT JOIN story_has_picture shp
 						ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
@@ -1214,7 +1214,7 @@ class StoryModel extends Model {
 
 			$start = $this-> getStartValue($howMany, $page);			
 
-			$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":UserId2" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
+			$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":UserId2" => $userID, ":start" => $start, ":howmany" => $howMany, ":CurrentUserId" => $currentUserId), "shared/StoryViewModel");
 
 			return $stories;
 		}
@@ -1559,7 +1559,7 @@ class StoryModel extends Model {
 		}
 	}
 
-	public function getStoriesRecommendedByCurrentUser($userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
+	public function getStoriesRecommendedByCurrentUser($currentUserId, $userID, $howMany = MAX_STORIES_LISTS, $page = self::PAGE)
 	{
 		try
 		{
@@ -1610,8 +1610,11 @@ class StoryModel extends Model {
 						LEFT JOIN admin_approve_story aps
 						ON (aps.Story_StoryId = s.StoryId) AND (aps.Active = TRUE)
 
+						LEFT JOIN user_recommend_story urs_owner
+						ON (urs_owner.Story_StoryId = s.StoryId) AND (urs_owner.Active = TRUE) AND (urs_owner.User_UserId = :UserId)
+
 						LEFT JOIN user_recommend_story urs
-						ON (urs.Story_StoryId = s.StoryId) AND (urs.Active = TRUE) AND (urs.User_UserId = :UserId)
+						ON (urs.Story_StoryId = s.StoryId) AND (urs.Active = TRUE) AND (urs.User_UserId = :CurrentUserId)
 
 						LEFT JOIN story_has_picture shp
 						ON (shp.Story_StoryId = s.StoryId) AND (shp.Active = TRUE)
@@ -1630,8 +1633,8 @@ class StoryModel extends Model {
 						AND aps.Approved = TRUE
 						AND u.Active = TRUE
 						AND s.Published = TRUE
-						AND urs.Opinion = TRUE
-						AND urs.Active = TRUE
+						AND urs_owner.Opinion = TRUE
+						AND urs_owner.Active = TRUE
 						AND u.ProfilePrivacyType_PrivacyTypeId = 1		
 						GROUP BY s.StoryId
 						ORDER BY totalRecommends DESC
@@ -1639,7 +1642,7 @@ class StoryModel extends Model {
 
 			$start = $this-> getStartValue($howMany, $page);
 
-			$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany), "shared/StoryViewModel");
+			$stories = $this->fetchIntoClass($statement, array(":UserId" => $userID, ":start" => $start, ":howmany" => $howMany, ":CurrentUserId" => $currentUserId), "shared/StoryViewModel");
 
 			return $stories;
 		}
