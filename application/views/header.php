@@ -38,7 +38,7 @@
     
   </head>
   <body>
-    <div id="c150-head" class="bg-grey">
+    <div id="c150-head">
       <div class="container">
         <div class="row">
           <div class="col-md-4">

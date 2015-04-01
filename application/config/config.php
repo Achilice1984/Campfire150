@@ -77,8 +77,8 @@ $config["CONTACT_EMAIL"] = "info@campfire150.com"; //Password h4qtXcrU5Bh{
 // These set the length limits for various lists in the website, some have mobile options
 //
 
-$config['MAX_HOME_STORIES'] 			= 9;
-$config['MAX_HOME_STORIES_MOBILE']		= 6;
+$config['MAX_HOME_STORIES'] 			= 6;
+$config['MAX_HOME_STORIES_MOBILE']		= 3;
 
 $config['MAX_STORIES_LISTS']			= 10;
 $config['MAX_STORIES_LISTS_MOBILE'] 	= 10;
