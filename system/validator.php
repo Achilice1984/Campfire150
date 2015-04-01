@@ -61,11 +61,20 @@ class Validator
 
   private function date($propertyValue)
   {
-    $format = "Y-m-d";
+    // $format = "Y-m-d";
 
-    $d = DateTime::createFromFormat($format, $propertyValue);
+    // $d = DateTime::createFromFormat($format, $propertyValue);
 
-    return $d && $d->format($format) == $propertyValue;
+    // return $d && $d->format($format) == $propertyValue;
+
+    if(isset($propertyValue) && is_numeric($propertyValue) && $propertyValue > 1900 && $propertyValue < 2100)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
   }
 
   private function email($propertyValue)
@@ -139,6 +148,7 @@ class Validator
   {
       try
       {
+        return true;
           // DO NOT TRUST $_FILES['upfile']['mime'] VALUE !!
           // Check MIME Type by yourself.
          // $finfo = new finfo(FILEINFO_MIME_TYPE);

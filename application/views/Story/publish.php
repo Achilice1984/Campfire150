@@ -17,7 +17,7 @@
                         $multiple = "";
                         $className = "";
 
-                        if($question->Value == 1 || $question->Value == 2)
+                        if($question->Value == 1 || $question->Value == 2 || $question->Value == 5)
                         {
                             $multiple = "multiple";
                             $className = "multiSelect5";

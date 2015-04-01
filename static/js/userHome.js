@@ -33,11 +33,7 @@ $(document.body).on('click', "#EditProfileButton", function(event){
 		success: function(data){
 			if(data)
 			{	
-				$("#profileContentContainer").html(data);
-
-				$('#Birthday').datepicker({
-				    format: 'yyyy-mm-dd'
-				});
+				$("#profileContentContainer").html(data);				
 
 				$('textarea#About').maxlength({
 		            alwaysShow: true
@@ -139,7 +135,7 @@ function initCrop(url) {
 			movable: true,
 			modal: true,
 			responsive: true,
-			autoCropArea: 0.8,
+			autoCropArea: 0.99,
 			guides: true,
 			highlight: true,
 			resizable: true,
@@ -245,7 +241,7 @@ function initCrop_profile(url) {
 			movable: true,
 			modal: true,
 			responsive: true,
-			autoCropArea: 0.8,
+			autoCropArea: 0.99,
 			guides: true,
 			highlight: true,
 			resizable: true,
@@ -463,7 +459,7 @@ $(document.body).on('click', "#ProfileSubmitButton", function(event){
 		success: function(data){
 			if(data)
 			{
-				$("#profileForm").find(".messageDiv").html(data);
+				$("#ProfileMessageDiv").html(data);
 			}
 			else
 			{

@@ -116,7 +116,6 @@ class Account extends Controller {
 						array("static/js/userHome.js", "intern"),
 						array("static/js/storyButtons.js", "intern"),
 						array("static/plugins/cropper/cropper.min.js", "intern"),
-						array("static/plugins/datepicker/js/bootstrap-datepicker.min.js", "intern"),
 						array("static/plugins/maxlength/js/bootstrap-maxlength.min.js", "intern"),
 						array("static/plugins/validation/js/formValidation.min.js", "intern"),
 						array("static/plugins/validation/js/framework/bootstrap.min.js", "intern"),
@@ -189,6 +188,10 @@ class Account extends Controller {
 
 					if($isLoggedIn) //Success
 					{
+						if(isset($_SESSION["Just_Registered"]))
+						{							
+							$this->redirect("story/add");
+						}
 						//Redirect to users home page
 						$this->redirect("account/home");	
 					}
@@ -337,7 +340,6 @@ class Account extends Controller {
 			//Load up some js files
 			$view->setJS(array(
 				array("static/plugins/datepicker/js/bootstrap-datepicker.min.js", "intern"),
-				array("static/js/register.js", "intern"),
 				array("static/plugins/validation/js/formValidation.min.js", "intern"),
 				array("static/plugins/validation/js/framework/bootstrap.min.js", "intern"),
 				array("static/plugins/select2/js/select2.min.js", "intern"),
@@ -379,6 +381,9 @@ class Account extends Controller {
 
 			if($model->verifiyEmail($email, $hashedEmailVerification))
 			{
+				//Stkaeholder wanted first login to redirect to add story page, this how its determined
+				$_SESSION["Just_Registered"] = TRUE;
+
 				addSuccessMessage("dbError", gettext("Your email has been successfully verified! Login to start using your account!"), 1);
 
 				$this->redirect("account/login");

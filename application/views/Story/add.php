@@ -12,6 +12,24 @@
     //debugit($storyViewModel);
 ?>
 
+<?php if (isset($_SESSION["Just_Registered"])): unset($_SESSION["Just_Registered"]);?>
+    <div id="WelcomeStoryModal" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h2 class="modal-title"><?php echo gettext("Welcome to Campfire 150!"); ?></h2>
+          </div>
+          <div class="modal-body">
+
+            <h4><?php echo gettext("Enjoy, and thank you for helping us create our national Story!"); ?></h4>
+           
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+<?php endif ?>
+
 
 <div class="container" style="padding-bottom: 50px; padding-top: 50px;">
 

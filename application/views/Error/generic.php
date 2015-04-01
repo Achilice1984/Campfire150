@@ -2,7 +2,7 @@
 <?php if (IS_DEBUG) { ?>
 	
 	<div class="container">
-		<?php if (!error_reporting()) { ?>
+		<?php if (error_reporting()) { ?>
 			
 			<?php if (isset($_SESSION["errno"])): ?>			
 			

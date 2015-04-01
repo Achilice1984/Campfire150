@@ -23,7 +23,7 @@
 			        <span class="glyphicon glyphicon-comment"></span> 
 					<?php echo $user->totalPublishedComments; ?>
 			    </div>
-			    <div data-toggle="tooltip" title="<?php echo gettext("Total Recommends"); ?>">
+			    <div data-toggle="tooltip" title="<?php echo gettext("Total Recommendations"); ?>">
 			        <span class="glyphicon glyphicon-thumbs-up"></span>
 					<?php echo $user->totalRecommends; ?>
 			    </div>		

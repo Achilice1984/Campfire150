@@ -74,12 +74,13 @@ class StoryViewModel extends ViewModel
 				array(
 					'Message' => gettext('The image you uploaded could not be processed.'),
 					'Properties' => array()
-				),
-			'img_required' =>
-				array(
-					'Message' => gettext('An image is required!'),
-					'Properties' => array()
 				)
+			// 	,
+			// 'img_required' =>
+			// 	array(
+			// 		'Message' => gettext('An image is required!'),
+			// 		'Properties' => array()
+			// 	)
 		);
 
 		//Pass validation to the View Model
