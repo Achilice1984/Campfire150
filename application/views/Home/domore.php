@@ -190,7 +190,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="celebratePostalCode">Find a party or event near you:</label>
+            <label for="volunteerPostalCode">Find a party or event near you:</label>
             <div class="input-group">
               <input type="text" id="volunteerPostalCode" class="form-control" placeholder="<?php echo gettext("Enter your Postal Code"); ?>">
               <span class="input-group-btn">
