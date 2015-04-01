@@ -653,6 +653,7 @@ class Story extends Controller {
 			$storyViewModel = $this->loadViewModel('shared/StoryViewModel');	
 
 			$storyViewModel = $model->getStory($this->currentUser->UserId, $storyID);
+			
 			if(isset($storyViewModel[0]))
 			{
 				$storyViewModel = $storyViewModel[0];

@@ -183,7 +183,7 @@
 				<div class="panel panel-default marginTop15">
 					<div class="panel-heading"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("About"); ?></div>
 					<div class="panel-body">
-						<div id="AboutDivText">
+						<div id="AboutDivText" style="word-wrap: break-word;">
 							<?php if(isset($accountHomeViewModel->userDetails->About) && trim($accountHomeViewModel->userDetails->About) != "") { ?>
 								<?php echo $accountHomeViewModel->userDetails->About; ?>
 							<?php } ?>
@@ -214,7 +214,7 @@
 				<div class="panel panel-default marginTop15">
 					<div class="panel-heading"><span class="glyphicon glyphicon-bullhorn"></span> <?php echo gettext("My Pledge"); ?></div>
 					<div class="panel-body">
-						<div id="ActionStatementDivText">
+						<div id="ActionStatementDivText" style="word-wrap: break-word;">
 							<?php if(isset($accountHomeViewModel->userDetails->UserActionStatement) && trim($accountHomeViewModel->userDetails->UserActionStatement) != "") { ?>
 								
 								<?php echo $accountHomeViewModel->userDetails->UserActionStatement; ?>

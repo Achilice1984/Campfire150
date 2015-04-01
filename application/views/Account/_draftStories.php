@@ -11,7 +11,7 @@
 				<div style="clear: both;"></div>
 			</div>
 	  		<div class="col-lg-8 col-md-7">
-	    		<h4><?php echo $story->StoryTitle; ?></h4>
+	    		<h4 class="storyTitle"><?php echo $story->StoryTitle; ?></h4>
     			<?php echo getSubText($story->Content); ?>
 
     			<div style="padding-top: 10px;" class="row">

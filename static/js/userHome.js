@@ -92,6 +92,12 @@ $(document.body).on('click', ".CancelProfileButton", function(event){
 	$("#ShareStoryButtonProfile").show();	
 
 	$(".messageDiv .alert").remove();
+
+	$("#AboutSubmitButton").hide();
+	$("#UserActionSubmitButton").hide();
+
+	$("#About").val($("#AboutDivText").text().trim()); 
+	$("#UserActionStatement").val($("#ActionStatementDivText").text().trim());  	 
 });
 
 
