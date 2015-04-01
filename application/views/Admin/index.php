@@ -22,6 +22,7 @@
                     <li role="presentation" class="active"><a href="#Stories_PendingApproal" aria-controls="Stories_PendingApproal" role="tab" data-toggle="tab">Pending Approval</a></li>
                     <li role="presentation"><a href="#Stories_Rejected" aria-controls="Stories_Rejected" role="tab" data-toggle="tab">Rejected</a></li>
                     <li role="presentation"><a href="#Stories_Inappropriate" aria-controls="Stories_Inappropriate" role="tab" data-toggle="tab">Inappropriate</a></li>
+                    <li role="presentation"><a href="#Stories_Published" aria-controls="Stories_Published" role="tab" data-toggle="tab">Published</a></li>  
                 </ul>   
 
                 <div class="tab-content" style="padding:20px;">
@@ -69,6 +70,21 @@
                             </tbody>
                         </table>
                     </div> 
+                    <div role="tabpanel" class="tab-pane" id="Stories_Published">
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxStoryListPublished" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Owner</th>
+                                    <th>Posted Date</th> 
+                                    <th>Action</th>                                    
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div> 
                 </div>       
 
             </div>
@@ -77,6 +93,7 @@
                 <ul class="nav nav-pills">
                     <li role="presentation" class="active"><a href="#Comments_Rejected" aria-controls="Comments_Rejected" role="tab" data-toggle="tab">Rejected</a></li>
                     <li role="presentation"><a href="#Comments_Inappropriate" aria-controls="Comments_Inappropriate" role="tab" data-toggle="tab">Inappropriate</a></li>
+                    <li role="presentation"><a href="#Comments_Published" aria-controls="Comments_Published" role="tab" data-toggle="tab">Published</a></li>
                 </ul>   
 
                 <div class="tab-content" style="padding:20px;">
@@ -110,6 +127,21 @@
                             </tbody>
                         </table>
                     </div> 
+                    <div role="tabpanel" class="tab-pane" id="Comments_Published">
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxCommentListPublished" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>Story Title</th>
+                                    <th>Comment Content</th>
+                                    <th>Comment Date</th>
+                                    <th>Action</th>                                    
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>  
 
             </div>
