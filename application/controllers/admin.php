@@ -15,7 +15,7 @@ class Admin extends Controller {
 		$model = $this->loadModel('Admin/AdminModel');
 	
 		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
-		$storyQuestionViewModel = $model->getCommentListRejected(100, 1);
+		$storyQuestionViewModel = $model->getStoryListPublished(100, 1);
 
 		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
 		//$returnData = $model->getDropdownListItem('gendertype', 1);
@@ -200,6 +200,47 @@ class Admin extends Controller {
 		echo json_encode($output);
 	}
 
+	function AjaxStoryListPublished()
+	{
+		$storyList;
+		$howMany = $_POST["length"]; //How many results to return
+		$start = $_POST["start"]; 
+		$page = ($start / $howMany) + 1; //What page number in results
+		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+		$resultData = array();
+
+		$adminModel = $this->loadModel('AdminModel');
+
+		if(!empty($_POST["search"]["value"]))
+		{			
+			//Perform a search
+			$storyList = $adminModel->searchForUser($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$storyList = $adminModel->getStoryListPublished($howMany, $page);
+		}
+
+		$recordsNum = isset($storyList[0]) ?  $storyList[0]->totalStories : 0;
+
+		//Process story list into array like below:	
+		foreach ($storyList as $story)
+		{
+			$url = '<a href='. BASE_URL . 'admin/storyeditapproval/' . $story->StoryId . '>Edit Approval</a>';
+			
+			//$url = BASE_URL."Admin/AjaxStoryListPending/".$story->StoryId;
+			$resultData[] = array($story->StoryTitle, $story->LastName.' '.$story->FirstName, $story->DatePosted, $url);
+		}
+
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => $recordsNum,
+	        "recordsFiltered" => $recordsNum,
+	        "data" => $resultData
+	    );
+		echo json_encode($output);
+	}
+
 	function AjaxCommentListRejected()
 	{
 		$storyList;
@@ -267,6 +308,45 @@ class Admin extends Controller {
 		{
 			$url = '<a href=' . BASE_URL . 'admin/commenteditapproval/' . $comment->CommentId . '>Edit Approval</a>';
 			$resultData[] = array($comment->StoryTitle, $comment->Content, $comment->TotalFlagNumber, $url);
+		}
+			
+		$output = array(
+	        "draw" => intval($_POST["draw"]),
+	        "recordsTotal" => $recordsNum,
+	        "recordsFiltered" => $recordsNum,
+	        "data" => $resultData
+	    );
+		echo json_encode($output);
+	}
+
+	function AjaxCommentListPublished()
+	{
+		$storyList;
+		$howMany = $_POST["length"]; //How many results to return
+		$start = $_POST["start"]; 
+		$page = ($start / $howMany) + 1; //What page number in results
+		$adminID = isset($_SESSION["userID"]) ? $_SESSION["userID"] : '';
+		$resultData = array();
+
+		$adminModel = $this->loadModel('AdminModel');
+
+		if(!empty($_POST["search"]["value"]))
+		{			
+			//Perform a search
+			$commentList = $adminModel->searchForUser($userSearch, $howMany, $page);
+		}
+		else
+		{
+			$commentList = $adminModel->getCommentListPublished($howMany, $page);
+		}
+
+		$recordsNum = isset($commentList[0]) ?  $commentList[0]->TotalComments : 0;
+
+		//Process story list into array like below:	
+		foreach ($commentList as $comment)
+		{
+			$url = '<a href='. BASE_URL . 'admin/commenteditapproval/' . $comment->CommentId . '>Edit Approval</a>';
+			$resultData[] = array($comment->StoryTitle, $comment->Content, $comment->DateUpdated, $url);
 		}
 			
 		$output = array(

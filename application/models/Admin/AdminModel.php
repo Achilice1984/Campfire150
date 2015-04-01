@@ -224,6 +224,45 @@ class AdminModel extends Model {
 		}		
 	}
 
+	public function getStoryListPublished($howMany = self::HOWMANY, $page = self::PAGE)
+	{
+		//Accepts how many, page
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Gets a list of stories that have been rejected by admin
+		//Should not contain any published stories
+		//Should have the admin user details an reason for being rejected
+		//returns an array of Story class
+
+		try
+		{
+			$statement = "SELECT *,
+								(SELECT COUNT(*) FROM story s LEFT JOIN admin_approve_story aas ON s.storyID=aas.Story_StoryId 
+									INNER JOIN user u ON s.User_UserId = u.UserId WHERE aas.Approved = 1) AS totalStories
+							FROM story s 
+							LEFT JOIN admin_approve_story aas 
+							ON s.storyID=aas.Story_StoryId 
+							INNER JOIN user u 
+							ON s.User_UserId = u.UserId 
+							WHERE aas.Approved = 1 
+							LIMIT :Start, :HowMany";
+
+			$start = $this->getStartValue($howMany, $page);
+
+			$parameters = array(
+				":Start"=>$start, 
+				":HowMany"=>$howMany
+				);
+
+			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+
+			return $storyList;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
 	public function rejectStory($adminID, $storyID, $reason)
 	{
 		//Accepts the adminID, the story id and the reason why it was rejected
@@ -403,6 +442,48 @@ class AdminModel extends Model {
 		}
 	}
 
+	public function getCommentListPublished($howMany = self::HOWMANY, $page = self::PAGE)
+	{
+		//Accepts how many, page
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Gets a list of comments that have been marked as inappropriate by users
+		//Order the list by how many inappropriate flags there are
+		//returns an array of Comment class
+		
+		try
+		{			
+			$statement = "SELECT c.CommentId, c.Story_StoryId, c.User_UserId, c.Content, c.PublishFlag, c.DateUpdated,
+								s.StoryTitle, (
+								SELECT COUNT( * )
+								FROM admin_reject_comment
+								WHERE Active = 1 AND Rejected = 0
+								) AS TotalComments
+							FROM admin_reject_comment arc 
+							LEFT JOIN comment c
+							ON c.CommentId = arc.Comment_CommentId 
+							LEFT JOIN story s 
+							ON c.Story_StoryId = s.StoryId 
+							LEFT JOIN user u 
+							ON c.User_UserId=u.UserId
+							WHERE arc.Active = 1 AND arc.Rejected = 0
+							ORDER BY c.CommentId 
+							LIMIT :Start, :HowMany";
+			
+			$start = $this->getStartValue($howMany, $page);
+			$parameters = array(
+				":Start"=>$start,
+				":HowMany"=>$howMany
+				);
+
+			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/CommentViewModel");
+
+			return $storyList;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
 
 	public function rejectCommentAsAdmin($adminID, $commentID, $reason)
 	{
