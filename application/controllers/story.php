@@ -570,12 +570,12 @@ class Story extends Controller {
 				addErrorMessage("dbError", gettext("Please answer all questions on the form."));
 
 				return FALSE;
-			}
+			}			
 
 			foreach ($_POST["QuestionAnswers"] as $questionID => $answers) {
 
-				if($questionID == 1 || $questionID == 2)
-				{
+				if($questionID == 1 || $questionID == 2 || $questionID == 5)
+				{ 
 					if(count($answers) > 5)
 					{
 						addErrorMessage("dbError", gettext("Some fields contain too many answers."));

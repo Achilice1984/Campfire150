@@ -33,7 +33,7 @@
                                         echo "<option value=''></option>";
                                         
                                         for ($i=0; $i < count($question->Answers); $i++) { 
-                                            echo "<option " . ((isset($_POST["QuestionAnswers"][$question->Value]) && in_array($question->Answers[$i]->Value, $_POST["QuestionAnswers"][$question->Value])) ? 'selected=selected' : "") . " value='" . $i . "'>"; 
+                                            echo "<option " . ((isset($_POST["QuestionAnswers"][$question->Value]) && in_array($question->Answers[$i]->Value, $_POST["QuestionAnswers"][$question->Value])) ? 'selected=selected' : "") . " value='" . $question->Answers[$i]->Value . "'>"; 
                                                 echo $question->Answers[$i]->Name;
                                             echo "</option>";
                                         }
