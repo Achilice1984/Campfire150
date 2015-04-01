@@ -22,7 +22,7 @@
 			    </a>
 			    <div style="font-size: 1.2em;" class="storyStatsContainer">
 				    <div style="float: left; padding-left: 10px;">
-				        <a data-toggle="tooltip" title="<?php echo gettext("Go to Comments"); ?>" style="text-decoration: none;" class="StoryActionButtons" href="#comments">
+				        <a data-toggle="tooltip" title="<?php echo gettext("Go to Comments"); ?>" style="text-decoration: none;" class="StoryActionButtons" href="<?php echo BASE_URL . "story/display/" . $feed->StoryId; ?>#comments">
 				            <span class="glyphicon glyphicon-comment"></span> 
 				        </a>
 				        <span class="totalCommentSpan"><?php echo $feed->totalComments; ?></span>

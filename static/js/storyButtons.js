@@ -42,6 +42,10 @@ $(document.body).on('click', ".StoryRecommendButton", function(event){
 					}
 				}
 			}
+			else
+			{
+				$("#NotLoggedInModal").modal();
+			}
 		}
 	});
 });
@@ -91,6 +95,10 @@ $(document.body).on('click', ".StoryFlagButton", function(event){
 						recommendButton.attr("data-request-type", "1");
 					}
 				}
+			}
+			else
+			{
+				$("#NotLoggedInModal").modal();
 			}
 		}
 	});

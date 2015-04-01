@@ -129,3 +129,30 @@
     </div> <!-- End #c150-head -->
 
     <div id="c150-body">
+
+      <?php if (!$currentUser->IsAuth): ?>
+          <div id="NotLoggedInModal" class="modal fade">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h2 class="modal-title"><?php echo gettext("Not logged in?"); ?></h2>
+                </div>
+                <div class="modal-body">
+
+                  <h4><?php echo gettext("Register now or login to start sharing your story!"); ?></h4>
+
+                  <div style="margin-top: 30px;" class="row">
+                    <div class="col-md-12">                      
+                      <a href="<?php echo BASE_URL . "account/login"; ?>" class="btn btn-md btn-warning"><?php echo gettext("Login"); ?></a>
+                      <a href="<?php echo BASE_URL . "account/register"; ?>" class="btn btn-md btn-primary"><?php echo gettext("Register"); ?></a>
+                    </div>
+                  </div>
+                 
+                </div>
+                <div class="modal-body">
+                </div>
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal -->
+      <?php endif ?>
