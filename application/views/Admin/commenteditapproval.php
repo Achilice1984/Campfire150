@@ -1,7 +1,7 @@
 
 <?php
 	// debugit($storyViewModel);
-	// debugit($userViewModel);
+	 // debugit($userViewModel);
 	//debugit($approvalViewModel);
 ?>
 <div class="container" style="margin-top:100px;">
@@ -17,12 +17,12 @@
 					<img style="width: 200px; height: 200px;" id="profilePicture" class="img-thumbnail img-responsive" src="<?php echo isset($userViewModel->profilePictureURL) ? $userViewModel->profilePictureURL : BASE_URL . "static/images/default-user-image.png"; ?>" alt="<?php echo gettext("Profile Picture"); ?>">
 				</div>
       			
-  				<h2><?php echo gettext("Owner Information"); ?></h2>
   				<ul>
-  					<li><?php echo $userViewModel->FirstName ?></li>
-  					<li><?php echo $userViewModel->LastName ?></li>
-  					<li><?php echo $userViewModel->ActionStatement ?></li>
-					<li>.....</li>
+  					<li><?php echo gettext("First Name: ") . $userViewModel->FirstName ?></li>
+  					<li><?php echo gettext("Last Name: ") . $userViewModel->LastName ?></li>
+  					<li><?php echo gettext("Action Statement: ") . $userViewModel->ActionStatement ?></li>
+					<li>... ...</li>
+
   				</ul>
   			</div>
 
