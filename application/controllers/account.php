@@ -57,7 +57,7 @@ class Account extends Controller {
 				($accountHomeViewModel->userDetails->ProfilePrivacyType_PrivacyTypeId == 1 || $userID == $this->currentUser->UserId) && $accountHomeViewModel->userDetails->Active == TRUE)
 			{
 				//Populate data to be shown on the page
-				$accountHomeViewModel->recommendedStoryList = $storyModel->getStoriesRecommendedByCurrentUser($userID);				
+				$accountHomeViewModel->recommendedStoryList = $storyModel->getStoriesRecommendedByCurrentUser($this->currentUser->UserId, $userID);				
 				$accountHomeViewModel->followingList = $model->getFollowing($userID);
 				$accountHomeViewModel->followerList = $model->getFollowers($userID);
 
@@ -93,7 +93,7 @@ class Account extends Controller {
 				}
 				else
 				{
-					$accountHomeViewModel->usersStoryList = $storyModel->getStoriesWrittenByCurrentUser($userID);
+					$accountHomeViewModel->usersStoryList = $storyModel->getStoriesWrittenByCurrentUser($this->currentUser->UserId, $userID);
 
 					//How many approved stories
 					$accountHomeViewModel->totalApprovedStories = $storyModel->getTotalStoriesApproved($userID);
@@ -137,7 +137,8 @@ class Account extends Controller {
 					//Load up some js files
 					$view->setJS(array(
 						array("static/js/followUser.js", "intern"),
-						array("static/js/userHome.js", "intern")
+						array("static/js/userHome.js", "intern"),
+						array("static/js/storyButtons.js", "intern"),
 					));
 				}				
 
@@ -1088,7 +1089,7 @@ class Account extends Controller {
 				$storyModel = $this->loadModel("Story/StoryModel");
 				$searchResults = array();
 
-				$searchResults = $storyModel->getStoriesWrittenByCurrentUser($_POST["UserId"], MAX_STORIES_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+				$searchResults = $storyModel->getStoriesWrittenByCurrentUser($this->currentUser->UserId, $_POST["UserId"], MAX_STORIES_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
 
 				if (isset($searchResults)) {
 					foreach ($searchResults as $story)
@@ -1115,7 +1116,7 @@ class Account extends Controller {
 				$storyModel = $this->loadModel("Story/StoryModel");
 				$searchResults = array();
 
-				$searchResults = $storyModel->getStoriesRecommendedByCurrentUser($_POST["UserId"], MAX_STORIES_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+				$searchResults = $storyModel->getStoriesRecommendedByCurrentUser($this->currentUser->UserId, $_POST["UserId"], MAX_STORIES_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
 
 				if (isset($searchResults)) {
 					foreach ($searchResults as $story)
