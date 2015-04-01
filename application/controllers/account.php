@@ -137,7 +137,8 @@ class Account extends Controller {
 					//Load up some js files
 					$view->setJS(array(
 						array("static/js/followUser.js", "intern"),
-						array("static/js/userHome.js", "intern")
+						array("static/js/userHome.js", "intern"),
+						array("static/js/storyButtons.js", "intern"),
 					));
 				}				
 
