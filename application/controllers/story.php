@@ -258,41 +258,48 @@ class Story extends Controller {
 					//Map post values to the loginViewModel
 					$storyViewModel = AutoMapper::mapPost($storyViewModel);					
 
-					if($storyViewModel->validate(0, isset($storyViewModel->PictureId) ? array("Images") : array() ))
+					if($this->CheckTags())
 					{
-						$storyViewModel->Published = FALSE;
-
-						//UPDATE STORY
-						$storyModel->updateDraft($storyViewModel, $this->currentUser->UserId);
-
-						//$this->saveQuestionAnswers($storyModel, $storyId);
-						$this->saveTags($storyModel, $storyViewModel->StoryId);
-						
-						$imageId = 0;
-
-						if(isset($storyViewModel->Images) && $storyViewModel->Images["size"] > 0)
+						if($storyViewModel->validate())
 						{
-							$imageId = $storyModel->saveStoryImageMetadata($this->currentUser->UserId, $storyViewModel->Images, $storyViewModel->StoryId);
+							$storyViewModel->Published = FALSE;
 
-							//debugit($imageId);
+							//UPDATE STORY
+							$storyModel->updateDraft($storyViewModel, $this->currentUser->UserId);
 
-							if(isset($imageId) && $imageId > 0)
+							//$this->saveQuestionAnswers($storyModel, $storyId);
+							$this->saveTags($storyModel, $storyViewModel->StoryId);
+							
+							$imageId = 0;
+
+							if(isset($storyViewModel->Images) && $storyViewModel->Images["size"] > 0)
 							{
-								//debugit($_POST);
-								image_save($storyViewModel->Images, $this->currentUser->UserId, $imageId, IMG_STORY_URL, 
-												 $_POST["image_height"], $_POST["image_width"], $_POST["image_x"], $_POST["image_y"]); 
-							}
-						}					
+								$imageId = $storyModel->saveStoryImageMetadata($this->currentUser->UserId, $storyViewModel->Images, $storyViewModel->StoryId);
 
-						if(isset($_POST["publish"]))
-						{
-							$this->redirect("story/publish", array($storyViewModel->StoryId));
+								//debugit($imageId);
+
+								if(isset($imageId) && $imageId > 0)
+								{
+									//debugit($_POST);
+									image_save($storyViewModel->Images, $this->currentUser->UserId, $imageId, IMG_STORY_URL, 
+													 $_POST["image_height"], $_POST["image_width"], $_POST["image_x"], $_POST["image_y"]); 
+								}
+							}					
+
+							if(isset($_POST["publish"]))
+							{
+								$this->redirect("story/publish", array($storyViewModel->StoryId));
+							}
+							else
+							{
+								$_SESSION["Story_Draft"] = TRUE;
+								$this->redirect("account/home");
+							}
 						}
-						else
-						{
-							$_SESSION["Story_Draft"] = TRUE;
-							$this->redirect("account/home");
-						}
+					}
+					else
+					{
+						addErrorMessage("dbError", gettext("Swearwords are not allowed!"));
 					}
 
 					$storyViewModel->Tags = $this->getTags($storyModel);	
@@ -387,6 +394,7 @@ class Story extends Controller {
 				//Execute code if a post back
 				if($this->isPost())
 				{
+					
 					//Map post values to the loginViewModel
 					$storyViewModel = AutoMapper::mapPost($storyViewModel);			
 
@@ -395,36 +403,47 @@ class Story extends Controller {
 
 					$storyId;
 
-					if($storyViewModel->validate())
+					if($this->CheckTags())
 					{
-						$storyViewModel->Published = FALSE;
-
-						$storyModel->publishNewStory($storyViewModel, $this->currentUser->UserId);
-						$storyId = $storyModel->lastInsertId();
-
-						//$this->saveQuestionAnswers($storyModel, $storyId);
-						$this->saveTags($storyModel, $storyId);
-
-						$imageId = $storyModel->saveStoryImageMetadata($this->currentUser->UserId, $storyViewModel->Images, $storyId);
-
-						if(isset($imageId) && $imageId > 0)
+						if($storyViewModel->validate())
 						{
-							image_save($storyViewModel->Images, $this->currentUser->UserId, $imageId, IMG_STORY_URL, 
-											 $_POST["image_height"], $_POST["image_width"], $_POST["image_x"], $_POST["image_y"]); 
-						}
+							$storyViewModel->Published = FALSE;
 
-						if(isset($_POST["publish"]))
-						{
-							$this->redirect("story/publish", array($storyId));
-						}
-						else
-						{
-							$_SESSION["Story_Draft"] = TRUE;
-							$this->redirect("account/home");
+							$storyModel->publishNewStory($storyViewModel, $this->currentUser->UserId);
+							$storyId = $storyModel->lastInsertId();
+
+							//$this->saveQuestionAnswers($storyModel, $storyId);
+							$this->saveTags($storyModel, $storyId);
+
+							if($storyViewModel->Images['size'] > 0)
+							{
+								$imageId = $storyModel->saveStoryImageMetadata($this->currentUser->UserId, $storyViewModel->Images, $storyId);
+
+								if(isset($imageId) && $imageId > 0)
+								{
+									image_save($storyViewModel->Images, $this->currentUser->UserId, $imageId, IMG_STORY_URL, 
+													 $_POST["image_height"], $_POST["image_width"], $_POST["image_x"], $_POST["image_y"]); 
+								}
+							}
+
+							if(isset($_POST["publish"]))
+							{
+								$this->redirect("story/publish", array($storyId));
+							}
+							else
+							{
+								$_SESSION["Story_Draft"] = TRUE;
+								$this->redirect("account/home");
+							}
 						}
 					}
+					else
+					{
+						addErrorMessage("dbError", gettext("Swearwords are not allowed!"));
+					}
 
-					$storyViewModel->Tags = $this->getTags($storyModel);			
+					$storyViewModel->Tags = $this->getTags($storyModel);	
+							
 				}		
 
 				//Load the profile view
@@ -488,6 +507,24 @@ class Story extends Controller {
 		{
 			throw $ex;
 		}
+	}
+
+	private function CheckTags()
+	{
+		require_once('./application/plugins/censor/CensorWords.php');
+		//use Snipe\BanBuilder\CensorWords;
+
+		$censor = new Snipe\BanBuilder\CensorWords;
+
+    	foreach ($_POST["Tags"] as $tagID) {
+    		$string = $censor->censorString($tagID);
+
+    		if (isset($string) && is_array($string) && $string["orig"] != $string["clean"]) {
+    			return FALSE;
+    		}
+    	}
+
+    	return TRUE;
 	}
 
 	private function saveTags($storyModel, $storyID)

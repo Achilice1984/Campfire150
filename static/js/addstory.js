@@ -1,3 +1,7 @@
+$(function(){
+	$("#WelcomeStoryModal").modal();
+});
+
 function readURL(input) {
 
     if (input.files && input.files[0]) {
@@ -34,7 +38,7 @@ function initCrop(url) {
 			movable: true,
 			modal: true,
 			responsive: true,
-			autoCropArea: 0.8,
+			autoCropArea: 0.99,
 			guides: true,
 			highlight: true,
 			resizable: true,

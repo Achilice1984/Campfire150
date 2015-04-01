@@ -30,7 +30,7 @@
 								<span style="padding-right: 5px;" class="glyphicon glyphicon-user"></span>  <strong><?php echo $comment->FirstName . " " . $comment->LastName; ?></strong>
 
 								<br />
-								<a style="text-decoration: none; padding-right: 5px;" data-request-type="<?php echo (isset($comment->IsFlagged) && $comment->IsFlagged == TRUE ? "0" : "1"); ?>" class="CommentFlagButton <?php echo (isset($comment->IsFlagged) && $comment->IsFlagged == TRUE) ? "text-danger" : "StoryActionButtons"; ?>" href="<?php echo BASE_URL . "story/flagCommentInappropriate/" . $comment->CommentId . "/" . (isset($comment->IsFlagged) && $comment->IsFlagged == TRUE ? "0" : "1"); ?>">
+								<a data-toggle="tooltip" title="<?php echo gettext("Flag as Inappropriate"); ?>" style="text-decoration: none; padding-right: 5px;" data-request-type="<?php echo (isset($comment->IsFlagged) && $comment->IsFlagged == TRUE ? "0" : "1"); ?>" class="CommentFlagButton <?php echo (isset($comment->IsFlagged) && $comment->IsFlagged == TRUE) ? "text-danger" : "StoryActionButtons"; ?>" href="<?php echo BASE_URL . "story/flagCommentInappropriate/" . $comment->CommentId . "/" . (isset($comment->IsFlagged) && $comment->IsFlagged == TRUE ? "0" : "1"); ?>">
 						            <span class="glyphicon glyphicon-flag"></span> 
 						        </a>
 								<!-- <span style="padding-right: 5px;" class="glyphicon glyphicon-flag"></span> -->  <strong><?php echo gettext("Flag"); ?></strong>
