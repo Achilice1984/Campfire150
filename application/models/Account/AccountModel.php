@@ -321,7 +321,7 @@ class AccountModel extends Model {
 			//Does everything match?
 			if(isset($user[0]))
 			{			
-				$updateStatement = "UPDATE user SET VerifiedEmail = TRUE, VerificationCode=NULL
+				$updateStatement = "UPDATE user SET VerifiedEmail = TRUE
 									WHERE user.UserId = :UserId";
 
 				$this->fetch($updateStatement, array(":UserId" => $user[0]->UserId));
@@ -332,7 +332,19 @@ class AccountModel extends Model {
 			$user = $this->fetchIntoClass($statement, array(":Email" => $email), "shared/UserViewModel");
 			if(isset($user[0]) && $user[0]->VerifiedEmail == TRUE)
 			{
-				$verified = TRUE;
+				$updateStatement = "UPDATE user SET VerificationCode=NULL
+									WHERE user.UserId = :UserId";
+
+				$this->fetch($updateStatement, array(":UserId" => $user[0]->UserId));
+
+				$statement = "SELECT * FROM user WHERE Email = :Email";
+
+				$user = $this->fetchIntoClass($statement, array(":Email" => $email), "shared/UserViewModel");
+
+				if(isset($user[0]) && $user[0]->VerificationCode == NULL)
+				{
+					$verified = TRUE;
+				}
 			}
 
 			return $verified;

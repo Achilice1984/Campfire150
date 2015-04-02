@@ -561,6 +561,8 @@ $(document.body).on('click', "#NewFeedContentMoreButton", function(event){
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -597,6 +599,8 @@ $(document.body).on('click', "#Stories_ContentMoreButton", function(event){
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -633,6 +637,8 @@ $(document.body).on('click', "#StoryRecommendationContentMoreButton", function(e
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -669,6 +675,8 @@ $(document.body).on('click', "#UserFollowingContentMoreButton", function(event){
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -705,6 +713,8 @@ $(document.body).on('click', "#UserFollowersContentMoreButton", function(event){
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -749,6 +759,8 @@ $(document.body).on('click', "#CurrentPublishedContentMoreButton", function(even
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -784,6 +796,8 @@ $(document.body).on('click', "#CurrentDraftsContentMoreButton", function(event){
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -819,6 +833,8 @@ $(document.body).on('click', "#CurrentPendingContentMoreButton", function(event)
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -854,6 +870,8 @@ $(document.body).on('click', "#CurrentRejectedContentMoreButton", function(event
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -890,6 +908,8 @@ $(document.body).on('click', "#CurrentCommentsContentMoreButton", function(event
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{

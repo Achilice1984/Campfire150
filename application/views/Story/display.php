@@ -29,7 +29,7 @@
     <div class="col-md-12"> 
         
 
-        <img style="width: 1200px;" class="img-responsive img-rounded" src="<?php echo image_get_path_basic($storyViewModel->UserId, $storyViewModel->PictureId, IMG_STORY, (IS_MOBILE ? IMG_MEDIUM : IMG_LARGE)); ?>" alt="<?php echo gettext("Story Picture"); ?>" />
+        <img style="width: 1200px;" class="img-responsive img-rounded" src="<?php echo image_get_path_basic($storyViewModel->UserId, $storyViewModel->PictureId, IMG_STORY, (IS_MOBILE ? IMG_SMALL : IMG_MEDIUM)); ?>" alt="<?php echo gettext("Story Picture"); ?>" />
 
         <div style="padding-top: 5px;"></div>
         <div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
