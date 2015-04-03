@@ -203,7 +203,7 @@ class AccountModel extends Model {
 											<h1>You\'re almost done!</h1>
 
 											<p>Click the button bellow to reset your password!</p>
-											<a style="background-color: #eea236; padding: 10px; color:white; text-decoration: none; width:250px;" href="' . base_url_https . 'account/resetPassword/' . $email . '/' . $hashedEmailVerification . '">Reset Now!</a>
+											<a style="background-color: #eea236; padding: 10px; color:white; text-decoration: none; width:250px;" href="' . base_url_https . 'account/resetPassword/' . $email . '/' . $hashedEmailVerification . '">Reset Now</a>
 										</div>
 									</body>
 								</html>';
@@ -293,14 +293,14 @@ class AccountModel extends Model {
 	</head>
 	<body style="padding:0; margin:0;">
 		<div style="background-color: #f8f8f8; padding: 20px;">
-			<h1 style="text-align: center; color: #333; font-weight: bolder; font-size: 2em;">Campfire 150! <small style="font-size: .4em; color:#808080;"><br />Share your story. Shape our future.</small></h1>
+			<h1 style="text-align: center; color: #333; font-weight: bolder; font-size: 2em;">Campfire 150 <small style="font-size: .4em; color:#808080;"><br />Share your story. Shape our future.</small></h1>
 		</div>
 		<div style="padding: 5%; padding-right: 0px; color: #333;">
 			<h1>You\'re almost done!</h1>
 
-			<p>Thank you so much for registering with Campfire 150!</p>
-			<p>Your profile is almost set up, just click the link below to activate your account.</p>
-			<a style="background-color: #eea236; padding: 10px; color:white; text-decoration: none; width:250px;" href="' . BASE_URL . 'account/verifyemail/' . $email . '/' . $hashedEmailVerification . '">Active Now!</a>
+			<p>Thank you for registering with Campfire 150.</p>
+			<p>Your profile is almost complete, just click the link below to activate your account.</p>
+			<a style="background-color: #eea236; padding: 10px; color:white; text-decoration: none; width:250px;" href="' . BASE_URL . 'account/verifyemail/' . $email . '/' . $hashedEmailVerification . '">Active Now</a>
 		</div>
 		<div style="background-color: #2e6da4; color: #fff; padding: 20px;">
 			<h1 style="text-align: center; font-weight: bolder; font-size: 4em;">Enjoy!</h1>
