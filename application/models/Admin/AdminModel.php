@@ -1300,6 +1300,9 @@ class AdminModel extends Model {
 				case strtolower($tableName) == "storyprivacytype":
 					$statement = "SELECT *, StoryPrivacyTypeId AS Id FROM storyprivacytype WHERE StoryPrivacyTypeId = :Id";
 					break;
+				case strtolower($tableName) == "actions_taken_type":
+					$statement = "SELECT *, ActionsTakenTypeId AS Id FROM actions_taken_type WHERE ActionsTakenTypeId = :Id";
+					break;
 				default:
 					return $tableName." is not a proper table name";
 			}			
@@ -1344,6 +1347,9 @@ class AdminModel extends Model {
 					break;
 				case strtolower($tableName) == "storyprivacytype":
 					$statement = "SELECT *, StoryPrivacyTypeId AS Id, (SELECT COUNT(*) FROM storyprivacytype) AS TotalNumber FROM storyprivacytype WHERE Active = 1";
+					break;
+				case strtolower($tableName) == "actions_taken_type":
+					$statement = "SELECT *, ActionsTakenTypeId AS Id, (SELECT COUNT(*) FROM actions_taken_type) AS TotalNumber FROM actions_taken_type WHERE Active = 1";
 					break;
 				default:
 					return $tableName." is not a proper table name";
@@ -1397,6 +1403,9 @@ class AdminModel extends Model {
 				case strtolower($tableName) == "storyprivacytype":
 					$statement = "INSERT INTO storyprivacytype (NameE, NameF) VALUES (:NameE, :NameF)";
 					break;
+				case strtolower($tableName) == "actions_taken_type":
+					$statement = "INSERT INTO actions_taken_type (NameE, NameF) VALUES (:NameE, :NameF)";
+					break;
 				default:
 					return $tableName." is not a proper table name";
 			}
@@ -1445,6 +1454,9 @@ class AdminModel extends Model {
 				case strtolower($tableName) == "storyprivacytype":
 					$statement = "UPDATE storyprivacytype SET NameE = :NameE, NameF = :NameF  WHERE StoryPrivacyTypeId = :Id";
 					break;
+				case strtolower($tableName) == "actions_taken_type":
+					$statement = "UPDATE actions_taken_type SET NameE = :NameE, NameF = :NameF  WHERE ActionsTakenTypeId = :Id";
+					break;
 				default:
 					return $tableName." is not a proper table name";
 			}
@@ -1491,6 +1503,9 @@ class AdminModel extends Model {
 					break;
 				case strtolower($tableName) == "storyprivacytype":
 					$statement = "UPDATE storyprivacytype SET Active = 0 WHERE StoryPrivacyTypeId = :Id";
+					break;
+				case strtolower($tableName) == "actions_taken_type":
+					$statement = "UPDATE actions_taken_type SET Active = 0 WHERE ActionsTakenTypeId = :Id";
 					break;
 				default:
 					return $tableName." is not a proper table name";

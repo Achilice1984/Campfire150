@@ -27,7 +27,11 @@
 	            <hr style="border:2; height:2px; width:85%; color:#333; weight:2em;"/>
 	            <div style="color:red">
 		            <div class="form-group">
-		            	<h4><?php echo gettext("CAUTION! Following Deactive Action is opotional. But if you checked the check box and confirmed this Action, you will not find this item again. And it may affect some exist account!"); ?></h4>
+		            	<?php echo gettext("<h3> CAUTION! </h3>Following Action is opotional. 
+			            						<br/>But if you checked and confirmed this Action,
+			            						<br/>it may put your website into risk! <br/><br/>"
+			            						); 
+			            ?>
 		                <label>
 		                    <input type="checkbox" name="Active" value='FALSE'> <?php echo gettext("Deactive."); ?>
 		                </label>

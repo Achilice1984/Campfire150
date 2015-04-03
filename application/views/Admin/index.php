@@ -270,6 +270,7 @@
                     <li role="presentation"><a href="#PictureType_Find" aria-controls="PictureType_Find" role="tab" data-toggle="tab">Picture</a></li>
                     <li role="presentation"><a href="#ProfilePrivacyType_Find" aria-controls="ProfilePrivacyType_Find" role="tab" data-toggle="tab">Profile Privacy</a></li>
                     <li role="presentation"><a href="#StoryPrivacyType_Find" aria-controls="StoryPrivacyType_Find" role="tab" data-toggle="tab">Story Privacy</a></li>
+                    <li role="presentation"><a href="#ActionTakenType_Find" aria-controls="ActionTakenType_Find" role="tab" data-toggle="tab">Action Taken Type</a></li>
                 </ul>   
 
                 <div class="tab-content" style="padding:20px;">
@@ -392,6 +393,23 @@
                         </table>
                         <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/storyprivacytype' ?> ">here</a></h3>
                     </div>
+                    <div role="tabpanel" class="tab-pane" id="ActionTakenType_Find">
+                        <!--This table will contain all users -->
+                        <table class="display dataTableAuto" data-table-url="<?php echo BASE_URL; ?>Admin/AjaxActionTakenTypeList" style="display:none;">
+                            <thead>
+                                <tr>
+                                    <th>English Version</th>
+                                    <th>French Version</th>
+                                    <th>Date Updated</th>
+                                    <th>Action</th>
+                                   
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/actions_taken_type' ?> ">here</a></h3>
+                    </div> 
                 </div>
 
             </div>

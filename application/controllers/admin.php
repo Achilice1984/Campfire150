@@ -687,6 +687,12 @@ class Admin extends Controller {
 		echo json_encode($output);
 	}
 
+	function AjaxActionTakenTypeList()
+	{
+		$output = $this->dropdownList("actions_taken_type");
+		echo json_encode($output);
+	}
+
 	function dropdownList($tableName)
 	{
 		$list = array();
