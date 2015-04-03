@@ -10,6 +10,8 @@ $(document.body).on('click', "#StorySearchMoreButton", function(event){
 			if(data)
 			{
 				$("#StorySearchContainer").append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -39,6 +41,8 @@ $(document.body).on('click', "#RecommendedStoryMoreButton", function(event){
 			if(data)
 			{
 				$("#RecommendedStoryContainer").append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -68,6 +72,8 @@ $(document.body).on('click', "#LatestStoryMoreButton", function(event){
 			if(data)
 			{
 				$("#LatestStoryContainer").append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{

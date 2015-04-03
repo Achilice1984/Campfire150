@@ -133,7 +133,7 @@ class Validator
  }
  private function postalCode($match)
  {
-    return preg_match('/^[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1} *\d{1}[A-Z]{1}\d{1}$/', $match);
+    return preg_match('/^[A-Za-z]{1}\d{1}[A-Za-z]{1} *\d{1}[A-Za-z]{1}\d{1}$/', $match);
  }
  function badWord($string){
   require_once('./application/plugins/censor/CensorWords.php');

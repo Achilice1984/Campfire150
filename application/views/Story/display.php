@@ -29,7 +29,7 @@
     <div class="col-md-12"> 
         
 
-        <img style="width: 1200px;" class="img-responsive img-rounded" src="<?php echo image_get_path_basic($storyViewModel->UserId, $storyViewModel->PictureId, IMG_STORY, (IS_MOBILE ? IMG_MEDIUM : IMG_LARGE)); ?>" alt="<?php echo gettext("Story Picture"); ?>" />
+        <img style="width: 1200px;" class="img-responsive img-rounded" src="<?php echo image_get_path_basic($storyViewModel->UserId, $storyViewModel->PictureId, IMG_STORY, (IS_MOBILE ? IMG_SMALL : IMG_MEDIUM)); ?>" alt="<?php echo gettext("Story Picture"); ?>" />
 
         <div style="padding-top: 5px;"></div>
         <div class="fb-like" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
@@ -126,7 +126,7 @@
 
                 <div class="alert alert-info alert-dismissible" id="CommentInfoBar" role="alert" style="display:none;">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of the comments."); ?>
+                    <strong><?php echo gettext("Info."); ?></strong> <?php echo gettext("You have reached the end of the comments."); ?>
                 </div>
                 
                 <input type="hidden" name="CommentPage" id="CommentPage" value="1">
@@ -135,7 +135,7 @@
                 <div class="row text-center" id="CommentStoryMoreButton" style="margin-bottom: 50px; <?php echo count($storyViewModel->Comments) <= 0 ? "display:none;" : "";  ?>">
                     <?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
                     
-                    <button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Comments!"); ?></button>
+                    <button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show More Comments"); ?></button>
                 </div>
             <?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
             
@@ -148,11 +148,11 @@
 
 
                     <div class="alert alert-success" id="CommentSubmitInfoBar" role="alert" style="display:none;">
-                        <strong><?php echo gettext("Success!"); ?></strong> <?php echo gettext("Your comment was successfully submitted, and is now awaiting approval."); ?>
+                        <strong><?php echo gettext("Success."); ?></strong> <?php echo gettext("Your comment was successfully submitted, and is now awaiting approval."); ?>
                     </div>
 
                     <div class="alert alert-danger" id="CommentSubmitInfoBarError" role="alert" style="display:none;">
-                        <strong><?php echo gettext("Error!"); ?></strong> <?php echo gettext("An error occurred while attempting to save your comment."); ?>
+                        <strong><?php echo gettext("Error."); ?></strong> <?php echo gettext("An error occurred while attempting to save your comment."); ?>
                     </div>
 
                     <div class="form-group">
@@ -169,7 +169,7 @@
         </div>
 
         <div class="row text-center" id="ShowCommentsButton" style="margin-top: 50px;">
-            <button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show Story Comments!"); ?></button>
+            <button type="button" class="btn btn-default btn-lg" style="background-color: orange; color:white; width:100%;"><?php echo gettext("Show Story Comments"); ?></button>
         </div>       
         
     </div>

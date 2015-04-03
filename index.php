@@ -1,4 +1,10 @@
 <?php
+// if($_SERVER["HTTPS"] != "on")
+// {
+//     header("Location: https://campfire150.com" . $_SERVER["REQUEST_URI"]);
+//     exit();
+// }
+
 
 header('Content-Type:text/html; charset=UTF-8');
 

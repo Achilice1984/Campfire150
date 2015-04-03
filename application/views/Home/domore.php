@@ -11,7 +11,7 @@
                 <div class="form-group">
                     <label style="font-size: 1.2em;" for="PostalCode"><?php echo gettext("Tell us about the fun you had and earn a Firekeeper badge:"); ?></label>
 
-                    <textarea maxlength="300" name="About" id="About" class="form-control" rows="3" placeholder="<?php echo gettext("What happened?!"); ?>"></textarea>
+                    <textarea maxlength="300" name="About" id="About" class="form-control" rows="3" placeholder="<?php echo gettext("What happened?"); ?>"></textarea>
                 </div>
 
             </div>

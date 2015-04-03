@@ -299,7 +299,7 @@ class Story extends Controller {
 					}
 					else
 					{
-						addErrorMessage("dbError", gettext("Swearwords are not allowed!"));
+						addErrorMessage("dbError", gettext("Swearwords are not allowed in tags."));
 					}
 
 					$storyViewModel->Tags = $this->getTags($storyModel);	
@@ -439,7 +439,7 @@ class Story extends Controller {
 					}
 					else
 					{
-						addErrorMessage("dbError", gettext("Swearwords are not allowed!"));
+						addErrorMessage("dbError", gettext("Swearwords are not allowed in tags."));
 					}
 
 					$storyViewModel->Tags = $this->getTags($storyModel);	

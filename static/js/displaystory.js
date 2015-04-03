@@ -13,6 +13,8 @@ $(document.body).on('click', "#CommentStoryMoreButton", function(){
 			if(data)
 			{
 				$("#comment-list").append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{

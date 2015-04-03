@@ -13,14 +13,14 @@ class SecurityAnswerViewModel extends ViewModel
 		$validate["SecurityQuestionId"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('Invalid Security Question field is required!'),
+					'Message' => gettext('Invalid Security Question field is required.'),
 					'Properties' => array()
 				)
 		);
 		$errors["Password"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Password field is required!'),
+					'Message' => gettext('The Password field is required.'),
 					'Properties' => array()
 				)
 		);
@@ -28,7 +28,7 @@ class SecurityAnswerViewModel extends ViewModel
 		$errors["SecurityAnswer"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Security Question Answer field is required!'),
+					'Message' => gettext('The Security Question Answer field is required.'),
 					'Properties' => array()
 				)
 		);

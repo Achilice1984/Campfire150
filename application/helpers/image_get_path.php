@@ -74,7 +74,15 @@
             else
             {
                 //default pic
-                $url = BASE_URL . 'static/images/default_story_image.jpg';
+                if($size == "small")
+                {
+                    //default pic
+                    $url = BASE_URL . 'static/images/default_story_image_medium.jpg';
+                }
+                else
+                {
+                    $url = BASE_URL . 'static/images/default_story_image.jpg';
+                }
 
                 $type = 'story';
             }

@@ -25,7 +25,7 @@
 			
 				<div class="alert alert-info alert-dismissible" id="UsersLatestInfoBar" role="alert" style="display:none;">
 			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+			  		<strong><?php echo gettext("Info."); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 				</div>
 
 				<input type="hidden" name="UsersLatestPage" id="UsersLatestPage" value="1">
@@ -53,7 +53,7 @@
 				
 				<div class="alert alert-info alert-dismissible" id="UserMostFollowersInfoBar" role="alert" style="display:none;">
 			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+			  		<strong><?php echo gettext("Info."); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 				</div>
 				
 				<input type="hidden" name="UserMostFollowersPage" id="UserMostFollowersPage" value="1">
@@ -91,7 +91,7 @@
 				
 				<div class="alert alert-info alert-dismissible" id="UserSearchInfoBar" role="alert" style="display:none;">
 			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+			  		<strong><?php echo gettext("Info."); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 				</div>
 
 				<div class="text-center" id="UserSearchMoreButton" style="<?php echo count($searchResults) <= 0 ? "display:none;" : "" ?>">

@@ -199,7 +199,7 @@ class Account extends Controller {
 					else //Failed login
 					{
 						// Add an error message because login failed 
-						addErrorMessage("dbError", gettext("Oops, it looks like your attempt to login failed."));
+						addErrorMessage("dbError", gettext("Your attempt to login failed."));
 					}				
 				}	
 
@@ -320,18 +320,26 @@ class Account extends Controller {
 				//This will also set the temp errors to be shown in the view
 				if($userViewModel->validate())
 				{		
-					//Attempt to register the user with our website				
-					if($model->registerUserProfile($userViewModel))
+					if($userViewModel->Password == $userViewModel->RePassword)
 					{
-						addSuccessMessage("dbSuccess", gettext("You are Registered! Verify your email and log in!"), 1);
+						//Attempt to register the user with our website				
+						if($model->registerUserProfile($userViewModel))
+						{
+							$_SESSION["User_Is_Registered"] = TRUE;
+							addSuccessMessage("dbSuccess", gettext("You are now registered. Please verify your email and login."), 1);
 
-						//If success, send user to the login page
-						$this->redirect("account/login");	
+							//If success, send user to the login page
+							$this->redirect("account/login");	
+						}
+						else
+						{
+							addErrorMessage("dbError", gettext("Something went wrong while trying to register your profile."));
+						}		
 					}
 					else
 					{
-						addErrorMessage("dbError", gettext("Oops, it looks like something went wrong while trying to register your profile."));
-					}					
+						addErrorMessage("dbError", gettext("Your passwords don't match."));
+					}			
 				}			
 			}		
 
@@ -385,13 +393,13 @@ class Account extends Controller {
 				//Stkaeholder wanted first login to redirect to add story page, this how its determined
 				$_SESSION["Just_Registered"] = TRUE;
 
-				addSuccessMessage("dbError", gettext("Your email has been successfully verified! Login to start using your account!"), 1);
+				addSuccessMessage("dbError", gettext("Your email has been successfully verified. Please login to start using your account."), 1);
 
 				$this->redirect("account/login");
 			}
 			else
 			{
-				addErrorMessage("dbError", gettext("Oops, an error occurred while attempting to verify your account!"), 1);
+				addErrorMessage("dbError", gettext("An error occurred while attempting to verify your account."), 1);
 				$this->redirect("");
 			}
 		}
@@ -480,7 +488,7 @@ class Account extends Controller {
 					{
 						if(!$this->isAjax())
 						{
-							addErrorMessage("dbError", gettext("Oops, it looks like something went wrong while trying to update your password."), 1);
+							addErrorMessage("dbError", gettext("Something went wrong while trying to update your password."), 1);
 						}
 					}
 				}
@@ -488,7 +496,7 @@ class Account extends Controller {
 				{
 					if(!$this->isAjax())
 					{
-						addErrorMessage("dbError", gettext("Oops, it looks like your passwords don't match."), 1);
+						addErrorMessage("dbError", gettext("Your passwords don't match."), 1);
 					}
 				}
 			}
@@ -697,7 +705,7 @@ class Account extends Controller {
 				{
 					if(!$IsSuccess)
 					{
-						addErrorMessage("dbError", gettext("Oops, it looks like something went wrong while trying to update your profile."), 1);
+						addErrorMessage("dbError", gettext("Something went wrong while trying to update your profile."), 1);
 					}	
 
 					//If success, send user to the home page
@@ -1446,7 +1454,7 @@ class Account extends Controller {
 			{
 				if($result)
 				{
-					addSuccessMessage("dbSuccess", gettext("An email was sent to help reset your password!"), 1);
+					addSuccessMessage("dbSuccess", gettext("An email was sent to help reset your password."), 1);
 					$this->redirect("");
 				}
 			}
@@ -1472,14 +1480,14 @@ class Account extends Controller {
 
 						if($result)
 						{
-							addSuccessMessage("dbSuccess", gettext("Password was reset, please login using your new password!"), 1);
+							addSuccessMessage("dbSuccess", gettext("Your password was reset, please login using your new password."), 1);
 
 							$this->redirect("account/login");
 						}
 					}
 				}
 
-				addErrorMessage("dbError", gettext("Oops, something went wrong while resetting your password."));
+				addErrorMessage("dbError", gettext("Something went wrong while resetting your password."));
 			}		
 
 			//Load the profile view

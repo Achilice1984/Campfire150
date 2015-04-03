@@ -24,3 +24,7 @@ $(document.body).on('click', "#RestPasswordButton", function(event){
 		}
 	});
 });
+
+$(function(){
+	$("#VerifyEmailModal").modal();
+});
