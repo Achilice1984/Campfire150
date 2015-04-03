@@ -12,6 +12,7 @@
             <li role="presentation"><a href="#Users" aria-controls="Users" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-user"></span> Users</a></li>
             <li role="presentation"><a href="#Story_Questionaire" aria-controls="Story_Questionaire" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-question-sign"></span> Story Questionaire</a></li>
             <li role="presentation"><a href="#Website_Dropdowns" aria-controls="Website_Dropdowns" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-list"></span> Website Dropdowns</a></li>
+            <li role="presentation"><a href="#Logs" aria-controls="Logs" role="tab" data-toggle="tab"><span class="glyphicon glyphicon-list"></span> Website Logs</a></li>
         </ul>
 
         <!-- Tab panes -->
@@ -236,7 +237,7 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <h3> Add a new question <a href="<?php echo BASE_URL . 'admin/storyquestionadd' ?> ">here</a></h3>
+                        <h4> Add a new question <a href="<?php echo BASE_URL . 'admin/storyquestionadd' ?> ">here</a></h4>
                     </div>  
                     <div role="tabpanel" class="tab-pane" id="Story_Answers_Find">
                         <!--This table will contain all story answers -->
@@ -254,7 +255,7 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <h3> Add a new answer <a href="<?php echo BASE_URL . 'admin/storyansweradd' ?> ">here</a></h3>
+                        <h4> Add a new answer <a href="<?php echo BASE_URL . 'admin/storyansweradd' ?> ">here</a></h4>
                     </div>
                    
                 </div>
@@ -289,7 +290,7 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/securityquestion' ?> ">here</a></h3>
+                        <h4> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/securityquestion' ?> ">here</a></h4>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="LanguageType_Find">
                         <!--This table will contain all users -->
@@ -306,7 +307,7 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/languagetype' ?> ">here</a></h3>
+                        <h4> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/languagetype' ?> ">here</a></h4>
                     </div>  
                     <div role="tabpanel" class="tab-pane" id="GenderType_Find">
                         <!--This table will contain all users that are disabled -->
@@ -323,7 +324,7 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/gendertype' ?> ">here</a></h3>
+                        <h4> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/gendertype' ?> ">here</a></h4>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="AchievementLevelType_Find">
                         <!--This table will contain all users -->
@@ -340,7 +341,7 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/achievementleveltype' ?> ">here</a></h3>
+                        <h4> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/achievementleveltype' ?> ">here</a></h4>
                     </div>  
                     <div role="tabpanel" class="tab-pane" id="PictureType_Find">
                         <!--This table will contain all users that are disabled -->
@@ -357,7 +358,7 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/picturetype' ?> ">here</a></h3>
+                        <h4> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/picturetype' ?> ">here</a></h4>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="ProfilePrivacyType_Find">
                         <!--This table will contain all users -->
@@ -374,7 +375,7 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/profileprivacytype' ?> ">here</a></h3>
+                        <h4> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/profileprivacytype' ?> ">here</a></h4>
                     </div>  
                     <div role="tabpanel" class="tab-pane" id="StoryPrivacyType_Find">
                         <!--This table will contain all users that are disabled -->
@@ -391,7 +392,7 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/storyprivacytype' ?> ">here</a></h3>
+                        <h4> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/storyprivacytype' ?> ">here</a></h4>
                     </div>
                     <div role="tabpanel" class="tab-pane" id="ActionTakenType_Find">
                         <!--This table will contain all users -->
@@ -408,10 +409,24 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <h3> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/actions_taken_type' ?> ">here</a></h3>
+                        <h4> Add a new item <a href="<?php echo BASE_URL . 'admin/dropdownitemadd/actions_taken_type' ?> ">here</a></h4>
                     </div> 
                 </div>
 
+            </div>
+
+
+            <div role="tabpanel" class="tab-pane" id="Logs">
+
+                <div class="container" style="margin-top:100px;">        
+                    <table width="70%">
+                        <tr>
+                            <td><h4>View error logs <a href="<?php echo BASE_URL . 'admin/errorLogs' ?> ">here</a></h4></td>
+                            <td></td>
+                            <td><h4> View exception logs <a href="<?php echo BASE_URL . 'admin/exceptionLogs' ?> ">here</a></h4></td>
+                        </tr>
+                    </table>
+                </div>
             </div>
         </div>
 
