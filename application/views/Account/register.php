@@ -118,8 +118,8 @@
                             </div>  
 
                             <div class="form-group">
-                                <label for="Birthday"><?php echo gettext("Birthday"); ?></label>
-                                <input type="date" class="form-control" id="Birthday" name="Birthday" placeholder="<?php echo gettext("YYYY-MM-DD"); ?>" value="<?php echo $userViewModel->Birthday; ?>">
+                                <label for="Birthday"><?php echo gettext("Year Born"); ?></label>
+                                <input type="number" class="form-control" id="Birthday" name="Birthday" placeholder="<?php echo gettext("YYYY"); ?>" value="<?php echo $userViewModel->Birthday; ?>">
                             </div>
 
                             <div class="form-group">

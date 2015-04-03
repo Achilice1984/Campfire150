@@ -26,7 +26,7 @@ class CommentViewModel extends ViewModel
 		$errors["Content"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Comment field is required!'),
+					'Message' => gettext('The Comment field is required.'),
 					'Properties' => array()
 				)
 		);

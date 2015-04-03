@@ -74,9 +74,9 @@
                         </div>  
 
                         <div class="form-group">
-                            <label for="Birthday"><?php echo gettext("Birthday"); ?></label>
-                            <input type="text" class="form-control" id="Birthday" name="Birthday" placeholder="<?php echo gettext("YYYY-MM-DD"); ?>" value="<?php echo $userViewModel->Birthday; ?>">
-                        </div>
+                                <label for="Birthday"><?php echo gettext("Year Born"); ?></label>
+                                <input type="number" class="form-control" id="Birthday" name="Birthday" placeholder="<?php echo gettext("YYYY"); ?>" value="<?php echo date('Y', strtotime($userViewModel->Birthday)); ?>">
+                            </div>
 
                         <div class="form-group">
                             <label for="YearsInCanada"><?php echo gettext("Years Living In Canada"); ?></label>
@@ -112,7 +112,7 @@
                             <input type="text" class="form-control" id="PostalCode" name="PostalCode" placeholder="<?php echo gettext("Enter Your Postal Code"); ?>" value="<?php echo $userViewModel->PostalCode; ?>">
                         </div>     
 
-                        <div class="messageDiv"></div>  
+                        <div id="ProfileMessageDiv" class="messageDiv"></div>  
                                                    
                         <div style="margin-left:10px" id="ProfileSpinerDiv">
                             <?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>

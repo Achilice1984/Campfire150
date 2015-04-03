@@ -14,26 +14,26 @@ class ChangePasswordViewModel extends ViewModel
 		$errors["OldPassword"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Old Password field is required!'),
+					'Message' => gettext('The Old Password field is required.'),
 					'Properties' => array()
 				)
 		);
 		$errors["Password"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Password field is required!'),
+					'Message' => gettext('The Password field is required.'),
 					'Properties' => array()
 				),
 			'fieldMatch' =>
 				array(
-					'Message' => gettext('The Password field does not match the Re-Type Password field!'),
+					'Message' => gettext('The Password field does not match the Re-Type Password field.'),
 					'Properties' => array('RePassword')
 				)
 		);
 		$errors["RePassword"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Re-Type Password field is required!'),
+					'Message' => gettext('The Re-Type Password field is required.'),
 					'Properties' => array()
 				)
 		);

@@ -30,7 +30,7 @@
 								<span style="padding-right: 5px;" class="glyphicon glyphicon-user"></span>  <strong><?php echo $comment->FirstName . " " . $comment->LastName; ?></strong>
 
 								<br />
-								<a style="text-decoration: none; padding-right: 5px;" data-request-type="<?php echo (isset($comment->IsFlagged) && $comment->IsFlagged == TRUE ? "0" : "1"); ?>" class="CommentFlagButton <?php echo (isset($comment->IsFlagged) && $comment->IsFlagged == TRUE) ? "text-danger" : "StoryActionButtons"; ?>" href="<?php echo BASE_URL . "story/flagCommentInappropriate/" . $comment->CommentId . "/" . (isset($comment->IsFlagged) && $comment->IsFlagged == TRUE ? "0" : "1"); ?>">
+								<a data-toggle="tooltip" title="<?php echo gettext("Flag as Inappropriate"); ?>" style="text-decoration: none; padding-right: 5px;" data-request-type="<?php echo (isset($comment->IsFlagged) && $comment->IsFlagged == TRUE ? "0" : "1"); ?>" class="CommentFlagButton <?php echo (isset($comment->IsFlagged) && $comment->IsFlagged == TRUE) ? "text-danger" : "StoryActionButtons"; ?>" href="<?php echo BASE_URL . "story/flagCommentInappropriate/" . $comment->CommentId . "/" . (isset($comment->IsFlagged) && $comment->IsFlagged == TRUE ? "0" : "1"); ?>">
 						            <span class="glyphicon glyphicon-flag"></span> 
 						        </a>
 								<!-- <span style="padding-right: 5px;" class="glyphicon glyphicon-flag"></span> -->  <strong><?php echo gettext("Flag"); ?></strong>
@@ -51,7 +51,7 @@
 		<div class="col-md-10">
 			<div class="col-md-12 comment-post alert alert-info alert-dismissible" id="CurrentRejectedContentInfoBar" role="alert" style="font-size: 1.2em; min-height: 82px;">
 		  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-		  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo (!isset($comment->IsAdminRejected) || $comment->IsAdminRejected == FALSE) ? gettext("This comment has been removed.") : gettext("This comment has been removed by an administrator."); ?>							
+		  		<strong><?php echo gettext("Info."); ?></strong> <?php echo (!isset($comment->IsAdminRejected) || $comment->IsAdminRejected == FALSE) ? gettext("This comment has been removed.") : gettext("This comment has been removed by an administrator."); ?>							
 			</div>
 		</div>
 	</article>

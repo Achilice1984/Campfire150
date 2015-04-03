@@ -106,9 +106,6 @@ function init_validation()
             Birthday: {
                 validators: {
                     notEmpty: {
-                    },
-                    date: {
-                        format: 'YYYY-MM-DD'
                     }
                 }
             },

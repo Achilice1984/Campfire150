@@ -11,6 +11,8 @@ $(document.body).on('click', "#UserSearchMoreButton", function(event){
 			if(data)
 			{
 				$("#UserSearchContainer").append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -40,6 +42,8 @@ $(document.body).on('click', "#UserMostFollowersMoreButton", function(event){
 			if(data)
 			{
 				$("#UserMostFollowersContainer").append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -69,6 +73,8 @@ $(document.body).on('click', "#UsersLatestMoreButton", function(event){
 			if(data)
 			{
 				$("#UsersLatestContainer").append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{

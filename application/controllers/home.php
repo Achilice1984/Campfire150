@@ -75,9 +75,7 @@ class Home extends Controller {
 				array("static/plugins/wordcloud/wordcloud2.js", "intern"),
 				array("static/js/wordcloud.js", "intern"),
 				array("static/js/home.js", "intern"),
-				array("static/js/storyThumbs.js", "intern"),
-				array("static/plugins/coutdown/jquery.final-countdown.min.js", "intern"),
-				array("static/plugins/coutdown/kinetic.js", "intern")
+				array("static/js/storyThumbs.js", "intern")
 			));
 
 
@@ -131,9 +129,13 @@ class Home extends Controller {
 				    'Content-Type: text/html; charset=ISO-8859-1' . "\r\n" .
 				    'X-Mailer: PHP/' . phpversion();
 
+				   $_POST["Email"] = "";
+				   $_POST["Subject"] = "";
+				   $_POST["Message"] = "";
+
 				mail(CONTACT_EMAIL, $_POST["Subject"], $_POST["Message"], $headers);
 
-				addSuccessMessage("dbSuccess", gettext("Your message has been seent!"));
+				addSuccessMessage("dbSuccess", gettext("Your message has been seent."));
 			}
 			else
 			{

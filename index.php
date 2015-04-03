@@ -1,4 +1,10 @@
 <?php
+// if($_SERVER["HTTPS"] != "on")
+// {
+//     header("Location: https://campfire150.com" . $_SERVER["REQUEST_URI"]);
+//     exit();
+// }
+
 
 header('Content-Type:text/html; charset=UTF-8');
 
@@ -18,6 +24,7 @@ require_once('./application/plugins/akismet/akismet.class.php');
 require_once('./application/plugins/mailchimp/Mailchimp.php');
 require_once('./application/plugins/html_sanitizer/html_sanitizer.php');
 require_once('./application/plugins/alphaid/alphaID.php');
+require_once('./application/plugins/censor/CensorWords.php');
 require_once('./application/plugins/mobile-detect/Mobile_Detect.php');
 
 //Need this if php version less than 5.5

@@ -7,7 +7,6 @@
 }
 body {
 	overflow-x: hidden;
-	background-color: #eee;
 }
 header, footer, nav {
 	text-transform: capitalize;
@@ -222,7 +221,6 @@ header, footer, nav {
 	border-bottom: 3px solid #eea236;
 }
 #c150-body {
-	background-color: #fff;
 	padding: 15px 0;
 }
 #c150-foot {
@@ -237,7 +235,8 @@ header, footer, nav {
 }
 
 .motto {
-	margin-top: 29px;
+	margin-top: 18px;
+	font-size: 2em;
 }
 
 .storySummary {
@@ -330,13 +329,6 @@ header, footer, nav {
 }
 #StorySearchContainer {
 	min-height: 200px;
-}
-
-.clock-canvas {
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
 }
 
 

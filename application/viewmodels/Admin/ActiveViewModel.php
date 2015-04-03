@@ -14,21 +14,21 @@ class ActiveViewModel extends ViewModel
 		$errors["TableName"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Table Name field is required!'),
+					'Message' => gettext('The Table Name field is required.'),
 					'Properties' => array()
 				)
 		);		
 		$errors["Id"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The UserId field is required!'),
+					'Message' => gettext('The UserId field is required.'),
 					'Properties' => array()
 				)
 		);
 		$errors["Active"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Active field is required!'),
+					'Message' => gettext('The Active field is required.'),
 					'Properties' => array()
 				)
 		);
@@ -36,7 +36,7 @@ class ActiveViewModel extends ViewModel
 		$errors["Reason"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Reason field is required!'),
+					'Message' => gettext('The Reason field is required.'),
 					'Properties' => array()
 				)
 		);

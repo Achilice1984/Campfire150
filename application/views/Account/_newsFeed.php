@@ -22,19 +22,19 @@
 			    </a>
 			    <div style="font-size: 1.2em;" class="storyStatsContainer">
 				    <div style="float: left; padding-left: 10px;">
-				        <a data-toggle="tooltip" title="<?php echo gettext("Total Comments"); ?>" style="text-decoration: none;" class="StoryActionButtons" href="#comments">
+				        <a data-toggle="tooltip" title="<?php echo gettext("Go to Comments"); ?>" style="text-decoration: none;" class="StoryActionButtons" href="<?php echo BASE_URL . "story/display/" . $feed->StoryId; ?>#comments">
 				            <span class="glyphicon glyphicon-comment"></span> 
 				        </a>
 				        <span class="totalCommentSpan"><?php echo $feed->totalComments; ?></span>
 				    </div>
 				    <div style="float: left; padding-left: 10px;">
-				        <a data-toggle="tooltip" title="<?php echo gettext("Total Recommends"); ?>" style="text-decoration: none;" data-request-type="<?php echo (isset($feed->Opinion) && $feed->Opinion == TRUE ? "0" : "1"); ?>" class="StoryRecommendButton <?php echo (isset($feed->Opinion) && $feed->Opinion == TRUE) ? "text-default" : "StoryActionButtons"; ?>" href="<?php echo BASE_URL . "story/recommendStory/" . $feed->StoryId . "/" . (isset($feed->Opinion) && $feed->Opinion == TRUE ? "0" : "1"); ?>">
+				        <a data-toggle="tooltip" title="<?php echo gettext("Recommend Story"); ?>" style="text-decoration: none;" data-request-type="<?php echo (isset($feed->Opinion) && $feed->Opinion == TRUE ? "0" : "1"); ?>" class="StoryRecommendButton <?php echo (isset($feed->Opinion) && $feed->Opinion == TRUE) ? "text-default" : "StoryActionButtons"; ?>" href="<?php echo BASE_URL . "story/recommendStory/" . $feed->StoryId . "/" . (isset($feed->Opinion) && $feed->Opinion == TRUE ? "0" : "1"); ?>">
 				            <span class="glyphicon glyphicon-thumbs-up"></span>
 				        </a>
 				        <span class="totalRecommendsSpan"><?php echo $feed->totalRecommends; ?></span>
 				    </div>
 				    <div style="float: left; padding-left: 10px;">
-				        <a data-toggle="tooltip" title="<?php echo gettext("Total Inappropriate Flags"); ?>" style="text-decoration: none;" data-request-type="<?php echo (isset($feed->Opinion) && $feed->Opinion == FALSE ? "0" : "1"); ?>" class="StoryFlagButton <?php echo (isset($feed->Opinion) && $feed->Opinion == FALSE) ? "text-danger" : "StoryActionButtons"; ?>" href="<?php echo BASE_URL . "story/flagInappropriate/" . $feed->StoryId . "/" . (isset($feed->Opinion) && $feed->Opinion == FALSE ? "0" : "1"); ?>">
+				        <a data-toggle="tooltip" title="<?php echo gettext("Flag as Inappropriate"); ?>" style="text-decoration: none;" data-request-type="<?php echo (isset($feed->Opinion) && $feed->Opinion == FALSE ? "0" : "1"); ?>" class="StoryFlagButton <?php echo (isset($feed->Opinion) && $feed->Opinion == FALSE) ? "text-danger" : "StoryActionButtons"; ?>" href="<?php echo BASE_URL . "story/flagInappropriate/" . $feed->StoryId . "/" . (isset($feed->Opinion) && $feed->Opinion == FALSE ? "0" : "1"); ?>">
 				            <span class="glyphicon glyphicon-flag"></span> 
 				        </a>
 				        <span class="totalFlagsSpan"><?php echo $feed->totalFlags; ?></span>
@@ -44,7 +44,7 @@
 				<div style="clear: both;"></div>
 			</div>
 	  		<div class="col-lg-8 col-md-7">
-	    		<h4><?php echo $feed->StoryTitle; ?></h4>
+	    		<h4 class="storyTitle"><?php echo $feed->StoryTitle; ?></h4>
     			<?php echo getSubText($feed->Content); ?>
   			</div>
 	

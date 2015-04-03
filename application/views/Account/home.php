@@ -170,8 +170,8 @@
 			            else
 			            {
 			            	?> 
-			            		<p><a id="EditProfileButton" class="btn btn-default btn-block" href="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Edit Profile"); ?></a></p>
-			            		<p><a class="CancelProfileButton btn btn-primary btn-block" style="display: none;"  href="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Finish Editing"); ?></a></p>
+			            		<p><button id="EditProfileButton" class="btn btn-default btn-block" data-action="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Edit Profile"); ?></button></p>
+			            		<p><button class="CancelProfileButton btn btn-primary btn-block" style="display: none;"  data-action="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Finish Editing"); ?></button></p>
 			            		<p><a id="ShareStoryButtonProfile" class="btn btn-primary btn-block marginBottom15" href="<?php echo BASE_URL . "story/add/" ?>"><span class="glyphicon glyphicon-pencil"></span> <?php echo gettext("Share A Story"); ?></a></p>
 		            		<?php
 			            }
@@ -183,7 +183,7 @@
 				<div class="panel panel-default marginTop15">
 					<div class="panel-heading"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("About"); ?></div>
 					<div class="panel-body">
-						<div id="AboutDivText">
+						<div id="AboutDivText" style="word-wrap: break-word;">
 							<?php if(isset($accountHomeViewModel->userDetails->About) && trim($accountHomeViewModel->userDetails->About) != "") { ?>
 								<?php echo $accountHomeViewModel->userDetails->About; ?>
 							<?php } ?>
@@ -198,7 +198,7 @@
 				<form id="AboutForm" action="<?php echo BASE_URL; ?>account/updateAbout" method="post">									    														
 						
 					<div class="form-group">
-		             	<textarea  data-toggle="tooltip" title="<?php echo gettext("Tell us a little bit about yourself!"); ?>" maxlength="150" name="About" id="About" class="form-control" rows="3" placeholder="<?php echo gettext("Tell us a little bit about yourself!"); ?>"><?php echo $accountHomeViewModel->userDetails->About; ?></textarea>
+		             	<textarea  data-toggle="tooltip" title="<?php echo gettext("Tell us a little bit about yourself."); ?>" maxlength="150" name="About" id="About" class="form-control" rows="3" placeholder="<?php echo gettext("Tell us a little bit about yourself."); ?>"><?php echo $accountHomeViewModel->userDetails->About; ?></textarea>
 	             	</div>
 
 		             <p>
@@ -214,7 +214,7 @@
 				<div class="panel panel-default marginTop15">
 					<div class="panel-heading"><span class="glyphicon glyphicon-bullhorn"></span> <?php echo gettext("My Pledge"); ?></div>
 					<div class="panel-body">
-						<div id="ActionStatementDivText">
+						<div id="ActionStatementDivText" style="word-wrap: break-word;">
 							<?php if(isset($accountHomeViewModel->userDetails->UserActionStatement) && trim($accountHomeViewModel->userDetails->UserActionStatement) != "") { ?>
 								
 								<?php echo $accountHomeViewModel->userDetails->UserActionStatement; ?>
@@ -280,7 +280,7 @@
 								
 								<div class="alert alert-info alert-dismissible" id="NewFeedContentInfoBar" role="alert" style="display:none;">
 							  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-							  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+							  		<strong><?php echo gettext("Info."); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 								</div>
 
 								<input type="hidden" name="NewFeedContentPage" id="NewFeedContentPage" value="1">
@@ -289,7 +289,7 @@
 								<div class="text-center" id="NewFeedContentMoreButton">
 									<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 
-									<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories!"); ?></button>
+									<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
 								</div>	
 							<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 					    </div>
@@ -314,7 +314,7 @@
 									?> 
 										<div class="alert alert-info alert-dismissible" id="Stories_ContentInfoBar" role="alert" style="display:none;">
 									  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-									  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+									  		<strong><?php echo gettext("Info."); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 										</div>
 
 										<input type="hidden" name="Stories_ContentPage" id="Stories_ContentPage" value="1">
@@ -323,7 +323,7 @@
 										<div class="text-center" id="Stories_ContentMoreButton">
 											<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 
-											<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories!"); ?></button>
+											<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
 										</div>									
 									<?php
 								}
@@ -353,7 +353,7 @@
 
 							<div class="alert alert-info alert-dismissible" id="StoryRecommendationContentInfoBar" role="alert" style="display:none;">
 						  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+						  		<strong><?php echo gettext("Info."); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 							</div>
 
 							<input type="hidden" name="StoryRecommendationContentPage" id="StoryRecommendationContentPage" value="1">
@@ -362,7 +362,7 @@
 							<div class="row text-center" id="StoryRecommendationContentMoreButton" style="margin-bottom: 100px;">
 								<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 
-								<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories!"); ?></button>
+								<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
 							</div>
 						<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 				    </div> 
@@ -382,7 +382,7 @@
 
 							<div class="alert alert-info alert-dismissible" id="UserFollowingContentInfoBar" role="alert" style="display:none;">
 						  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+						  		<strong><?php echo gettext("Info."); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 							</div>
 
 							<input type="hidden" name="UserFollowingContentPage" id="UserFollowingContentPage" value="1">
@@ -391,7 +391,7 @@
 							<div class="text-center" id="UserFollowingContentMoreButton">
 								<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 
-								<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories!"); ?></button>
+								<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
 							</div>
 						<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 				    </div> 
@@ -411,7 +411,7 @@
 
 							<div class="alert alert-info alert-dismissible" id="UserFollowersContentInfoBar" role="alert" style="display:none;">
 						  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+						  		<strong><?php echo gettext("Info."); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 							</div>
 
 							<input type="hidden" name="UserFollowersContentPage" id="UserFollowersContentPage" value="1">
@@ -420,7 +420,7 @@
 							<div class="text-center" id="UserFollowersContentMoreButton">
 								<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 								
-								<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories!"); ?></button>
+								<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
 							</div>
 						<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 				    </div> 
@@ -460,7 +460,7 @@
 				                            </div>
 												
 											<div class="form-group">
-								             	<textarea maxlength="250" name="Content" id="Content" class="form-control" rows="3" placeholder="<?php echo gettext("What did you do to take action?!"); ?>"></textarea>
+								             	<textarea maxlength="250" name="Content" id="Content" class="form-control" rows="3" placeholder="<?php echo gettext("What did you do to take action?"); ?>"></textarea>
 							             	</div>
 
 								             <button style="float: left;" id="ActionTakenSubmitButton" type="submit" class="btn btn-default"><?php echo gettext("Add Action"); ?></button>

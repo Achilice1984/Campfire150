@@ -167,40 +167,55 @@ class AccountModel extends Model {
 	{
 		try
 		{
-			$statement = "UPDATE user SET VerificationCode=:RestHash";
-			$statement .= " WHERE Email = :Email";
+			$statement = "SELECT * FROM user WHERE Email = :Email AND VerifiedEmail=TRUE";
 
-			$hashedEmailVerification = md5(uniqid());
+			//Get user that matches email address
+			$user = $this->fetchIntoClass($statement, array(":Email" => $email), "shared/UserViewModel");
 
-			$parameters = array( 
-				":RestHash" => $hashedEmailVerification,
-				":Email" => $email
-			);
-
-			$result = $this->fetch($statement, $parameters);
-
-			if($result == TRUE)
+			if(isset($user[0]))
 			{
-				$subject = gettext('Reset Password');
 
-				$message = '<html stlye="font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;">
-								<head>
-									<title>Campfire 150</title>
-								</head>
-								<body style="padding:0; margin:0;">
-									<div style="background-color: #f8f8f8; padding: 20px;">
-										<h1 style="text-align: center; color: #333; font-weight: bolder; font-size: 2em;">Campfire 150! <small style="font-size: .4em; color:#808080;"><br />Share your story. Shape our future.</small></h1>
-									</div>
-									<div style="padding: 10px; color: #333;">
-										<h1>You\'re almost done!</h1>
+				$statement = "UPDATE user SET VerificationCode=:RestHash";
+				$statement .= " WHERE Email = :Email";
 
-										<p>Click the button bellow to reset your password!</p>
-										<a style="background-color: #eea236; padding: 10px; color:white; text-decoration: none; width:250px;" href="' . base_url_https . 'account/resetPassword/' . $email . '/' . $hashedEmailVerification . '">Reset Now!</a>
-									</div>
-								</body>
-							</html>';
+				$hashedEmailVerification = md5(uniqid());
 
-				$this->sendEmail($email, $subject, $message);
+				$parameters = array( 
+					":RestHash" => $hashedEmailVerification,
+					":Email" => $email
+				);
+
+				$result = $this->fetch($statement, $parameters);
+
+				if($result == TRUE)
+				{
+					$subject = gettext('Reset Password');
+
+					$message = '<html stlye="font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;">
+									<head>
+										<title>Campfire 150</title>
+									</head>
+									<body style="padding:0; margin:0;">
+										<div style="background-color: #f8f8f8; padding: 20px;">
+											<h1 style="text-align: center; color: #333; font-weight: bolder; font-size: 2em;">Campfire 150! <small style="font-size: .4em; color:#808080;"><br />Share your story. Shape our future.</small></h1>
+										</div>
+										<div style="padding: 10px; color: #333;">
+											<h1>You\'re almost done!</h1>
+
+											<p>Click the button bellow to reset your password!</p>
+											<a style="background-color: #eea236; padding: 10px; color:white; text-decoration: none; width:250px;" href="' . base_url_https . 'account/resetPassword/' . $email . '/' . $hashedEmailVerification . '">Reset Now</a>
+										</div>
+									</body>
+								</html>';
+
+					$this->sendEmail($email, $subject, $message);
+
+					return TRUE;
+				}
+			}
+			else
+			{
+				return FALSE;
 			}
 		}
 		catch(Exception $ex)
@@ -278,14 +293,14 @@ class AccountModel extends Model {
 	</head>
 	<body style="padding:0; margin:0;">
 		<div style="background-color: #f8f8f8; padding: 20px;">
-			<h1 style="text-align: center; color: #333; font-weight: bolder; font-size: 2em;">Campfire 150! <small style="font-size: .4em; color:#808080;"><br />Share your story. Shape our future.</small></h1>
+			<h1 style="text-align: center; color: #333; font-weight: bolder; font-size: 2em;">Campfire 150 <small style="font-size: .4em; color:#808080;"><br />Share your story. Shape our future.</small></h1>
 		</div>
 		<div style="padding: 5%; padding-right: 0px; color: #333;">
 			<h1>You\'re almost done!</h1>
 
-			<p>Thank you so much for registering with Campfire 150!</p>
-			<p>Your profile is almost set up, just click the link below to activate your account.</p>
-			<a style="background-color: #eea236; padding: 10px; color:white; text-decoration: none; width:250px;" href="' . BASE_URL . 'account/verifyemail/' . $email . '/' . $hashedEmailVerification . '">Active Now!</a>
+			<p>Thank you for registering with Campfire 150.</p>
+			<p>Your profile is almost complete, just click the link below to activate your account.</p>
+			<a style="background-color: #eea236; padding: 10px; color:white; text-decoration: none; width:250px;" href="' . BASE_URL . 'account/verifyemail/' . $email . '/' . $hashedEmailVerification . '">Active Now</a>
 		</div>
 		<div style="background-color: #2e6da4; color: #fff; padding: 20px;">
 			<h1 style="text-align: center; font-weight: bolder; font-size: 4em;">Enjoy!</h1>
@@ -321,7 +336,7 @@ class AccountModel extends Model {
 			//Does everything match?
 			if(isset($user[0]))
 			{			
-				$updateStatement = "UPDATE user SET VerifiedEmail = TRUE, VerificationCode=NULL
+				$updateStatement = "UPDATE user SET VerifiedEmail = TRUE
 									WHERE user.UserId = :UserId";
 
 				$this->fetch($updateStatement, array(":UserId" => $user[0]->UserId));
@@ -332,7 +347,19 @@ class AccountModel extends Model {
 			$user = $this->fetchIntoClass($statement, array(":Email" => $email), "shared/UserViewModel");
 			if(isset($user[0]) && $user[0]->VerifiedEmail == TRUE)
 			{
-				$verified = TRUE;
+				$updateStatement = "UPDATE user SET VerificationCode=NULL
+									WHERE user.UserId = :UserId";
+
+				$this->fetch($updateStatement, array(":UserId" => $user[0]->UserId));
+
+				$statement = "SELECT * FROM user WHERE Email = :Email";
+
+				$user = $this->fetchIntoClass($statement, array(":Email" => $email), "shared/UserViewModel");
+
+				if(isset($user[0]) && $user[0]->VerificationCode == NULL)
+				{
+					$verified = TRUE;
+				}
 			}
 
 			return $verified;
@@ -506,6 +533,8 @@ class AccountModel extends Model {
 	{	
 		try
 		{
+			$user->Birthday = date_format(new DateTime('01/01/' . $user->Birthday), 'Y-m-d');
+
 			$authentication = new Authentication();
 			$user->Password = $authentication->hashPassword($user->Password);
 
@@ -617,6 +646,8 @@ class AccountModel extends Model {
 	{
 		try
 		{
+			$user->Birthday = date_format(new DateTime('01/01/' . $user->Birthday), 'Y-m-d');
+
 			$authentication = new Authentication();
 
 			$statement = "UPDATE user SET YearsInCanada = :YearsInCanada, LanguageType_LanguageId = :LanguageType_LanguageId, Email = :Email, Address = :Address, PostalCode = :PostalCode, PhoneNumber = :PhoneNumber, FirstName = :FirstName, LastName = :LastName, MidName = :MidName, ProfilePrivacyType_PrivacyTypeId = :ProfilePrivacyType_PrivacyTypeId, Gender_GenderId = :Gender_GenderId, Ethnicity = :Ethnicity, Birthday = :Birthday";

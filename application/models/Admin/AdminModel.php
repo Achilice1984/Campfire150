@@ -277,8 +277,8 @@ class AdminModel extends Model {
 			 	array(":StoryID"=>$storyID)
 			 	);//Set the active record for the story to deactive;
 
-			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved)
-			  				VALUES(:AdminID, :StoryID, :Reason, FALSE)
+			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved, Pending)
+			  				VALUES(:AdminID, :StoryID, :Reason, FALSE, FALSE)
 							ON DUPLICATE KEY
 							UPDATE Reason=:NewReason, Approved=0, Active=1";
 
@@ -311,8 +311,8 @@ class AdminModel extends Model {
 			 	array(":StoryID"=>$storyID)
 			 	);//Set the active record for the story to deactive;
 
-			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved)
-			  				VALUES(:AdminID, :StoryID, :Reason, TRUE)
+			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved, Pending)
+			  				VALUES(:AdminID, :StoryID, :Reason, TRUE, FALSE)
 							ON DUPLICATE KEY
 							UPDATE Reason=:NewReason, Approved=1, Active=1";
 

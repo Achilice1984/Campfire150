@@ -61,11 +61,20 @@ class Validator
 
   private function date($propertyValue)
   {
-    $format = "Y-m-d";
+    // $format = "Y-m-d";
 
-    $d = DateTime::createFromFormat($format, $propertyValue);
+    // $d = DateTime::createFromFormat($format, $propertyValue);
 
-    return $d && $d->format($format) == $propertyValue;
+    // return $d && $d->format($format) == $propertyValue;
+
+    if(isset($propertyValue) && is_numeric($propertyValue) && $propertyValue > 1900 && $propertyValue < 2100)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
   }
 
   private function email($propertyValue)
@@ -124,21 +133,22 @@ class Validator
  }
  private function postalCode($match)
  {
-    return preg_match('/^[ABCEGHJKLMNPRSTVXY]{1}\d{1}[A-Z]{1} *\d{1}[A-Z]{1}\d{1}$/', $match);
+    return preg_match('/^[A-Za-z]{1}\d{1}[A-Za-z]{1} *\d{1}[A-Za-z]{1}\d{1}$/', $match);
  }
  function badWord($string){
-    $string =strtolower($string);
-    $badWords = array("fuck","shit","asshole","bitch","whore","cunt");
-    $matches = array();
-    $matchFound = preg_match_all("/\b(" . implode($badWords,"|") . ")\b/i",$string,$matches);
+  require_once('./application/plugins/censor/CensorWords.php');
+  
+    $censor = new CensorWords;
+    $newString = $censor->censorString($string);
 
-    return $matchFound;
+    return $string != $newString;
   }
 
   function validFileType($file)
   {
       try
       {
+        return true;
           // DO NOT TRUST $_FILES['upfile']['mime'] VALUE !!
           // Check MIME Type by yourself.
          // $finfo = new finfo(FILEINFO_MIME_TYPE);

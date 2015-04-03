@@ -11,7 +11,7 @@
                 <div class="form-group">
                     <label style="font-size: 1.2em;" for="PostalCode"><?php echo gettext("Tell us about the fun you had and earn a Firekeeper badge:"); ?></label>
 
-                    <textarea maxlength="300" name="About" id="About" class="form-control" rows="3" placeholder="<?php echo gettext("What happened?!"); ?>"></textarea>
+                    <textarea maxlength="300" name="About" id="About" class="form-control" rows="3" placeholder="<?php echo gettext("What happened?"); ?>"></textarea>
                 </div>
 
             </div>
@@ -190,7 +190,7 @@
             </div>
         </div>
         <div class="form-group">
-            <label for="celebratePostalCode">Find a party or event near you:</label>
+            <label for="volunteerPostalCode">Find a party or event near you:</label>
             <div class="input-group">
               <input type="text" id="volunteerPostalCode" class="form-control" placeholder="<?php echo gettext("Enter your Postal Code"); ?>">
               <span class="input-group-btn">

@@ -49,33 +49,33 @@ class ProfileViewModel extends ViewModel
 				),
 			'required' =>
 				array(
-					'Message' => gettext('The Email field is required!'),
+					'Message' => gettext('The Email field is required.'),
 					'Properties' => array()
 				)
 		);
 		$errors["FirstName"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The First Name field is required!'),
+					'Message' => gettext('The First Name field is required.'),
 					'Properties' => array()
 				)
 		);
 		$errors["LastName"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Last Name field is required!'),
+					'Message' => gettext('The Last Name field is required.'),
 					'Properties' => array()
 				)
 		);
 		$errors["Password"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Password field is required!'),
+					'Message' => gettext('The Password field is required.'),
 					'Properties' => array()
 				),
 			'fieldMatch' =>
 				array(
-					'Message' => gettext('The Password field does not match the Re-Type Password field!'),
+					'Message' => gettext('The Password field does not match the Re-Type Password field.'),
 					'Properties' => array('RePassword')
 				)
 		);
@@ -83,33 +83,33 @@ class ProfileViewModel extends ViewModel
 		$errors["PostalCode"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Postal Code field is required!'),
+					'Message' => gettext('The Postal Code field is required.'),
 					'Properties' => array()
 				)
 		);
 		$errors["LanguageType_LanguageId"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Language field is required!'),
+					'Message' => gettext('The Language field is required.'),
 					'Properties' => array()
 				)
 		);
 		$errors["ProfilePrivacyType_PrivacyTypeId"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Privacy field is required!'),
+					'Message' => gettext('The Privacy field is required.'),
 					'Properties' => array()
 				)
 		);
 		$errors["Birthday"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Birthday field is required!'),
+					'Message' => gettext('The Birthday field is required.'),
 					'Properties' => array()
 				),
 			'date' =>
 				array(
-					'Message' => gettext('The Birthday field is not a valid date!'),
+					'Message' => gettext('The Birthday field is not a valid date.'),
 					'Properties' => array()
 				)
 		);
@@ -117,7 +117,7 @@ class ProfileViewModel extends ViewModel
 		$errors["Gender_GenderId"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Gender field is required!'),
+					'Message' => gettext('The Gender field is required.'),
 					'Properties' => array()
 				)
 		);

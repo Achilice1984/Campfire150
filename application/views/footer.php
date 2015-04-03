@@ -1,6 +1,6 @@
     </div> <!-- End #c150-body -->
 
-    <div id="c150-foot" class="bg-grey">
+    <div id="c150-foot">
         <footer class="container">
             <p>&copy; <?php echo date("Y"); ?>, Campfire 150</p>
         </footer>
