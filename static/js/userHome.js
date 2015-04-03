@@ -29,7 +29,7 @@ $(document.body).on('click', "#EditProfileButton", function(event){
 
 	$.ajax({
 		type: "GET",
-		url: $("#EditProfileButton").attr("href"),
+		url: $("#EditProfileButton").attr("data-action"),
 		success: function(data){
 			if(data)
 			{	

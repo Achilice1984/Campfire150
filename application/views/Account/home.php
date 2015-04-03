@@ -170,8 +170,8 @@
 			            else
 			            {
 			            	?> 
-			            		<p><a id="EditProfileButton" class="btn btn-default btn-block" href="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Edit Profile"); ?></a></p>
-			            		<p><a class="CancelProfileButton btn btn-primary btn-block" style="display: none;"  href="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Finish Editing"); ?></a></p>
+			            		<p><button id="EditProfileButton" class="btn btn-default btn-block" data-action="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Edit Profile"); ?></button></p>
+			            		<p><button class="CancelProfileButton btn btn-primary btn-block" style="display: none;"  data-action="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Finish Editing"); ?></button></p>
 			            		<p><a id="ShareStoryButtonProfile" class="btn btn-primary btn-block marginBottom15" href="<?php echo BASE_URL . "story/add/" ?>"><span class="glyphicon glyphicon-pencil"></span> <?php echo gettext("Share A Story"); ?></a></p>
 		            		<?php
 			            }
