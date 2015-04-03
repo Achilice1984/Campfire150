@@ -1328,28 +1328,28 @@ class AdminModel extends Model {
 			switch(true)
 			{
 				case strtolower($tableName) == "languagetype":
-					$statement = "SELECT *, LanguageId AS Id, (SELECT COUNT(*) FROM languagetype) AS TotalNumber FROM languagetype WHERE Active = 1";
+					$statement = "SELECT *, LanguageId AS Id, (SELECT COUNT(*) FROM languagetype WHERE Active = 1) AS TotalNumber FROM languagetype WHERE Active = 1";
 					break;
 				case strtolower($tableName) == "gendertype":
-					$statement = "SELECT *, GenderTypeId AS Id, (SELECT COUNT(*) FROM gendertype) AS TotalNumber FROM gendertype WHERE Active = 1";
+					$statement = "SELECT *, GenderTypeId AS Id, (SELECT COUNT(*) FROM gendertype WHERE Active = 1) AS TotalNumber FROM gendertype WHERE Active = 1";
 					break;
 				case strtolower($tableName) == "achievementleveltype":
-					$statement = "SELECT *, LevelId AS Id, (SELECT COUNT(*) FROM achievementleveltype) AS TotalNumber FROM achievementleveltype WHERE Active = 1";
+					$statement = "SELECT *, LevelId AS Id, (SELECT COUNT(*) FROM achievementleveltype WHERE Active = 1) AS TotalNumber FROM achievementleveltype WHERE Active = 1";
 					break;
 				case strtolower($tableName) == "securityquestion":
-					$statement = "SELECT *, SecurityQuestionId AS Id, (SELECT COUNT(*) FROM securityquestion) AS TotalNumber FROM securityquestion WHERE Active = 1";
+					$statement = "SELECT *, SecurityQuestionId AS Id, (SELECT COUNT(*) FROM securityquestion WHERE Active = 1) AS TotalNumber FROM securityquestion WHERE Active = 1";
 					break;
 				case strtolower($tableName) == "picturetype":
-					$statement = "SELECT *, PictureTypeId AS Id, (SELECT COUNT(*) FROM picturetype) AS TotalNumber FROM picturetype WHERE Active = 1";
+					$statement = "SELECT *, PictureTypeId AS Id, (SELECT COUNT(*) FROM picturetype WHERE Active = 1) AS TotalNumber FROM picturetype WHERE Active = 1";
 					break;
 				case strtolower($tableName) == "profileprivacytype":
-					$statement = "SELECT *, PrivacyTypeId AS Id, (SELECT COUNT(*) FROM profileprivacytype) AS TotalNumber FROM profileprivacytype WHERE Active = 1";
+					$statement = "SELECT *, PrivacyTypeId AS Id, (SELECT COUNT(*) FROM profileprivacytype WHERE Active = 1) AS TotalNumber FROM profileprivacytype WHERE Active = 1";
 					break;
 				case strtolower($tableName) == "storyprivacytype":
-					$statement = "SELECT *, StoryPrivacyTypeId AS Id, (SELECT COUNT(*) FROM storyprivacytype) AS TotalNumber FROM storyprivacytype WHERE Active = 1";
+					$statement = "SELECT *, StoryPrivacyTypeId AS Id, (SELECT COUNT(*) FROM storyprivacytype WHERE Active = 1) AS TotalNumber FROM storyprivacytype WHERE Active = 1";
 					break;
 				case strtolower($tableName) == "actions_taken_type":
-					$statement = "SELECT *, ActionsTakenTypeId AS Id, (SELECT COUNT(*) FROM actions_taken_type) AS TotalNumber FROM actions_taken_type WHERE Active = 1";
+					$statement = "SELECT *, ActionsTakenTypeId AS Id, (SELECT COUNT(*) FROM actions_taken_type WHERE Active = 1) AS TotalNumber FROM actions_taken_type WHERE Active = 1";
 					break;
 				default:
 					return $tableName." is not a proper table name";
