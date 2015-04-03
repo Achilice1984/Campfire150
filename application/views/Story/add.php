@@ -22,7 +22,7 @@
           </div>
           <div class="modal-body">
 
-            <h4><?php echo gettext("Enjoy, and thank you for helping us create our national Story!"); ?></h4>
+            <h4><?php echo gettext("Thank you for helping us create our national Story."); ?></h4>
            
           </div>
         </div><!-- /.modal-content -->
@@ -44,7 +44,7 @@
                 <?php if (isset($storyViewModel->Published) && $storyViewModel->Published == TRUE): ?>
                     <div class="alert alert-info alert-dismissible" role="alert">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("Editing a published story sets its status back to pending approval."); ?>
+                        <strong><?php echo gettext("Info."); ?></strong> <?php echo gettext("Editing a published story sets its status back to pending approval."); ?>
                     </div>
                 <?php endif ?>
 

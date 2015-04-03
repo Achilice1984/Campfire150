@@ -13,7 +13,7 @@ class ApprovalViewModel extends ViewModel
 		$errors["Id"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Id field is required!'),
+					'Message' => gettext('The Id field is required.'),
 					'Properties' => array()
 				)
 		);
@@ -21,7 +21,7 @@ class ApprovalViewModel extends ViewModel
 		$errors["Content"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Content field is required!'),
+					'Message' => gettext('The Content field is required.'),
 					'Properties' => array()
 				)
 		);
@@ -29,7 +29,7 @@ class ApprovalViewModel extends ViewModel
 		$errors["Approval"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Approval field is required!'),
+					'Message' => gettext('The Approval field is required.'),
 					'Properties' => array()
 				)
 		);

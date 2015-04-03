@@ -144,7 +144,7 @@
                 </div>
                 <div class="modal-body">
 
-                  <h4><?php echo gettext("Register now or login to start sharing your story!"); ?></h4>
+                  <h4><?php echo gettext("Login or register now to start sharing your story."); ?></h4>
 
                   <div style="margin-top: 30px;" class="row">
                     <div class="col-md-12">                      

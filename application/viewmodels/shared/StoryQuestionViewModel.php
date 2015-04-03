@@ -23,7 +23,7 @@ class StoryQuestionViewModel extends ViewModel
 		$errors["NameE"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The English Name field is required!'),
+					'Message' => gettext('The English Name field is required.'),
 					'Properties' => array()
 				)
 		);
@@ -31,7 +31,7 @@ class StoryQuestionViewModel extends ViewModel
 		$errors["NameF"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The French Name field is required!'),
+					'Message' => gettext('The French Name field is required.'),
 					'Properties' => array()
 				)
 		);

@@ -135,7 +135,7 @@ class Home extends Controller {
 
 				mail(CONTACT_EMAIL, $_POST["Subject"], $_POST["Message"], $headers);
 
-				addSuccessMessage("dbSuccess", gettext("Your message has been seent!"));
+				addSuccessMessage("dbSuccess", gettext("Your message has been seent."));
 			}
 			else
 			{

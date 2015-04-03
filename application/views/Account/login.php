@@ -20,12 +20,12 @@
 
                 <h2><?php echo gettext("Forgot your password?"); ?></h2>
 
-                <p style="font-size: 1.2em;"><?php echo gettext("Don't worry! Give us your email and we will help reset your password."); ?></p>                
+                <p style="font-size: 1.2em;"><?php echo gettext("Don't worry. Give us your email and we will help reset your password."); ?></p>                
                 
                 <div style="padding-top: 25px;" class="form-group">
-                    <div class="alert alert-success alert-dismissible" role="alert" id="ResetMessage" style="display: none;">
+                    <div class="alert alert-info alert-dismissible" role="alert" id="ResetMessage" style="display: none;">
                         <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <strong><?php echo gettext("Success!"); ?></strong> <?php echo gettext("Check your email to reset your password!"); ?>
+                        <strong><?php echo gettext("Info."); ?></strong> <?php echo gettext("If your account has been verified, an email will be sent to help you change your password."); ?>
                     </div>
                     <input type="email" class="form-control" id="ResetEmail" name="ResetEmail" placeholder="<?php echo gettext("Enter Email"); ?>" value="">
                 </div>

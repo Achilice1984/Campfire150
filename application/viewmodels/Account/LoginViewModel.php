@@ -13,7 +13,7 @@ class LoginViewModel extends ViewModel
 		$errors["Email"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Email field is required!'),
+					'Message' => gettext('The Email field is required.'),
 					'Properties' => array()
 				),
 			'email' =>
@@ -25,7 +25,7 @@ class LoginViewModel extends ViewModel
 		$errors["Password"] = array(
 			'required' =>
 				array(
-					'Message' => gettext('The Password field is required!'),
+					'Message' => gettext('The Password field is required.'),
 					'Properties' => array()
 				)
 		);
