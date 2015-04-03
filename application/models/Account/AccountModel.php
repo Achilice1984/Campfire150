@@ -167,40 +167,55 @@ class AccountModel extends Model {
 	{
 		try
 		{
-			$statement = "UPDATE user SET VerificationCode=:RestHash";
-			$statement .= " WHERE Email = :Email";
+			$statement = "SELECT * FROM user WHERE Email = :Email AND VerifiedEmail=TRUE";
 
-			$hashedEmailVerification = md5(uniqid());
+			//Get user that matches email address
+			$user = $this->fetchIntoClass($statement, array(":Email" => $email), "shared/UserViewModel");
 
-			$parameters = array( 
-				":RestHash" => $hashedEmailVerification,
-				":Email" => $email
-			);
-
-			$result = $this->fetch($statement, $parameters);
-
-			if($result == TRUE)
+			if(isset($user[0]))
 			{
-				$subject = gettext('Reset Password');
 
-				$message = '<html stlye="font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;">
-								<head>
-									<title>Campfire 150</title>
-								</head>
-								<body style="padding:0; margin:0;">
-									<div style="background-color: #f8f8f8; padding: 20px;">
-										<h1 style="text-align: center; color: #333; font-weight: bolder; font-size: 2em;">Campfire 150! <small style="font-size: .4em; color:#808080;"><br />Share your story. Shape our future.</small></h1>
-									</div>
-									<div style="padding: 10px; color: #333;">
-										<h1>You\'re almost done!</h1>
+				$statement = "UPDATE user SET VerificationCode=:RestHash";
+				$statement .= " WHERE Email = :Email";
 
-										<p>Click the button bellow to reset your password!</p>
-										<a style="background-color: #eea236; padding: 10px; color:white; text-decoration: none; width:250px;" href="' . base_url_https . 'account/resetPassword/' . $email . '/' . $hashedEmailVerification . '">Reset Now!</a>
-									</div>
-								</body>
-							</html>';
+				$hashedEmailVerification = md5(uniqid());
 
-				$this->sendEmail($email, $subject, $message);
+				$parameters = array( 
+					":RestHash" => $hashedEmailVerification,
+					":Email" => $email
+				);
+
+				$result = $this->fetch($statement, $parameters);
+
+				if($result == TRUE)
+				{
+					$subject = gettext('Reset Password');
+
+					$message = '<html stlye="font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;">
+									<head>
+										<title>Campfire 150</title>
+									</head>
+									<body style="padding:0; margin:0;">
+										<div style="background-color: #f8f8f8; padding: 20px;">
+											<h1 style="text-align: center; color: #333; font-weight: bolder; font-size: 2em;">Campfire 150! <small style="font-size: .4em; color:#808080;"><br />Share your story. Shape our future.</small></h1>
+										</div>
+										<div style="padding: 10px; color: #333;">
+											<h1>You\'re almost done!</h1>
+
+											<p>Click the button bellow to reset your password!</p>
+											<a style="background-color: #eea236; padding: 10px; color:white; text-decoration: none; width:250px;" href="' . base_url_https . 'account/resetPassword/' . $email . '/' . $hashedEmailVerification . '">Reset Now!</a>
+										</div>
+									</body>
+								</html>';
+
+					$this->sendEmail($email, $subject, $message);
+
+					return TRUE;
+				}
+			}
+			else
+			{
+				return FALSE;
 			}
 		}
 		catch(Exception $ex)

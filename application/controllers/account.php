@@ -320,18 +320,26 @@ class Account extends Controller {
 				//This will also set the temp errors to be shown in the view
 				if($userViewModel->validate())
 				{		
-					//Attempt to register the user with our website				
-					if($model->registerUserProfile($userViewModel))
+					if($userViewModel->Password == $userViewModel->RePassword)
 					{
-						addSuccessMessage("dbSuccess", gettext("You are Registered! Verify your email and log in!"), 1);
+						//Attempt to register the user with our website				
+						if($model->registerUserProfile($userViewModel))
+						{
+							$_SESSION["User_Is_Registered"] = TRUE;
+							addSuccessMessage("dbSuccess", gettext("You are Registered! Verify your email and log in!"), 1);
 
-						//If success, send user to the login page
-						$this->redirect("account/login");	
+							//If success, send user to the login page
+							$this->redirect("account/login");	
+						}
+						else
+						{
+							addErrorMessage("dbError", gettext("Oops, it looks like something went wrong while trying to register your profile."));
+						}		
 					}
 					else
 					{
-						addErrorMessage("dbError", gettext("Oops, it looks like something went wrong while trying to register your profile."));
-					}					
+						addErrorMessage("dbError", gettext("Your passwords don't match."));
+					}			
 				}			
 			}		
 

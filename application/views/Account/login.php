@@ -46,6 +46,26 @@
   </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+<?php if (isset($_SESSION["User_Is_Registered"])): unset($_SESSION["User_Is_Registered"]);?>
+    <div id="VerifyEmailModal" class="modal fade">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h2 class="modal-title"><?php echo gettext("Your almost done!"); ?></h2>
+          </div>
+          <div class="modal-body">
+
+            <h4><?php echo gettext("An email has been sent to the provided email address."); ?></h4>
+
+            <h4><?php echo gettext("Please use this email to verify your account before logging in."); ?></h4>
+           
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+<?php endif ?>
+
 
 <div class="container" style="padding-top: 50px; padding-bottom: 50px;">
     <div class="row">
