@@ -67,6 +67,9 @@ function initCrop(url) {
 
 
 $(document.body).on('click', "#cropImage", function(){
+
+	$("#CropStorySpinerDiv .spinner_small").removeClass("hide");
+
  	var url = $('#imgPreviewer').cropper('getDataURL');
 
  	$('#imgPreviewer').cropper('destroy');
@@ -77,6 +80,7 @@ $(document.body).on('click', "#cropImage", function(){
 	$(".close").click();
 
 	$("#cropImage").hide();
+	$("#CropStorySpinerDiv .spinner_small").addClass("hide");
 
 	return true;
  });

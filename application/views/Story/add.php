@@ -72,7 +72,7 @@
                                   </div>
 
                                   <div id="cropImage" class="btn btn-primary" style="display:none;"><?php echo gettext("Crop"); ?></div>
-                                  <div style="float: right; margin-left:10px" id="CropBackgroundSpinerDiv">
+                                  <div style="float: right; margin-left:10px" id="CropStorySpinerDiv">
                                         <?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
                                     </div>
                               </div>          
