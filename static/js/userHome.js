@@ -144,7 +144,7 @@ function initCrop(url) {
 			autoCropArea: 0.99,
 			guides: true,
 			highlight: true,
-			resizable: true,
+			resizable: false,
 			minContainerWidth:100,
 			zoomable: false,
 			crop: function(data) {
@@ -188,6 +188,7 @@ $(document.body).on('click', "#cropImage_header", function(){
 			}
 
 			$('#imgPreviewer_header').cropper('destroy');
+			$('#imgPreviewer_header').attr("src", "");
 		},
 		beforeSend: function(){
 			$("#CropBackgroundSpinerDiv .spinner_small").removeClass("hide");
@@ -250,7 +251,7 @@ function initCrop_profile(url) {
 			autoCropArea: 0.99,
 			guides: true,
 			highlight: true,
-			resizable: true,
+			resizable: false,
 			minContainerWidth:100,
 			zoomable: false,
 			crop: function(data) {
@@ -294,6 +295,7 @@ $(document.body).on('click', "#cropImage_profile", function(){
 			}
 
 			$('#imgPreviewer_profile').cropper('destroy');
+			$('#imgPreviewer_profile').attr("src", "");
 		},
 		beforeSend: function(){
 			$("#CropProfileSpinerDiv .spinner_small").removeClass("hide");
