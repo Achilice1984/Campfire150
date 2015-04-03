@@ -61,5 +61,18 @@
         </div>
     </div>
 
+    <div class="row">
+    	<hr style="border:2; height:2px; width:85%; color:#333; weight:2em;"/>
+        <div style="color:red">
+            <div class="form-group">
+            	<h4><?php echo gettext("CAUTION! Following Deactive Action is opotional. But if you checked the check box and confirmed this Action, you will not find this item again. And it may affect some exist account!"); ?></h4>
+                <label>
+                    <input type="checkbox" name="Active" value='FALSE'> <?php echo gettext("Deactive."); ?>
+                </label>
+            </div>
+            <button type="submit" name="btnDeactive" class="btn btn-default"><?php echo gettext("Confirm"); ?></button>
+        </div>
+    </div>
+
      </form>
 </div>

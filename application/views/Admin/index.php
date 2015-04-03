@@ -215,7 +215,9 @@
                 <ul class="nav nav-pills">
                     <li role="presentation" class="active"><a href="#Questions_Find" aria-controls="Questions_Find" role="tab" data-toggle="tab">Find Questions</a></li>
                     <li role="presentation"><a href="#Story_Answers_Find" aria-controls="Story_Answers_Find" role="tab" data-toggle="tab">Find Answers</a></li>
-                </ul>   
+             <!--        <li role="presentation"><a href="#Story_DeactiveQuestion_Find" aria-controls="Story_DeactiveQuestion_Find" role="tab" data-toggle="tab">Find Deactive Questions</a></li>
+                    <li role="presentation"><a href="#Story_DeactiveAnswers_Find" aria-controls="Story_Answers_Find" role="tab" data-toggle="tab">Find Deactive Answers</a></li>
+                --> </ul>   
 
                 <div class="tab-content" style="padding:20px;">
                     <div role="tabpanel" class="tab-pane active" id="Questions_Find">
@@ -254,6 +256,7 @@
                         </table>
                         <h3> Add a new answer <a href="<?php echo BASE_URL . 'admin/storyansweradd' ?> ">here</a></h3>
                     </div>
+                   
                 </div>
 
             </div>

@@ -15,7 +15,7 @@ class Admin extends Controller {
 		$model = $this->loadModel('Admin/AdminModel');
 	
 		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
-		$storyQuestionViewModel = $model->getStoryListPublished(100, 1);
+		$storyQuestionViewModel = $model->setUserAsAdmin(1);
 
 		//$returnData = $model->addQuestionAnswer(9, "testE", "testF");
 		//$returnData = $model->getDropdownListItem('gendertype', 1);
@@ -502,7 +502,7 @@ class Admin extends Controller {
 		}
 		else
 		{
-			$questionList = $adminModel->getListQuestionaireQuestions($howMany, $page);
+			$questionList = $adminModel->getListActiveQuestionaireQuestions($howMany, $page);
 		}
 
 		$recordsNum = isset($questionList[0]) ?  $questionList[0]->TotalQuestions : 0;
@@ -526,6 +526,48 @@ class Admin extends Controller {
 
 		echo json_encode($output);
 	}
+
+	// function AjaxStoryDeactiveQuestionList()
+	// {
+	// 	$questionList;
+	// 	$howMany = $_POST["length"]; //How many results to return
+	// 	$start = $_POST["start"]; //What page number in results
+	// 	$page = ($start / $howMany) + 1;
+	// 	$resultData = array();
+
+	// 	$adminModel = $this->loadModel('AdminModel');
+
+	// 	if(!empty($_POST["search"]["value"]))
+	// 	{			
+	// 		//Perform a search
+	// 		$questionList = $adminModel->searchForUser($userSearch, $howMany, $page);
+	// 	}
+	// 	else
+	// 	{
+	// 		$questionList = $adminModel->getListDeactiveQuestionaireQuestions($howMany, $page);
+	// 	}
+
+	// 	$recordsNum = isset($questionList[0]) ?  $questionList[0]->TotalQuestions : 0;
+
+	// 	foreach ($questionList as $question)
+	// 	{
+	// 		$url = '<a href=' . BASE_URL . 'admin/storyquestionedit/' . $question->QuestionId . '>Action</a>';
+
+	// 		$resultData[] = array($question->QuestionId, $question->NameE,
+	// 		  $question->NameF, $question->DateUpdated, $url);
+	// 	}		
+			
+	// 	//Process question list into array like below:	
+
+	// 	$output = array(
+	//         "draw" => intval($_POST["draw"]),
+	//         "recordsTotal" => $recordsNum,
+	//         "recordsFiltered" => $recordsNum,
+	//         "data" => $resultData
+	//     );
+
+	// 	echo json_encode($output);
+	// }
 
 	function AjaxStoryAnswerList()
 	{
@@ -564,6 +606,44 @@ class Admin extends Controller {
 	    );
 		echo json_encode($output);
 	}
+
+	// function AjaxStoryDeactivedAnswerList()
+	// {
+	// 	$answerList;
+	// 	$howMany = $_POST["length"]; //How many results to return
+	// 	$start = $_POST["start"]; 
+	// 	$page = ($start / $howMany) + 1; //What page number in results
+	// 	$resultData = array();
+
+	// 	$adminModel = $this->loadModel('AdminModel');
+
+	// 	if(!empty($_POST["search"]["value"]))
+	// 	{			
+	// 		//Perform a search
+	// 		$answerList = $adminModel->searchForUser($userSearch, $howMany, $page);
+	// 	}
+	// 	else
+	// 	{
+	// 		$answerList = $adminModel->getListDeactiveQuestionaireAnswers($howMany, $page);
+	// 	}
+
+	// 	$recordsNum = isset($answerList[0]) ?  $answerList[0]->TotalAnswers : 0;
+
+	// 	//Process story list into array like below:	
+	// 	foreach ($answerList as $answer)
+	// 	{
+	// 		$url = '<a href=' . BASE_URL . 'admin/storyansweredit/' . $answer->AnswerId . '>Update</a>'; //Add link for edit the record
+	// 		$resultData[] = array($answer->QuestionId, $answer->AnswerE, $answer->AnswerF, $answer->DateUpdated, $url);
+	// 	}
+			
+	// 	$output = array(
+	//         "draw" => intval($_POST["draw"]),
+	//         "recordsTotal" => $recordsNum,
+	//         "recordsFiltered" => $recordsNum,
+	//         "data" => $resultData
+	//     );
+	// 	echo json_encode($output);
+	// }
 
 	function AjaxUserSecurityQuestionList()
 	{
@@ -819,16 +899,23 @@ class Admin extends Controller {
 		//Execute code if a post back
 		if($this->isPost())
 		{
-			$activeViewModel->Active = isset($_POST["Active"]) ? $_POST["Active"] : "";
-			$activeViewModel->Reason = isset($_POST["Reason"]) ? $_POST["Reason"] : "";
-
 			//Map post values to the loginViewModel
 			$activeViewModel  = AutoMapper::mapPost($activeViewModel );
 
-			if($activeViewModel->validate())
+			if(isset($_POST["Flag"]) && $_POST["Flag"] == "FALSE" && $userViewModel->AdminFlag == 1)
 			{
-				debugit($_POST["Reason"]);
-				debugit($activeViewModel);
+				$model->setUserAsRegular($userViewModel->UserId);
+
+				$this->redirect("admin/");
+			}
+			elseif(isset($_POST["Flag"]) && $_POST["Flag"] == "TRUE" && $userViewModel->AdminFlag == 0)
+			{
+				$model->setUserAsAdmin($userViewModel->UserId);
+
+				$this->redirect("admin/");
+			}
+			elseif($activeViewModel->validate())
+			{
 				// Save data
 				if($activeViewModel->Active == 'TRUE')
 					$model->activateUser($this->currentUser->UserId, $activeViewModel->Id, $activeViewModel->Reason);
@@ -838,14 +925,6 @@ class Admin extends Controller {
 
 				$this->redirect("admin/");
 			}
-			else
-			{
-				// echo "Failed to save the change";
-			}
-		}
-		else
-		{
-			//Execute this code if NOT a post back
 		}
 
 		$view->set('activeViewModel', $activeViewModel);
@@ -865,6 +944,10 @@ class Admin extends Controller {
 
 		$dropdownListItemViewModel = $this->loadViewModel('shared/DropdownItemViewModel');
 
+		$activeViewModel = $this->loadViewModel('Admin/ActiveViewModel');
+		$activeViewModel->Id = $Id;
+		$activeViewModel->TableName = $tableName;
+
 		//Load the approval view model
 
 		//Adds variables or objects to that can be accessed in the view
@@ -874,13 +957,21 @@ class Admin extends Controller {
 		//Execute code if a post back
 		if($this->isPost())
 		{
-			$dropdownListItemViewModel->NameE = $_POST["NameE"];
-			$dropdownListItemViewModel->NameF = $_POST["NameF"];
+			// $dropdownListItemViewModel->NameE = $_POST["NameE"];
+			// $dropdownListItemViewModel->NameF = $_POST["NameF"];
 
 			//Map post values to the loginViewModel
 			$dropdownListItemViewModel  = AutoMapper::mapPost($dropdownListItemViewModel );
 
-			if($dropdownListItemViewModel->validate())
+			$activeViewModel = AutoMapper::mapPost($activeViewModel);			
+
+			if(isset($_POST["btnDeactive"]) && $activeViewModel->Active == "FALSE")
+			{
+				$model->DeactiveDropdownListItem($activeViewModel->TableName, $activeViewModel->Id);
+
+				$this->redirect("admin/");
+			}
+			elseif($dropdownListItemViewModel->validate())
 			{
 				// Save data
 				$model->updateDropdownValue($dropdownListItemViewModel->TableName, $dropdownListItemViewModel->Id, $dropdownListItemViewModel->NameE, $dropdownListItemViewModel->NameF);
@@ -959,16 +1050,27 @@ class Admin extends Controller {
 		$storyQuestionViewModel = $this->loadViewModel('shared/StoryQuestionViewModel');
 		$storyQuestionViewModel = $model->getQuestionsByAnswerId($answerId);
 
+		$activeViewModel = $this->loadViewModel('Admin/ActiveViewModel');
+		$activeViewModel->Id = $answerId;
+		$activeViewModel->TableName = "answer";
+		
 		//Execute code if a post back
 		if($this->isPost())
 		{
-			$storyAnswerViewModel->NameE = $_POST["NameE"];
-			$storyAnswerViewModel->NameF = $_POST["NameF"];
+			// $storyAnswerViewModel->NameE = $_POST["NameE"];
+			// $storyAnswerViewModel->NameF = $_POST["NameF"];
 
 			//Map post values to the loginViewModel
 			$storyAnswerViewModel  = AutoMapper::mapPost($storyAnswerViewModel );
-			
-			if($storyAnswerViewModel->validate())
+			$activeViewModel = AutoMapper::mapPost($activeViewModel);			
+
+			if(isset($_POST["btnDeactive"]) && $activeViewModel->Active == "FALSE")
+			{
+				$model->DeactiveQuestionaireAnswer($storyAnswerViewModel->AnswerId);
+
+				$this->redirect("admin/");
+			}
+			elseif($storyAnswerViewModel->validate())
 			{
 				$model->updateAnswer($storyAnswerViewModel->AnswerId, $storyAnswerViewModel->NameE, $storyAnswerViewModel->NameF);
 
@@ -986,6 +1088,7 @@ class Admin extends Controller {
 
 		$view->set('storyAnswerViewModel', $storyAnswerViewModel);
 		$view->set('storyQuestionViewModel', $storyQuestionViewModel);
+		$view->set('activeViewModel', $activeViewModel);
 
 		//Renders the view. true indicates to load the layout
 		$view->render(true);		
@@ -1007,8 +1110,8 @@ class Admin extends Controller {
 		//Execute code if a post back
 		if($this->isPost())
 		{
-			$storyAnswerViewModel->NameE = $_POST["NameE"];
-			$storyAnswerViewModel->NameF = $_POST["NameF"];
+			// $storyAnswerViewModel->NameE = $_POST["NameE"];
+			// $storyAnswerViewModel->NameF = $_POST["NameF"];
 
 			//Map post values to the loginViewModel
 			$storyAnswerViewModel  = AutoMapper::mapPost($storyAnswerViewModel );
@@ -1052,16 +1155,28 @@ class Admin extends Controller {
 		$storyAnswerViewModelList = $this->loadViewModel('shared/StoryQuestionViewModel');
 		$storyAnswerViewModelList = $model->getAnswersByQuestionId($questionId);
 
+		$activeViewModel = $this->loadViewModel('Admin/ActiveViewModel');
+		$activeViewModel->Id = $questionId;
+		$activeViewModel->TableName = "question";
+
 		//Execute code if a post back
 		if($this->isPost())
 		{
-			$storyQuestionViewModel->NameE = $_POST["NameE"];
-			$storyQuestionViewModel->NameF = $_POST["NameF"];
+			// $storyQuestionViewModel->NameE = $_POST["NameE"];
+			// $storyQuestionViewModel->NameF = $_POST["NameF"];
 			
 			//Map post values to the loginViewModel
 			$storyQuestionViewModel  = AutoMapper::mapPost($storyQuestionViewModel );
 			
-			if($storyQuestionViewModel->validate())
+			$activeViewModel = AutoMapper::mapPost($activeViewModel);			
+
+			if(isset($_POST["btnDeactive"]) && $activeViewModel->Active == "FALSE")
+			{
+				$model->DeactiveQuestionaireQuestion($activeViewModel->Id);
+
+				$this->redirect("admin/");
+			}
+			elseif($storyQuestionViewModel->validate())
 			{
 				$model->updateQuestion($storyQuestionViewModel->QuestionId,
 				$storyQuestionViewModel->NameE, $storyQuestionViewModel->NameF);
