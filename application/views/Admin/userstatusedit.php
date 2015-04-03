@@ -1,6 +1,6 @@
 <div class="container">
 	
-	<h1><?php echo gettext("Edit pending approval story"); ?></h1>
+	<h1><?php echo gettext("Edit User Status"); ?></h1>
 	<div class="row">
   		<div class="col-md-3">
   			<div class="thumbnail">
@@ -10,6 +10,12 @@
   					<li><?php echo $userViewModel->FirstName ?></li>
   					<li><?php echo $userViewModel->LastName ?></li>
   					<li><?php echo $userViewModel->ActionStatement ?></li>
+  					<?php
+	            		if($userViewModel->AdminFlag)
+	            			print '<li>Administrator</li>';
+	            		else
+	            			print '<li>Regular User</li>';
+	            	?>
 					<li>.....</li>
   				</ul>
   			</div>
@@ -48,6 +54,31 @@
 	            
 
 	            <button type="submit" class="btn btn-default"><?php echo gettext("Submit"); ?></button>
+
+	            <div class="row">
+			    	<hr style="border:2; height:2px; width:85%; color:#333; weight:2em;"/>
+
+			        <div style="color:red">
+			            <div class="form-group">
+			            	<?php echo gettext("<h3> CAUTION! </h3>Following Action is opotional. 
+			            						<br/>But if you checked and confirmed this Action,
+			            						<br/>it may put your website into risk! <br/><br/>"
+			            						); 
+			            	?>
+
+			                <div class="radio">
+				                <label>
+				                    <input type="radio" name="Flag" value='TRUE' > <?php echo gettext("Administrator"); ?>
+				                </label>
+				                <label>
+				                    <input type="radio" name="Flag" value='FALSE'> <?php echo gettext("Regular User"); ?>
+				                </label>
+				              
+				            </div>
+			            </div>
+			            <button type="submit" name="btnDeactive" class="btn btn-default"><?php echo gettext("Confirm"); ?></button>
+			        </div>
+			    </div>
 	        </form>
         </div>
     </div>
