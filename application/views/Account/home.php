@@ -149,7 +149,7 @@
 				</div>
 				<img style="width: 200px; height: 200px;" id="profilePicture" class="img-thumbnail img-responsive" src="<?php echo isset($accountHomeViewModel->profilePictureURL) ? $accountHomeViewModel->profilePictureURL : BASE_URL . "static/images/default-user-image.png"; ?>" alt="<?php echo gettext("Profile Picture"); ?>">
 			</div>
-				<h1 class="h2">
+				<h1 id="userNameDiv" class="h2">
 					<?php echo $accountHomeViewModel->userDetails->FirstName . " " . $accountHomeViewModel->userDetails->LastName; ?>
 				</h1>
 				<?php

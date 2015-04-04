@@ -73,7 +73,7 @@
                       <?php } else { ?>
                                 <li class="dropdown">
                                   <a href="#" class="dropdown-toggle" id="loginMenu" data-toggle="dropdown" aria-expanded="true">
-                                    <span class="glyphicon glyphicon-user"></span><span class="hidden-xs"> <?php echo $currentUser->FirstName . " " . $currentUser->LastName; ?></span> <span class="caret"></span>
+                                    <span class="glyphicon glyphicon-user"></span><span id="LoginNameSpan" class="hidden-xs"> <?php echo $currentUser->FirstName . " " . $currentUser->LastName; ?></span> <span class="caret"></span>
                                   </a>
                                   <ul class="dropdown-menu" role="menu" aria-labelledby="loginMenu">
                                     <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/home"><?php echo gettext("Profile"); ?></a></li>
