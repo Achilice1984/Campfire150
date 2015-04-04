@@ -538,8 +538,8 @@ class AccountModel extends Model {
 			$authentication = new Authentication();
 			$user->Password = $authentication->hashPassword($user->Password);
 
-			$statement = "INSERT INTO user (YearsInCanada, Email, Password, LanguageType_LanguageId, FirstName, LastName, MidName, Address, PostalCode, PhoneNumber, VerificationCode, VerifiedEmail, ProfilePrivacyType_PrivacyTypeId, Gender_GenderId, Ethnicity, Birthday)";
-			$statement .= " VALUES (:YearsInCanada, :Email, :Password, :LanguageType_LanguageId, :FirstName, :LastName, :MidName, :Address, :PostalCode, :PhoneNumber, :VerificationCode, :VerifiedEmail, :ProfilePrivacyType_PrivacyTypeId, :Gender_GenderId, :Ethnicity, :Birthday)";
+			$statement = "INSERT INTO user (YearsInCanada, Email, Password, LanguageType_LanguageId, FirstName, LastName, MidName, Address, PostalCode, PhoneNumber, VerificationCode, VerifiedEmail, ProfilePrivacyType_PrivacyTypeId, Gender_GenderId, Ethnicity, Birthday, DateCreated)";
+			$statement .= " VALUES (:YearsInCanada, :Email, :Password, :LanguageType_LanguageId, :FirstName, :LastName, :MidName, :Address, :PostalCode, :PhoneNumber, :VerificationCode, :VerifiedEmail, :ProfilePrivacyType_PrivacyTypeId, :Gender_GenderId, :Ethnicity, :Birthday, :DateCreated)";
 
 			$hashedEmailVerification = md5(uniqid());
 
@@ -559,7 +559,8 @@ class AccountModel extends Model {
 				":Gender_GenderId" => $user->Gender_GenderId,
 				":Ethnicity" => $user->Ethnicity,
 				":Birthday" => $user->Birthday,
-				":YearsInCanada" => $user->YearsInCanada//DateTime::createFromFormat("d/m/Y", $user->Birthday)->format('Y-m-d H:i:s')
+				":YearsInCanada" => $user->YearsInCanada,//DateTime::createFromFormat("d/m/Y", $user->Birthday)->format('Y-m-d H:i:s')
+				":DateCreated" => $this->getDateNow()
 			);
 			
 			$this->sendEmailVerification($user->Email, $hashedEmailVerification);
@@ -1536,7 +1537,7 @@ class AccountModel extends Model {
 							AND u.ProfilePrivacyType_PrivacyTypeId = 1
 							AND u.VerifiedEmail = TRUE
 							GROUP BY u.UserId
-							ORDER BY u.DateCreated
+							ORDER BY u.DateCreated ASC
 							LIMIT :start, :howmany";
 
 			$start = $this-> getStartValue($howMany, $page);
