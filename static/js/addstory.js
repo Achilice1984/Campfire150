@@ -18,12 +18,14 @@ function readURL(input) {
             $("#cropImage").show();
         }
 
-        reader.readAsDataURL(input.files[0]);        
+        reader.readAsDataURL(input.files[0]);  
+
+        $("#StoryInfoDiv").show("slow");      
     }
 }
 
 $("#Images").change(function(){
-    readURL(this);     
+    readURL(this);
 });
 
 function initCrop(url) {
