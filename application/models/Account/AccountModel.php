@@ -650,8 +650,20 @@ class AccountModel extends Model {
 
 			$authentication = new Authentication();
 
-			$statement = "UPDATE user SET YearsInCanada = :YearsInCanada, LanguageType_LanguageId = :LanguageType_LanguageId, Email = :Email, Address = :Address, PostalCode = :PostalCode, PhoneNumber = :PhoneNumber, FirstName = :FirstName, LastName = :LastName, MidName = :MidName, ProfilePrivacyType_PrivacyTypeId = :ProfilePrivacyType_PrivacyTypeId, Gender_GenderId = :Gender_GenderId, Ethnicity = :Ethnicity, Birthday = :Birthday";
-			$statement .= " WHERE UserId = :UserId";
+			$statement = "UPDATE user 
+							SET YearsInCanada = :YearsInCanada, 
+							LanguageType_LanguageId = :LanguageType_LanguageId, 
+							Email = :Email, Address = :Address, 
+							PostalCode = :PostalCode, 
+							PhoneNumber = :PhoneNumber, 
+							FirstName = :FirstName, 
+							LastName = :LastName, 
+							MidName = :MidName, 
+							ProfilePrivacyType_PrivacyTypeId = :ProfilePrivacyType_PrivacyTypeId, 
+							Gender_GenderId = :Gender_GenderId, 
+							Ethnicity = :Ethnicity, 
+							Birthday = :Birthday
+ 							WHERE UserId = :UserId";
 
 			$parameters = array( 
 				":Email" => $user->Email, 

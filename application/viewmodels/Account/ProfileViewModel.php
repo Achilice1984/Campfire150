@@ -41,7 +41,7 @@ class ProfileViewModel extends ViewModel
 	function __construct()
 	{		
 
-		$validate["Email"] = array(
+		$errors["Email"] = array(
 			'email' =>
 				array(
 					'Message' => gettext('Invalid email address.'),
@@ -67,18 +67,18 @@ class ProfileViewModel extends ViewModel
 					'Properties' => array()
 				)
 		);
-		$errors["Password"] = array(
-			'required' =>
-				array(
-					'Message' => gettext('The Password field is required.'),
-					'Properties' => array()
-				),
-			'fieldMatch' =>
-				array(
-					'Message' => gettext('The Password field does not match the Re-Type Password field.'),
-					'Properties' => array('RePassword')
-				)
-		);
+		// $errors["Password"] = array(
+		// 	'required' =>
+		// 		array(
+		// 			'Message' => gettext('The Password field is required.'),
+		// 			'Properties' => array()
+		// 		),
+		// 	'fieldMatch' =>
+		// 		array(
+		// 			'Message' => gettext('The Password field does not match the Re-Type Password field.'),
+		// 			'Properties' => array('RePassword')
+		// 		)
+		// );
 
 		$errors["PostalCode"] = array(
 			'required' =>

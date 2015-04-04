@@ -660,9 +660,7 @@ class Account extends Controller {
 			$profileViewModel = $this->loadViewModel('ProfileViewModel');
 
 			//Load the AccountModel to access account functions
-			$model = $this->loadModel('AccountModel');
-
-			$profileViewModel = $model->getProfileByID($this->currentUser->UserId);
+			$model = $this->loadModel('AccountModel');			
 
 			$IsSuccess = FALSE;
 
@@ -670,12 +668,14 @@ class Account extends Controller {
 			if($this->isPost())
 			{			
 				//Map post values to the userViewModel
-				$profileViewModel = AutoMapper::mapPost($profileViewModel);			
+				$profileViewModel = AutoMapper::mapPost($profileViewModel);	
 				
 				//Validate data that was posted to the server
 				//This will also set the temp errors to be shown in the view
 				if($profileViewModel->validate())
 				{		
+					$profileViewModel->UserId = $this->currentUser->UserId;
+					
 					//Attempt to register the user with our website				
 					if($model->updateUserProfile($profileViewModel))
 					{
@@ -711,7 +711,9 @@ class Account extends Controller {
 					//If success, send user to the home page
 					$this->redirect("account/home");
 				}			
-			}		
+			}
+
+			$profileViewModel = $model->getProfileByID($this->currentUser->UserId);		
 
 			$siteModel = $this->loadModel('SiteContent/SiteContentModel');
 			$privacyDropdownValues = $siteModel->getDropdownValues_ProfilePrivacyType();
