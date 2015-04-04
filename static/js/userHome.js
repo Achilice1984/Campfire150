@@ -467,6 +467,9 @@ $(document.body).on('click', "#ProfileSubmitButton", function(event){
 		success: function(data){
 			if(data)
 			{
+				$("#userNameDiv").html($("#FirstName").val() + " " + $("#LastName").val());
+				$("#LoginNameSpan").html(" " + $("#FirstName").val() + " " + $("#LastName").val());
+
 				$("#ProfileMessageDiv").html(data);
 			}
 			else
