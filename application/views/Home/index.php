@@ -40,7 +40,7 @@
             <div class="col-md-6">
                 <h1><?php echo gettext("How the Campfire Works"); ?></h1>
                 <ol>
-                    <li><?php echo gettext("Submit a story"); ?></li>
+                    <li><?php echo gettext("Share your story about Canada’s future"); ?></li>
                     <li><?php echo gettext("Answer some simple questions"); ?></li>
                     <li><?php echo gettext("Contribute to our national story"); ?></li>
                     <li><?php echo gettext("Repeat"); ?></li>
