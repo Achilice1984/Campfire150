@@ -127,7 +127,6 @@ class Account extends Controller {
 
 					$view->setCSS(array(
 						array("static/plugins/cropper/cropper.min.css", "intern"),
-						array("static/plugins/datepicker/css/bootstrap-datepicker3.min.css", "intern"),
 						array("static/plugins/validation/css/formValidation.min.css", "intern"),
 						array("static/plugins/select2/css/select2.min.css", "intern")
 					));
@@ -348,7 +347,6 @@ class Account extends Controller {
 
 			//Load up some js files
 			$view->setJS(array(
-				array("static/plugins/datepicker/js/bootstrap-datepicker.min.js", "intern"),
 				array("static/plugins/validation/js/formValidation.min.js", "intern"),
 				array("static/plugins/validation/js/framework/bootstrap.min.js", "intern"),
 				array("static/plugins/select2/js/select2.min.js", "intern"),
@@ -358,7 +356,6 @@ class Account extends Controller {
 			));
 
 			$view->setCSS(array(
-				array("static/plugins/datepicker/css/bootstrap-datepicker3.min.css", "intern"),
 				array("static/plugins/validation/css/formValidation.min.css", "intern"),
 				array("static/plugins/select2/css/select2.min.css", "intern")
 			));		

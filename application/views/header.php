@@ -25,8 +25,8 @@
     <link href="<?php echo BASE_URL; ?>static/css/style.css" rel="stylesheet">
 
 
-    <link rel="shortcut icon" href="<?php echo BASE_URL; ?>favicon.ico?asdasd" type="image/icon"> 
-    <link rel="icon" href="<?php echo BASE_URL; ?>favicon.ico?asdasd" type="image/icon">
+    <link rel="shortcut icon" href="<?php echo BASE_URL; ?>favicon.ico" type="image/icon"> 
+    <link rel="icon" href="<?php echo BASE_URL; ?>favicon.ico" type="image/icon">
    
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -48,7 +48,7 @@
           <div class="col-md-4">
             <header role="banner">
               <a href="<?php echo BASE_URL; ?>">
-                <img class="img-responsive" src="<?php echo BASE_URL; ?>/static/c150/c150.png" id="c150-logo" alt="Campfire 150" />
+                <img class="img-responsive" src="<?php echo BASE_URL; ?>static/c150/c150.png" id="c150-logo" alt="Campfire 150" />
               </a>
             </header>
           </div>
