@@ -20,6 +20,8 @@
         <h4 class="modal-title"><?php echo gettext("Header Photo"); ?></h4>
       </div>
       <div class="modal-body">
+
+      	<p id="HeaderImgInfoDiv" style="display:none; font-size: 1.2em;"><?php echo gettext("Click on the darker area and drag to resize your image."); ?></p>
       	
         <div id="addImageDiv" class="img-rounded center-block" style="border-radius: 10px !important; position: relative; min-height:200px; border: 1px solid #E8E8E8; overflow: hidden; padding: 0; margin: 0;">
             
@@ -60,6 +62,8 @@
       </div>
       <div class="modal-body">
       	
+		<p id="ProfileImgInfoDiv" style="display:none; font-size: 1.2em;"><?php echo gettext("Click on the darker area and drag to resize your image."); ?></p>
+
         <div id="addImageDiv_profile" class="center-block" style="border-radius: 10px !important; position: relative; min-height:200px; border: 1px solid #E8E8E8; overflow: hidden; padding: 0; margin: 0;">
             <img id="imgPreviewer_profile" src="" class="img-rounded img-responsive center-block" alt="" style="width:1200px; z-index: 10; " />
         </div>
@@ -149,7 +153,7 @@
 				</div>
 				<img style="width: 200px; height: 200px;" id="profilePicture" class="img-thumbnail img-responsive" src="<?php echo isset($accountHomeViewModel->profilePictureURL) ? $accountHomeViewModel->profilePictureURL : BASE_URL . "static/images/default-user-image.png"; ?>" alt="<?php echo gettext("Profile Picture"); ?>">
 			</div>
-				<h1 class="h2">
+				<h1 id="userNameDiv" class="h2">
 					<?php echo $accountHomeViewModel->userDetails->FirstName . " " . $accountHomeViewModel->userDetails->LastName; ?>
 				</h1>
 				<?php
@@ -171,7 +175,7 @@
 			            {
 			            	?> 
 			            		<p><button id="EditProfileButton" class="btn btn-default btn-block" data-action="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Edit Profile"); ?></button></p>
-			            		<p><button class="CancelProfileButton btn btn-primary btn-block" style="display: none;"  data-action="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><span class="glyphicon glyphicon-user"></span> <?php echo gettext("Finish Editing"); ?></button></p>
+			            		<p><button class="CancelProfileButton btn btn-danger btn-block" style="display: none;"  data-action="<?php echo BASE_URL . "account/profile/" . $accountHomeViewModel->userDetails->UserId; ?>"><span class="glyphicon glyphicon-remove"></span> <?php echo gettext("Close Edit Screen"); ?></button></p>
 			            		<p><a id="ShareStoryButtonProfile" class="btn btn-primary btn-block marginBottom15" href="<?php echo BASE_URL . "story/add/" ?>"><span class="glyphicon glyphicon-pencil"></span> <?php echo gettext("Share A Story"); ?></a></p>
 		            		<?php
 			            }

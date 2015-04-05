@@ -125,7 +125,9 @@ function readURL(input) {
             $("#cropImage_header").show();
         }
 
-        reader.readAsDataURL(input.files[0]);        
+        reader.readAsDataURL(input.files[0]);    
+
+        $("#HeaderImgInfoDiv").show("slow");     
     }
 }
 
@@ -232,7 +234,9 @@ function readURL_profile(input) {
             $("#cropImage_profile").show();
         }
 
-        reader.readAsDataURL(input.files[0]);        
+        reader.readAsDataURL(input.files[0]);      
+
+        $("#ProfileImgInfoDiv").show("slow");  
     }
 }
 
@@ -467,6 +471,9 @@ $(document.body).on('click', "#ProfileSubmitButton", function(event){
 		success: function(data){
 			if(data)
 			{
+				$("#userNameDiv").html($("#FirstName").val() + " " + $("#LastName").val());
+				$("#LoginNameSpan").html(" " + $("#FirstName").val() + " " + $("#LastName").val());
+
 				$("#ProfileMessageDiv").html(data);
 			}
 			else

@@ -52,6 +52,8 @@
                             <h4 class="modal-title"><?php echo gettext("Header Photo"); ?></h4>
                           </div>
                           <div class="modal-body">
+
+                            <p id="StoryInfoDiv" style="display:none; font-size: 1.2em;"><?php echo gettext("Click on the darker area and drag to resize your image."); ?></p>
                             
                             <div id="addImageDiv" class="img-rounded center-block" style="position: relative; min-height:200px; border: 1px solid #E8E8E8; overflow: hidden; padding: 0; margin: 0;">
                                 

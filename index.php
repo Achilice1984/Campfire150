@@ -20,12 +20,15 @@ session_start();
 *	Load plugins
 */
 require_once('./application/plugins/gettext/gettext.inc');
-require_once('./application/plugins/akismet/akismet.class.php');
-require_once('./application/plugins/mailchimp/Mailchimp.php');
 require_once('./application/plugins/html_sanitizer/html_sanitizer.php');
-require_once('./application/plugins/alphaid/alphaID.php');
 require_once('./application/plugins/censor/CensorWords.php');
 require_once('./application/plugins/mobile-detect/Mobile_Detect.php');
+
+//unused
+// require_once('./application/plugins/alphaid/alphaID.php');
+// require_once('./application/plugins/mailchimp/Mailchimp.php');
+// require_once('./application/plugins/akismet/akismet.class.php');
+
 
 //Need this if php version less than 5.5
 require_once('./application/plugins/password/password.php');
@@ -96,8 +99,6 @@ define('base_url_https', $config['base_url_https']);
 
 define('SITE_EMAIL', $config['SITE_EMAIL']);
 define('CONTACT_EMAIL', $config['CONTACT_EMAIL']);
-
-define('COUNTDOWN_END', $config['COUNTDOWN_END']);
 
 $request_url = sprintf(
 					    "%s://%s:8084/",
