@@ -119,16 +119,4 @@ $config['MAX_LOGIN_ATTEMPTS'] 			= 10;
 //This is how long an account will be locked for if the maximum login attemps exceeds the maximum limit
 $config['ACCOUNT_LOCKOUT_TIME_MIN']		= 10;
 
-
-/*********************************************
-*
-*				COUNTDOWN
-*
-**********************************************/
-//
-// The end date for the countdown timmer
-//
-
-$config['COUNTDOWN_END']				= "1 April 2016";
-
 ?>
