@@ -105,7 +105,8 @@ class AdminModel extends Model {
 								(SELECT COUNT( * )
 									FROM story s1
 									INNER JOIN user u1 ON s1.User_UserId = u1.UserId
-									WHERE storyID NOT
+									WHERE s.Published = TRUE 
+									AND s1.storyID NOT
 									IN (
 
 									SELECT Story_StoryId
@@ -117,10 +118,11 @@ class AdminModel extends Model {
 							FROM story s
 							INNER JOIN user u
 							ON s.User_UserId = u.UserId
-							WHERE storyID 
+							WHERE s.Published = TRUE 
+							AND s.storyID 
 							NOT IN (SELECT Story_StoryId 
 									FROM admin_approve_story aas
-									WHERE aas.Active = TRUE) 
+									WHERE aas.Active = TRUE ) 
 							LIMIT :Start, :HowMany";
 
 			$start = $this->getStartValue($howMany, $page);
