@@ -100,16 +100,16 @@ define('base_url_https', $config['base_url_https']);
 define('SITE_EMAIL', $config['SITE_EMAIL']);
 define('CONTACT_EMAIL', $config['CONTACT_EMAIL']);
 
-// $request_url = sprintf(
-// 					    "%s://%s:8084/",
-// 					    isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
-// 					    $_SERVER['SERVER_NAME']
-// 					  );
 $request_url = sprintf(
-					    "%s://%s/",
+					    "%s://%s:8084/",
 					    isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
 					    $_SERVER['SERVER_NAME']
 					  );
+// $request_url = sprintf(
+// 					    "%s://%s/",
+// 					    isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
+// 					    $_SERVER['SERVER_NAME']
+// 					  );
 
 //Check if the requested url is included in the array of valid urls
 //and asign the proper url
@@ -122,8 +122,8 @@ else
 	define('BASE_URL', $config['base_url'][0]);
 }
 
-//define('FULL_URL', 'http'.(empty($_SERVER['HTTPS'])?'':'s').'://'.$_SERVER['SERVER_NAME'] . ($config["debugMode"] == true ? ":8084" : "") . $_SERVER['REQUEST_URI']);
-define('FULL_URL', 'http'.(empty($_SERVER['HTTPS'])?'':'s').'://'.$_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
+define('FULL_URL', 'http'.(empty($_SERVER['HTTPS'])?'':'s').'://'.$_SERVER['SERVER_NAME'] . ($config["debugMode"] == true ? ":8084" : "") . $_SERVER['REQUEST_URI']);
+//define('FULL_URL', 'http'.(empty($_SERVER['HTTPS'])?'':'s').'://'.$_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
 // Language Setup
 
 $sessionManager = new SessionManager;

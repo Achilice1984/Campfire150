@@ -19,11 +19,11 @@ $config["debugMode"] = true;
 // These are the urls that you intend to allow users to access your site by.
 //
 
-//$config['base_url'] = array("http://localhost:8084/CampFire150/"); // Base URL including trailing slash (e.g. http://localhost/)
-//$config['base_url_https'] = "http://localhost:8084/CampFire150/";
+$config['base_url'] = array("http://localhost:8084/CampFire150/"); // Base URL including trailing slash (e.g. http://localhost/)
+$config['base_url_https'] = "http://localhost:8084/CampFire150/";
 
-$config['base_url'] = array("http://www.campfire150.com/", "http://campfire150.com/", "https://www.campfire150.com/", "https://campfire150.com/"); // Base URL including trailing slash (e.g. http://localhost/)
-$config['base_url_https'] ="http://www.campfire150.com/";
+//$config['base_url'] = array("http://www.campfire150.com/", "http://campfire150.com/", "https://www.campfire150.com/", "https://campfire150.com/"); // Base URL including trailing slash (e.g. http://localhost/)
+//$config['base_url_https'] ="http://www.campfire150.com/";
 
 /*********************************************
 *
