@@ -1,9 +1,4 @@
 
-<?php
-	// debugit($storyViewModel);
-	 // debugit($userViewModel);
-	//debugit($approvalViewModel);
-?>
 <div class="container" style="margin-top:100px;">
 
 	<h1><?php echo gettext("Edit inappropriate comment"); ?></h1>
@@ -16,7 +11,7 @@
 					</div>
 					<img style="width: 200px; height: 200px;" id="profilePicture" class="img-thumbnail img-responsive" src="<?php echo isset($userViewModel->profilePictureURL) ? $userViewModel->profilePictureURL : BASE_URL . "static/images/default-user-image.png"; ?>" alt="<?php echo gettext("Profile Picture"); ?>">
 				</div>
-      			
+      			<br />
   				<ul>
   					<li><?php echo gettext("First Name: ") . $userViewModel->FirstName ?></li>
   					<li><?php echo gettext("Last Name: ") . $userViewModel->LastName ?></li>

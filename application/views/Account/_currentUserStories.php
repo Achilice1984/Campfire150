@@ -25,7 +25,7 @@
 
 				<div class="alert alert-info alert-dismissible" id="CurrentPublishedContentInfoBar" role="alert" style="display:none;">
 			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+			  		<strong><?php echo gettext("Info."); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 				</div>
 
 				<input type="hidden" name="CurrentPublishedContentPage" id="CurrentPublishedContentPage" value="1">
@@ -34,7 +34,7 @@
 				<div class="text-center" id="CurrentPublishedContentMoreButton">
 					<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 
-					<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories!"); ?></button>
+					<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
 				</div>	
 			<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 		</div>
@@ -55,7 +55,7 @@
 
 				<div class="alert alert-info alert-dismissible" id="CurrentDraftsContentInfoBar" role="alert" style="display:none;">
 			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+			  		<strong><?php echo gettext("Info."); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 				</div>
 
 				<input type="hidden" name="CurrentDraftsContentPage" id="CurrentDraftsContentPage" value="1">
@@ -64,7 +64,7 @@
 				<div class="text-center" id="CurrentDraftsContentMoreButton">
 					<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 
-					<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories!"); ?></button>
+					<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
 				</div>
 			<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 		</div>
@@ -85,7 +85,7 @@
 
 				<div class="alert alert-info alert-dismissible" id="CurrentPendingContentInfoBar" role="alert" style="display:none;">
 			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+			  		<strong><?php echo gettext("Info."); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 				</div>
 
 				<input type="hidden" name="CurrentPendingContentPage" id="CurrentPendingContentPage" value="1">
@@ -94,7 +94,7 @@
 				<div class="text-center" id="CurrentPendingContentMoreButton">
 					<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 
-					<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories!"); ?></button>
+					<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
 				</div>
 			<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 		</div>
@@ -115,7 +115,7 @@
 
 				<div class="alert alert-info alert-dismissible" id="CurrentRejectedContentInfoBar" role="alert" style="display:none;">
 			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+			  		<strong><?php echo gettext("Info."); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 				</div>
 
 				<input type="hidden" name="CurrentRejectedContentPage" id="CurrentRejectedContentPage" value="1">
@@ -124,7 +124,7 @@
 				<div class="text-center" id="CurrentRejectedContentMoreButton">
 					<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 
-					<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories!"); ?></button>
+					<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
 				</div>
 			<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 		</div>  
@@ -145,7 +145,7 @@
 
 				<div class="alert alert-info alert-dismissible" id="CurrentCommentsContentInfoBar" role="alert" style="display:none;">
 			  		<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			  		<strong><?php echo gettext("Info!"); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
+			  		<strong><?php echo gettext("Info."); ?></strong> <?php echo gettext("You have reached the end of your search results."); ?>
 				</div>
 
 				<input type="hidden" name="CurrentCommentsContentPage" id="CurrentCommentsContentPage" value="1">
@@ -154,7 +154,7 @@
 				<div class="row text-center" id="CurrentCommentsContentMoreButton" style="margin-bottom: 100px;">
 					<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 					
-					<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Comments!"); ?></button>
+					<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Comments"); ?></button>
 				</div>
 			<?php } else { include(APP_DIR . "views/shared/noResults.php"); } ?>
 		</div>  		

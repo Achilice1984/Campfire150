@@ -29,15 +29,11 @@ $(document.body).on('click', "#EditProfileButton", function(event){
 
 	$.ajax({
 		type: "GET",
-		url: $("#EditProfileButton").attr("href"),
+		url: $("#EditProfileButton").attr("data-action"),
 		success: function(data){
 			if(data)
 			{	
-				$("#profileContentContainer").html(data);
-
-				$('#Birthday').datepicker({
-				    format: 'yyyy-mm-dd'
-				});
+				$("#profileContentContainer").html(data);				
 
 				$('textarea#About').maxlength({
 		            alwaysShow: true
@@ -96,6 +92,12 @@ $(document.body).on('click', ".CancelProfileButton", function(event){
 	$("#ShareStoryButtonProfile").show();	
 
 	$(".messageDiv .alert").remove();
+
+	$("#AboutSubmitButton").hide();
+	$("#UserActionSubmitButton").hide();
+
+	$("#About").val($("#AboutDivText").text().trim()); 
+	$("#UserActionStatement").val($("#ActionStatementDivText").text().trim());  	 
 });
 
 
@@ -123,7 +125,9 @@ function readURL(input) {
             $("#cropImage_header").show();
         }
 
-        reader.readAsDataURL(input.files[0]);        
+        reader.readAsDataURL(input.files[0]);    
+
+        $("#HeaderImgInfoDiv").show("slow");     
     }
 }
 
@@ -139,10 +143,10 @@ function initCrop(url) {
 			movable: true,
 			modal: true,
 			responsive: true,
-			autoCropArea: 0.8,
+			autoCropArea: 0.99,
 			guides: true,
 			highlight: true,
-			resizable: true,
+			resizable: false,
 			minContainerWidth:100,
 			zoomable: false,
 			crop: function(data) {
@@ -186,6 +190,7 @@ $(document.body).on('click', "#cropImage_header", function(){
 			}
 
 			$('#imgPreviewer_header').cropper('destroy');
+			$('#imgPreviewer_header').attr("src", "");
 		},
 		beforeSend: function(){
 			$("#CropBackgroundSpinerDiv .spinner_small").removeClass("hide");
@@ -229,7 +234,9 @@ function readURL_profile(input) {
             $("#cropImage_profile").show();
         }
 
-        reader.readAsDataURL(input.files[0]);        
+        reader.readAsDataURL(input.files[0]);      
+
+        $("#ProfileImgInfoDiv").show("slow");  
     }
 }
 
@@ -245,10 +252,10 @@ function initCrop_profile(url) {
 			movable: true,
 			modal: true,
 			responsive: true,
-			autoCropArea: 0.8,
+			autoCropArea: 0.99,
 			guides: true,
 			highlight: true,
-			resizable: true,
+			resizable: false,
 			minContainerWidth:100,
 			zoomable: false,
 			crop: function(data) {
@@ -292,6 +299,7 @@ $(document.body).on('click', "#cropImage_profile", function(){
 			}
 
 			$('#imgPreviewer_profile').cropper('destroy');
+			$('#imgPreviewer_profile').attr("src", "");
 		},
 		beforeSend: function(){
 			$("#CropProfileSpinerDiv .spinner_small").removeClass("hide");
@@ -463,7 +471,10 @@ $(document.body).on('click', "#ProfileSubmitButton", function(event){
 		success: function(data){
 			if(data)
 			{
-				$("#profileForm").find(".messageDiv").html(data);
+				$("#userNameDiv").html($("#FirstName").val() + " " + $("#LastName").val());
+				$("#LoginNameSpan").html(" " + $("#FirstName").val() + " " + $("#LastName").val());
+
+				$("#ProfileMessageDiv").html(data);
 			}
 			else
 			{
@@ -559,6 +570,8 @@ $(document.body).on('click', "#NewFeedContentMoreButton", function(event){
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -595,6 +608,8 @@ $(document.body).on('click', "#Stories_ContentMoreButton", function(event){
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -631,6 +646,8 @@ $(document.body).on('click', "#StoryRecommendationContentMoreButton", function(e
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -667,6 +684,8 @@ $(document.body).on('click', "#UserFollowingContentMoreButton", function(event){
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -703,6 +722,8 @@ $(document.body).on('click', "#UserFollowersContentMoreButton", function(event){
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -747,6 +768,8 @@ $(document.body).on('click', "#CurrentPublishedContentMoreButton", function(even
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -782,6 +805,8 @@ $(document.body).on('click', "#CurrentDraftsContentMoreButton", function(event){
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -817,6 +842,8 @@ $(document.body).on('click', "#CurrentPendingContentMoreButton", function(event)
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -852,6 +879,8 @@ $(document.body).on('click', "#CurrentRejectedContentMoreButton", function(event
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -888,6 +917,8 @@ $(document.body).on('click', "#CurrentCommentsContentMoreButton", function(event
 			if(data)
 			{
 				$(contentDivName).append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{

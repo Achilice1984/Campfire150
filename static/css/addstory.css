@@ -1,14 +1,11 @@
 #StoryTitle {
-	border-width:0px;
-	border:none;
 	box-shadow: none;
-	height: 80px;
-	font-size: 3em;
+	height: 50px;
+	font-size: 2em;
 }
 
 .select2-container--default {
 	
-	height: 40px;
 	font-size: 1.5em;
 }
 
@@ -17,10 +14,10 @@
 	padding-right: 20px;
 
 }
-.fileUpload{
+/*.fileUpload{
 	margin-top: 300px;
 	width:100%;
-}
+}*/
 
 .mce-menubar {
 	background-color: white !important;

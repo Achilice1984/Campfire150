@@ -23,6 +23,10 @@
     <link href="<?php echo BASE_URL; ?>static/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">  
 
     <link href="<?php echo BASE_URL; ?>static/css/style.css" rel="stylesheet">
+
+
+    <link rel="shortcut icon" href="<?php echo BASE_URL; ?>favicon.ico" type="image/icon"> 
+    <link rel="icon" href="<?php echo BASE_URL; ?>favicon.ico" type="image/icon">
    
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -44,7 +48,7 @@
           <div class="col-md-4">
             <header role="banner">
               <a href="<?php echo BASE_URL; ?>">
-                <img class="img-responsive" src="<?php echo BASE_URL; ?>/static/c150/c150.png" id="c150-logo" alt="Campfire 150" />
+                <img class="img-responsive" src="<?php echo BASE_URL; ?>static/c150/c150.png" id="c150-logo" alt="Campfire 150" />
               </a>
             </header>
           </div>
@@ -69,7 +73,7 @@
                       <?php } else { ?>
                                 <li class="dropdown">
                                   <a href="#" class="dropdown-toggle" id="loginMenu" data-toggle="dropdown" aria-expanded="true">
-                                    <span class="glyphicon glyphicon-user"></span><span class="hidden-xs"> <?php echo $currentUser->FirstName . " " . $currentUser->LastName; ?></span> <span class="caret"></span>
+                                    <span class="glyphicon glyphicon-user"></span><span id="LoginNameSpan" class="hidden-xs"> <?php echo $currentUser->FirstName . " " . $currentUser->LastName; ?></span> <span class="caret"></span>
                                   </a>
                                   <ul class="dropdown-menu" role="menu" aria-labelledby="loginMenu">
                                     <li role="presentation"><a role="menuitem" tabindex="-1" href="<?php echo BASE_URL; ?>account/home"><?php echo gettext("Profile"); ?></a></li>
@@ -129,3 +133,30 @@
     </div> <!-- End #c150-head -->
 
     <div id="c150-body">
+
+      <?php if (!$currentUser->IsAuth): ?>
+          <div id="NotLoggedInModal" class="modal fade">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                  <h2 class="modal-title"><?php echo gettext("Not logged in?"); ?></h2>
+                </div>
+                <div class="modal-body">
+
+                  <h4><?php echo gettext("Login or register now to start sharing your story."); ?></h4>
+
+                  <div style="margin-top: 30px;" class="row">
+                    <div class="col-md-12">                      
+                      <a href="<?php echo BASE_URL . "account/login"; ?>" class="btn btn-md btn-warning"><?php echo gettext("Login"); ?></a>
+                      <a href="<?php echo BASE_URL . "account/register"; ?>" class="btn btn-md btn-primary"><?php echo gettext("Register"); ?></a>
+                    </div>
+                  </div>
+                 
+                </div>
+                <div class="modal-body">
+                </div>
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal -->
+      <?php endif ?>

@@ -331,13 +331,6 @@ header, footer, nav {
 	min-height: 200px;
 }
 
-.clock-canvas {
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-}
-
 
 /*****************************************************
 *

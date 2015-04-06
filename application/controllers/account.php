@@ -57,7 +57,7 @@ class Account extends Controller {
 				($accountHomeViewModel->userDetails->ProfilePrivacyType_PrivacyTypeId == 1 || $userID == $this->currentUser->UserId) && $accountHomeViewModel->userDetails->Active == TRUE)
 			{
 				//Populate data to be shown on the page
-				$accountHomeViewModel->recommendedStoryList = $storyModel->getStoriesRecommendedByCurrentUser($userID);				
+				$accountHomeViewModel->recommendedStoryList = $storyModel->getStoriesRecommendedByCurrentUser($this->currentUser->UserId, $userID);				
 				$accountHomeViewModel->followingList = $model->getFollowing($userID);
 				$accountHomeViewModel->followerList = $model->getFollowers($userID);
 
@@ -93,7 +93,7 @@ class Account extends Controller {
 				}
 				else
 				{
-					$accountHomeViewModel->usersStoryList = $storyModel->getStoriesWrittenByCurrentUser($userID);
+					$accountHomeViewModel->usersStoryList = $storyModel->getStoriesWrittenByCurrentUser($this->currentUser->UserId, $userID);
 
 					//How many approved stories
 					$accountHomeViewModel->totalApprovedStories = $storyModel->getTotalStoriesApproved($userID);
@@ -116,7 +116,6 @@ class Account extends Controller {
 						array("static/js/userHome.js", "intern"),
 						array("static/js/storyButtons.js", "intern"),
 						array("static/plugins/cropper/cropper.min.js", "intern"),
-						array("static/plugins/datepicker/js/bootstrap-datepicker.min.js", "intern"),
 						array("static/plugins/maxlength/js/bootstrap-maxlength.min.js", "intern"),
 						array("static/plugins/validation/js/formValidation.min.js", "intern"),
 						array("static/plugins/validation/js/framework/bootstrap.min.js", "intern"),
@@ -128,7 +127,6 @@ class Account extends Controller {
 
 					$view->setCSS(array(
 						array("static/plugins/cropper/cropper.min.css", "intern"),
-						array("static/plugins/datepicker/css/bootstrap-datepicker3.min.css", "intern"),
 						array("static/plugins/validation/css/formValidation.min.css", "intern"),
 						array("static/plugins/select2/css/select2.min.css", "intern")
 					));
@@ -138,7 +136,8 @@ class Account extends Controller {
 					//Load up some js files
 					$view->setJS(array(
 						array("static/js/followUser.js", "intern"),
-						array("static/js/userHome.js", "intern")
+						array("static/js/userHome.js", "intern"),
+						array("static/js/storyButtons.js", "intern"),
 					));
 				}				
 
@@ -189,13 +188,17 @@ class Account extends Controller {
 
 					if($isLoggedIn) //Success
 					{
+						if(isset($_SESSION["Just_Registered"]))
+						{							
+							$this->redirect("story/add");
+						}
 						//Redirect to users home page
 						$this->redirect("account/home");	
 					}
 					else //Failed login
 					{
 						// Add an error message because login failed 
-						addErrorMessage("dbError", gettext("Oops, it looks like your attempt to login failed."));
+						addErrorMessage("dbError", gettext("Your attempt to login failed."));
 					}				
 				}	
 
@@ -316,18 +319,26 @@ class Account extends Controller {
 				//This will also set the temp errors to be shown in the view
 				if($userViewModel->validate())
 				{		
-					//Attempt to register the user with our website				
-					if($model->registerUserProfile($userViewModel))
+					if($userViewModel->Password == $userViewModel->RePassword)
 					{
-						addSuccessMessage("dbSuccess", gettext("You are Registered! Verify your email and log in!"), 1);
+						//Attempt to register the user with our website				
+						if($model->registerUserProfile($userViewModel))
+						{
+							$_SESSION["User_Is_Registered"] = TRUE;
+							addSuccessMessage("dbSuccess", gettext("You are now registered. Please verify your email and login."), 1);
 
-						//If success, send user to the login page
-						$this->redirect("account/login");	
+							//If success, send user to the login page
+							$this->redirect("account/login");	
+						}
+						else
+						{
+							addErrorMessage("dbError", gettext("Something went wrong while trying to register your profile."));
+						}		
 					}
 					else
 					{
-						addErrorMessage("dbError", gettext("Oops, it looks like something went wrong while trying to register your profile."));
-					}					
+						addErrorMessage("dbError", gettext("Your passwords don't match."));
+					}			
 				}			
 			}		
 
@@ -336,8 +347,6 @@ class Account extends Controller {
 
 			//Load up some js files
 			$view->setJS(array(
-				array("static/plugins/datepicker/js/bootstrap-datepicker.min.js", "intern"),
-				array("static/js/register.js", "intern"),
 				array("static/plugins/validation/js/formValidation.min.js", "intern"),
 				array("static/plugins/validation/js/framework/bootstrap.min.js", "intern"),
 				array("static/plugins/select2/js/select2.min.js", "intern"),
@@ -347,7 +356,6 @@ class Account extends Controller {
 			));
 
 			$view->setCSS(array(
-				array("static/plugins/datepicker/css/bootstrap-datepicker3.min.css", "intern"),
 				array("static/plugins/validation/css/formValidation.min.css", "intern"),
 				array("static/plugins/select2/css/select2.min.css", "intern")
 			));		
@@ -379,13 +387,16 @@ class Account extends Controller {
 
 			if($model->verifiyEmail($email, $hashedEmailVerification))
 			{
-				addSuccessMessage("dbError", gettext("Your email has been successfully verified! Login to start using your account!"), 1);
+				//Stkaeholder wanted first login to redirect to add story page, this how its determined
+				$_SESSION["Just_Registered"] = TRUE;
+
+				addSuccessMessage("dbError", gettext("Your email has been successfully verified. Please login to start using your account."), 1);
 
 				$this->redirect("account/login");
 			}
 			else
 			{
-				addErrorMessage("dbError", gettext("Oops, an error occurred while attempting to verify your account!"), 1);
+				addErrorMessage("dbError", gettext("An error occurred while attempting to verify your account."), 1);
 				$this->redirect("");
 			}
 		}
@@ -474,7 +485,7 @@ class Account extends Controller {
 					{
 						if(!$this->isAjax())
 						{
-							addErrorMessage("dbError", gettext("Oops, it looks like something went wrong while trying to update your password."), 1);
+							addErrorMessage("dbError", gettext("Something went wrong while trying to update your password."), 1);
 						}
 					}
 				}
@@ -482,7 +493,7 @@ class Account extends Controller {
 				{
 					if(!$this->isAjax())
 					{
-						addErrorMessage("dbError", gettext("Oops, it looks like your passwords don't match."), 1);
+						addErrorMessage("dbError", gettext("Your passwords don't match."), 1);
 					}
 				}
 			}
@@ -646,9 +657,7 @@ class Account extends Controller {
 			$profileViewModel = $this->loadViewModel('ProfileViewModel');
 
 			//Load the AccountModel to access account functions
-			$model = $this->loadModel('AccountModel');
-
-			$profileViewModel = $model->getProfileByID($this->currentUser->UserId);
+			$model = $this->loadModel('AccountModel');			
 
 			$IsSuccess = FALSE;
 
@@ -656,12 +665,14 @@ class Account extends Controller {
 			if($this->isPost())
 			{			
 				//Map post values to the userViewModel
-				$profileViewModel = AutoMapper::mapPost($profileViewModel);			
+				$profileViewModel = AutoMapper::mapPost($profileViewModel);	
 				
 				//Validate data that was posted to the server
 				//This will also set the temp errors to be shown in the view
 				if($profileViewModel->validate())
 				{		
+					$profileViewModel->UserId = $this->currentUser->UserId;
+					
 					//Attempt to register the user with our website				
 					if($model->updateUserProfile($profileViewModel))
 					{
@@ -691,13 +702,15 @@ class Account extends Controller {
 				{
 					if(!$IsSuccess)
 					{
-						addErrorMessage("dbError", gettext("Oops, it looks like something went wrong while trying to update your profile."), 1);
+						addErrorMessage("dbError", gettext("Something went wrong while trying to update your profile."), 1);
 					}	
 
 					//If success, send user to the home page
 					$this->redirect("account/home");
 				}			
-			}		
+			}
+
+			$profileViewModel = $model->getProfileByID($this->currentUser->UserId);		
 
 			$siteModel = $this->loadModel('SiteContent/SiteContentModel');
 			$privacyDropdownValues = $siteModel->getDropdownValues_ProfilePrivacyType();
@@ -1083,7 +1096,7 @@ class Account extends Controller {
 				$storyModel = $this->loadModel("Story/StoryModel");
 				$searchResults = array();
 
-				$searchResults = $storyModel->getStoriesWrittenByCurrentUser($_POST["UserId"], MAX_STORIES_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+				$searchResults = $storyModel->getStoriesWrittenByCurrentUser($this->currentUser->UserId, $_POST["UserId"], MAX_STORIES_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
 
 				if (isset($searchResults)) {
 					foreach ($searchResults as $story)
@@ -1110,7 +1123,7 @@ class Account extends Controller {
 				$storyModel = $this->loadModel("Story/StoryModel");
 				$searchResults = array();
 
-				$searchResults = $storyModel->getStoriesRecommendedByCurrentUser($_POST["UserId"], MAX_STORIES_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
+				$searchResults = $storyModel->getStoriesRecommendedByCurrentUser($this->currentUser->UserId, $_POST["UserId"], MAX_STORIES_LISTS, isset($_POST["Page"]) ? $_POST["Page"] : 1);
 
 				if (isset($searchResults)) {
 					foreach ($searchResults as $story)
@@ -1440,7 +1453,7 @@ class Account extends Controller {
 			{
 				if($result)
 				{
-					addSuccessMessage("dbSuccess", gettext("An email was sent to help reset your password!"), 1);
+					addSuccessMessage("dbSuccess", gettext("An email was sent to help reset your password."), 1);
 					$this->redirect("");
 				}
 			}
@@ -1466,14 +1479,14 @@ class Account extends Controller {
 
 						if($result)
 						{
-							addSuccessMessage("dbSuccess", gettext("Password was reset, please login using your new password!"), 1);
+							addSuccessMessage("dbSuccess", gettext("Your password was reset, please login using your new password."), 1);
 
 							$this->redirect("account/login");
 						}
 					}
 				}
 
-				addErrorMessage("dbError", gettext("Oops, something went wrong while resetting your password."));
+				addErrorMessage("dbError", gettext("Something went wrong while resetting your password."));
 			}		
 
 			//Load the profile view

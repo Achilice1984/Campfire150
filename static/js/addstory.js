@@ -1,3 +1,11 @@
+$(function(){
+	$("#WelcomeStoryModal").modal();
+});
+
+$(document.body).on('click', "#addStoryImgButton", function(){
+	$('#storyImgModal').modal();	
+});
+
 function readURL(input) {
 
     if (input.files && input.files[0]) {
@@ -10,12 +18,14 @@ function readURL(input) {
             $("#cropImage").show();
         }
 
-        reader.readAsDataURL(input.files[0]);        
+        reader.readAsDataURL(input.files[0]);  
+
+        $("#StoryInfoDiv").show("slow");      
     }
 }
 
 $("#Images").change(function(){
-    readURL(this);     
+    readURL(this);
 });
 
 function initCrop(url) {
@@ -34,10 +44,10 @@ function initCrop(url) {
 			movable: true,
 			modal: true,
 			responsive: true,
-			autoCropArea: 0.8,
+			autoCropArea: 0.99,
 			guides: true,
 			highlight: true,
-			resizable: true,
+			resizable: false,
 			minContainerWidth:100,
 			zoomable: false,
 			crop: function(data) {
@@ -59,12 +69,20 @@ function initCrop(url) {
 
 
 $(document.body).on('click', "#cropImage", function(){
+
+	$("#CropStorySpinerDiv .spinner_small").removeClass("hide");
+
  	var url = $('#imgPreviewer').cropper('getDataURL');
 
  	$('#imgPreviewer').cropper('destroy');
-	$("#imgPreviewer").attr("src", url);
+ 	$('#imgPreviewer').attr("src", "");
+
+	$("#imgDisplayer").attr("src", url);
+
+	$(".close").click();
 
 	$("#cropImage").hide();
+	$("#CropStorySpinerDiv .spinner_small").addClass("hide");
 
 	return true;
  });

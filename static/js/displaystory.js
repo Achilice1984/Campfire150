@@ -13,6 +13,8 @@ $(document.body).on('click', "#CommentStoryMoreButton", function(){
 			if(data)
 			{
 				$("#comment-list").append(data).show("slow");
+
+				init_tooltip();
 			}
 			else
 			{
@@ -113,6 +115,10 @@ $(document.body).on('click', ".StoryRecommendButton", function(event){
 					}
 				}
 			}
+			else
+			{
+				$("#NotLoggedInModal").modal();
+			}
 		}
 	});
 });
@@ -163,6 +169,10 @@ $(document.body).on('click', ".StoryFlagButton", function(event){
 					}
 				}
 			}
+			else
+			{
+				$("#NotLoggedInModal").modal();
+			}
 		}
 	});
 });
@@ -197,6 +207,10 @@ $(document.body).on('click', ".CommentFlagButton", function(event){
 				{
 					thisFlag.removeClass("StoryActionButtons").addClass("text-danger");
 				}
+			}
+			else
+			{
+				$("#NotLoggedInModal").modal();
 			}
 		}
 	});

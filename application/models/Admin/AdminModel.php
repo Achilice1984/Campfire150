@@ -105,7 +105,8 @@ class AdminModel extends Model {
 								(SELECT COUNT( * )
 									FROM story s1
 									INNER JOIN user u1 ON s1.User_UserId = u1.UserId
-									WHERE storyID NOT
+									WHERE s.Published = TRUE 
+									AND s1.storyID NOT
 									IN (
 
 									SELECT Story_StoryId
@@ -117,10 +118,11 @@ class AdminModel extends Model {
 							FROM story s
 							INNER JOIN user u
 							ON s.User_UserId = u.UserId
-							WHERE storyID 
+							WHERE s.Published = TRUE 
+							AND s.storyID 
 							NOT IN (SELECT Story_StoryId 
 									FROM admin_approve_story aas
-									WHERE aas.Active = TRUE) 
+									WHERE aas.Active = TRUE ) 
 							LIMIT :Start, :HowMany";
 
 			$start = $this->getStartValue($howMany, $page);
@@ -224,6 +226,45 @@ class AdminModel extends Model {
 		}		
 	}
 
+	public function getStoryListPublished($howMany = self::HOWMANY, $page = self::PAGE)
+	{
+		//Accepts how many, page
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Gets a list of stories that have been rejected by admin
+		//Should not contain any published stories
+		//Should have the admin user details an reason for being rejected
+		//returns an array of Story class
+
+		try
+		{
+			$statement = "SELECT *,
+								(SELECT COUNT(*) FROM story s LEFT JOIN admin_approve_story aas ON s.storyID=aas.Story_StoryId 
+									INNER JOIN user u ON s.User_UserId = u.UserId WHERE aas.Approved = 1) AS totalStories
+							FROM story s 
+							LEFT JOIN admin_approve_story aas 
+							ON s.storyID=aas.Story_StoryId 
+							INNER JOIN user u 
+							ON s.User_UserId = u.UserId 
+							WHERE aas.Approved = 1 
+							LIMIT :Start, :HowMany";
+
+			$start = $this->getStartValue($howMany, $page);
+
+			$parameters = array(
+				":Start"=>$start, 
+				":HowMany"=>$howMany
+				);
+
+			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/StoryViewModel");
+
+			return $storyList;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
+
 	public function rejectStory($adminID, $storyID, $reason)
 	{
 		//Accepts the adminID, the story id and the reason why it was rejected
@@ -238,8 +279,8 @@ class AdminModel extends Model {
 			 	array(":StoryID"=>$storyID)
 			 	);//Set the active record for the story to deactive;
 
-			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved)
-			  				VALUES(:AdminID, :StoryID, :Reason, FALSE)
+			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved, Pending)
+			  				VALUES(:AdminID, :StoryID, :Reason, FALSE, FALSE)
 							ON DUPLICATE KEY
 							UPDATE Reason=:NewReason, Approved=0, Active=1";
 
@@ -272,8 +313,8 @@ class AdminModel extends Model {
 			 	array(":StoryID"=>$storyID)
 			 	);//Set the active record for the story to deactive;
 
-			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved)
-			  				VALUES(:AdminID, :StoryID, :Reason, TRUE)
+			$statement = "INSERT INTO admin_approve_story (User_UserId, Story_StoryId, Reason, Approved, Pending)
+			  				VALUES(:AdminID, :StoryID, :Reason, TRUE, FALSE)
 							ON DUPLICATE KEY
 							UPDATE Reason=:NewReason, Approved=1, Active=1";
 
@@ -403,6 +444,48 @@ class AdminModel extends Model {
 		}
 	}
 
+	public function getCommentListPublished($howMany = self::HOWMANY, $page = self::PAGE)
+	{
+		//Accepts how many, page
+		//for example, if how many = 10 and page = 2, you would take results 11 to 20
+		//Gets a list of comments that have been marked as inappropriate by users
+		//Order the list by how many inappropriate flags there are
+		//returns an array of Comment class
+		
+		try
+		{			
+			$statement = "SELECT c.CommentId, c.Story_StoryId, c.User_UserId, c.Content, c.PublishFlag, c.DateUpdated,
+								s.StoryTitle, (
+								SELECT COUNT( * )
+								FROM admin_reject_comment
+								WHERE Active = 1 AND Rejected = 0
+								) AS TotalComments
+							FROM admin_reject_comment arc 
+							LEFT JOIN comment c
+							ON c.CommentId = arc.Comment_CommentId 
+							LEFT JOIN story s 
+							ON c.Story_StoryId = s.StoryId 
+							LEFT JOIN user u 
+							ON c.User_UserId=u.UserId
+							WHERE arc.Active = 1 AND arc.Rejected = 0
+							ORDER BY c.CommentId 
+							LIMIT :Start, :HowMany";
+			
+			$start = $this->getStartValue($howMany, $page);
+			$parameters = array(
+				":Start"=>$start,
+				":HowMany"=>$howMany
+				);
+
+			$storyList = $this->fetchIntoClass($statement, $parameters, "shared/CommentViewModel");
+
+			return $storyList;
+		}
+		catch(PDOException $e) 
+		{
+			return $e->getMessage();
+		}
+	}
 
 	public function rejectCommentAsAdmin($adminID, $commentID, $reason)
 	{
@@ -474,9 +557,7 @@ class AdminModel extends Model {
 	{
 		try
 		{
-			$statement = "SELECT user.UserId, user.FirstName, user.LastName, user.DateCreated, user.About, user.ProfilePrivacyType_PrivacyTypeId, user.Active,
-							
-							pp.PictureId as ProfilePictureId,
+			$statement = "SELECT *,	pp.PictureId as ProfilePictureId,
 
 							bp.PictureId as BackgroundPictureId,
 							
@@ -734,7 +815,35 @@ class AdminModel extends Model {
 		}
 	}
 
-	public function getListQuestionaireQuestions($howMany = self::HOWMANY, $page = self::PAGE)
+	public function setUserAsAdmin($userId)
+	{
+		try
+		{
+			$statement = "UPDATE user SET AdminFlag = 1 WHERE UserId = :UserId";
+
+			return $this->fetch($statement, array(":UserId" => $userId));
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function setUserAsRegular($userId)
+	{
+		try
+		{
+			$statement = "UPDATE user SET AdminFlag = 0 WHERE UserId = :UserId";
+
+			return $this->fetch($statement, array(":UserId" => $userId));
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function getListActiveQuestionaireQuestions($howMany = self::HOWMANY, $page = self::PAGE)
 	{
 		//Gets a list of all the current questionaire questions
 		//This will include a list of possible answers
@@ -742,9 +851,46 @@ class AdminModel extends Model {
 		try
 		{
 			$statement = "SELECT * , (
-								SELECT COUNT(*) FROM question
+								SELECT COUNT(*) FROM question WHERE Active = 1
 							) AS TotalQuestions
 							FROM question
+							WHERE Active = 1
+							LIMIT :Start, :HowMany";
+
+			$start = $this-> getStartValue($howMany, $page);
+			
+			$parameters = array( 
+					":Start" => $start,
+					":HowMany" => $howMany
+				);
+
+			$questionList = $this->fetchIntoObject($statement, $parameters);
+
+			if(isset($questionList))
+			{
+				return $questionList;
+			}
+
+			return null;
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function getListDeactiveQuestionaireQuestions($howMany = self::HOWMANY, $page = self::PAGE)
+	{
+		//Gets a list of all the current questionaire questions
+		//This will include a list of possible answers
+
+		try
+		{
+			$statement = "SELECT * , (
+								SELECT COUNT(*) FROM question WHERE Active = 0
+							) AS TotalQuestions
+							FROM question
+							WHERE Active = 0
 							LIMIT :Start, :HowMany";
 
 			$start = $this-> getStartValue($howMany, $page);
@@ -784,12 +930,14 @@ class AdminModel extends Model {
 								ON AnswerId = Answer_AnswerId
 								LEFT JOIN question q
 								ON QuestionId = Question_QuestionId
+								WHERE answer.Active = 1
 							) AS TotalAnswers
 							FROM answer a
 							LEFT JOIN answer_for_question afq
 							ON a.AnswerId = afq.Answer_AnswerId
 							LEFT JOIN question q
 							ON q.QuestionId = afq.Question_QuestionId
+							WHERE a.Active = 1
 							ORDER BY afq.Question_QuestionId
 							LIMIT :Start, :HowMany";
 
@@ -808,6 +956,88 @@ class AdminModel extends Model {
 			}
 
 			return null;
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function getListDeactiveQuestionaireAnswers($howMany = self::HOWMANY, $page = self::PAGE)
+	{
+		//Gets a list of all the current questionaire questions
+		//This will include a list of possible answers
+
+		try
+		{
+			$statement = "SELECT * , a.NameE AS AnswerE, a.NameF AS AnswerF, 
+							q.NameE AS QuestionE, q.NameE AS QuestionF, (
+								SELECT COUNT(*) 
+								FROM answer
+								LEFT JOIN answer_for_question
+								ON AnswerId = Answer_AnswerId
+								LEFT JOIN question q
+								ON QuestionId = Question_QuestionId
+								WHERE answer.Active = 0
+							) AS TotalAnswers
+							FROM answer a
+							LEFT JOIN answer_for_question afq
+							ON a.AnswerId = afq.Answer_AnswerId
+							LEFT JOIN question q
+							ON q.QuestionId = afq.Question_QuestionId
+							WHERE a.Active = 0
+							ORDER BY afq.Question_QuestionId
+							LIMIT :Start, :HowMany";
+
+			$start = $this-> getStartValue($howMany, $page);
+			
+			$parameters = array( 
+					":Start" => $start,
+					":HowMany" => $howMany
+				);
+
+			$answerList = $this->fetchIntoObject($statement, $parameters);
+
+			if(isset($answerList))
+			{
+				return $answerList;
+			}
+
+			return null;
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function DeactiveQuestionaireAnswer($answerId)
+	{
+		//Gets a list of all the current questionaire questions
+		//This will include a list of possible answers
+
+		try
+		{
+			$statement = "UPDATE answer SET Active = 0 WHERE AnswerId = :AnswerId AND Active = 1";
+
+			return $this->fetch($statement, array(":AnswerId" => $answerId));
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function DeactiveQuestionaireQuestion($questionId)
+	{
+		//Gets a list of all the current questionaire questions
+		//This will include a list of possible answers
+
+		try
+		{
+			$statement = "UPDATE question SET Active = 0 WHERE QuestionId = :QuestionId AND Active = 1";
+
+			return $this->fetch($statement, array(":QuestionId" => $questionId));
 		}
 		catch(PDOException $e)
 		{
@@ -1072,6 +1302,9 @@ class AdminModel extends Model {
 				case strtolower($tableName) == "storyprivacytype":
 					$statement = "SELECT *, StoryPrivacyTypeId AS Id FROM storyprivacytype WHERE StoryPrivacyTypeId = :Id";
 					break;
+				case strtolower($tableName) == "actions_taken_type":
+					$statement = "SELECT *, ActionsTakenTypeId AS Id FROM actions_taken_type WHERE ActionsTakenTypeId = :Id";
+					break;
 				default:
 					return $tableName." is not a proper table name";
 			}			
@@ -1097,25 +1330,28 @@ class AdminModel extends Model {
 			switch(true)
 			{
 				case strtolower($tableName) == "languagetype":
-					$statement = "SELECT *, LanguageId AS Id, (SELECT COUNT(*) FROM languagetype) AS TotalNumber FROM languagetype";
+					$statement = "SELECT *, LanguageId AS Id, (SELECT COUNT(*) FROM languagetype WHERE Active = 1) AS TotalNumber FROM languagetype WHERE Active = 1";
 					break;
 				case strtolower($tableName) == "gendertype":
-					$statement = "SELECT *, GenderTypeId AS Id, (SELECT COUNT(*) FROM gendertype) AS TotalNumber FROM gendertype";
+					$statement = "SELECT *, GenderTypeId AS Id, (SELECT COUNT(*) FROM gendertype WHERE Active = 1) AS TotalNumber FROM gendertype WHERE Active = 1";
 					break;
 				case strtolower($tableName) == "achievementleveltype":
-					$statement = "SELECT *, LevelId AS Id, (SELECT COUNT(*) FROM achievementleveltype) AS TotalNumber FROM achievementleveltype";
+					$statement = "SELECT *, LevelId AS Id, (SELECT COUNT(*) FROM achievementleveltype WHERE Active = 1) AS TotalNumber FROM achievementleveltype WHERE Active = 1";
 					break;
 				case strtolower($tableName) == "securityquestion":
-					$statement = "SELECT *, SecurityQuestionId AS Id, (SELECT COUNT(*) FROM securityquestion) AS TotalNumber FROM securityquestion";
+					$statement = "SELECT *, SecurityQuestionId AS Id, (SELECT COUNT(*) FROM securityquestion WHERE Active = 1) AS TotalNumber FROM securityquestion WHERE Active = 1";
 					break;
 				case strtolower($tableName) == "picturetype":
-					$statement = "SELECT *, PictureTypeId AS Id, (SELECT COUNT(*) FROM picturetype) AS TotalNumber FROM picturetype";
+					$statement = "SELECT *, PictureTypeId AS Id, (SELECT COUNT(*) FROM picturetype WHERE Active = 1) AS TotalNumber FROM picturetype WHERE Active = 1";
 					break;
 				case strtolower($tableName) == "profileprivacytype":
-					$statement = "SELECT *, PrivacyTypeId AS Id, (SELECT COUNT(*) FROM profileprivacytype) AS TotalNumber FROM profileprivacytype";
+					$statement = "SELECT *, PrivacyTypeId AS Id, (SELECT COUNT(*) FROM profileprivacytype WHERE Active = 1) AS TotalNumber FROM profileprivacytype WHERE Active = 1";
 					break;
 				case strtolower($tableName) == "storyprivacytype":
-					$statement = "SELECT *, StoryPrivacyTypeId AS Id, (SELECT COUNT(*) FROM storyprivacytype) AS TotalNumber FROM storyprivacytype";
+					$statement = "SELECT *, StoryPrivacyTypeId AS Id, (SELECT COUNT(*) FROM storyprivacytype WHERE Active = 1) AS TotalNumber FROM storyprivacytype WHERE Active = 1";
+					break;
+				case strtolower($tableName) == "actions_taken_type":
+					$statement = "SELECT *, ActionsTakenTypeId AS Id, (SELECT COUNT(*) FROM actions_taken_type WHERE Active = 1) AS TotalNumber FROM actions_taken_type WHERE Active = 1";
 					break;
 				default:
 					return $tableName." is not a proper table name";
@@ -1169,6 +1405,9 @@ class AdminModel extends Model {
 				case strtolower($tableName) == "storyprivacytype":
 					$statement = "INSERT INTO storyprivacytype (NameE, NameF) VALUES (:NameE, :NameF)";
 					break;
+				case strtolower($tableName) == "actions_taken_type":
+					$statement = "INSERT INTO actions_taken_type (NameE, NameF) VALUES (:NameE, :NameF)";
+					break;
 				default:
 					return $tableName." is not a proper table name";
 			}
@@ -1217,6 +1456,9 @@ class AdminModel extends Model {
 				case strtolower($tableName) == "storyprivacytype":
 					$statement = "UPDATE storyprivacytype SET NameE = :NameE, NameF = :NameF  WHERE StoryPrivacyTypeId = :Id";
 					break;
+				case strtolower($tableName) == "actions_taken_type":
+					$statement = "UPDATE actions_taken_type SET NameE = :NameE, NameF = :NameF  WHERE ActionsTakenTypeId = :Id";
+					break;
 				default:
 					return $tableName." is not a proper table name";
 			}
@@ -1228,6 +1470,50 @@ class AdminModel extends Model {
 				);
 
 			return $this->fetch($statement, $parameters);
+		}
+		catch(PDOException $e)
+		{
+			return $e->getMessage();
+		}
+	}
+
+	public function DeactiveDropdownListItem($tableName, $itemId)
+	{
+		try
+		{
+			$statement = "";
+
+			switch(true)
+			{
+				case strtolower($tableName) == "languagetype":
+					$statement = "UPDATE languagetype SET Active = 0 WHERE LanguageId = :Id";
+					break;
+				case strtolower($tableName) == "gendertype":
+					$statement = "UPDATE gendertype SET Active = 0 WHERE GenderTypeId = :Id";
+					break;
+				case strtolower($tableName) == "achievementleveltype":
+					$statement = "UPDATE achievementleveltype SET Active = 0 WHERE LevelId = :Id";
+					break;
+				case strtolower($tableName) == "securityquestion":
+					$statement = "UPDATE securityquestion SET Active = 0 WHERE SecurityQuestionId = :Id";
+					break;
+				case strtolower($tableName) == "picturetype":
+					$statement = "UPDATE picturetype SET Active = 0 WHERE PictureTypeId = :Id";
+					break;
+				case strtolower($tableName) == "profileprivacytype":
+					$statement = "UPDATE profileprivacytype SET Active = 0 WHERE PrivacyTypeId = :Id";
+					break;
+				case strtolower($tableName) == "storyprivacytype":
+					$statement = "UPDATE storyprivacytype SET Active = 0 WHERE StoryPrivacyTypeId = :Id";
+					break;
+				case strtolower($tableName) == "actions_taken_type":
+					$statement = "UPDATE actions_taken_type SET Active = 0 WHERE ActionsTakenTypeId = :Id";
+					break;
+				default:
+					return $tableName." is not a proper table name";
+			}			
+
+			return $this->fetch($statement, array(":Id" => $itemId));
 		}
 		catch(PDOException $e)
 		{
