@@ -14,6 +14,7 @@
 				</a>
 			</figure>
 		</div>
+
 		<div class="col-sm-10 col-xs-9">
 			<div class="comment-post">
 				<div class="row">
@@ -29,6 +30,7 @@
 				        	</a>
 							<?php echo gettext("Flag"); ?>
 						</p>
+
 					</div>
 				</div>
 				
@@ -37,7 +39,9 @@
 	</article>
 <?php } else { ?>
 	  <!-- First Comment -->
+
 	<div class="comment-post alert alert-warning" id="CurrentRejectedContentInfoBar" role="alert">
   		<?php echo (!isset($comment->IsAdminRejected) || $comment->IsAdminRejected == FALSE) ? gettext("This comment has been removed.") : gettext("This comment has been removed by an administrator."); ?>							
 	</div>
+
 <?php } ?>

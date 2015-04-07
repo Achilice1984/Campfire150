@@ -26,11 +26,11 @@
 
 <div class="container">
         
-
     <img class="img-responsive" src="<?php echo image_get_path_basic($storyViewModel->UserId, $storyViewModel->PictureId, IMG_STORY, (IS_MOBILE ? IMG_SMALL : IMG_MEDIUM)); ?>" alt="<?php echo gettext("Story Picture"); ?>" />
     <div class="social">
         <div class="fb-like paddingTop15" data-href="https://developers.facebook.com/docs/plugins/" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
         <div class="paddingTop15">
+
             <a href="https://twitter.com/share" class="twitter-share-button" data-via="Campfire150">Tweet</a>
         </div>
     </div>
@@ -112,6 +112,7 @@
             <section id="comment-list">
                 <?php 
 
+
                     foreach ($storyViewModel->Comments as $comment)
                     {
                         include(APP_DIR . "views/Story/_comments.php");
@@ -122,6 +123,7 @@
             <div class="alert alert-info" id="CommentInfoBar" role="alert" style="display:none;">
                 <?php echo gettext("You have reached the end of the comments."); ?>
             </div>
+
             
             <input type="hidden" name="CommentPage" id="CommentPage" value="1">
             <input type="hidden" name="CommentUrl" id="CommentUrl" value="<?php echo BASE_URL; ?>story/getStoryComments">
@@ -139,7 +141,6 @@
                 <input type="hidden" name="Story_StoryId" id="Story_StoryId" value="<?php echo $storyViewModel->StoryId; ?>">
 
                 <?php include(APP_DIR . 'views/shared/messages.php'); ?>
-
 
                 <div class="alert alert-success" id="CommentSubmitInfoBar" role="alert" style="display:none;">
                     <strong><?php echo gettext("Success:"); ?></strong> <?php echo gettext("Your comment was successfully submitted, and is now awaiting approval."); ?>
@@ -160,6 +161,7 @@
                 </div>
             </form>
         <?php } ?>
+
     </div>
 
     <p class="text-center" id="ShowCommentsButton">
