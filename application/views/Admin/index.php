@@ -255,7 +255,6 @@
                             <tbody>
                             </tbody>
                         </table>
-                        <h4> Add a new answer <a href="<?php echo BASE_URL . 'admin/storyansweradd' ?> ">here</a></h4>
                     </div>
                    
                 </div>
