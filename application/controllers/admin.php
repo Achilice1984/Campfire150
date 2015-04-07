@@ -832,6 +832,18 @@ class Admin extends Controller {
 
 		$userViewModel = $model->getUserByID($commentViewModel->User_UserId);
 
+		if(isset($userViewModel->BackgroundPictureId))
+		{
+			$userViewModel->backgroundPictureURL = 
+				image_get_path_basic($userViewModel->UserId, $userViewModel->BackgroundPictureId, IMG_BACKGROUND, (IS_MOBILE ? IMG_MEDIUM : IMG_LARGE));
+		}
+
+		if(isset($userViewModel->ProfilePictureId))
+		{
+			$userViewModel->profilePictureURL = 
+				image_get_path_basic($userViewModel->UserId, $userViewModel->ProfilePictureId, IMG_PROFILE, (IS_MOBILE ? IMG_XSMALL : IMG_SMALL));
+		}
+
 		//Execute code if a post back
 		if($this->isPost())
 		{
@@ -901,6 +913,18 @@ class Admin extends Controller {
 
 		$userViewModel = $this->loadViewModel('shared/UserViewModel');
 		$userViewModel = $model->getUserByID($userId);
+
+		if(isset($userViewModel->BackgroundPictureId))
+		{
+			$userViewModel->backgroundPictureURL = 
+				image_get_path_basic($userViewModel->UserId, $userViewModel->BackgroundPictureId, IMG_BACKGROUND, (IS_MOBILE ? IMG_MEDIUM : IMG_LARGE));
+		}
+
+		if(isset($userViewModel->ProfilePictureId))
+		{
+			$userViewModel->profilePictureURL = 
+				image_get_path_basic($userViewModel->UserId, $userViewModel->ProfilePictureId, IMG_PROFILE, (IS_MOBILE ? IMG_XSMALL : IMG_SMALL));
+		}
 
 		//Execute code if a post back
 		if($this->isPost())
