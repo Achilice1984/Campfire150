@@ -52,7 +52,7 @@
         ?>
     </p>
 
-    <div id="storyContentContainer">
+    <div id="storyContentContainer" style="font-size: 1.2em">
         <?php echo $storyViewModel->Content; ?>
     </div>
     
