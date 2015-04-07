@@ -23,7 +23,7 @@
   		</div>
   		<div class="col-md-6">
   			<div class="thumbnail">
-      			<img src="<?php echo isset($userViewModel->BackgroundPictureId) ? $userViewModel->BackgroundPictureId : BASE_URL . "static/images/default-user-image.png"; ?>" alt=""><br/>
+  				<img src="<?php echo isset($userViewModel->BackgroundPictureURL) ? $userViewModel->BackgroundPictureURL : BASE_URL . "static/images/default-user-image.png"; ?>" alt="<?php echo gettext("User background picture"); ?>"><br/>
  				<h2>More user information click <a href= "<?php echo BASE_URL . 'account/home/' . $activeViewModel->Id; ?>"> here </a> </h2> 				
   			</div>
   		</div>

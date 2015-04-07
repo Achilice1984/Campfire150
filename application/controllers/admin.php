@@ -916,7 +916,7 @@ class Admin extends Controller {
 
 		if(isset($userViewModel->BackgroundPictureId))
 		{
-			$userViewModel->backgroundPictureURL = 
+			$userViewModel->BackgroundPictureURL = 
 				image_get_path_basic($userViewModel->UserId, $userViewModel->BackgroundPictureId, IMG_BACKGROUND, (IS_MOBILE ? IMG_MEDIUM : IMG_LARGE));
 		}
 
