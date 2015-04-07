@@ -49,19 +49,19 @@
             </div>
             <div class="col-md-6">
                 <div class="row text-center">
-                    <div class="col-md-6 col-xs-3">
+                    <div class="col-md-6 col-sm-3 col-xs-6">
                         <p class="h1"><?php echo $homeViewModel->totalPublishedStories; ?></p>
                         <p><?php echo gettext("Stories"); ?></p>
                     </div>
-                    <div class="col-md-6 col-xs-3">
+                    <div class="col-md-6 col-sm-3 col-xs-6">
                         <p class="h1"><?php echo $homeViewModel->totalActiveUsers; ?></p>
                         <p><?php echo gettext("Users"); ?></p>
                     </div>
-                    <div class="col-md-6 col-xs-3">
+                    <div class="col-md-6 col-sm-3 col-xs-6">
                         <p class="h1"><?php echo $homeViewModel->totalPublishedComments; ?></p>
                         <p><?php echo gettext("Comments"); ?></p>
                     </div>
-                    <div class="col-md-6 col-xs-3">
+                    <div class="col-md-6 col-sm-3 col-xs-6">
                         <p class="h1"><?php echo $homeViewModel->totalRecommendations; ?></p>
                         <p><?php echo gettext("Recommends"); ?></p>
                     </div>
@@ -74,15 +74,7 @@
 <section class="bg-blue marginBottom-15">
     <div class="container">
         <h2>&nbsp</h2>
-        <div class="row">
-            <div class="col-md-12">
-                <canvas id="wordCloudCanvas" height="600" width="1000"></canvas> 
-            </div>
-        </div>
-        <div class="row">
-             <div style="" class="col-md-12">
-                
-                <p style="padding: 25px;"><a href="<?php echo BASE_URL; ?>story/add" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Share a Story"); ?></a></p>       
-        </div>
+        <canvas id="wordCloudCanvas" height="600" width="1000"></canvas>        
+        <p class="paddingTop15"><a href="<?php echo BASE_URL; ?>story/add" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Share a Story"); ?></a></p>       
     </div>
 </section>
