@@ -1,4 +1,5 @@
 <?php
+
 // if($_SERVER["HTTPS"] != "on")
 // {
 //     header("Location: https://campfire150.com" . $_SERVER["REQUEST_URI"]);
@@ -70,8 +71,6 @@ require(ROOT_DIR .'system/sessionmanager.php');
 
 $detect = new Mobile_Detect;
 
-// Define base URL
-global $config;
 
 /*****************
 *
@@ -100,27 +99,10 @@ define('base_url_https', $config['base_url_https']);
 define('SITE_EMAIL', $config['SITE_EMAIL']);
 define('CONTACT_EMAIL', $config['CONTACT_EMAIL']);
 
-$request_url = sprintf(
-					    "%s://%s:8084/",
-					    isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
-					    $_SERVER['SERVER_NAME']
-					  );
-// $request_url = sprintf(
-// 					    "%s://%s/",
-// 					    isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http',
-// 					    $_SERVER['SERVER_NAME']
-// 					  );
 
 //Check if the requested url is included in the array of valid urls
 //and asign the proper url
-if(in_array($request_url, $config['base_url'], true))
-{
-	define('BASE_URL', $request_url);
-}
-else
-{
-	define('BASE_URL', $config['base_url'][0]);
-}
+define('BASE_URL', $config['base_url']);
 
 define('FULL_URL', 'http'.(empty($_SERVER['HTTPS'])?'':'s').'://'.$_SERVER['SERVER_NAME'] . ($config["debugMode"] == true ? ":8084" : "") . $_SERVER['REQUEST_URI']);
 //define('FULL_URL', 'http'.(empty($_SERVER['HTTPS'])?'':'s').'://'.$_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI']);
