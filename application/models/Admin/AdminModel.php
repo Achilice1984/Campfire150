@@ -159,7 +159,7 @@ class AdminModel extends Model {
 									LEFT JOIN user u ON s.User_UserId = u.UserId WHERE aas.Approved = 0) AS totalStories
 							FROM story s 
 							LEFT JOIN admin_approve_story aas 
-							ON s.storyID=aas.Story_StoryId 
+							ON s.StoryId=aas.Story_StoryId 
 							LEFT JOIN user u 
 							ON s.User_UserId = u.UserId 
 							WHERE aas.Approved = 0 
