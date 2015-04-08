@@ -10,7 +10,7 @@ class AdminModel extends Model {
 		try
 		{
 			$statement = "SELECT * FROM user 
-							WHERE userID = :ID AND AdminFlag = 1";
+							WHERE UserId = :ID AND AdminFlag = 1";
 
 			$rowCount = $this->fetchRowCount($statement, array("ID" => $userID));
 
@@ -104,9 +104,9 @@ class AdminModel extends Model {
 			$statement = "SELECT *, 
 								(SELECT COUNT( * )
 									FROM story s1
-									INNER JOIN user u1 ON s1.User_UserId = u1.UserId
-									WHERE s.Published = TRUE 
-									AND s1.storyID NOT
+									LEFT JOIN user u1 ON s1.User_UserId = u1.UserId
+									WHERE s1.Published = TRUE 
+									AND s1.StoryId NOT
 									IN (
 
 									SELECT Story_StoryId
@@ -116,10 +116,10 @@ class AdminModel extends Model {
 									)
 								) AS totalStories
 							FROM story s
-							INNER JOIN user u
+							LEFT JOIN user u
 							ON s.User_UserId = u.UserId
 							WHERE s.Published = TRUE 
-							AND s.storyID 
+							AND s.StoryId 
 							NOT IN (SELECT Story_StoryId 
 									FROM admin_approve_story aas
 									WHERE aas.Active = TRUE ) 
@@ -156,11 +156,11 @@ class AdminModel extends Model {
 		{
 			$statement = "SELECT *,
 								(SELECT COUNT(*) FROM story s LEFT JOIN admin_approve_story aas ON s.storyID=aas.Story_StoryId 
-									INNER JOIN user u ON s.User_UserId = u.UserId WHERE aas.Approved = 0) AS totalStories
+									LEFT JOIN user u ON s.User_UserId = u.UserId WHERE aas.Approved = 0) AS totalStories
 							FROM story s 
 							LEFT JOIN admin_approve_story aas 
-							ON s.storyID=aas.Story_StoryId 
-							INNER JOIN user u 
+							ON s.StoryId=aas.Story_StoryId 
+							LEFT JOIN user u 
 							ON s.User_UserId = u.UserId 
 							WHERE aas.Approved = 0 
 							LIMIT :Start, :HowMany";
@@ -195,19 +195,19 @@ class AdminModel extends Model {
 			$start = $this->getStartValue($howMany, $page);
 
 			$statement = "SELECT *, COUNT(urs.User_UserId) AS NumberOfFlagged,
-								(SELECT COUNT(*) FROM (SELECT StoryId
-									FROM story s
-									INNER JOIN user_recommend_story u ON StoryID = Story_StoryId
-									WHERE Opinion =0
-									GROUP BY StoryID) tmptable
+								(SELECT COUNT(*) FROM (SELECT s1.StoryId
+									FROM story s1
+									LEFT JOIN user_recommend_story urs1 ON s1.StoryId = urs1.Story_StoryId
+									WHERE urs1.Opinion =0
+									GROUP BY s1.StoryId) tmptable
 								) AS totalStories
 							FROM story s 
-							INNER JOIN user_recommend_story urs 
-							ON s.StoryID=urs.Story_StoryId 
+							LEFT JOIN user_recommend_story urs 
+							ON s.StoryId=urs.Story_StoryId 
 							LEFT JOIN user u 
 							ON s.User_UserId=u.UserId 
 							WHERE urs.Opinion = 0 
-							GROUP BY s.StoryID 
+							GROUP BY s.StoryId 
 							ORDER BY NumberOfFlagged DESC 
 							LIMIT :Start, :HowMany";
 
@@ -238,12 +238,12 @@ class AdminModel extends Model {
 		try
 		{
 			$statement = "SELECT *,
-								(SELECT COUNT(*) FROM story s LEFT JOIN admin_approve_story aas ON s.storyID=aas.Story_StoryId 
-									INNER JOIN user u ON s.User_UserId = u.UserId WHERE aas.Approved = 1) AS totalStories
+								(SELECT COUNT(*) FROM story s LEFT JOIN admin_approve_story aas ON s.StoryID=aas.Story_StoryId 
+									LEFT JOIN user u ON s.User_UserId = u.UserId WHERE aas.Approved = 1) AS totalStories
 							FROM story s 
 							LEFT JOIN admin_approve_story aas 
-							ON s.storyID=aas.Story_StoryId 
-							INNER JOIN user u 
+							ON s.StoryID=aas.Story_StoryId 
+							LEFT JOIN user u 
 							ON s.User_UserId = u.UserId 
 							WHERE aas.Approved = 1 
 							LIMIT :Start, :HowMany";
