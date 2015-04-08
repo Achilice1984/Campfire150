@@ -363,7 +363,7 @@
 							<input type="hidden" name="StoryRecommendationContentPage" id="StoryRecommendationContentPage" value="1">
 							<input type="hidden" name="StoryRecommendationContentUrl" id="StoryRecommendationContentUrl" value="<?php echo BASE_URL; ?>account/recommendations">
 
-							<div class="row text-center" id="StoryRecommendationContentMoreButton" style="margin-bottom: 100px;">
+							<div class="text-center" id="StoryRecommendationContentMoreButton" style="margin-bottom: 100px;">
 								<?php include(APP_DIR . 'views/shared/_spinner_large.php'); ?>
 
 								<button type="button" class="btn btn-warning btn-lg btn-block"><?php echo gettext("Show More Stories"); ?></button>
@@ -430,7 +430,7 @@
 				    </div> 
 				    <div role="tabpanel" class="tab-pane" id="User_ActionsTaken">
 							<?php 
-								echo "<table class='table table-hover' id='ActionsTakenListContainer'>";
+								echo "<div id='ActionsTakenListContainer'>";
 
 								if(isset($accountHomeViewModel->ActionTakenList) && is_array($accountHomeViewModel->ActionTakenList) && count($accountHomeViewModel->ActionTakenList) > 0)
 								{
@@ -442,7 +442,7 @@
 								}
 								else { include(APP_DIR . "views/shared/noResults.php"); } 
 
-								echo "</table>";
+								echo "</div>";
 
 								if($currentUser->UserId == $accountHomeViewModel->userDetails->UserId)	
 								{
@@ -467,8 +467,10 @@
 								             	<textarea maxlength="250" name="Content" id="Content" class="form-control" rows="3" placeholder="<?php echo gettext("What did you do to take action?"); ?>"></textarea>
 							             	</div>
 
-								             <button style="float: left;" id="ActionTakenSubmitButton" type="submit" class="btn btn-default"><?php echo gettext("Add Action"); ?></button>
-								             <div style="float: left; margin-left:10px" id="ActionTakenSpinerDiv">
+							             	<p class="clearfix">
+								            	<button id="ActionTakenSubmitButton" type="submit" class="btn btn-default pull-right"><?php echo gettext("Add Action"); ?></button>
+								            </p>
+								            <div style="float: left; margin-left:10px" id="ActionTakenSpinerDiv">
 							             		<?php include(APP_DIR . 'views/shared/_spinner_small.php'); ?>
 						             		</div>
 								         </form>
