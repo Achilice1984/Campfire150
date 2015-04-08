@@ -1,7 +1,7 @@
 
 <div class="container" style="margin-top:100px;">
 
-	<h1><?php echo gettext("Edit inappropriate comment"); ?></h1>
+	<h1><?php echo gettext("Edit Comment Status"); ?></h1>
     <div class="row">
   		<div class="col-md-3">
   			<div class="thumbnail">

@@ -1,6 +1,6 @@
 <div class="container">
 	
-	<h1><?php echo gettext("Edit pending approval story"); ?></h1>
+	<h1><?php echo gettext("Edit Story Status"); ?></h1>
 	<div class="row">
   		<div class="col-md-3">
   			<div class="thumbnail">
