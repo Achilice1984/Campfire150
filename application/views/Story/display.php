@@ -42,7 +42,7 @@
     <p class="h4">
         <?php 
             for ($i=0; $i < count($storyViewModel->Tags); $i++) { 
-                echo '<span class="label label-primary">' . $storyViewModel->Tags[$i]->Tag . '</span>';
+                echo '<a class="btn btn-xs btn-primary" href="' . BASE_URL . 'story/search/?search=true&q=' . $storyViewModel->Tags[$i]->Tag . '">' . $storyViewModel->Tags[$i]->Tag . '</a>';
 
                 if(count($storyViewModel->Tags) != $i + 1)
                 {
@@ -52,7 +52,7 @@
         ?>
     </p>
 
-    <div id="storyContentContainer" style="font-size: 1.2em">
+    <div id="storyContentContainer" style="font-size: 1.3em; padding-top: 15px; padding-bottom: 15px;">
         <?php echo $storyViewModel->Content; ?>
     </div>
     
