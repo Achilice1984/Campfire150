@@ -17,7 +17,7 @@
             </div>
             <div class="modal-footer">
                 <div class="form-group" style="">   
-                    <button style="float: left;" class="btn btn-large btn-warning">Tell your story</button>                     
+                    <div style="float: left;" class="btn btn-large btn-warning">Tell your story</div>                     
                 </div>          
             </div>
         </form>
