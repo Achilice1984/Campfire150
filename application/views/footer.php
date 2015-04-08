@@ -3,45 +3,23 @@
     <div id="c150-foot">
         <footer class="container">
             <div class="row">
-                <div class="col-md-6">     
-                    <h3><?php echo gettext("Site Links"); ?></h3>   
+                <div class="col-xs-6">     
+                    <h1 class="h3"><?php echo gettext("Site Links"); ?></h1>   
                     <ul>
-                       <!--  <li>
-                            <a href="<?php echo BASE_URL; ?>"><?php echo gettext("Home"); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo BASE_URL; ?>story/search"><?php echo gettext("Stories"); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo BASE_URL; ?>account/search"><?php echo gettext("Users"); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo BASE_URL; ?>home/domore"><?php echo gettext("Do More"); ?></a>
-                        </li> -->
-                        <li>
-                            <a href="<?php echo BASE_URL; ?>home/mission"><?php echo gettext("Mission / Vision"); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo BASE_URL; ?>home/partners"><?php echo gettext("Our Partners"); ?></a>
-                        </li>
-                        <li>
-                            <a href="<?php echo BASE_URL; ?>home/contact"><?php echo gettext("Contact Us"); ?></a>
-                        </li>
+                        <li><a href="<?php echo BASE_URL; ?>home/mission"><?php echo gettext("Mission / Vision"); ?></a></li>
+                        <li><a href="<?php echo BASE_URL; ?>home/partners"><?php echo gettext("Our Partners"); ?></a></li>
+                        <li><a href="<?php echo BASE_URL; ?>home/contact"><?php echo gettext("Contact Us"); ?></a></li>
                     </ul>            
                 </div>
-                <div class="col-md-6">    
-                    <h3><?php echo gettext("Social Links"); ?></h3>  
-
-                    <a style="text-decoration: none; padding-top: 10px;" data-toggle="tooltip" title="<?php echo gettext("Find us on Facebook"); ?>" href="https://www.facebook.com/campfireproject" >
-                        <img src="<?php echo BASE_URL; ?>static/images/fb_icon.png">  
-                    </a>
-
-                    <a style="text-decoration: none; padding-top: 10px;" data-toggle="tooltip" title="<?php echo gettext("Find us on Twitter"); ?>" href="https://twitter.com/campfire150" >
-                        <img src="<?php echo BASE_URL; ?>static/images/tw_icon.png">  
-                    </a>             
+                <div class="col-xs-6 text-right">    
+                    <h1 class="h3"><?php echo gettext("Social"); ?></h1>  
+                    <p>
+                        <a data-toggle="tooltip" title="<?php echo gettext("Find us on Facebook"); ?>" href="https://www.facebook.com/campfireproject"><img src="<?php echo BASE_URL; ?>/static/images/fb_icon.png"></a>
+                        <a data-toggle="tooltip" title="<?php echo gettext("Find us on Twitter"); ?>" style="padding-left: 10px;" href="https://twitter.com/campfire150"><img src="<?php echo BASE_URL; ?>/static/images/tw_icon.png"></a>             
+                    </p>
                 </div>
             </div>
-            <p style="padding-top: 10px;">&copy; <?php echo date("Y"); ?>, Campfire 150</p>
+            <p class="text-center">&copy; <?php echo date("Y"); ?>, Campfire 150</p>
         </footer>
     </div> <!-- End #c150-foot -->	
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

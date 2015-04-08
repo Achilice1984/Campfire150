@@ -12,7 +12,16 @@ header, footer, nav {
 	text-transform: capitalize;
 }
 
+textarea {
+    resize: vertical;
+}
+
 /* -------------------- Bootstrap Overrides -------------------- */
+
+.nav-pills li a {
+	overflow: hidden;
+	white-space: nowrap;
+}
 
 .navbar {
 	margin: 0;
@@ -143,6 +152,7 @@ header, footer, nav {
 		background-color: #fff;
 		border: 1px solid #337ab7;
 		margin: -1px 0px;
+		padding-bottom: 9px !important;
 	}
 	.WriteStoryButton:hover {
 		background-color: #eea236 !important;
@@ -225,7 +235,6 @@ header, footer, nav {
 }
 #c150-foot {
 	border-top: 3px solid #eea236;
-	padding-top: 10px;
 }
 
 /* -------------------- Theme Misc -------------------- */
