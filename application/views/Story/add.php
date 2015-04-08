@@ -53,7 +53,10 @@
                           </div>
                           <div class="modal-body">
 
-                            <p id="StoryInfoDiv" style="display:none; font-size: 1.2em;"><?php echo gettext("Click on the darker area and drag to resize your image."); ?></p>
+                            <div id="StoryInfoDiv" style="display:none;" class="alert alert-info alert-dismissible" id="CurrentDraftsContentInfoBar" role="alert" style="display:none;">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <?php echo gettext("Click on the darker area and drag to resize your image."); ?>
+                            </div>
                             
                             <div id="addImageDiv" class="img-rounded center-block" style="position: relative; min-height:200px; border: 1px solid #E8E8E8; overflow: hidden; padding: 0; margin: 0;">
                                 
