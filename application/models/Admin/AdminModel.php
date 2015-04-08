@@ -10,7 +10,7 @@ class AdminModel extends Model {
 		try
 		{
 			$statement = "SELECT * FROM user 
-							WHERE userID = :ID AND AdminFlag = 1";
+							WHERE UserId = :ID AND AdminFlag = 1";
 
 			$rowCount = $this->fetchRowCount($statement, array("ID" => $userID));
 
@@ -238,12 +238,12 @@ class AdminModel extends Model {
 		try
 		{
 			$statement = "SELECT *,
-								(SELECT COUNT(*) FROM story s LEFT JOIN admin_approve_story aas ON s.storyID=aas.Story_StoryId 
-									INNER JOIN user u ON s.User_UserId = u.UserId WHERE aas.Approved = 1) AS totalStories
+								(SELECT COUNT(*) FROM story s LEFT JOIN admin_approve_story aas ON s.StoryID=aas.Story_StoryId 
+									LEFT JOIN user u ON s.User_UserId = u.UserId WHERE aas.Approved = 1) AS totalStories
 							FROM story s 
 							LEFT JOIN admin_approve_story aas 
-							ON s.storyID=aas.Story_StoryId 
-							INNER JOIN user u 
+							ON s.StoryID=aas.Story_StoryId 
+							LEFT JOIN user u 
 							ON s.User_UserId = u.UserId 
 							WHERE aas.Approved = 1 
 							LIMIT :Start, :HowMany";
