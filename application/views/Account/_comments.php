@@ -9,7 +9,7 @@
 				<div class="storyAuthorDetails">
 					<h4><?php echo $comment->FirstName . " " . $comment->LastName; ?></h4>
 					<p>
-						<?php echo gettext("Posted:") . " " . date("m-d-Y", strtotime($comment->DateCreated)); ?>
+						<?php echo gettext("Posted:") . " " . date("M d, Y", strtotime($comment->DateCreated)); ?>
 					</p>
 				</div>				
 			</div>			

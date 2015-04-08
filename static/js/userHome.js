@@ -445,6 +445,7 @@ $(document.body).on('click', "#ActionTakenSubmitButton", function(event){
 			if(data)
 			{
 				$("#ActionsTakenListContainer").html(data);
+				$("#Content").val("");
 			}
 			else
 			{
@@ -1007,7 +1008,7 @@ $(document.body).on('click', ".removeAction", function(event){
 		success: function(data){
 			if(data)
 			{
-				thisAction.closest(".actionTakenTd").remove();
+				thisAction.closest(".actionTakenSection").remove();
 			}
 			else
 			{
