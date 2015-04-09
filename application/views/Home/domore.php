@@ -92,7 +92,7 @@
             <p>Share the story of your Campfire and earn a Firekeeper badge.</p>
             <p><button class="btn btn-warning btn-lg btn-block" data-toggle="modal" data-target="#eventModel">Tell your story</button></p>
             <h3>Stories collected so far</h3>
-            <div class="text-center">
+            <div class="text-center paddingBottom15">
                 <div class="row">
                     <div class="col-sm-3 col-xs-6">
                         <p class="h1">##</p>
@@ -153,7 +153,7 @@
             <p class="lead">Join a legacy project</p>
             <p>Make your vision for Canada a reality by volunteering in your community. Whether its helping organization a 150th celebration, taking action for a cause you care about, or joining a legacy project to commemorate the 150th anniversary with one of our partner organizations, your involvement will help make Canada a better place to call home.</p>
             <h3>Actions taken so far</h3>
-            <div class="text-center">
+            <div class="text-center paddingBottom15">
                 <div class="row">
                     <div class="col-sm-3 col-xs-6">
                         <p class="h1">##</p>

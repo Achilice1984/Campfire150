@@ -24,7 +24,7 @@
 
 ?>
 
-<div class="container">
+<div class="container" style="font-size: 1.2em">
         
     <img class="img-responsive" src="<?php echo image_get_path_basic($storyViewModel->UserId, $storyViewModel->PictureId, IMG_STORY, (IS_MOBILE ? IMG_SMALL : IMG_MEDIUM)); ?>" alt="<?php echo gettext("Story Picture"); ?>" />
     <div class="social">
@@ -39,7 +39,7 @@
 
     <?php include(APP_DIR . "views/Story/_storyStats.php"); ?>
 
-    <p class="h4">
+    <p>
         <?php 
             for ($i=0; $i < count($storyViewModel->Tags); $i++) { 
                 echo '<a class="btn btn-xs btn-primary" href="' . BASE_URL . 'story/search/?search=true&q=' . $storyViewModel->Tags[$i]->Tag . '">' . $storyViewModel->Tags[$i]->Tag . '</a>';
@@ -52,8 +52,8 @@
         ?>
     </p>
 
-    <div id="storyContentContainer" style="font-size: 1.3em; padding-top: 15px; padding-bottom: 15px;">
-        <?php echo $storyViewModel->Content; ?>
+    <div id="storyContentContainer">
+        <?php echo preg_replace("/<p[^>]*>[\s|&nbsp;]*<\/p>/", '', $storyViewModel->Content); ?>
     </div>
     
     <div id="StorySignatureContainer">

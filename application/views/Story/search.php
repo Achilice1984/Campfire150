@@ -49,7 +49,7 @@
 		                <button id="StorySearchButton" class="btn btn-default" type="submit"><span class="glyphicon glyphicon-search"></span></button>
 		            </div>
 		        </div>						
-			</form>		
+			</form>
 
 			<?php if (isset($searchResults) && is_array($searchResults) && count($searchResults) > 0) { ?>
 				<div id="StorySearchContainer">
