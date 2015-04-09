@@ -1,8 +1,7 @@
 
  <div class="col-md-4 col-sm-6">
  	<h2 class="storyTitle"><?php echo $story->StoryTitle; ?></h2>
-    <div  class="thumbnail">
-        
+    <div  class="thumbnail" style="height: 200px; background: url('<?php echo image_get_path_basic($story->UserId, $story->PictureId, IMG_STORY, IMG_SMALL); ?>') center center; background-size: auto 200px; cursor: pointer">
         <div class="caption">
         	<div class="storyStats clearfix">
 			    <div>
@@ -25,10 +24,5 @@
             	<a href="<?php echo BASE_URL . "story/display/" . $story->StoryId; ?>" class="btn btn-warning btn-block"><?php echo gettext("Read"); ?></a>
             </p>
         </div>
-		
-		<a href="<?php echo BASE_URL . "story/display/" . $story->StoryId; ?>">
-        	<img style="min-height: 203px;" class=" img-responsive" src="<?php echo image_get_path_basic($story->UserId, $story->PictureId, IMG_STORY, IMG_SMALL); ?>"  alt="" />
-    	</a>
-
     </div>
 </div>
