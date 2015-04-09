@@ -1,7 +1,7 @@
 
 <div class="container" style="margin-top:100px;">
 
-	<h1><?php echo gettext("Edit inappropriate comment"); ?></h1>
+	<h1><?php echo gettext("Edit Comment Status"); ?></h1>
     <div class="row">
   		<div class="col-md-3">
   			<div class="thumbnail">
@@ -24,7 +24,7 @@
   		</div>
   		<div class="col-md-6">
   			<div class="thumbnail">
-      			<img style="width: 1200px;" class="img-responsive img-rounded" src="<?php echo image_get_path_basic($storyViewModel->UserId, $storyViewModel->PictureId, IMG_STORY, (IS_MOBILE ? IMG_MEDIUM : IMG_LARGE)); ?>" alt="<?php echo gettext('Story Picture'); ?>" />
+      			<img style="width: 1200px;" class="img-responsive img-rounded" src="<?php echo image_get_path_basic($userViewModel->UserId, $storyViewModel->PictureId, IMG_STORY, (IS_MOBILE ? IMG_MEDIUM : IMG_LARGE)); ?>" alt="<?php echo gettext('Story Picture'); ?>" />
   				<h2><?php echo $storyViewModel->StoryTitle ?></h2>
   					<div class="thumbnail">
   						<p><?php echo $storyViewModel->Content ?></p>

@@ -4,8 +4,8 @@
 	<div class="row">
   		<div class="col-md-3">
   			<div class="thumbnail">
-      			<img class="img-rounded" src="../../static/images/default-user-image.png" alt="">
-  				<h2><?php echo gettext("Owner Information"); ?></h2>
+				<img style="width: 200px; height: 200px;" id="profilePicture" class="img-thumbnail img-responsive" src="<?php echo isset($userViewModel->profilePictureURL) ? $userViewModel->profilePictureURL : BASE_URL . "static/images/default-user-image.png"; ?>" alt="<?php echo gettext("Profile Picture"); ?>">
+      			<h2><?php echo gettext("Owner Information"); ?></h2>
   				<ul>
   					<li><?php echo $userViewModel->FirstName ?></li>
   					<li><?php echo $userViewModel->LastName ?></li>
@@ -23,8 +23,8 @@
   		</div>
   		<div class="col-md-6">
   			<div class="thumbnail">
-      			<img src="../../static/images/default_story_image.jpg" alt=""><br/>
- 				<h2>More user information click <a href= "<?php echo BASE_URL . 'account/profile/' . $activeViewModel->Id; ?>"> here </a> </h2> 				
+  				<img src="<?php echo isset($userViewModel->BackgroundPictureURL) ? $userViewModel->BackgroundPictureURL : BASE_URL . "static/images/default-user-image.png"; ?>" alt="<?php echo gettext("User background picture"); ?>"><br/>
+ 				<h2>More user information click <a href= "<?php echo BASE_URL . 'account/home/' . $activeViewModel->Id; ?>"> here </a> </h2> 				
   			</div>
   		</div>
 	</div>

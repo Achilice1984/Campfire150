@@ -1,4 +1,4 @@
-<section class="storySummary">
+<section class="actionTakenSection">
 	<?php
 		echo "<h2>" . ($currentUser->LanguagePreference == "en_CA" ? $action->NameE : $action->NameF) . "</h2>";
 		

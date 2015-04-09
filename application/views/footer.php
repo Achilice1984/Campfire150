@@ -14,8 +14,8 @@
                 <div class="col-xs-6 text-right">    
                     <h1 class="h3"><?php echo gettext("Social"); ?></h1>  
                     <p>
-                        <a data-toggle="tooltip" title="<?php echo gettext("Find us on Facebook"); ?>" href="https://www.facebook.com/campfireproject"><img src="<?php echo BASE_URL; ?>/static/images/fb_icon.png"></a>
-                        <a data-toggle="tooltip" title="<?php echo gettext("Find us on Twitter"); ?>" style="padding-left: 10px;" href="https://twitter.com/campfire150"><img src="<?php echo BASE_URL; ?>/static/images/tw_icon.png"></a>             
+                        <a style="padding: 10px;" data-toggle="tooltip" title="<?php echo gettext("Find us on Facebook"); ?>" href="https://www.facebook.com/campfireproject"><img src="<?php echo BASE_URL; ?>/static/images/fb_icon.png"></a>
+                        <a style="padding: 10px;" data-toggle="tooltip" title="<?php echo gettext("Find us on Twitter"); ?>" style="padding-left: 10px;" href="https://twitter.com/campfire150"><img src="<?php echo BASE_URL; ?>/static/images/tw_icon.png"></a>             
                     </p>
                 </div>
             </div>

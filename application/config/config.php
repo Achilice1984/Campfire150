@@ -18,6 +18,7 @@ $config["debugMode"] = true;
 **********************************************/
 //
 // These are the urls that you intend to allow users to access your site by.
+// Because we are forcing the https connection this is almost not necessary
 //
 
  $config['base_url'] = "http://localhost:8084/CampFire150/"; // Base URL including trailing slash (e.g. http://localhost/)
@@ -35,8 +36,13 @@ $config["debugMode"] = true;
 // These are default locations that users will be redirected to
 //
 
-$config['default_controller'] = 'home'; // Default controller to load
-$config['error_controller'] = 'error'; // Controller used for errors (e.g. 404, 500 etc)
+// Default controller to load
+// This means that when someone requests https://campfire150.com/
+// They are getting the home controller and the index action
+$config['default_controller'] = 'home'; 
+
+// Controller used for errors (e.g. 404, 500 etc)
+$config['error_controller'] = 'error'; 
 
 /*********************************************
 *
@@ -119,5 +125,46 @@ $config['MAX_LOGIN_ATTEMPTS'] 			= 10;
 
 //This is how long an account will be locked for if the maximum login attemps exceeds the maximum limit
 $config['ACCOUNT_LOCKOUT_TIME_MIN']		= 10;
+
+
+
+/*********************************************
+*
+*				EXAMPLE OF MAILCHIMP AND ASKIMET
+*
+**********************************************/
+	// $comment = array(
+	 //            'author'    => 'joshdvrs',
+	 //            'email'     => 'josh.dvrs@gmail.com',
+	 //            'website'   => 'http://www.example.com/',
+	 //            'body'      => 'I really enjoyed your story!',
+	 //            'permalink' => 'http://redfishgraphics.com/campfire',
+	 //            'referrer'  => 'http://redfishgraphics.com/campfire'
+	 //         );
+	 
+	 //     $akismet = new Akismet('http://www.yourdomain.com/', '00092d26de0e', $comment);
+	 
+	 //     if($akismet->errorsExist()) {
+	 //         echo"Couldn't connected to Akismet server!";
+	 //     } else {
+	 //         if($akismet->isSpam()) {
+	 //             echo"Spam detected";
+	 //         } else {
+	 //             echo"yay, no spam!";
+	 //         }
+	 //     }
+
+
+		// $MailChimp = new Mailchimp('4532c26dcf56308f605aaacb28f6b77b-us10');
+		// $result = $MailChimp->call('lists/subscribe', array(
+		//                 'id'                => '72b72d0de5',
+		//                 'email'             => array('email'=>'josh.dvrs@gmail.com'),
+		//                 'merge_vars'        => array('FNAME'=>'Josh', 'LNAME'=>'de Vries'),
+		//                 'double_optin'      => false,
+		//                 'update_existing'   => true,
+		//                 'replace_interests' => false,
+		//                 'send_welcome'      => false,
+		//             ));
+		// print_r($result);
 
 ?>
