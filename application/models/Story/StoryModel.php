@@ -2310,11 +2310,19 @@ class StoryModel extends Model {
 			$statement = "SELECT t.Tag,
 							(
 							    SELECT COUNT(*)
-							    FROM story_has_tag sht
-							    WHERE t.TagId = sht.Tag_TagId
+							    FROM admin_approve_story aas
 							    
-							) AS count
+							    INNER JOIN story s
+								ON s.StoryId = aas.Story_StoryId
+							    
+							    INNER JOIN story_has_tag st
+								ON s.StoryId = st.Story_StoryId
+							    
+							      WHERE aas.Approved = TRUE
+							    	AND t.TagId = st.Tag_TagId
+							)AS count
 							FROM tag t
+							HAVING count > 0
 							ORDER BY count DESC
 							LIMIT 0,100";
 
